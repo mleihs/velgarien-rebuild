@@ -1,8 +1,8 @@
 # 00 - Project Overview: Velgarien Multi-Simulations-Plattform
 
-**Version:** 1.0
+**Version:** 1.1
 **Datum:** 2026-02-15
-**Status:** Spezifikation
+**Status:** Phase 1 implementiert (Platform Foundation)
 
 ---
 

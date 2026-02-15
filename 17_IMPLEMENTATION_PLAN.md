@@ -1,8 +1,54 @@
 # 17 - Implementation Plan: Step-by-Step Tasks
 
-**Version:** 2.0
+**Version:** 2.1
 **Datum:** 2026-02-15
+**Aenderung v2.1:** Phase 1 als implementiert markiert, Abweichungen dokumentiert
 **Aenderung v2.0:** Vollstaendige Neufassung — 5 Phasen, ~140 Tasks, 100% Spec-Abdeckung
+
+---
+
+## Implementierungs-Status
+
+| Phase | Tasks | Status | Datum |
+|-------|-------|--------|-------|
+| **Phase 1** | 41 | **ERLEDIGT** | 2026-02-15 |
+| Phase 2 | 37 | Offen | — |
+| Phase 3 | 30 | Offen | — |
+| Phase 4 | 20 | Offen | — |
+| Phase 5 | 10 | Offen | — |
+
+### Phase 1 — Ergebnis
+
+**Alle 41 Tasks erledigt.** Verifikation bestanden:
+
+| Objekt | Erwartet | Tatsaechlich |
+|--------|----------|-------------|
+| Tabellen | 27 | 27 |
+| RLS-Policies | ~100 | 101 |
+| Triggers | 22 | 22 |
+| Views (regular) | 6 | 6 |
+| Views (materialized) | 2 | 2 |
+| Functions | ~10 | 16 |
+| Storage Buckets | 4 | 4 |
+| Backend Tests | bestanden | 10/10 |
+| Frontend Tests | bestanden | 8/8 |
+| Biome Lint | clean | clean |
+| Ruff Lint | clean | clean |
+| Health Endpoint | 200 | 200 |
+| Swagger UI | verfuegbar | /api/docs |
+
+### Abweichungen von Plan
+
+1. **Projekt-Verzeichnis:** `velgarien-rebuild/` statt `velgarien-platform/` (bestehendes Repo)
+2. **pyproject.toml im Root** statt `backend/pyproject.toml` (bessere Ergonomie)
+3. **index.html in frontend/** statt `frontend/src/index.html` (Vite-Konvention)
+4. **Kein separater router.ts** — Router ist in `app-shell.ts` integriert (simpler fuer @lit-labs/router Reactive Controller)
+5. **Kein separater error_handler.py / logging.py** — Error-Handling in FastAPI exception handlers; Logging via uvicorn Defaults. Wird bei Bedarf in Phase 3 ergaenzt.
+6. **Typen in einer Datei** statt `types/models/*.ts` + `types/api/*.ts` — Alle in `types/index.ts` (27 Interfaces, uebersichtlich genug)
+7. **Kein CreateSimulationButton / ResetPasswordView** — Werden in Phase 2 ergaenzt
+8. **Shared Component Styles (button.css, card.css etc.)** — Nicht als separate CSS-Dateien, Styles in Lit Shadow DOM der Komponenten. Design Tokens in CSS Custom Properties verfuegbar.
+9. **Biome 2.4.0** statt 2.0.0 — Config-Schema angepasst (`assist.actions.source.organizeImports`, `files.includes`)
+10. **Swagger docs immer aktiv** — `docs_url="/api/docs"` ohne Debug-Guard (fuer Entwicklung praktischer)
 
 ---
 

@@ -1,0 +1,25 @@
+/* === Layout Tokens === */
+
+:root {
+  /* === CONTAINER SIZES === */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1400px;
+  --container-max: 1600px;
+
+  /* === STRUCTURAL DIMENSIONS === */
+  --header-height: 60px;
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 64px;
+  --content-padding: var(--space-6);
+
+  /* Breakpoints (reference only, not usable in @media queries as CSS variables)
+     sm: 640px
+     md: 768px
+     lg: 1024px
+     xl: 1280px
+     2xl: 1536px
+  */
+}

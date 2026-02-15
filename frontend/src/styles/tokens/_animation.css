@@ -1,0 +1,22 @@
+/* === Animation Tokens === */
+
+:root {
+  /* === DURATION === */
+  --duration-instant: 0ms;
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+  /* === EASING === */
+  --ease-default: ease;
+  --ease-in: ease-in;
+  --ease-out: ease-out;
+  --ease-in-out: ease-in-out;
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* === COMPOSED TRANSITIONS === */
+  --transition-fast: var(--duration-fast) var(--ease-default);
+  --transition-normal: var(--duration-normal) var(--ease-default);
+  --transition-slow: var(--duration-slow) var(--ease-default);
+}

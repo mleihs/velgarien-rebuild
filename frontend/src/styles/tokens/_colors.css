@@ -1,0 +1,65 @@
+/* === Color Tokens === */
+
+:root {
+  /* === GRAY SCALE === */
+  --color-gray-0: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+  --color-gray-1000: #000000;
+
+  /* === SEMANTIC COLORS === */
+  --color-primary: #000000;
+  --color-primary-hover: #1f2937;
+  --color-primary-active: #374151;
+
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fecaca;
+
+  --color-success: #22c55e;
+  --color-success-hover: #16a34a;
+  --color-success-bg: #f0fdf4;
+  --color-success-border: #bbf7d0;
+
+  --color-warning: #f59e0b;
+  --color-warning-hover: #d97706;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+
+  --color-info: #3b82f6;
+  --color-info-hover: #2563eb;
+  --color-info-bg: #eff6ff;
+  --color-info-border: #bfdbfe;
+
+  /* === SURFACE COLORS === */
+  --color-surface: var(--color-gray-0);
+  --color-surface-raised: var(--color-gray-0);
+  --color-surface-sunken: var(--color-gray-50);
+  --color-surface-overlay: var(--color-gray-0);
+  --color-surface-header: var(--color-gray-100);
+  --color-surface-inverse: var(--color-gray-1000);
+
+  /* === TEXT COLORS === */
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-muted: var(--color-gray-400);
+  --color-text-inverse: var(--color-gray-0);
+  --color-text-link: var(--color-info);
+  --color-text-danger: var(--color-danger);
+
+  /* === BORDER COLORS === */
+  --color-border: var(--color-gray-1000);
+  --color-border-light: var(--color-gray-200);
+  --color-border-focus: var(--color-info);
+  --color-border-danger: var(--color-danger);
+}

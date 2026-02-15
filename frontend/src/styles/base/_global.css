@@ -1,0 +1,88 @@
+/* === Global Styles === */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  line-height: var(--leading-normal);
+}
+
+/* === HEADINGS === */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--heading-font);
+  font-weight: var(--heading-weight);
+  text-transform: var(--heading-transform);
+  letter-spacing: var(--heading-tracking);
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: var(--h1-size);
+}
+
+h2 {
+  font-size: var(--h2-size);
+}
+
+h3 {
+  font-size: var(--h3-size);
+}
+
+h4 {
+  font-size: var(--h4-size);
+}
+
+h5 {
+  font-size: var(--h5-size);
+}
+
+h6 {
+  font-size: var(--h6-size);
+}
+
+/* === LINKS === */
+
+a {
+  color: var(--color-text-link);
+  text-decoration: underline;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-info-hover);
+}
+
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+/* === REDUCED MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 0ms;
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

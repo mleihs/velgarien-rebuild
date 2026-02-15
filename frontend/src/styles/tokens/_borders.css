@@ -1,0 +1,24 @@
+/* === Border Tokens === */
+
+:root {
+  /* === BORDER WIDTHS === */
+  --border-width-thin: 1px;
+  --border-width-default: 2px;
+  --border-width-thick: 3px;
+  --border-width-heavy: 4px;
+
+  /* === BORDER RADII === */
+  --border-radius-none: 0;
+  --border-radius-sm: 2px;
+  --border-radius-md: 4px;
+  --border-radius-lg: 8px;
+  --border-radius-full: 9999px;
+
+  /* Brutalist Default: No radius */
+  --border-radius: var(--border-radius-none);
+
+  /* === COMPOSED BORDERS === */
+  --border-default: var(--border-width-thick) solid var(--color-border);
+  --border-light: var(--border-width-thin) solid var(--color-border-light);
+  --border-medium: var(--border-width-default) solid var(--color-border);
+}
