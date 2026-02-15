@@ -733,7 +733,7 @@ INSERT INTO simulations (id, name, slug, theme, status, content_locale, owner_id
 VALUES ('test-sim-uuid', 'Test Simulation', 'test', 'dystopian', 'active', 'de', 'user-a-uuid');
 
 -- Test-Mitgliedschaft
-INSERT INTO simulation_members (simulation_id, user_id, role)
+INSERT INTO simulation_members (simulation_id, user_id, member_role)
 VALUES
   ('test-sim-uuid', 'user-a-uuid', 'owner'),
   ('test-sim-uuid', 'user-viewer-uuid', 'viewer');
@@ -755,7 +755,7 @@ INSERT INTO agents (id, simulation_id, name, system, gender) VALUES
   ('agent-5-uuid', 'test-sim-uuid', 'Agent Epsilon', 'politics', 'female');
 
 -- Test-Buildings (3 Stuck)
-INSERT INTO buildings (id, simulation_id, name, type) VALUES
+INSERT INTO buildings (id, simulation_id, name, building_type) VALUES
   ('building-1-uuid', 'test-sim-uuid', 'Hauptquartier', 'government'),
   ('building-2-uuid', 'test-sim-uuid', 'Kaserne', 'military'),
   ('building-3-uuid', 'test-sim-uuid', 'Forschungslabor', 'special');

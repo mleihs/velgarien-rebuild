@@ -153,7 +153,7 @@ velgarien-platform/
 - **`campaign_events`** (NEU — Junction Table: campaign_id + event_id)
 - **`campaign_metrics`** (NEU — metric_name, metric_value, measured_at)
 - Alle fehlenden Indexes: `idx_social_comments_post`, `idx_social_comments_parent`, `idx_social_comments_simulation`, `idx_campaigns_trend`, `idx_campaigns_event`, `idx_social_posts_event`, `idx_campaign_events_campaign`, `idx_campaign_events_event`, `idx_campaign_metrics_campaign`
-**Akzeptanz:** Alle 28 Tabellen-Zwischensumme korrekt. FKs vorhanden und enforced.
+**Akzeptanz:** Alle 27 Tabellen-Zwischensumme korrekt. FKs vorhanden und enforced.
 **Abh.:** P1.2.3
 **Ref.:** 03_DATABASE_SCHEMA_NEW §Social, §Campaign
 
@@ -167,7 +167,7 @@ velgarien-platform/
 - **FIXED**: Zwei partielle Unique Indexes statt invalidem inline UNIQUE+WHERE:
   - `idx_prompt_templates_sim_unique` ON (simulation_id, template_type, locale) WHERE simulation_id IS NOT NULL
   - `idx_prompt_templates_platform_unique` ON (template_type, locale) WHERE simulation_id IS NULL
-**Akzeptanz:** Alle 28 Tabellen existieren. `SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'` = 28.
+**Akzeptanz:** Alle 27 Tabellen existieren. `SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'` = 27.
 **Abh.:** P1.2.3
 **Ref.:** 03_DATABASE_SCHEMA_NEW §Chat, §Prompts, §Audit
 
@@ -184,7 +184,7 @@ velgarien-platform/
 
 #### P1.2.8 — RLS-Policies fuer alle Tabellen
 **Dateien:** `supabase/migrations/008_rls_policies.sql`
-**Aktion:** `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` + SELECT/INSERT/UPDATE/DELETE Policies fuer alle 28 Tabellen
+**Aktion:** `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` + SELECT/INSERT/UPDATE/DELETE Policies fuer alle 27 Tabellen
 **Akzeptanz:** RLS ist auf allen Tabellen aktiviert. Query als nicht-authentifizierter User gibt 0 Rows.
 **Abh.:** P1.2.7, P1.2.6 (alle Tabellen muessen existieren)
 **Ref.:** 10_AUTH_AND_SECURITY §RLS-Policies
@@ -232,7 +232,7 @@ velgarien-platform/
 **Abh.:** P1.2.8
 **Ref.:** 03_DATABASE_SCHEMA_NEW §Storage Buckets
 
-**Checkpoint 1.2:** 28 Tabellen mit FKs, ~50 Indexes, 22 Triggers, 9 Funktionen, 8 Views, RLS-Policies, Storage Buckets deployed. Schema vollstaendig.
+**Checkpoint 1.2:** 27 Tabellen mit FKs, ~50 Indexes, 22 Triggers, 9 Funktionen, 8 Views, RLS-Policies, Storage Buckets deployed. Schema vollstaendig.
 
 ---
 
@@ -499,7 +499,7 @@ frontend/src/components/platform/
 **Abh.:** P1.3.10, P1.4.11
 **Ref.:** 16_TESTING_STRATEGY §CI/CD Pipeline
 
-**Checkpoint Phase 1:** Plattform-Grundgeruest steht. Auth, DB-Schema (28 Tabellen, Triggers, Views), API-Grundstruktur mit Middleware, Frontend-Shell, CI/CD. **41 Tasks erledigt.**
+**Checkpoint Phase 1:** Plattform-Grundgeruest steht. Auth, DB-Schema (27 Tabellen, Triggers, Views), API-Grundstruktur mit Middleware, Frontend-Shell, CI/CD. **41 Tasks erledigt.**
 
 ---
 
@@ -1412,7 +1412,7 @@ frontend/src/components/locations/
 #### P5.2.1 — RLS Security Tests
 **Dateien:** `backend/tests/integration/test_rls_policies.py`
 **Aktion:**
-- Isolation-Tests: User A sieht nicht User Bs Daten (fuer alle 28 Tabellen)
+- Isolation-Tests: User A sieht nicht User Bs Daten (fuer alle 27 Tabellen)
 - Rollen-Tests: Viewer kann nicht schreiben, Editor kann nicht Admin-Settings aendern
 - Trigger-Tests: Slug immutabel, letzter Owner geschuetzt, Status-Transitions
 - Storage RLS: Nur Simulations-Mitglieder koennen uploaden
@@ -1451,7 +1451,7 @@ frontend/src/components/locations/
 | Phase | Abschnitt | Tasks | Beschreibung |
 |-------|-----------|-------|-------------|
 | **Phase 1** | 1.1 | 7 | Projekt-Setup |
-| | 1.2 | 12 | Datenbank-Schema (28 Tabellen, Triggers, Views) |
+| | 1.2 | 12 | Datenbank-Schema (27 Tabellen, Triggers, Views) |
 | | 1.3 | 10 | Backend Foundation (Middleware, Auth, Routers) |
 | | 1.4 | 11 | Frontend Foundation (Shell, Auth, Dashboard) |
 | | 1.5 | 1 | CI/CD |

@@ -284,7 +284,7 @@ Simulation "Fantasy World":
 
 ### ADR-002: Settings als Key-Value Store
 
-**Entscheidung:** Settings als `simulation_settings(simulation_id, category, key, value_json)` Tabelle.
+**Entscheidung:** Settings als `simulation_settings(simulation_id, category, setting_key, setting_value)` Tabelle.
 
 **Begründung:** Maximale Flexibilität. Neue Settings können ohne Schema-Migration hinzugefügt werden. Kategorisierung ermöglicht effiziente Abfragen.
 

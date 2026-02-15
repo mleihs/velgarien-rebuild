@@ -1241,7 +1241,7 @@ CREATE POLICY simulation_assets_insert ON storage.objects FOR INSERT
 
 | Metrik | Wert |
 |--------|------|
-| Tabellen | 28 (+ campaign_events, campaign_metrics) |
+| Tabellen | 27 (+ campaign_events, campaign_metrics gegenueber v1.0) |
 | Trigger Functions | 6 |
 | Utility Functions | 4 |
 | RLS Functions | 3 |
