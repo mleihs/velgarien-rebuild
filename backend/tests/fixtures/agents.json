@@ -1,0 +1,7 @@
+[
+  {"name": "Agent Smith", "system": "politics", "gender": "male", "character": "Ambitious politician"},
+  {"name": "Agent Jones", "system": "economy", "gender": "female", "character": "Corporate executive"},
+  {"name": "Agent Brown", "system": "religion", "gender": "male", "character": "Religious leader"},
+  {"name": "Agent White", "system": "media", "gender": "female", "character": "Investigative journalist"},
+  {"name": "Agent Black", "system": "military", "gender": "male", "character": "Decorated general"}
+]

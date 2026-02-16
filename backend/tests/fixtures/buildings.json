@@ -1,0 +1,5 @@
+[
+  {"name": "Central Tower", "building_type": "government", "building_condition": "good", "population_capacity": 500},
+  {"name": "Market Hall", "building_type": "commercial", "building_condition": "fair", "population_capacity": 200},
+  {"name": "Residential Block A", "building_type": "residential", "building_condition": "poor", "population_capacity": 150}
+]

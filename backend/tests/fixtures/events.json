@@ -1,0 +1,5 @@
+[
+  {"title": "Political Summit", "event_type": "political", "impact_level": 8, "tags": ["politics", "summit"]},
+  {"title": "Market Crash", "event_type": "economic", "impact_level": 9, "tags": ["economy", "crisis"]},
+  {"title": "Festival of Lights", "event_type": "cultural", "impact_level": 3, "tags": ["culture", "celebration"]}
+]

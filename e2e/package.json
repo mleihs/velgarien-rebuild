@@ -1,0 +1,16 @@
+{
+  "name": "velgarien-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npx playwright test --config=playwright.config.ts",
+    "test:headed": "npx playwright test --config=playwright.config.ts --headed",
+    "test:debug": "npx playwright test --config=playwright.config.ts --debug",
+    "test:ui": "npx playwright test --config=playwright.config.ts --ui",
+    "report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}

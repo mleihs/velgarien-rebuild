@@ -52,3 +52,7 @@ select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "DTZ", "T20", "ICN
 [tool.pytest.ini_options]
 testpaths = ["backend/tests"]
 asyncio_mode = "auto"
+markers = [
+    "integration: Integration tests requiring app instantiation but not external services",
+    "slow: Performance tests that may take several seconds",
+]
