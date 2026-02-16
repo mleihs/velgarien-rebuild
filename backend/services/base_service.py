@@ -131,8 +131,21 @@ class BaseService:
         simulation_id: UUID,
         entity_id: UUID,
         data: dict,
+        *,
+        if_updated_at: str | None = None,
     ) -> dict:
-        """Update an existing entity."""
+        """Update an existing entity.
+
+        Args:
+            supabase: Supabase client with user JWT.
+            simulation_id: Owning simulation.
+            entity_id: Entity to update.
+            data: Fields to update.
+            if_updated_at: Optimistic lock — if provided, the update only succeeds
+                when the row's ``updated_at`` still matches this value.  A mismatch
+                means another user edited the entity in the meantime and results in
+                HTTP 409 Conflict.
+        """
         if not data:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -141,16 +154,41 @@ class BaseService:
 
         update_data = {**data, "updated_at": datetime.now(UTC).isoformat()}
 
-        response = (
+        query = (
             supabase.table(cls.table_name)
             .update(update_data)
             .eq("simulation_id", str(simulation_id))
             .eq("id", str(entity_id))
             .is_("deleted_at", "null")
-            .execute()
         )
 
+        if if_updated_at is not None:
+            query = query.eq("updated_at", if_updated_at)
+
+        response = query.execute()
+
         if not response.data:
+            # Distinguish "not found" from "conflict" when optimistic locking is active.
+            if if_updated_at is not None:
+                # Check whether the entity actually exists (ignoring the timestamp).
+                exists = (
+                    supabase.table(cls.table_name)
+                    .select("id")
+                    .eq("simulation_id", str(simulation_id))
+                    .eq("id", str(entity_id))
+                    .is_("deleted_at", "null")
+                    .maybe_single()
+                    .execute()
+                )
+                if exists.data:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail=(
+                            "Conflict: entity was modified by another user. "
+                            "Please refresh and try again."
+                        ),
+                    )
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{cls.table_name} '{entity_id}' not found.",

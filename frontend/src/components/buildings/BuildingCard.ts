@@ -1,6 +1,6 @@
 import { css, html, LitElement, nothing, svg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
+import { appState } from '../../services/AppStateManager.js';
 import type { Building } from '../../types/index.js';
 
 @customElement('velg-building-card')
@@ -280,14 +280,20 @@ export class VelgBuildingCard extends LitElement {
           </div>
         </div>
 
-        <div class="card__actions">
-          <button class="card__action-btn" @click=${this._handleEdit}>
-            Edit
-          </button>
-          <button class="card__action-btn card__action-btn--danger" @click=${this._handleDelete}>
-            Delete
-          </button>
-        </div>
+        ${
+          appState.canEdit.value
+            ? html`
+              <div class="card__actions">
+                <button class="card__action-btn" @click=${this._handleEdit}>
+                  Edit
+                </button>
+                <button class="card__action-btn card__action-btn--danger" @click=${this._handleDelete}>
+                  Delete
+                </button>
+              </div>
+            `
+            : nothing
+        }
       </div>
     `;
   }

@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** Phase 1 + Phase 2 + Phase 3 complete. Phase 4 next (Social, Multi-User, Realtime).
+**Current Status:** Phase 1 + Phase 2 + Phase 3 + Phase 4 complete. Phase 5 next (Testing & Polish).
 
 ## Tech Stack
 
@@ -41,12 +41,12 @@ Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT
 
 ```
 backend/              FastAPI application
-  app.py              Entry point (registers 13 routers)
+  app.py              Entry point (registers 19 routers)
   config.py           Settings (pydantic-settings, extra="ignore")
   dependencies.py     JWT auth, Supabase client, role checking
-  routers/            API endpoints — 13 routers, 81+ endpoints (/api/v1/...)
-  models/             Pydantic request/response models (16 files)
-  services/           Business logic (BaseService + 8 entity + audit + simulation)
+  routers/            API endpoints — 19 routers, 100+ endpoints (/api/v1/...)
+  models/             Pydantic request/response models (19 files)
+  services/           Business logic (BaseService + 12 entity + audit + simulation + external)
   middleware/         Rate limiting, security headers
   utils/              Encryption (AES-256 for settings)
   tests/              pytest tests (52 tests: unit + integration)
@@ -55,14 +55,17 @@ frontend/             Lit + Vite application
     app-shell.ts      Main app with @lit-labs/router (auth + simulation-scoped routes)
     components/
       auth/           Login, Register views
-      platform/       PlatformHeader, UserMenu, SimulationsDashboard
+      platform/       PlatformHeader, UserMenu, SimulationsDashboard, CreateSimulationWizard, UserProfileView, InvitationAcceptView, NotificationCenter
       layout/         SimulationShell, SimulationHeader, SimulationNav
       shared/         10 reusable components (BaseModal, DataTable, FilterBar, etc.)
       agents/         AgentsView, AgentCard, AgentEditModal, AgentDetailsPanel
       buildings/      BuildingsView, BuildingCard, BuildingEditModal, BuildingDetailsPanel
       events/         EventsView, EventCard, EventEditModal, EventDetailsPanel
       chat/           ChatView, ChatWindow, ConversationList, MessageList, MessageInput, AgentSelector
-    services/         Supabase client, 11 API services, AppStateManager
+      social/         SocialTrendsView, SocialMediaView, CampaignDashboard, CampaignDetailView, TrendCard, PostCard, TransformationModal, PostTransformModal, CampaignCard
+      locations/      LocationsView, CityList, ZoneList, StreetList, LocationEditModal
+      settings/       SettingsView + 7 panels (General, World, AI, Integration, Design, Access, View)
+    services/         Supabase client, 16 API services, AppStateManager, NotificationService, RealtimeService, PresenceService
     styles/           CSS design tokens (tokens/) + base styles (base/)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
   tests/              vitest tests
@@ -134,7 +137,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 }
 ```
 
-81+ endpoints across 13 routers. Platform-level: `/api/v1/health`, `/api/v1/users/me`, `/api/v1/simulations`. Simulation-scoped: `/api/v1/simulations/{simulation_id}/agents`, `buildings`, `events`, `agent_professions`, `locations`, `taxonomies`, `settings`, `chat`, `members`, `campaigns`.
+100+ endpoints across 19 routers. Platform-level: `/api/v1/health`, `/api/v1/users/me`, `/api/v1/simulations`, `/api/v1/invitations`. Simulation-scoped: `/api/v1/simulations/{simulation_id}/agents`, `buildings`, `events`, `agent_professions`, `locations`, `taxonomies`, `settings`, `chat`, `members`, `campaigns`, `social-trends`, `social-media`, `generation`, `prompt-templates`.
 
 ## Backend Patterns
 
@@ -176,7 +179,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 | `10_AUTH_AND_SECURITY.md` | Hybrid auth, JWT validation, RLS strategies | v1.0 (rewritten) |
 | `12_DESIGN_SYSTEM.md` | CSS tokens, brutalist aesthetic, component styles | v1.0 |
 | `13_TECHSTACK_RECOMMENDATION.md` | All config templates (pyproject, package.json, etc.) | v1.3 |
-| `17_IMPLEMENTATION_PLAN.md` | 138 tasks, 5 phases, dependency graph | v2.3 |
+| `17_IMPLEMENTATION_PLAN.md` | 138 tasks, 5 phases, dependency graph | v2.5 |
 
 ## Python Version
 

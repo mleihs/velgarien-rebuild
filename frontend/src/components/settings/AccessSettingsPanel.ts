@@ -1,8 +1,14 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import { settingsApi } from '../../services/api/index.js';
-import type { SimulationSetting } from '../../types/index.js';
+import { invitationsApi, membersApi, settingsApi } from '../../services/api/index.js';
+import type {
+  Invitation,
+  SimulationMember,
+  SimulationRole,
+  SimulationSetting,
+} from '../../types/index.js';
+import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import { VelgToast } from '../shared/Toast.js';
 
 interface AccessFormData {
@@ -305,6 +311,232 @@ export class VelgAccessSettingsPanel extends LitElement {
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
     }
+
+    .members {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .members__list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: var(--border-default);
+    }
+
+    .members__row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-default);
+    }
+
+    .members__row:last-child {
+      border-bottom: none;
+    }
+
+    .members__name {
+      flex: 1;
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--color-text-primary);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .members__role-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-0-5) var(--space-2);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      border: var(--border-width-default) solid var(--color-border);
+      background: var(--color-surface-header);
+    }
+
+    .members__role-badge--owner {
+      background: var(--color-primary-bg);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .members__role-badge--admin {
+      background: var(--color-info-bg, rgba(59, 130, 246, 0.1));
+      border-color: var(--color-info, #3b82f6);
+      color: var(--color-info, #3b82f6);
+    }
+
+    .members__role-select {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      padding: var(--space-1) var(--space-2);
+      border: var(--border-default);
+      background: var(--color-surface);
+      cursor: pointer;
+    }
+
+    .members__remove-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-1) var(--space-2);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      background: transparent;
+      color: var(--color-danger);
+      border: var(--border-width-thin) solid var(--color-danger);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .members__remove-btn:hover {
+      background: var(--color-danger);
+      color: var(--color-text-inverse);
+    }
+
+    .members__empty {
+      padding: var(--space-4);
+      text-align: center;
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+
+    .invite-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border: var(--border-default);
+      background: var(--color-surface-sunken);
+    }
+
+    .invite-form__row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .invite-form__input {
+      flex: 1;
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      padding: var(--space-2) var(--space-3);
+      border: var(--border-default);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+    }
+
+    .invite-form__input:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: var(--ring-focus);
+    }
+
+    .invite-form__select {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      padding: var(--space-2) var(--space-3);
+      border: var(--border-default);
+      background: var(--color-surface);
+      cursor: pointer;
+    }
+
+    .invite-form__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .invite-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--color-success-bg, #e6f9e6);
+      border: var(--border-width-default) solid var(--color-success);
+      word-break: break-all;
+    }
+
+    .invite-link__url {
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-text-primary);
+    }
+
+    .invite-link__copy-btn {
+      flex-shrink: 0;
+      padding: var(--space-1) var(--space-2);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      background: var(--color-surface);
+      border: var(--border-default);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .invite-link__copy-btn:hover {
+      background: var(--color-surface-sunken);
+    }
+
+    .invitations__list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: var(--border-default);
+    }
+
+    .invitations__row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2-5) var(--space-4);
+      border-bottom: var(--border-default);
+      font-size: var(--text-sm);
+    }
+
+    .invitations__row:last-child {
+      border-bottom: none;
+    }
+
+    .invitations__email {
+      flex: 1;
+      font-family: var(--font-sans);
+      color: var(--color-text-primary);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .invitations__status {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-warning);
+    }
+
+    .invitations__status--expired {
+      color: var(--color-text-muted);
+    }
+
+    .invitations__status--accepted {
+      color: var(--color-success);
+    }
   `;
 
   @property({ type: String }) simulationId = '';
@@ -314,6 +546,14 @@ export class VelgAccessSettingsPanel extends LitElement {
   @state() private _loading = true;
   @state() private _saving = false;
   @state() private _error: string | null = null;
+
+  @state() private _members: SimulationMember[] = [];
+  @state() private _invitations: Invitation[] = [];
+  @state() private _loadingMembers = false;
+  @state() private _showInviteForm = false;
+  @state() private _inviteEmail = '';
+  @state() private _inviteRole: SimulationRole = 'viewer';
+  @state() private _createdInviteLink: string | null = null;
 
   private get _isOwner(): boolean {
     return appState.isOwner.value;
@@ -333,12 +573,16 @@ export class VelgAccessSettingsPanel extends LitElement {
     super.connectedCallback();
     if (this.simulationId && this._isOwner) {
       this._loadSettings();
+      this._loadMembers();
+      this._loadInvitations();
     }
   }
 
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId && this._isOwner) {
       this._loadSettings();
+      this._loadMembers();
+      this._loadInvitations();
     }
   }
 
@@ -488,6 +732,279 @@ export class VelgAccessSettingsPanel extends LitElement {
     }
   }
 
+  private async _loadMembers(): Promise<void> {
+    if (!this.simulationId) return;
+    this._loadingMembers = true;
+    try {
+      const response = await membersApi.list(this.simulationId);
+      if (response.success && response.data) {
+        this._members = response.data as SimulationMember[];
+      }
+    } catch {
+      // Silently fail — members section is supplementary
+    } finally {
+      this._loadingMembers = false;
+    }
+  }
+
+  private async _loadInvitations(): Promise<void> {
+    if (!this.simulationId) return;
+    try {
+      const response = await invitationsApi.list(this.simulationId);
+      if (response.success && response.data) {
+        this._invitations = response.data as Invitation[];
+      }
+    } catch {
+      // Silently fail
+    }
+  }
+
+  private async _handleRoleChange(member: SimulationMember, e: Event): Promise<void> {
+    const target = e.target as HTMLSelectElement;
+    const newRole = target.value as SimulationRole;
+    try {
+      const response = await membersApi.changeRole(this.simulationId, member.id, {
+        member_role: newRole,
+      });
+      if (response.success) {
+        VelgToast.success(`Role updated to ${newRole}.`);
+        this._loadMembers();
+      } else {
+        VelgToast.error(response.error?.message ?? 'Failed to change role.');
+      }
+    } catch {
+      VelgToast.error('An unexpected error occurred.');
+    }
+  }
+
+  private async _handleRemoveMember(member: SimulationMember): Promise<void> {
+    const displayName = member.user?.display_name ?? member.user?.email ?? 'this member';
+
+    const confirmed = await VelgConfirmDialog.show({
+      title: 'Remove Member',
+      message: `Are you sure you want to remove ${displayName} from this simulation?`,
+      confirmLabel: 'Remove',
+      variant: 'danger',
+    });
+
+    if (!confirmed) return;
+
+    try {
+      const response = await membersApi.remove(this.simulationId, member.id);
+      if (response.success) {
+        VelgToast.success(`${displayName} has been removed.`);
+        this._loadMembers();
+      } else {
+        VelgToast.error(response.error?.message ?? 'Failed to remove member.');
+      }
+    } catch {
+      VelgToast.error('An unexpected error occurred.');
+    }
+  }
+
+  private _handleToggleInviteForm(): void {
+    this._showInviteForm = !this._showInviteForm;
+    this._createdInviteLink = null;
+    this._inviteEmail = '';
+    this._inviteRole = 'viewer';
+  }
+
+  private async _handleCreateInvitation(): Promise<void> {
+    try {
+      const response = await invitationsApi.create(this.simulationId, {
+        invited_email: this._inviteEmail || undefined,
+        invited_role: this._inviteRole,
+      });
+      if (response.success && response.data) {
+        const invitation = response.data as Invitation;
+        this._createdInviteLink = `${window.location.origin}/invitations/${invitation.invite_token}`;
+        VelgToast.success('Invitation created.');
+        this._loadInvitations();
+      } else {
+        VelgToast.error(response.error?.message ?? 'Failed to create invitation.');
+      }
+    } catch {
+      VelgToast.error('An unexpected error occurred.');
+    }
+  }
+
+  private async _handleCopyInviteLink(): Promise<void> {
+    if (!this._createdInviteLink) return;
+    try {
+      await navigator.clipboard.writeText(this._createdInviteLink);
+      VelgToast.success('Link copied to clipboard.');
+    } catch {
+      VelgToast.error('Failed to copy link.');
+    }
+  }
+
+  private _getInvitationStatus(inv: Invitation): { label: string; cssClass: string } {
+    if (inv.accepted_at) {
+      return { label: 'Accepted', cssClass: 'invitations__status--accepted' };
+    }
+    const expired = new Date(inv.expires_at) < new Date();
+    if (expired) {
+      return { label: 'Expired', cssClass: 'invitations__status--expired' };
+    }
+    return { label: 'Pending', cssClass: '' };
+  }
+
+  private _renderMembersSection() {
+    if (!this._isOwner) return nothing;
+
+    return html`
+      <h2 class="panel__section-title">Members</h2>
+
+      ${
+        this._loadingMembers
+          ? html`<velg-loading-state message="Loading members..."></velg-loading-state>`
+          : html`
+            <div class="members">
+              ${
+                this._members.length > 0
+                  ? html`
+                    <div class="members__list">
+                      ${this._members.map((member) => this._renderMemberRow(member))}
+                    </div>
+                  `
+                  : html`<div class="members__empty">No members found.</div>`
+              }
+
+              <div>
+                <button
+                  class="btn btn--primary"
+                  @click=${this._handleToggleInviteForm}
+                >
+                  ${this._showInviteForm ? 'Cancel' : 'Create Invitation'}
+                </button>
+              </div>
+
+              ${this._showInviteForm ? this._renderInviteForm() : nothing}
+
+              ${this._renderPendingInvitations()}
+            </div>
+          `
+      }
+    `;
+  }
+
+  private _renderMemberRow(member: SimulationMember) {
+    const displayName = member.user?.display_name ?? member.user?.email ?? 'Unknown';
+    const isOwnerMember = member.member_role === 'owner';
+    const roleBadgeClass =
+      member.member_role === 'owner'
+        ? 'members__role-badge members__role-badge--owner'
+        : member.member_role === 'admin'
+          ? 'members__role-badge members__role-badge--admin'
+          : 'members__role-badge';
+
+    return html`
+      <div class="members__row">
+        <span class="members__name">${displayName}</span>
+
+        ${
+          isOwnerMember
+            ? html`<span class=${roleBadgeClass}>${member.member_role}</span>`
+            : html`
+              <select
+                class="members__role-select"
+                .value=${member.member_role}
+                @change=${(e: Event) => this._handleRoleChange(member, e)}
+              >
+                <option value="admin" ?selected=${member.member_role === 'admin'}>Admin</option>
+                <option value="editor" ?selected=${member.member_role === 'editor'}>Editor</option>
+                <option value="viewer" ?selected=${member.member_role === 'viewer'}>Viewer</option>
+              </select>
+            `
+        }
+
+        ${
+          isOwnerMember
+            ? nothing
+            : html`
+              <button
+                class="members__remove-btn"
+                @click=${() => this._handleRemoveMember(member)}
+              >
+                Remove
+              </button>
+            `
+        }
+      </div>
+    `;
+  }
+
+  private _renderInviteForm() {
+    return html`
+      <div class="invite-form">
+        <div class="invite-form__row">
+          <input
+            class="invite-form__input"
+            type="email"
+            placeholder="Email (optional)"
+            .value=${this._inviteEmail}
+            @input=${(e: Event) => {
+              this._inviteEmail = (e.target as HTMLInputElement).value;
+            }}
+          />
+          <select
+            class="invite-form__select"
+            .value=${this._inviteRole}
+            @change=${(e: Event) => {
+              this._inviteRole = (e.target as HTMLSelectElement).value as SimulationRole;
+            }}
+          >
+            <option value="admin">Admin</option>
+            <option value="editor">Editor</option>
+            <option value="viewer" selected>Viewer</option>
+          </select>
+        </div>
+
+        <div class="invite-form__actions">
+          <button class="btn btn--primary" @click=${this._handleCreateInvitation}>
+            Create
+          </button>
+        </div>
+
+        ${
+          this._createdInviteLink
+            ? html`
+              <div class="invite-link">
+                <span class="invite-link__url">${this._createdInviteLink}</span>
+                <button class="invite-link__copy-btn" @click=${this._handleCopyInviteLink}>
+                  Copy
+                </button>
+              </div>
+            `
+            : nothing
+        }
+      </div>
+    `;
+  }
+
+  private _renderPendingInvitations() {
+    const pending = this._invitations.filter((inv) => !inv.accepted_at);
+    if (pending.length === 0) return nothing;
+
+    return html`
+      <div>
+        <h3 class="form__label" style="margin-bottom: var(--space-2)">Pending Invitations</h3>
+        <div class="invitations__list">
+          ${pending.map((inv) => {
+            const status = this._getInvitationStatus(inv);
+            return html`
+              <div class="invitations__row">
+                <span class="invitations__email">${inv.invited_email ?? 'Open link'}</span>
+                <span class="members__role-badge">${inv.invited_role}</span>
+                <span class="invitations__status ${status.cssClass}">${status.label}</span>
+              </div>
+            `;
+          })}
+        </div>
+      </div>
+    `;
+  }
+
   protected render() {
     if (!this._isOwner) {
       return html`
@@ -626,6 +1143,8 @@ export class VelgAccessSettingsPanel extends LitElement {
             ${this._saving ? 'Saving...' : 'Save Access Settings'}
           </button>
         </div>
+
+        ${this._renderMembersSection()}
       </div>
     `;
   }

@@ -505,6 +505,29 @@ export interface PromptTemplate {
   updated_at: string;
 }
 
+// --- Invitations ---
+
+export interface Invitation {
+  id: UUID;
+  simulation_id: UUID;
+  invited_email?: string;
+  invite_token: string;
+  invited_role: SimulationRole;
+  invited_by_id: UUID;
+  expires_at: string;
+  accepted_at?: string;
+  created_at: string;
+}
+
+export interface InvitationPublicInfo {
+  simulation_name: string;
+  invited_role: SimulationRole;
+  invited_email?: string;
+  expires_at: string;
+  is_expired: boolean;
+  is_accepted: boolean;
+}
+
 // --- User ---
 
 export interface UserProfile {

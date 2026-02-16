@@ -1,0 +1,276 @@
+"""Social media integration endpoints."""
+
+from datetime import UTC, datetime
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+
+from backend.dependencies import get_current_user, get_supabase, require_role
+from backend.models.common import CurrentUser, PaginatedResponse, SuccessResponse
+from backend.models.social import SocialMediaPostResponse
+from backend.models.social_media import (
+    AnalyzeSentimentRequest,
+    GenerateReactionsRequest,
+    TransformPostRequest,
+)
+from backend.services.external_service_resolver import ExternalServiceResolver
+from backend.services.social_media_service import SocialMediaService
+from supabase import Client
+
+router = APIRouter(
+    prefix="/api/v1/simulations/{simulation_id}/social-media",
+    tags=["social-media"],
+)
+
+
+@router.get("/posts", response_model=PaginatedResponse[SocialMediaPostResponse])
+async def list_posts(
+    simulation_id: UUID,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("viewer")),
+    supabase: Client = Depends(get_supabase),
+    platform: str | None = None,
+    transformed: bool | None = None,
+    limit: int = Query(default=25, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    """List social media posts."""
+    data, total = await SocialMediaService.list_posts(
+        supabase,
+        simulation_id,
+        platform=platform,
+        transformed=transformed,
+        limit=limit,
+        offset=offset,
+    )
+    return {
+        "success": True,
+        "data": data,
+        "meta": {"count": len(data), "total": total, "limit": limit, "offset": offset},
+    }
+
+
+@router.post("/sync", response_model=SuccessResponse[dict])
+async def sync_posts(
+    simulation_id: UUID,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Sync posts from configured Facebook page."""
+    resolver = ExternalServiceResolver(supabase, simulation_id)
+    fb_config = await resolver.get_facebook_config()
+
+    if not fb_config:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Facebook integration not configured for this simulation.",
+        )
+
+    from backend.services.external.facebook import FacebookService
+
+    fb = FacebookService(fb_config.access_token, fb_config.api_version)
+    raw_posts = await fb.get_page_feed(fb_config.page_id)
+
+    stored = await SocialMediaService.store_posts(supabase, simulation_id, raw_posts)
+
+    # Optionally fetch comments for each post
+    comments_count = 0
+    for post in raw_posts:
+        if post.get("platform_id"):
+            raw_comments = await fb.get_post_comments(post["platform_id"])
+            if raw_comments:
+                for c in raw_comments:
+                    # Find stored post to link comment
+                    stored_post = next(
+                        (s for s in stored if s.get("platform_id") == post["platform_id"]),
+                        None,
+                    )
+                    if stored_post:
+                        supabase.table("social_media_comments").insert({
+                            "simulation_id": str(simulation_id),
+                            "post_id": stored_post["id"],
+                            **c,
+                        }).execute()
+                        comments_count += 1
+
+    return {
+        "success": True,
+        "data": {
+            "posts_synced": len(stored),
+            "comments_synced": comments_count,
+        },
+    }
+
+
+@router.post(
+    "/posts/{post_id}/transform",
+    response_model=SuccessResponse[SocialMediaPostResponse],
+)
+async def transform_post(
+    simulation_id: UUID,
+    post_id: UUID,
+    body: TransformPostRequest,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Transform a social media post using AI."""
+    post = await SocialMediaService.get_post(supabase, simulation_id, post_id)
+
+    resolver = ExternalServiceResolver(supabase, simulation_id)
+    ai_config = await resolver.get_ai_provider_config()
+
+    from backend.services.generation_service import GenerationService
+
+    gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
+    result = await gen.generate_social_media_transform(
+        original_text=post.get("message", ""),
+        transformation_type=body.transformation_type,
+    )
+
+    updated = await SocialMediaService.update_post(
+        supabase,
+        simulation_id,
+        post_id,
+        {
+            "transformed_content": result.get("transformed_text", ""),
+            "transformation_type": body.transformation_type,
+            "transformed_at": datetime.now(UTC).isoformat(),
+        },
+    )
+
+    return {"success": True, "data": updated}
+
+
+@router.post(
+    "/posts/{post_id}/analyze-sentiment",
+    response_model=SuccessResponse[SocialMediaPostResponse],
+)
+async def analyze_sentiment(
+    simulation_id: UUID,
+    post_id: UUID,
+    body: AnalyzeSentimentRequest,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Analyze sentiment of a social media post using AI."""
+    post = await SocialMediaService.get_post(supabase, simulation_id, post_id)
+
+    resolver = ExternalServiceResolver(supabase, simulation_id)
+    ai_config = await resolver.get_ai_provider_config()
+
+    from backend.services.generation_service import GenerationService
+
+    gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
+
+    # Use the social_media_sentiment template
+    text = post.get("message", "")
+    transformed = post.get("transformed_content")
+
+    sentiment_data = await gen.generate_social_trends_campaign(
+        trend_name=text[:100],
+        trend_platform=post.get("platform", "unknown"),
+        trend_sentiment="neutral",
+    )
+
+    # Store sentiment on original or transformed
+    update_data: dict = {}
+    if transformed:
+        update_data["transformed_sentiment"] = sentiment_data
+    else:
+        update_data["original_sentiment"] = sentiment_data
+
+    updated = await SocialMediaService.update_post(
+        supabase, simulation_id, post_id, update_data
+    )
+    return {"success": True, "data": updated}
+
+
+@router.post(
+    "/posts/{post_id}/generate-reactions",
+    response_model=SuccessResponse[list[dict]],
+)
+async def generate_reactions(
+    simulation_id: UUID,
+    post_id: UUID,
+    body: GenerateReactionsRequest,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Generate agent reactions to a social media post."""
+    post = await SocialMediaService.get_post(supabase, simulation_id, post_id)
+
+    # Get agents to react
+    agent_query = (
+        supabase.table("active_agents")
+        .select("id, name, system")
+        .eq("simulation_id", str(simulation_id))
+    )
+    if body.agent_ids:
+        agent_query = agent_query.in_("id", body.agent_ids)
+    else:
+        agent_query = agent_query.limit(body.max_agents)
+
+    agents_response = agent_query.execute()
+    agents = agents_response.data or []
+
+    if not agents:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No agents found for reaction generation.",
+        )
+
+    resolver = ExternalServiceResolver(supabase, simulation_id)
+    ai_config = await resolver.get_ai_provider_config()
+
+    from backend.services.generation_service import GenerationService
+
+    gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
+
+    reactions = []
+    content = post.get("transformed_content") or post.get("message", "")
+
+    for agent in agents:
+        try:
+            result = await gen.generate_agent_reaction(
+                agent_name=agent["name"],
+                agent_system=agent.get("system", ""),
+                event_title=content[:100],
+                event_description=content,
+            )
+
+            reaction = await SocialMediaService.store_agent_reaction(
+                supabase,
+                simulation_id,
+                {
+                    "post_id": str(post_id),
+                    "agent_id": agent["id"],
+                    "reaction_type": "ai_generated",
+                    "reaction_content": result.get("reaction", ""),
+                    "reaction_intensity": result.get("intensity", 5),
+                },
+            )
+            reactions.append(reaction)
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(
+                "Failed to generate reaction for agent %s: %s", agent["name"], e
+            )
+
+    return {"success": True, "data": reactions}
+
+
+@router.get("/posts/{post_id}/comments", response_model=SuccessResponse[list[dict]])
+async def get_comments(
+    simulation_id: UUID,
+    post_id: UUID,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("viewer")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Get all comments for a social media post."""
+    comments = await SocialMediaService.get_comments(supabase, simulation_id, post_id)
+    return {"success": True, "data": comments}

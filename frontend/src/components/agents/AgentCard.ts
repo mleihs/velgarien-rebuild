@@ -1,5 +1,6 @@
-import { css, html, LitElement, svg } from 'lit';
+import { css, html, LitElement, nothing, svg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { appState } from '../../services/AppStateManager.js';
 import type { Agent } from '../../types/index.js';
 
 @customElement('velg-agent-card')
@@ -255,24 +256,30 @@ export class VelgAgentCard extends LitElement {
           </div>
         </div>
 
-        <div class="card__actions">
-          <button
-            class="card__action-btn"
-            @click=${this._handleEdit}
-            title="Edit"
-            aria-label="Edit agent"
-          >
-            ${this._editIcon()}
-          </button>
-          <button
-            class="card__action-btn card__action-btn--danger"
-            @click=${this._handleDelete}
-            title="Delete"
-            aria-label="Delete agent"
-          >
-            ${this._deleteIcon()}
-          </button>
-        </div>
+        ${
+          appState.canEdit.value
+            ? html`
+              <div class="card__actions">
+                <button
+                  class="card__action-btn"
+                  @click=${this._handleEdit}
+                  title="Edit"
+                  aria-label="Edit agent"
+                >
+                  ${this._editIcon()}
+                </button>
+                <button
+                  class="card__action-btn card__action-btn--danger"
+                  @click=${this._handleDelete}
+                  title="Delete"
+                  aria-label="Delete agent"
+                >
+                  ${this._deleteIcon()}
+                </button>
+              </div>
+            `
+            : nothing
+        }
       </div>
     `;
   }

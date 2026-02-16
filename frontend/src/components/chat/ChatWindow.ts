@@ -99,6 +99,52 @@ export class VelgChatWindow extends LitElement {
       color: var(--color-text-muted);
       border-top: var(--border-light);
     }
+
+    .window__typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+    }
+
+    .window__typing-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: var(--space-2) var(--space-3);
+      background: var(--color-surface-sunken);
+      border: var(--border-width-thin) solid var(--color-border-light);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+
+    .window__typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--color-text-muted);
+      border-radius: 50%;
+      animation: typing-pulse 1.4s ease-in-out infinite;
+    }
+
+    .window__typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .window__typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing-pulse {
+      0%, 60%, 100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+      }
+      30% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
   `;
 
   @property({ type: Object }) conversation: ChatConversation | null = null;
@@ -107,6 +153,7 @@ export class VelgChatWindow extends LitElement {
   @state() private _messages: ChatMessage[] = [];
   @state() private _loading = false;
   @state() private _sending = false;
+  @state() private _aiTyping = false;
 
   @query('.window__messages') private _messagesContainer!: HTMLElement;
 
@@ -182,19 +229,39 @@ export class VelgChatWindow extends LitElement {
       });
 
       if (response.success && response.data) {
-        // The API may return both the user message confirmation and assistant response.
-        // Replace the optimistic message and add any new messages.
-        // For simplicity, reload all messages to get the latest state.
-        await this._loadMessages();
+        // User message sent, now request AI response
+        this._sending = false;
+        this._aiTyping = true;
+        this._scrollToBottom();
+
+        try {
+          const aiResponse = await chatApi.sendMessage(this.simulationId, this.conversation.id, {
+            content,
+            generate_response: true,
+          });
+
+          if (aiResponse.success) {
+            await this._loadMessages();
+          } else {
+            // AI response failed, but user message was saved — reload to show current state
+            await this._loadMessages();
+            VelgToast.error(aiResponse.error?.message ?? 'Failed to get AI response.');
+          }
+        } catch {
+          await this._loadMessages();
+          VelgToast.error('An unexpected error occurred while getting the AI response.');
+        } finally {
+          this._aiTyping = false;
+        }
       } else {
         // Remove optimistic message on error
         this._messages = this._messages.filter((m) => m.id !== optimisticMessage.id);
         VelgToast.error(response.error?.message ?? 'Failed to send message.');
+        this._sending = false;
       }
     } catch {
       this._messages = this._messages.filter((m) => m.id !== optimisticMessage.id);
       VelgToast.error('An unexpected error occurred while sending the message.');
-    } finally {
       this._sending = false;
     }
   }
@@ -240,14 +307,24 @@ export class VelgChatWindow extends LitElement {
             `
         }
 
+        ${this._sending ? html`<div class="window__sending-indicator">Sending...</div>` : null}
+
         ${
-          this._sending
-            ? html`<div class="window__sending-indicator">Agent is responding...</div>`
+          this._aiTyping
+            ? html`
+              <div class="window__typing-indicator">
+                <div class="window__typing-bubble">
+                  <span class="window__typing-dot"></span>
+                  <span class="window__typing-dot"></span>
+                  <span class="window__typing-dot"></span>
+                </div>
+              </div>
+            `
             : null
         }
 
         <velg-message-input
-          ?disabled=${this._sending || isArchived}
+          ?disabled=${this._sending || this._aiTyping || isArchived}
           @send-message=${this._handleSendMessage}
         ></velg-message-input>
       </div>

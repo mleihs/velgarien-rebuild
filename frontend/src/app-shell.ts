@@ -15,6 +15,13 @@ import './components/buildings/BuildingsView.js';
 import './components/events/EventsView.js';
 import './components/chat/ChatView.js';
 import './components/settings/SettingsView.js';
+import './components/social/SocialTrendsView.js';
+import './components/social/SocialMediaView.js';
+import './components/social/CampaignDashboard.js';
+import './components/locations/LocationsView.js';
+import './components/platform/InvitationAcceptView.js';
+import './components/platform/CreateSimulationWizard.js';
+import './components/platform/UserProfileView.js';
 
 @customElement('velg-app')
 export class VelgApp extends LitElement {
@@ -103,6 +110,21 @@ export class VelgApp extends LitElement {
           }
           return true;
         },
+      },
+      {
+        path: '/invitations/:token',
+        render: ({ token }) =>
+          html`<velg-invitation-accept-view .token=${token ?? ''}></velg-invitation-accept-view>`,
+      },
+      {
+        path: '/profile',
+        render: () => html`<velg-user-profile-view></velg-user-profile-view>`,
+        enter: async () => this._guardAuth(),
+      },
+      {
+        path: '/new-simulation',
+        render: () => html`<velg-create-simulation-wizard open></velg-create-simulation-wizard>`,
+        enter: async () => this._guardAuth(),
       },
       // --- Simulation-scoped routes ---
       {
@@ -214,6 +236,12 @@ export class VelgApp extends LitElement {
         break;
       case 'settings':
         content = html`<velg-settings-view .simulationId=${simulationId}></velg-settings-view>`;
+        break;
+      case 'social':
+        content = html`<velg-social-trends-view .simulationId=${simulationId}></velg-social-trends-view>`;
+        break;
+      case 'locations':
+        content = html`<velg-locations-view .simulationId=${simulationId}></velg-locations-view>`;
         break;
       default:
         content = html`

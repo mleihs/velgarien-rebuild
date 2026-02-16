@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { eventsApi } from '../../services/api/index.js';
@@ -256,7 +256,7 @@ export class VelgEventsView extends LitElement {
                 + Create Event
               </button>
             `
-              : null
+              : nothing
           }
         </div>
 

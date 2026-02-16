@@ -32,7 +32,7 @@ export class ChatApiService extends BaseApiService {
   sendMessage(
     simulationId: string,
     conversationId: string,
-    data: { content: string; metadata?: Record<string, unknown> },
+    data: { content: string; metadata?: Record<string, unknown>; generate_response?: boolean },
   ): Promise<ApiResponse<ChatMessage>> {
     return this.post(
       `/simulations/${simulationId}/chat/conversations/${conversationId}/messages`,

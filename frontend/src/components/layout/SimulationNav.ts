@@ -1,9 +1,11 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { appState } from '../../services/AppStateManager.js';
 
 interface NavTab {
   label: string;
   path: string;
+  requireAdmin?: boolean;
 }
 
 const TABS: NavTab[] = [
@@ -13,7 +15,7 @@ const TABS: NavTab[] = [
   { label: 'Chat', path: 'chat' },
   { label: 'Social', path: 'social' },
   { label: 'Locations', path: 'locations' },
-  { label: 'Settings', path: 'settings' },
+  { label: 'Settings', path: 'settings', requireAdmin: true },
 ];
 
 @customElement('velg-simulation-nav')
@@ -89,10 +91,17 @@ export class VelgSimulationNav extends LitElement {
     );
   }
 
+  private get _visibleTabs(): NavTab[] {
+    return TABS.filter((tab) => {
+      if (tab.requireAdmin && !appState.canAdmin.value) return false;
+      return true;
+    });
+  }
+
   protected render() {
     return html`
       <nav class="nav">
-        ${TABS.map(
+        ${this._visibleTabs.map(
           (tab) => html`
             <button
               class="nav__tab ${this._activeTab === tab.path ? 'nav__tab--active' : ''}"

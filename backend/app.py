@@ -7,6 +7,7 @@ from backend.config import settings as app_settings
 from backend.middleware.rate_limit import limiter
 from backend.middleware.security import SecurityHeadersMiddleware
 from backend.routers import (
+    admin,
     agent_professions,
     agents,
     buildings,
@@ -15,11 +16,14 @@ from backend.routers import (
     events,
     generation,
     health,
+    invitations,
     locations,
     members,
     prompt_templates,
     settings,
     simulations,
+    social_media,
+    social_trends,
     taxonomies,
     users,
 )
@@ -66,3 +70,7 @@ app.include_router(members.router)
 app.include_router(campaigns.router)
 app.include_router(generation.router)
 app.include_router(prompt_templates.router)
+app.include_router(invitations.router)
+app.include_router(social_trends.router)
+app.include_router(social_media.router)
+app.include_router(admin.router)

@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Header, Query
 
 from backend.dependencies import get_current_user, get_supabase, require_role
 from backend.models.agent import AgentCreate, AgentResponse, AgentUpdate
@@ -92,10 +92,12 @@ async def update_agent(
     user: CurrentUser = Depends(get_current_user),
     _role_check: str = Depends(require_role("editor")),
     supabase: Client = Depends(get_supabase),
+    if_updated_at: str | None = Header(default=None, alias="If-Updated-At"),
 ) -> dict:
     """Update an existing agent."""
     agent = await _service.update(
-        supabase, simulation_id, agent_id, body.model_dump(exclude_none=True)
+        supabase, simulation_id, agent_id, body.model_dump(exclude_none=True),
+        if_updated_at=if_updated_at,
     )
     await AuditService.log_action(supabase, simulation_id, user.id, "agents", agent_id, "update")
     return {"success": True, "data": agent}

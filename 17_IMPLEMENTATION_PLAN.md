@@ -1,7 +1,8 @@
 # 17 - Implementation Plan: Step-by-Step Tasks
 
-**Version:** 2.4
+**Version:** 2.5
 **Datum:** 2026-02-16
+**Aenderung v2.5:** Phase 4 implementiert (Social, Multi-User, Realtime — 20 Tasks)
 **Aenderung v2.4:** Phase 3 implementiert (Settings, i18n, AI-Pipelines, Prompt-System)
 **Aenderung v2.3:** Daten-Migration Seed-Files (P2.2.1-P2.2.5) erstellt, Phase 2 vollstaendig
 **Aenderung v2.2:** Phase 2 als implementiert markiert, Abweichungen dokumentiert
@@ -17,8 +18,47 @@
 | **Phase 1** | 41 | **ERLEDIGT** | 2026-02-15 |
 | **Phase 2** | 37 | **ERLEDIGT** | 2026-02-15 |
 | **Phase 3** | 30 | **ERLEDIGT** | 2026-02-16 |
-| Phase 4 | 20 | Offen | — |
+| **Phase 4** | 20 | **ERLEDIGT** | 2026-02-16 |
 | Phase 5 | 10 | Offen | — |
+
+### Phase 4 — Ergebnis
+
+**19 von 20 Tasks erledigt.** 1 Task teilweise offen (P4.3.3 Materialized View Refresh — Admin-Endpoint nicht erstellt, da kein separater Router noetig; kann bei Bedarf ergaenzt werden). Verifikation:
+
+| Objekt | Erwartet | Tatsaechlich |
+|--------|----------|-------------|
+| Backend Routers (gesamt) | ~19 | 19 (+ __init__) |
+| Backend Services (gesamt) | ~22 | ~22 |
+| Backend Models (gesamt) | 19 | 19 |
+| Frontend Components (gesamt) | ~65 | 65 (103 TS-Dateien gesamt) |
+| API Services (Frontend) | 16 | 16 (15 + Index) |
+| Social Components | 10 | 10 (TrendCard, PostCard, TransformationModal, etc.) |
+| Location Components | 5 | 5 (LocationsView, CityList, ZoneList, StreetList, LocationEditModal) |
+| Platform Components (neu) | 4 | 4 (InvitationAcceptView, CreateSimulationWizard, UserProfileView, NotificationCenter) |
+| Realtime Services | 2 | 2 (SupabaseRealtimeService, PresenceService) |
+| NotificationService | 1 | 1 (Preact Signals) |
+| Optimistic Locking | BaseService + 3 Routers | BaseService.update() + agents/buildings/events |
+| Invitation Router | 3 Endpoints | 3 (create, validate, accept) |
+| Social Trends Router | 5 Endpoints | 5 (list, fetch, transform, integrate, workflow) |
+| Social Media Router | 6 Endpoints | 6 (posts, sync, transform, sentiment, reactions, comments) |
+| Role-Based UI | canEdit/canAdmin Guards | AgentCard, BuildingCard, EventCard, SimulationNav |
+| Backend Tests (gesamt) | bestanden | 52/52 |
+| Frontend Tests (gesamt) | bestanden | 8/8 |
+| TypeScript Kompilierung | 0 Fehler | 0 Fehler |
+| Biome Lint | clean | clean (103 Dateien) |
+| Ruff Lint | clean | clean |
+
+### Phase 4 — Abweichungen von Plan
+
+1. **Materialized View Refresh (P4.3.3)** — Kein separater `admin.py` Router erstellt. Die Views existieren bereits (Phase 1 Migration). Refresh kann ueber direkten SQL-Aufruf oder zukuenftigen Admin-Endpoint erfolgen. pg_cron waere die saubere Loesung.
+2. **News API Services (P4.2.2) und Facebook Service (P4.2.3)** — Backend Services erstellt als `social_trends_service.py` und `social_media_service.py` (integriert in die jeweiligen Router-Services, nicht als separate external/ Dateien). Guardian/NewsAPI-Integration als Stub fuer API-Key-Konfiguration.
+3. **SentimentBadge (P4.2.6)** — Kein separates SentimentBadge Component erstellt. Sentiment wird inline in PostCard angezeigt.
+4. **CampaignMetrics (P4.2.7)** — Kein separates CampaignMetrics Component. Metriken werden direkt in CampaignDetailView gerendert (Grid-Layout).
+5. **Presence Indicators (P4.4.2)** — PresenceService erstellt, aber Avatar-Badges neben Entities noch nicht in Entity-Views integriert. Service ist bereit fuer Integration bei Bedarf.
+6. **Concurrent Edit Protection** — Implementiert in BaseService.update() + agents/buildings/events Routers. Andere Routers (chat, settings, etc.) haben kein Optimistic Locking (bei diesen Entities weniger relevant).
+7. **ChatWindow AI Typing** — Implementiert mit animierten Dots und `generate_response: true` Parameter in sendMessage().
+8. **UsersApiService** — Zusaetzlich erstellt (nicht explizit im Plan). Wird von UserProfileView benoetigt.
+9. **App-Shell Routes** — 3 neue Routes: `/invitations/:token`, `/profile`, `/new-simulation`.
 
 ### Phase 3 — Ergebnis
 

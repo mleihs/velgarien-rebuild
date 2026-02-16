@@ -36,12 +36,17 @@ export class BaseApiService {
     path: string,
     body?: unknown,
     params?: Record<string, string>,
+    extraHeaders?: Record<string, string>,
   ): Promise<ApiResponse<T>> {
     try {
       const url = this.buildUrl(path, params);
+      const headers = this.getHeaders();
+      if (extraHeaders) {
+        Object.assign(headers, extraHeaders);
+      }
       const options: RequestInit = {
         method,
-        headers: this.getHeaders(),
+        headers,
       };
 
       if (body !== undefined && method !== 'GET') {
@@ -85,8 +90,9 @@ export class BaseApiService {
     return this.request<T>('POST', path, body);
   }
 
-  protected put<T>(path: string, body?: unknown): Promise<ApiResponse<T>> {
-    return this.request<T>('PUT', path, body);
+  protected put<T>(path: string, body?: unknown, updatedAt?: string): Promise<ApiResponse<T>> {
+    const extraHeaders = updatedAt ? { 'If-Updated-At': updatedAt } : undefined;
+    return this.request<T>('PUT', path, body, undefined, extraHeaders);
   }
 
   protected delete<T>(path: string): Promise<ApiResponse<T>> {
