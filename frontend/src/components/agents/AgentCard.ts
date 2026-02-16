@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, nothing, svg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -247,7 +248,7 @@ export class VelgAgentCard extends LitElement {
 
           <div class="card__badges">
             ${agent.system ? html`<span class="card__badge card__badge--system">${agent.system}</span>` : null}
-            ${agent.data_source === 'ai' ? html`<span class="card__badge card__badge--ai">AI Generated</span>` : null}
+            ${agent.data_source === 'ai' ? html`<span class="card__badge card__badge--ai">${msg('AI Generated')}</span>` : null}
           </div>
 
           <div class="card__meta">
@@ -263,16 +264,16 @@ export class VelgAgentCard extends LitElement {
                 <button
                   class="card__action-btn"
                   @click=${this._handleEdit}
-                  title="Edit"
-                  aria-label="Edit agent"
+                  title=${msg('Edit')}
+                  aria-label=${msg('Edit agent')}
                 >
                   ${this._editIcon()}
                 </button>
                 <button
                   class="card__action-btn card__action-btn--danger"
                   @click=${this._handleDelete}
-                  title="Delete"
-                  aria-label="Delete agent"
+                  title=${msg('Delete')}
+                  aria-label=${msg('Delete agent')}
                 >
                   ${this._deleteIcon()}
                 </button>

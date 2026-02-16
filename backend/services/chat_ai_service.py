@@ -114,13 +114,13 @@ class ChatAIService:
             self._supabase.table("chat_conversations")
             .select("*")
             .eq("id", str(conversation_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        if not response.data:
+        if not response or not response.data:
             msg = f"Conversation {conversation_id} not found"
             raise ValueError(msg)
-        return response.data
+        return response.data[0]
 
     async def _load_agent(self, agent_id: str) -> dict:
         """Load agent profile."""
@@ -128,10 +128,10 @@ class ChatAIService:
             self._supabase.table("agents")
             .select("name, character, background, system, gender, primary_profession")
             .eq("id", agent_id)
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        return response.data or {}
+        return response.data[0] if response and response.data else {}
 
     async def _load_simulation(self) -> dict:
         """Load simulation details."""
@@ -139,10 +139,10 @@ class ChatAIService:
             self._supabase.table("simulations")
             .select("name, description")
             .eq("id", str(self._simulation_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        return response.data or {}
+        return response.data[0] if response and response.data else {}
 
     async def _load_history(self, conversation_id: UUID) -> list[dict]:
         """Load the last N messages from conversation history."""
@@ -163,9 +163,9 @@ class ChatAIService:
             .select("setting_value")
             .eq("simulation_id", str(self._simulation_id))
             .eq("setting_key", "general.content_locale")
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        if response.data:
-            return str(response.data.get("setting_value", "de"))
+        if response and response.data:
+            return str(response.data[0].get("setting_value", "de"))
         return "de"

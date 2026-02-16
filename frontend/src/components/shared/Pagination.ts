@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
@@ -223,7 +224,7 @@ export class VelgPagination extends LitElement {
     return html`
       <div class="pagination">
         <div class="pagination__info">
-          Showing ${this._showingStart}-${this._showingEnd} of ${this.total}
+          ${msg(str`Showing ${this._showingStart}-${this._showingEnd} of ${this.total}`)}
         </div>
 
         <div class="pagination__controls">
@@ -232,7 +233,7 @@ export class VelgPagination extends LitElement {
             ?disabled=${this._currentPage <= 1}
             @click=${this._handlePrevious}
           >
-            Prev
+            ${msg('Prev')}
           </button>
 
           ${pages.map((page) =>
@@ -253,12 +254,12 @@ export class VelgPagination extends LitElement {
             ?disabled=${this._currentPage >= this._totalPages}
             @click=${this._handleNext}
           >
-            Next
+            ${msg('Next')}
           </button>
         </div>
 
         <div class="pagination__limit">
-          <span class="pagination__limit-label">Per page</span>
+          <span class="pagination__limit-label">${msg('Per page')}</span>
           <select
             class="pagination__limit-select"
             .value=${String(this.limit)}

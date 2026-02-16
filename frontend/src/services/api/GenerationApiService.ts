@@ -11,6 +11,8 @@ export interface GenerateAgentRequest {
 export interface GenerateBuildingRequest {
   building_type: string;
   name?: string;
+  style?: string;
+  condition?: string;
   locale: string;
 }
 

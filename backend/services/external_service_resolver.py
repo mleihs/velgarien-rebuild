@@ -54,7 +54,7 @@ class ExternalServiceResolver:
         self._cache: dict[str, str | None] | None = None
 
     async def _load_integration_settings(self) -> dict[str, str | None]:
-        """Load all integration.* settings for this simulation."""
+        """Load all integration category settings for this simulation."""
         if self._cache is not None:
             return self._cache
 
@@ -62,7 +62,7 @@ class ExternalServiceResolver:
             self._supabase.table("simulation_settings")
             .select("setting_key, setting_value")
             .eq("simulation_id", str(self._simulation_id))
-            .like("setting_key", "integration.%")
+            .eq("category", "integration")
             .execute()
         )
 
@@ -92,33 +92,33 @@ class ExternalServiceResolver:
         """Get Facebook integration config if enabled."""
         settings = await self._load_integration_settings()
 
-        enabled = settings.get("integration.facebook.enabled")
+        enabled = settings.get("facebook_enabled")
         if not enabled or str(enabled).lower() not in ("true", "1"):
             return None
 
-        page_id = settings.get("integration.facebook.page_id")
+        page_id = settings.get("facebook_page_id")
         if not page_id:
             return None
 
-        access_token = self._get_decrypted(settings, "integration.facebook.access_token")
+        access_token = self._get_decrypted(settings, "facebook_access_token")
         if not access_token:
             return None
 
         return FacebookConfig(
             page_id=str(page_id),
             access_token=access_token,
-            api_version=str(settings.get("integration.facebook.api_version", "v23.0")),
+            api_version=str(settings.get("facebook_api_version", "v23.0")),
         )
 
     async def get_guardian_config(self) -> NewsConfig | None:
         """Get Guardian API config if enabled."""
         settings = await self._load_integration_settings()
 
-        enabled = settings.get("integration.guardian.enabled")
+        enabled = settings.get("guardian_enabled")
         if not enabled or str(enabled).lower() not in ("true", "1"):
             return None
 
-        api_key = self._get_decrypted(settings, "integration.guardian.api_key")
+        api_key = self._get_decrypted(settings, "guardian_api_key")
         if not api_key:
             return None
 
@@ -128,11 +128,11 @@ class ExternalServiceResolver:
         """Get NewsAPI config if enabled."""
         settings = await self._load_integration_settings()
 
-        enabled = settings.get("integration.newsapi.enabled")
+        enabled = settings.get("newsapi_enabled")
         if not enabled or str(enabled).lower() not in ("true", "1"):
             return None
 
-        api_key = self._get_decrypted(settings, "integration.newsapi.api_key")
+        api_key = self._get_decrypted(settings, "newsapi_api_key")
         if not api_key:
             return None
 
@@ -142,8 +142,8 @@ class ExternalServiceResolver:
         """Get AI provider API keys — simulation override or platform defaults."""
         settings = await self._load_integration_settings()
 
-        openrouter_key = self._get_decrypted(settings, "integration.openrouter.api_key")
-        replicate_key = self._get_decrypted(settings, "integration.replicate.api_key")
+        openrouter_key = self._get_decrypted(settings, "openrouter_api_key")
+        replicate_key = self._get_decrypted(settings, "replicate_api_key")
 
         return AIProviderConfig(
             openrouter_api_key=openrouter_key or platform_settings.openrouter_api_key,

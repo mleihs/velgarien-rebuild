@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { SocialTrend } from '../../types/index.js';
@@ -109,17 +110,17 @@ export class VelgTrendCard extends LitElement {
           <div class="card__badges">
             <span class="card__badge card__badge--platform">${t.platform}</span>
             ${t.sentiment ? html`<span class="card__badge ${this._getSentimentClass()}">${t.sentiment}</span>` : ''}
-            ${t.is_processed ? html`<span class="card__badge card__badge--processed">Processed</span>` : ''}
+            ${t.is_processed ? html`<span class="card__badge card__badge--processed">${msg('Processed')}</span>` : ''}
           </div>
           <div class="card__meta">
-            ${t.volume ? html`<span class="card__meta-item">Volume: ${t.volume}</span>` : ''}
-            ${t.relevance_score != null ? html`<span class="card__meta-item">Relevance: ${t.relevance_score}/10</span>` : ''}
+            ${t.volume ? html`<span class="card__meta-item">${msg(str`Volume: ${t.volume}`)}</span>` : ''}
+            ${t.relevance_score != null ? html`<span class="card__meta-item">${msg(str`Relevance: ${t.relevance_score}/10`)}</span>` : ''}
           </div>
           ${t.url ? html`<a class="card__url" href=${t.url} target="_blank" rel="noopener">${t.url}</a>` : ''}
         </div>
         <div class="card__actions">
-          <button class="card__action-btn card__action-btn--primary" @click=${this._handleTransform}>Transform</button>
-          <button class="card__action-btn" @click=${this._handleIntegrate}>Integrate</button>
+          <button class="card__action-btn card__action-btn--primary" @click=${this._handleTransform}>${msg('Transform')}</button>
+          <button class="card__action-btn" @click=${this._handleIntegrate}>${msg('Integrate')}</button>
         </div>
       </div>
     `;

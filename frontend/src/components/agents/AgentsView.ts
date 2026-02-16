@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -131,7 +132,7 @@ export class VelgAgentsView extends LitElement {
     return [
       {
         key: 'system',
-        label: 'System',
+        label: msg('System'),
         options: systemTaxonomies.map((t) => ({
           value: t.value,
           label: t.label[locale] ?? t.value,
@@ -139,7 +140,7 @@ export class VelgAgentsView extends LitElement {
       },
       {
         key: 'gender',
-        label: 'Gender',
+        label: msg('Gender'),
         options: genderTaxonomies.map((t) => ({
           value: t.value,
           label: t.label[locale] ?? t.value,
@@ -187,14 +188,13 @@ export class VelgAgentsView extends LitElement {
       const response = await agentsApi.list(this.simulationId, params);
 
       if (response.success && response.data) {
-        const paginated = response.data;
-        this._agents = paginated.data ?? [];
-        this._total = paginated.total ?? 0;
+        this._agents = Array.isArray(response.data) ? response.data : [];
+        this._total = response.meta?.total ?? this._agents.length;
       } else {
-        this._error = response.error?.message ?? 'Failed to load agents';
+        this._error = response.error?.message ?? msg('Failed to load agents');
       }
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
@@ -228,9 +228,11 @@ export class VelgAgentsView extends LitElement {
     const agent = e.detail;
 
     const confirmed = await VelgConfirmDialog.show({
-      title: 'Delete Agent',
-      message: `Are you sure you want to delete "${agent.name}"? This action cannot be undone.`,
-      confirmLabel: 'Delete',
+      title: msg('Delete Agent'),
+      message: msg(
+        str`Are you sure you want to delete "${agent.name}"? This action cannot be undone.`,
+      ),
+      confirmLabel: msg('Delete'),
       variant: 'danger',
     });
 
@@ -239,15 +241,15 @@ export class VelgAgentsView extends LitElement {
     try {
       const response = await agentsApi.remove(this.simulationId, agent.id);
       if (response.success) {
-        VelgToast.success(`Agent "${agent.name}" deleted successfully.`);
+        VelgToast.success(msg(str`Agent "${agent.name}" deleted successfully.`));
         this._showDetails = false;
         this._selectedAgent = null;
         this._loadAgents();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to delete agent.');
+        VelgToast.error(response.error?.message ?? msg('Failed to delete agent.'));
       }
     } catch (err) {
-      VelgToast.error(err instanceof Error ? err.message : 'An unknown error occurred.');
+      VelgToast.error(err instanceof Error ? err.message : msg('An unknown error occurred.'));
     }
   }
 
@@ -260,7 +262,9 @@ export class VelgAgentsView extends LitElement {
     const isEdit = this._editAgent !== null;
     this._showEditModal = false;
     this._editAgent = null;
-    VelgToast.success(isEdit ? 'Agent updated successfully.' : 'Agent created successfully.');
+    VelgToast.success(
+      isEdit ? msg('Agent updated successfully.') : msg('Agent created successfully.'),
+    );
     this._loadAgents();
   }
 
@@ -288,12 +292,12 @@ export class VelgAgentsView extends LitElement {
     return html`
       <div class="view">
         <div class="view__header">
-          <h1 class="view__title">Agents</h1>
+          <h1 class="view__title">${msg('Agents')}</h1>
           ${
             this._canEdit
               ? html`
                 <button class="view__create-btn" @click=${this._handleCreateClick}>
-                  + Create Agent
+                  ${msg('+ Create Agent')}
                 </button>
               `
               : nothing
@@ -302,7 +306,7 @@ export class VelgAgentsView extends LitElement {
 
         <velg-filter-bar
           .filters=${this._filterConfigs}
-          search-placeholder="Search agents..."
+          search-placeholder=${msg('Search agents...')}
           @filter-change=${this._handleFilterChange}
         ></velg-filter-bar>
 
@@ -337,7 +341,7 @@ export class VelgAgentsView extends LitElement {
 
   private _renderContent() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading agents..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading agents...')}></velg-loading-state>`;
     }
 
     if (this._error) {
@@ -353,15 +357,15 @@ export class VelgAgentsView extends LitElement {
     if (this._agents.length === 0) {
       return html`
         <velg-empty-state
-          message="No agents found."
-          cta-label=${this._canEdit ? 'Create First Agent' : ''}
+          message=${msg('No agents found.')}
+          cta-label=${this._canEdit ? msg('Create First Agent') : ''}
           @cta-click=${this._handleEmptyCta}
         ></velg-empty-state>
       `;
     }
 
     return html`
-      <span class="view__count">${this._total} Agent${this._total !== 1 ? 's' : ''}</span>
+      <span class="view__count">${msg(str`${this._total} Agent${this._total !== 1 ? 's' : ''}`)}</span>
       <div class="view__grid">
         ${this._agents.map(
           (agent) => html`

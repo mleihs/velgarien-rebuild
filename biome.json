@@ -37,6 +37,6 @@
     }
   },
   "files": {
-    "includes": ["frontend/src/**/*.ts"]
+    "includes": ["frontend/src/**/*.ts", "!frontend/src/locales/generated/**"]
   }
 }

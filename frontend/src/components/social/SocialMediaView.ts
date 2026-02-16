@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { socialMediaApi } from '../../services/api/index.js';
@@ -58,11 +59,10 @@ export class VelgSocialMediaView extends LitElement {
     };
     const response = await socialMediaApi.listPosts(this.simulationId, params);
     if (response.success && response.data) {
-      const paginated = response.data;
-      this._posts = paginated?.data ?? [];
-      this._total = paginated?.total ?? this._posts.length;
+      this._posts = Array.isArray(response.data) ? response.data : [];
+      this._total = response.meta?.total ?? this._posts.length;
     } else {
-      this._error = response.error?.message || 'Failed to load posts';
+      this._error = response.error?.message || msg('Failed to load posts');
     }
     this._loading = false;
   }
@@ -71,10 +71,10 @@ export class VelgSocialMediaView extends LitElement {
     this._loading = true;
     const response = await socialMediaApi.syncPosts(this.simulationId);
     if (response.success) {
-      VelgToast.success('Posts synced successfully');
+      VelgToast.success(msg('Posts synced successfully'));
       await this._loadPosts();
     } else {
-      VelgToast.error(response.error?.message || 'Sync failed');
+      VelgToast.error(response.error?.message || msg('Sync failed'));
       this._loading = false;
     }
   }
@@ -105,37 +105,37 @@ export class VelgSocialMediaView extends LitElement {
     return html`
       <div class="social">
         <div class="social__header">
-          <h1 class="social__title">Social Media</h1>
-          <button class="social__btn" @click=${this._handleSync}>Sync Posts</button>
+          <h1 class="social__title">${msg('Social Media')}</h1>
+          <button class="social__btn" @click=${this._handleSync}>${msg('Sync Posts')}</button>
         </div>
 
         <velg-filter-bar
           .filters=${[
             {
               key: 'platform',
-              label: 'Platform',
+              label: msg('Platform'),
               type: 'select' as const,
-              options: [{ value: 'facebook', label: 'Facebook' }],
+              options: [{ value: 'facebook', label: msg('Facebook') }],
             },
             {
               key: 'transformed',
-              label: 'Transformed',
+              label: msg('Transformed'),
               type: 'select' as const,
               options: [
-                { value: 'true', label: 'Yes' },
-                { value: 'false', label: 'No' },
+                { value: 'true', label: msg('Yes') },
+                { value: 'false', label: msg('No') },
               ],
             },
           ]}
           @filter-change=${this._handleFilterChange}
         ></velg-filter-bar>
 
-        ${this._loading ? html`<velg-loading-state message="Loading posts..."></velg-loading-state>` : ''}
+        ${this._loading ? html`<velg-loading-state message=${msg('Loading posts...')}></velg-loading-state>` : ''}
         ${this._error ? html`<velg-error-state message=${this._error} @retry=${this._loadPosts}></velg-error-state>` : ''}
 
         ${
           !this._loading && !this._error && this._posts.length === 0
-            ? html`<velg-empty-state message="No posts found" actionLabel="Sync Posts" @action=${this._handleSync}></velg-empty-state>`
+            ? html`<velg-empty-state message=${msg('No posts found')} actionLabel=${msg('Sync Posts')} @action=${this._handleSync}></velg-empty-state>`
             : ''
         }
 
@@ -160,7 +160,8 @@ export class VelgSocialMediaView extends LitElement {
           <velg-post-transform-modal
             .post=${this._selectedPost}
             .simulationId=${this.simulationId}
-            @close=${() => {
+            ?open=${true}
+            @modal-close=${() => {
               this._showTransformModal = false;
             }}
             @transform-complete=${this._handleTransformComplete}

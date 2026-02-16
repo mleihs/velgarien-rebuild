@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { settingsApi } from '../../services/api/index.js';
@@ -6,44 +7,55 @@ import { VelgToast } from '../shared/Toast.js';
 
 /** The 8 AI model purpose keys used in the settings. */
 const MODEL_PURPOSES = [
-  { key: 'model_agent_description', label: 'Agent Description' },
-  { key: 'model_agent_reactions', label: 'Agent Reactions' },
-  { key: 'model_building_description', label: 'Building Description' },
-  { key: 'model_event_generation', label: 'Event Generation' },
-  { key: 'model_chat_response', label: 'Chat Response' },
-  { key: 'model_news_transformation', label: 'News Transformation' },
-  { key: 'model_social_trends', label: 'Social Trends' },
-  { key: 'model_fallback', label: 'Fallback Model' },
+  { key: 'model_agent_description', label: msg('Agent Description') },
+  { key: 'model_agent_reactions', label: msg('Agent Reactions') },
+  { key: 'model_building_description', label: msg('Building Description') },
+  { key: 'model_event_generation', label: msg('Event Generation') },
+  { key: 'model_chat_response', label: msg('Chat Response') },
+  { key: 'model_news_transformation', label: msg('News Transformation') },
+  { key: 'model_social_trends', label: msg('Social Trends') },
+  { key: 'model_fallback', label: msg('Fallback Model') },
 ] as const;
 
 /** Common text model options. */
 const TEXT_MODEL_OPTIONS = [
+  'deepseek/deepseek-v3.2',
+  'deepseek/deepseek-chat-v3-0324',
+  'deepseek/deepseek-r1-0528',
+  'deepseek/deepseek-r1-0528:free',
   'openai/gpt-4o',
   'openai/gpt-4o-mini',
-  'openai/gpt-4-turbo',
   'anthropic/claude-3.5-sonnet',
   'anthropic/claude-3-haiku',
   'google/gemini-pro-1.5',
   'google/gemini-flash-1.5',
   'meta-llama/llama-3.1-70b-instruct',
-  'meta-llama/llama-3.1-8b-instruct',
   'mistralai/mistral-large',
-  'mistralai/mistral-small',
 ];
 
 /** Image parameter keys. */
 const IMAGE_PARAMS = [
-  { key: 'image_width', label: 'Image Width (px)', type: 'number', placeholder: '1024' },
-  { key: 'image_height', label: 'Image Height (px)', type: 'number', placeholder: '1024' },
-  { key: 'image_guidance_scale', label: 'Guidance Scale', type: 'number', placeholder: '7.5' },
-  { key: 'image_num_inference_steps', label: 'Inference Steps', type: 'number', placeholder: '50' },
-  { key: 'image_scheduler', label: 'Scheduler', type: 'text', placeholder: 'DPMSolverMultistep' },
+  { key: 'image_width', label: msg('Image Width (px)'), type: 'number', placeholder: '1024' },
+  { key: 'image_height', label: msg('Image Height (px)'), type: 'number', placeholder: '1024' },
+  { key: 'image_guidance_scale', label: msg('Guidance Scale'), type: 'number', placeholder: '7.5' },
+  {
+    key: 'image_num_inference_steps',
+    label: msg('Inference Steps'),
+    type: 'number',
+    placeholder: '50',
+  },
+  {
+    key: 'image_scheduler',
+    label: msg('Scheduler'),
+    type: 'text',
+    placeholder: 'DPMSolverMultistep',
+  },
 ] as const;
 
 /** Default generation params. */
 const GENERATION_PARAMS = [
-  { key: 'default_temperature', label: 'Default Temperature', placeholder: '0.7' },
-  { key: 'default_max_tokens', label: 'Default Max Tokens', placeholder: '2048' },
+  { key: 'default_temperature', label: msg('Default Temperature'), placeholder: '0.7' },
+  { key: 'default_max_tokens', label: msg('Default Max Tokens'), placeholder: '2048' },
 ] as const;
 
 @customElement('velg-ai-settings-panel')
@@ -217,13 +229,6 @@ export class VelgAISettingsPanel extends LitElement {
     return false;
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    if (this.simulationId) {
-      this._loadSettings();
-    }
-  }
-
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId) {
       this._loadSettings();
@@ -267,10 +272,10 @@ export class VelgAISettingsPanel extends LitElement {
         this._values = { ...vals };
         this._originalValues = { ...vals };
       } else {
-        this._error = response.error?.message ?? 'Failed to load AI settings';
+        this._error = response.error?.message ?? msg('Failed to load AI settings');
       }
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
@@ -299,7 +304,6 @@ export class VelgAISettingsPanel extends LitElement {
 
       for (const key of changedKeys) {
         const value = this._values[key] ?? '';
-        if (!value) continue; // Skip empty values
 
         const response = await settingsApi.upsert(this.simulationId, {
           category: 'ai',
@@ -308,17 +312,17 @@ export class VelgAISettingsPanel extends LitElement {
         });
 
         if (!response.success) {
-          this._error = response.error?.message ?? `Failed to save ${key}`;
-          VelgToast.error(`Failed to save ${key}`);
+          this._error = response.error?.message ?? msg(str`Failed to save ${key}`);
+          VelgToast.error(msg(str`Failed to save ${key}`));
           return;
         }
       }
 
       this._originalValues = { ...this._values };
-      VelgToast.success('AI settings saved successfully.');
+      VelgToast.success(msg('AI settings saved successfully.'));
       this.dispatchEvent(new CustomEvent('settings-saved', { bubbles: true, composed: true }));
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
       VelgToast.error(this._error);
     } finally {
       this._saving = false;
@@ -327,7 +331,7 @@ export class VelgAISettingsPanel extends LitElement {
 
   protected render() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading AI settings..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading AI settings...')}></velg-loading-state>`;
     }
 
     return html`
@@ -335,8 +339,8 @@ export class VelgAISettingsPanel extends LitElement {
         ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
 
         <div class="section">
-          <h2 class="section__title">Text Models</h2>
-          <p class="section__subtitle">Select a model for each generation purpose</p>
+          <h2 class="section__title">${msg('Text Models')}</h2>
+          <p class="section__subtitle">${msg('Select a model for each generation purpose')}</p>
           <div class="form-grid">
             ${MODEL_PURPOSES.map(
               (mp) => html`
@@ -348,7 +352,7 @@ export class VelgAISettingsPanel extends LitElement {
                     .value=${this._values[mp.key] ?? ''}
                     @change=${(e: Event) => this._handleInput(mp.key, e)}
                   >
-                    <option value="">-- Default --</option>
+                    <option value="">${msg('-- Default --')}</option>
                     ${TEXT_MODEL_OPTIONS.map(
                       (model) => html`
                         <option value=${model} ?selected=${this._values[mp.key] === model}>
@@ -364,7 +368,7 @@ export class VelgAISettingsPanel extends LitElement {
         </div>
 
         <div class="section">
-          <h2 class="section__title">Image Generation</h2>
+          <h2 class="section__title">${msg('Image Generation')}</h2>
           <div class="form-grid form-grid--narrow">
             ${IMAGE_PARAMS.map(
               (param) => html`
@@ -385,7 +389,7 @@ export class VelgAISettingsPanel extends LitElement {
         </div>
 
         <div class="section">
-          <h2 class="section__title">Generation Defaults</h2>
+          <h2 class="section__title">${msg('Generation Defaults')}</h2>
           <div class="form-grid form-grid--narrow">
             ${GENERATION_PARAMS.map(
               (param) => html`
@@ -414,7 +418,7 @@ export class VelgAISettingsPanel extends LitElement {
             @click=${this._handleSave}
             ?disabled=${!this._hasChanges || this._saving}
           >
-            ${this._saving ? 'Saving...' : 'Save AI Settings'}
+            ${this._saving ? msg('Saving...') : msg('Save AI Settings')}
           </button>
         </div>
       </div>

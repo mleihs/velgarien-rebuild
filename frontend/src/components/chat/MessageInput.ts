@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 
@@ -138,7 +139,7 @@ export class VelgMessageInput extends LitElement {
         <textarea
           class="input-area__textarea"
           .value=${this._content}
-          placeholder="Type your message..."
+          placeholder=${msg('Type your message...')}
           ?disabled=${this.disabled}
           @input=${this._handleInput}
           @keydown=${this._handleKeyDown}
@@ -149,7 +150,7 @@ export class VelgMessageInput extends LitElement {
           ?disabled=${this.disabled || !this._content.trim()}
           @click=${this._send}
         >
-          Send
+          ${msg('Send')}
         </button>
       </div>
     `;

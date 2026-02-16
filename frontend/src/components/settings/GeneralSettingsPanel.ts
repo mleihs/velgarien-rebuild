@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { settingsApi } from '../../services/api/index.js';
@@ -5,12 +6,12 @@ import type { SimulationSetting, SimulationTheme } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 
 const THEME_OPTIONS: Array<{ value: SimulationTheme; label: string }> = [
-  { value: 'dystopian', label: 'Dystopian' },
-  { value: 'utopian', label: 'Utopian' },
-  { value: 'fantasy', label: 'Fantasy' },
-  { value: 'scifi', label: 'Sci-Fi' },
-  { value: 'historical', label: 'Historical' },
-  { value: 'custom', label: 'Custom' },
+  { value: 'dystopian', label: msg('Dystopian') },
+  { value: 'utopian', label: msg('Utopian') },
+  { value: 'fantasy', label: msg('Fantasy') },
+  { value: 'scifi', label: msg('Sci-Fi') },
+  { value: 'historical', label: msg('Historical') },
+  { value: 'custom', label: msg('Custom') },
 ];
 
 interface GeneralFormData {
@@ -203,13 +204,6 @@ export class VelgGeneralSettingsPanel extends LitElement {
     );
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    if (this.simulationId) {
-      this._loadSettings();
-    }
-  }
-
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId) {
       this._loadSettings();
@@ -271,10 +265,10 @@ export class VelgGeneralSettingsPanel extends LitElement {
         this._formData = { ...formData };
         this._originalData = { ...formData };
       } else {
-        this._error = response.error?.message ?? 'Failed to load settings';
+        this._error = response.error?.message ?? msg('Failed to load settings');
       }
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
@@ -312,17 +306,17 @@ export class VelgGeneralSettingsPanel extends LitElement {
         });
 
         if (!response.success) {
-          this._error = response.error?.message ?? `Failed to save ${field.key}`;
-          VelgToast.error(`Failed to save ${field.key}`);
+          this._error = response.error?.message ?? msg(str`Failed to save ${field.key}`);
+          VelgToast.error(msg(str`Failed to save ${field.key}`));
           return;
         }
       }
 
       this._originalData = { ...this._formData };
-      VelgToast.success('General settings saved successfully.');
+      VelgToast.success(msg('General settings saved successfully.'));
       this.dispatchEvent(new CustomEvent('settings-saved', { bubbles: true, composed: true }));
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
       VelgToast.error(this._error);
     } finally {
       this._saving = false;
@@ -331,23 +325,23 @@ export class VelgGeneralSettingsPanel extends LitElement {
 
   protected render() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading general settings..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading general settings...')}></velg-loading-state>`;
     }
 
     return html`
       <div class="panel">
-        <h2 class="panel__section-title">General Settings</h2>
+        <h2 class="panel__section-title">${msg('General Settings')}</h2>
 
         ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
 
         <div class="form">
           <div class="form__group">
-            <label class="form__label" for="general-name">Simulation Name</label>
+            <label class="form__label" for="general-name">${msg('Simulation Name')}</label>
             <input
               class="form__input"
               id="general-name"
               type="text"
-              placeholder="Enter simulation name..."
+              placeholder=${msg('Enter simulation name...')}
               .value=${this._formData.name}
               @input=${(e: Event) => this._handleInput('name', e)}
             />
@@ -355,8 +349,8 @@ export class VelgGeneralSettingsPanel extends LitElement {
 
           <div class="form__group">
             <label class="form__label" for="general-slug">
-              Slug
-              <span class="form__hint">(read-only, set at creation)</span>
+              ${msg('Slug')}
+              <span class="form__hint">${msg('(read-only, set at creation)')}</span>
             </label>
             <input
               class="form__input form__input--readonly"
@@ -368,18 +362,18 @@ export class VelgGeneralSettingsPanel extends LitElement {
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="general-description">Description</label>
+            <label class="form__label" for="general-description">${msg('Description')}</label>
             <textarea
               class="form__textarea"
               id="general-description"
-              placeholder="Describe your simulation world..."
+              placeholder=${msg('Describe your simulation world...')}
               .value=${this._formData.description}
               @input=${(e: Event) => this._handleInput('description', e)}
             ></textarea>
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="general-theme">Theme</label>
+            <label class="form__label" for="general-theme">${msg('Theme')}</label>
             <select
               class="form__select"
               id="general-theme"
@@ -403,7 +397,7 @@ export class VelgGeneralSettingsPanel extends LitElement {
             @click=${this._handleSave}
             ?disabled=${!this._hasChanges || this._saving}
           >
-            ${this._saving ? 'Saving...' : 'Save Changes'}
+            ${this._saving ? msg('Saving...') : msg('Save Changes')}
           </button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, svg } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { eventsApi } from '../../services/api/index.js';
@@ -518,7 +519,7 @@ export class VelgEventDetailsPanel extends LitElement {
 
     return html`
       <div class="panel__section">
-        <div class="panel__section-title">Metadata</div>
+        <div class="panel__section-title">${msg('Metadata')}</div>
         <div class="panel__kv-list">
           ${entries.map(
             ([key, value]) => html`
@@ -535,11 +536,11 @@ export class VelgEventDetailsPanel extends LitElement {
 
   private _renderReactions() {
     if (this._reactionsLoading) {
-      return html`<div class="panel__reactions-loading">Loading reactions...</div>`;
+      return html`<div class="panel__reactions-loading">${msg('Loading reactions...')}</div>`;
     }
 
     if (this._reactions.length === 0) {
-      return html`<div class="panel__reaction-empty">No reactions yet</div>`;
+      return html`<div class="panel__reaction-empty">${msg('No reactions yet')}</div>`;
     }
 
     return html`
@@ -573,11 +574,11 @@ export class VelgEventDetailsPanel extends LitElement {
       >
         <div class="panel">
           <div class="panel__header">
-            <h2 class="panel__title">${evt?.title ?? 'Event Details'}</h2>
+            <h2 class="panel__title">${evt?.title ?? msg('Event Details')}</h2>
             <button
               class="panel__close"
               @click=${this._handleClose}
-              aria-label="Close"
+              aria-label=${msg('Close')}
             >
               X
             </button>
@@ -600,7 +601,7 @@ export class VelgEventDetailsPanel extends LitElement {
                   evt.description
                     ? html`
                     <div class="panel__section">
-                      <div class="panel__section-title">Description</div>
+                      <div class="panel__section-title">${msg('Description')}</div>
                       <div class="panel__text">${evt.description}</div>
                     </div>
                   `
@@ -612,7 +613,7 @@ export class VelgEventDetailsPanel extends LitElement {
                   evt.occurred_at
                     ? html`
                     <div class="panel__section">
-                      <div class="panel__section-title">Occurred At</div>
+                      <div class="panel__section-title">${msg('Occurred At')}</div>
                       <div class="panel__text">${this._formatDate(evt.occurred_at)}</div>
                     </div>
                   `
@@ -621,7 +622,7 @@ export class VelgEventDetailsPanel extends LitElement {
 
                 <!-- Impact Level -->
                 <div class="panel__section">
-                  <div class="panel__section-title">Impact Level</div>
+                  <div class="panel__section-title">${msg('Impact Level')}</div>
                   ${this._renderImpactBar()}
                 </div>
 
@@ -630,7 +631,7 @@ export class VelgEventDetailsPanel extends LitElement {
                   evt.location
                     ? html`
                     <div class="panel__section">
-                      <div class="panel__section-title">Location</div>
+                      <div class="panel__section-title">${msg('Location')}</div>
                       <div class="panel__text">${evt.location}</div>
                     </div>
                   `
@@ -642,7 +643,7 @@ export class VelgEventDetailsPanel extends LitElement {
                   evt.tags && evt.tags.length > 0
                     ? html`
                     <div class="panel__section">
-                      <div class="panel__section-title">Tags</div>
+                      <div class="panel__section-title">${msg('Tags')}</div>
                       <div class="panel__tags">
                         ${evt.tags.map((tag) => html`<span class="panel__tag">${tag}</span>`)}
                       </div>
@@ -657,7 +658,7 @@ export class VelgEventDetailsPanel extends LitElement {
                 <!-- Reactions -->
                 <div class="panel__section">
                   <div class="panel__section-title">
-                    Reactions (${this._reactions.length})
+                    ${msg(str`Reactions (${this._reactions.length})`)}
                   </div>
                   ${this._renderReactions()}
                 </div>
@@ -669,20 +670,20 @@ export class VelgEventDetailsPanel extends LitElement {
                   @click=${this._handleEdit}
                 >
                   ${this._editIcon()}
-                  Edit
+                  ${msg('Edit')}
                 </button>
                 <button
                   class="panel__btn panel__btn--danger"
                   @click=${this._handleDelete}
                 >
                   ${this._deleteIcon()}
-                  Delete
+                  ${msg('Delete')}
                 </button>
               </div>
             `
               : html`
               <div class="panel__body">
-                <div class="panel__text panel__text--secondary">No event selected.</div>
+                <div class="panel__text panel__text--secondary">${msg('No event selected.')}</div>
               </div>
             `
           }

@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { ChatMessage } from '../../types/index.js';
@@ -96,10 +97,10 @@ export class VelgMessageList extends LitElement {
       const diffHours = Math.floor(diffMs / 3600000);
       const diffDays = Math.floor(diffMs / 86400000);
 
-      if (diffMins < 1) return 'Just now';
-      if (diffMins < 60) return `${diffMins}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
-      if (diffDays < 7) return `${diffDays}d ago`;
+      if (diffMins < 1) return msg('Just now');
+      if (diffMins < 60) return msg(str`${diffMins}m ago`);
+      if (diffHours < 24) return msg(str`${diffHours}h ago`);
+      if (diffDays < 7) return msg(str`${diffDays}d ago`);
 
       return date.toLocaleDateString(undefined, {
         month: 'short',
@@ -114,7 +115,7 @@ export class VelgMessageList extends LitElement {
 
   private _renderMessage(message: ChatMessage) {
     const isUser = message.sender_role === 'user';
-    const senderLabel = isUser ? 'You' : this.agentName;
+    const senderLabel = isUser ? msg('You') : this.agentName;
 
     return html`
       <div class="message message--${message.sender_role}">
@@ -129,7 +130,7 @@ export class VelgMessageList extends LitElement {
 
   protected render() {
     if (this.messages.length === 0) {
-      return html`<div class="empty">No messages yet. Start the conversation.</div>`;
+      return html`<div class="empty">${msg('No messages yet. Start the conversation.')}</div>`;
     }
 
     return html`

@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -266,10 +267,10 @@ export class VelgUserProfileView extends LitElement {
       if (response.success && response.data) {
         this._memberships = response.data;
       } else {
-        this._membershipsError = response.error?.message ?? 'Failed to load memberships.';
+        this._membershipsError = response.error?.message ?? msg('Failed to load memberships.');
       }
     } catch {
-      this._membershipsError = 'An unexpected error occurred while loading memberships.';
+      this._membershipsError = msg('An unexpected error occurred while loading memberships.');
     } finally {
       this._loadingMemberships = false;
     }
@@ -289,13 +290,13 @@ export class VelgUserProfileView extends LitElement {
       });
 
       if (response.success) {
-        VelgToast.success('Profile updated successfully.');
+        VelgToast.success(msg('Profile updated successfully.'));
       } else {
-        this._apiError = response.error?.message ?? 'Failed to update profile.';
+        this._apiError = response.error?.message ?? msg('Failed to update profile.');
         VelgToast.error(this._apiError);
       }
     } catch {
-      this._apiError = 'An unexpected error occurred.';
+      this._apiError = msg('An unexpected error occurred.');
       VelgToast.error(this._apiError);
     } finally {
       this._saving = false;
@@ -331,7 +332,7 @@ export class VelgUserProfileView extends LitElement {
     return html`
       <div class="profile__section">
         <div class="profile__section-header">
-          <h2 class="profile__section-title">Profile Information</h2>
+          <h2 class="profile__section-title">${msg('Profile Information')}</h2>
         </div>
         <div class="profile__section-body">
           ${
@@ -340,7 +341,7 @@ export class VelgUserProfileView extends LitElement {
 
           <div class="profile__form">
             <div class="profile__field">
-              <label class="profile__label" for="profile-email">Email</label>
+              <label class="profile__label" for="profile-email">${msg('Email')}</label>
               <input
                 class="profile__input profile__input--readonly"
                 id="profile-email"
@@ -352,13 +353,13 @@ export class VelgUserProfileView extends LitElement {
 
             <div class="profile__field">
               <label class="profile__label" for="profile-display-name">
-                Display Name
+                ${msg('Display Name')}
               </label>
               <input
                 class="profile__input"
                 id="profile-display-name"
                 type="text"
-                placeholder="Your display name..."
+                placeholder=${msg('Your display name...')}
                 .value=${this._displayName}
                 @input=${this._handleDisplayNameInput}
               />
@@ -370,7 +371,7 @@ export class VelgUserProfileView extends LitElement {
                 @click=${this._handleSave}
                 ?disabled=${this._saving}
               >
-                ${this._saving ? 'Saving...' : 'Save Changes'}
+                ${this._saving ? msg('Saving...') : msg('Save Changes')}
               </button>
             </div>
           </div>
@@ -383,12 +384,11 @@ export class VelgUserProfileView extends LitElement {
     return html`
       <div class="profile__section">
         <div class="profile__section-header">
-          <h2 class="profile__section-title">Password</h2>
+          <h2 class="profile__section-title">${msg('Password')}</h2>
         </div>
         <div class="profile__section-body">
           <p class="profile__info-text">
-            Use the reset password flow to change your password.
-            A password reset email will be sent to your registered email address.
+            ${msg('Use the reset password flow to change your password. A password reset email will be sent to your registered email address.')}
           </p>
         </div>
       </div>
@@ -399,17 +399,17 @@ export class VelgUserProfileView extends LitElement {
     return html`
       <div class="profile__section">
         <div class="profile__section-header">
-          <h2 class="profile__section-title">Simulation Memberships</h2>
+          <h2 class="profile__section-title">${msg('Simulation Memberships')}</h2>
         </div>
         <div class="profile__section-body">
           ${
             this._loadingMemberships
-              ? html`<div class="loading-state">Loading memberships...</div>`
+              ? html`<div class="loading-state">${msg('Loading memberships...')}</div>`
               : this._membershipsError
                 ? html`<div class="profile__api-error">${this._membershipsError}</div>`
                 : this._memberships.length === 0
                   ? html`<div class="empty-state">
-                    You are not a member of any simulations yet.
+                    ${msg('You are not a member of any simulations yet.')}
                   </div>`
                   : html`
                   <div class="profile__memberships-list">
@@ -427,7 +427,7 @@ export class VelgUserProfileView extends LitElement {
                               ${m.member_role}
                             </span>
                             <span class="profile__membership-date">
-                              Joined ${this._formatDate(m.joined_at)}
+                              ${msg(str`Joined ${this._formatDate(m.joined_at)}`)}
                             </span>
                           </div>
                         </div>
@@ -444,7 +444,7 @@ export class VelgUserProfileView extends LitElement {
   protected render() {
     return html`
       <div class="profile__header">
-        <h1 class="profile__title">Profile</h1>
+        <h1 class="profile__title">${msg('Profile')}</h1>
       </div>
 
       ${this._renderProfileForm()}

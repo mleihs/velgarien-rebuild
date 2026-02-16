@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { Campaign } from '../../types/index.js';
@@ -49,7 +50,7 @@ export class VelgCampaignCard extends LitElement {
           <div class="card__badges">
             ${c.campaign_type ? html`<span class="card__badge card__badge--type">${c.campaign_type}</span>` : ''}
             ${c.urgency_level ? html`<span class="card__badge card__badge--urgency">${c.urgency_level}</span>` : ''}
-            ${c.is_integrated_as_event ? html`<span class="card__badge card__badge--integrated">Event</span>` : ''}
+            ${c.is_integrated_as_event ? html`<span class="card__badge card__badge--integrated">${msg('Event')}</span>` : ''}
           </div>
         </div>
       </div>

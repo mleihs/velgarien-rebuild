@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { campaignsApi } from '../../services/api/index.js';
@@ -68,21 +69,21 @@ export class VelgCampaignDetailView extends LitElement {
 
   protected render() {
     if (this._loading)
-      return html`<velg-loading-state message="Loading campaign..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading campaign...')}></velg-loading-state>`;
     if (!this._campaign) return html``;
 
     return html`
       <div class="detail">
         <div class="detail__header">
           <h2 class="detail__title">${this._campaign.title}</h2>
-          <button class="detail__back" @click=${this._handleBack}>Back</button>
+          <button class="detail__back" @click=${this._handleBack}>${msg('Back')}</button>
         </div>
 
         ${this._campaign.description ? html`<p class="detail__description">${this._campaign.description}</p>` : ''}
 
-        <h3 class="detail__section-title">Events (${this._events.length})</h3>
+        <h3 class="detail__section-title">${msg(str`Events (${this._events.length})`)}</h3>
         <div class="detail__events">
-          ${this._events.length === 0 ? html`<p style="color: var(--color-text-secondary)">No events linked.</p>` : ''}
+          ${this._events.length === 0 ? html`<p style="color: var(--color-text-secondary)">${msg('No events linked.')}</p>` : ''}
           ${this._events.map(
             (e) => html`
             <div class="detail__event-row">
@@ -93,9 +94,9 @@ export class VelgCampaignDetailView extends LitElement {
           )}
         </div>
 
-        <h3 class="detail__section-title">Metrics (${this._metrics.length})</h3>
+        <h3 class="detail__section-title">${msg(str`Metrics (${this._metrics.length})`)}</h3>
         <div class="detail__metrics">
-          ${this._metrics.length === 0 ? html`<p style="color: var(--color-text-secondary)">No metrics yet.</p>` : ''}
+          ${this._metrics.length === 0 ? html`<p style="color: var(--color-text-secondary)">${msg('No metrics yet.')}</p>` : ''}
           ${this._metrics.map(
             (m) => html`
             <div class="detail__metric">

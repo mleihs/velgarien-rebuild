@@ -1,8 +1,9 @@
 """AI generation endpoints — rate-limited."""
 
+import logging
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -10,10 +11,13 @@ from slowapi.util import get_remote_address
 from backend.dependencies import get_current_user, get_supabase, require_role
 from backend.middleware.rate_limit import RATE_LIMIT_AI_GENERATION
 from backend.models.common import CurrentUser, SuccessResponse
+from backend.services.external.openrouter import OpenRouterError
 from backend.services.external_service_resolver import ExternalServiceResolver
 from backend.services.generation_service import GenerationService
 from backend.services.image_service import ImageService
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api/v1/simulations/{simulation_id}/generate",
@@ -40,6 +44,8 @@ class GenerateBuildingRequest(BaseModel):
 
     building_type: str = Field(..., min_length=1)
     name: str | None = None
+    style: str | None = None
+    condition: str | None = None
     locale: str = "de"
 
 
@@ -111,14 +117,20 @@ async def generate_agent(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Generate an agent description using AI."""
-    service = await _get_generation_service(simulation_id, supabase)
-    result = await service.generate_agent_full(
-        agent_name=body.name,
-        agent_system=body.system,
-        agent_gender=body.gender,
-        locale=body.locale,
-    )
-    return {"success": True, "data": result}
+    try:
+        service = await _get_generation_service(simulation_id, supabase)
+        result = await service.generate_agent_full(
+            agent_name=body.name,
+            agent_system=body.system,
+            agent_gender=body.gender,
+            locale=body.locale,
+        )
+        return {"success": True, "data": result}
+    except OpenRouterError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Agent generation failed")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
 
 
 @router.post("/building", response_model=SuccessResponse[dict])
@@ -132,13 +144,21 @@ async def generate_building(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Generate a building description using AI."""
-    service = await _get_generation_service(simulation_id, supabase)
-    result = await service.generate_building(
-        building_type=body.building_type,
-        building_name=body.name,
-        locale=body.locale,
-    )
-    return {"success": True, "data": result}
+    try:
+        service = await _get_generation_service(simulation_id, supabase)
+        result = await service.generate_building(
+            building_type=body.building_type,
+            building_name=body.name,
+            building_style=body.style,
+            building_condition=body.condition,
+            locale=body.locale,
+        )
+        return {"success": True, "data": result}
+    except OpenRouterError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Building generation failed")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
 
 
 @router.post("/portrait-description", response_model=SuccessResponse[dict])
@@ -152,12 +172,18 @@ async def generate_portrait_description(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Generate a portrait description for image generation."""
-    service = await _get_generation_service(simulation_id, supabase)
-    description = await service.generate_portrait_description(
-        agent_name=body.agent_name,
-        agent_data=body.agent_data,
-    )
-    return {"success": True, "data": {"description": description}}
+    try:
+        service = await _get_generation_service(simulation_id, supabase)
+        description = await service.generate_portrait_description(
+            agent_name=body.agent_name,
+            agent_data=body.agent_data,
+        )
+        return {"success": True, "data": {"description": description}}
+    except OpenRouterError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Portrait description generation failed")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
 
 
 @router.post("/event", response_model=SuccessResponse[dict])
@@ -171,12 +197,18 @@ async def generate_event(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Generate an event description using AI."""
-    service = await _get_generation_service(simulation_id, supabase)
-    result = await service.generate_event(
-        event_type=body.event_type,
-        locale=body.locale,
-    )
-    return {"success": True, "data": result}
+    try:
+        service = await _get_generation_service(simulation_id, supabase)
+        result = await service.generate_event(
+            event_type=body.event_type,
+            locale=body.locale,
+        )
+        return {"success": True, "data": result}
+    except OpenRouterError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Event generation failed")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
 
 
 @router.post("/image", response_model=SuccessResponse[dict])
@@ -190,20 +222,26 @@ async def generate_image(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Generate an image for an agent portrait or building."""
-    service = await _get_image_service(simulation_id, supabase)
+    try:
+        service = await _get_image_service(simulation_id, supabase)
 
-    if body.entity_type == "agent":
-        url = await service.generate_agent_portrait(
-            agent_id=body.entity_id,
-            agent_name=body.entity_name,
-            agent_data=body.extra,
-        )
-    else:
-        building_type = (body.extra or {}).get("building_type", "residential")
-        url = await service.generate_building_image(
-            building_id=body.entity_id,
-            building_name=body.entity_name,
-            building_type=building_type,
-        )
+        if body.entity_type == "agent":
+            url = await service.generate_agent_portrait(
+                agent_id=body.entity_id,
+                agent_name=body.entity_name,
+                agent_data=body.extra,
+            )
+        else:
+            building_type = (body.extra or {}).get("building_type", "residential")
+            url = await service.generate_building_image(
+                building_id=body.entity_id,
+                building_name=body.entity_name,
+                building_type=building_type,
+            )
 
-    return {"success": True, "data": {"image_url": url}}
+        return {"success": True, "data": {"image_url": url}}
+    except OpenRouterError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Image generation failed")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e

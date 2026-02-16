@@ -1,8 +1,11 @@
+import { msg } from '@lit/localize';
 import { Router } from '@lit-labs/router';
 import type { TemplateResult } from 'lit';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from './services/AppStateManager.js';
+import { membersApi, taxonomiesApi } from './services/api/index.js';
+import { localeService } from './services/i18n/locale-service.js';
 import { authService } from './services/supabase/SupabaseAuthService.js';
 
 import './components/auth/LoginView.js';
@@ -186,6 +189,7 @@ export class VelgApp extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+    await localeService.initLocale();
     this.addEventListener('navigate', this._handleNavigate as EventListener);
     await this._initAuth();
   }
@@ -209,17 +213,40 @@ export class VelgApp extends LitElement {
 
   private async _initAuth(): Promise<void> {
     try {
-      const { session } = await authService.getSession();
-      if (session) {
-        appState.setUser(session.user);
-        appState.setAccessToken(session.access_token);
-      }
+      await authService.initialize();
     } finally {
       this._initializing = false;
     }
   }
 
+  private _lastLoadedSimulationId = '';
+
+  private async _loadSimulationContext(simulationId: string): Promise<void> {
+    if (this._lastLoadedSimulationId === simulationId) return;
+    this._lastLoadedSimulationId = simulationId;
+
+    // Load taxonomies and member role in parallel
+    const [taxResponse, membersResponse] = await Promise.all([
+      taxonomiesApi.list(simulationId, { limit: '500' }),
+      membersApi.list(simulationId),
+    ]);
+
+    if (taxResponse.success && taxResponse.data) {
+      appState.setTaxonomies(Array.isArray(taxResponse.data) ? taxResponse.data : []);
+    }
+
+    if (membersResponse.success && membersResponse.data) {
+      const members = Array.isArray(membersResponse.data) ? membersResponse.data : [];
+      const userId = appState.user.value?.id;
+      const me = members.find((m) => m.user_id === userId);
+      if (me) {
+        appState.setCurrentRole(me.member_role as 'owner' | 'admin' | 'editor' | 'viewer');
+      }
+    }
+  }
+
   private _renderSimulationView(simulationId: string, view: string) {
+    this._loadSimulationContext(simulationId);
     let content: TemplateResult;
     switch (view) {
       case 'agents':
@@ -248,7 +275,7 @@ export class VelgApp extends LitElement {
           <div class="placeholder-view">
             <div class="placeholder-view__title">${view}</div>
             <div class="placeholder-view__text">
-              This view is coming soon.
+              ${msg('This view is coming soon.')}
             </div>
           </div>
         `;
@@ -263,7 +290,7 @@ export class VelgApp extends LitElement {
 
   protected render() {
     if (this._initializing) {
-      return html`<div class="loading-container">Loading...</div>`;
+      return html`<div class="loading-container">${msg('Loading...')}</div>`;
     }
 
     return html`

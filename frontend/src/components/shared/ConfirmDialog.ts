@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -70,10 +71,10 @@ export class VelgConfirmDialog extends LitElement {
     }
   `;
 
-  @property({ type: String }) title = 'Confirm';
-  @property({ type: String }) message = 'Are you sure?';
-  @property({ type: String, attribute: 'confirm-label' }) confirmLabel = 'Confirm';
-  @property({ type: String, attribute: 'cancel-label' }) cancelLabel = 'Cancel';
+  @property({ type: String }) title = msg('Confirm');
+  @property({ type: String }) message = msg('Are you sure?');
+  @property({ type: String, attribute: 'confirm-label' }) confirmLabel = msg('Confirm');
+  @property({ type: String, attribute: 'cancel-label' }) cancelLabel = msg('Cancel');
   @property({ type: String }) variant: 'default' | 'danger' = 'default';
   @state() private _open = false;
 

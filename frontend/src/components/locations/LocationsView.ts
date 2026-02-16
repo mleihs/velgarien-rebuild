@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -139,10 +140,10 @@ export class VelgLocationsView extends LitElement {
       if (response.success && response.data) {
         this._cities = response.data.data ?? [];
       } else {
-        this._error = response.error?.message ?? 'Failed to load cities';
+        this._error = response.error?.message ?? msg('Failed to load cities');
       }
     } catch {
-      this._error = 'An unexpected error occurred while loading cities';
+      this._error = msg('An unexpected error occurred while loading cities');
     } finally {
       this._loading = false;
     }
@@ -158,10 +159,10 @@ export class VelgLocationsView extends LitElement {
       if (response.success && response.data) {
         this._zones = response.data.data ?? [];
       } else {
-        this._error = response.error?.message ?? 'Failed to load zones';
+        this._error = response.error?.message ?? msg('Failed to load zones');
       }
     } catch {
-      this._error = 'An unexpected error occurred while loading zones';
+      this._error = msg('An unexpected error occurred while loading zones');
     } finally {
       this._loading = false;
     }
@@ -177,10 +178,10 @@ export class VelgLocationsView extends LitElement {
       if (response.success && response.data) {
         this._streets = response.data.data ?? [];
       } else {
-        this._error = response.error?.message ?? 'Failed to load streets';
+        this._error = response.error?.message ?? msg('Failed to load streets');
       }
     } catch {
-      this._error = 'An unexpected error occurred while loading streets';
+      this._error = msg('An unexpected error occurred while loading streets');
     } finally {
       this._loading = false;
     }
@@ -259,7 +260,7 @@ export class VelgLocationsView extends LitElement {
           class="view__crumb ${this._level === 'cities' ? 'view__crumb--current' : ''}"
           @click=${() => this._navigateTo('cities')}
         >
-          Cities
+          ${msg('Cities')}
         </span>
         ${
           this._selectedCity
@@ -290,7 +291,7 @@ export class VelgLocationsView extends LitElement {
 
   private _renderContent() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading locations..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading locations...')}></velg-loading-state>`;
     }
 
     if (this._error) {
@@ -307,8 +308,8 @@ export class VelgLocationsView extends LitElement {
       if (this._cities.length === 0) {
         return html`
           <velg-empty-state
-            message="No cities found. Create one to get started."
-            cta-label=${this._canEdit ? 'Create City' : ''}
+            message=${msg('No cities found. Create one to get started.')}
+            cta-label=${this._canEdit ? msg('Create City') : ''}
             @cta-click=${this._handleCreateClick}
           ></velg-empty-state>
         `;
@@ -325,8 +326,8 @@ export class VelgLocationsView extends LitElement {
       if (this._zones.length === 0) {
         return html`
           <velg-empty-state
-            message="No zones in this city."
-            cta-label=${this._canEdit ? 'Create Zone' : ''}
+            message=${msg('No zones in this city.')}
+            cta-label=${this._canEdit ? msg('Create Zone') : ''}
             @cta-click=${this._handleCreateClick}
           ></velg-empty-state>
         `;
@@ -342,8 +343,8 @@ export class VelgLocationsView extends LitElement {
     if (this._streets.length === 0) {
       return html`
         <velg-empty-state
-          message="No streets in this zone."
-          cta-label=${this._canEdit ? 'Create Street' : ''}
+          message=${msg('No streets in this zone.')}
+          cta-label=${this._canEdit ? msg('Create Street') : ''}
           @cta-click=${this._handleCreateClick}
         ></velg-empty-state>
       `;
@@ -355,20 +356,20 @@ export class VelgLocationsView extends LitElement {
 
   protected render() {
     const levelLabels: Record<LocationLevel, string> = {
-      cities: 'City',
-      zones: 'Zone',
-      streets: 'Street',
+      cities: msg('City'),
+      zones: msg('Zone'),
+      streets: msg('Street'),
     };
 
     return html`
       <div class="view">
         <div class="view__header">
-          <h1 class="view__title">Locations</h1>
+          <h1 class="view__title">${msg('Locations')}</h1>
           ${
             this._canEdit
               ? html`
                 <button class="view__create-btn" @click=${this._handleCreateClick}>
-                  + Create ${levelLabels[this._level]}
+                  ${msg(str`+ Create ${levelLabels[this._level]}`)}
                 </button>
               `
               : nothing

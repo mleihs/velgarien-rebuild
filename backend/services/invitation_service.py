@@ -53,16 +53,16 @@ class InvitationService:
             supabase.table("simulation_invitations")
             .select("*, simulations(name)")
             .eq("invite_token", token)
-            .maybe_single()
+            .limit(1)
             .execute()
         )
 
-        if not response.data:
+        if not response or not response.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Invalid or expired invitation token.",
             )
-        return response.data
+        return response.data[0]
 
     @staticmethod
     async def accept_invitation(
@@ -77,17 +77,17 @@ class InvitationService:
             .select("*")
             .eq("invite_token", token)
             .is_("accepted_at", "null")
-            .maybe_single()
+            .limit(1)
             .execute()
         )
 
-        if not inv_response.data:
+        if not inv_response or not inv_response.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Invitation not found or already accepted.",
             )
 
-        invitation = inv_response.data
+        invitation = inv_response.data[0]
 
         # Check expiry
         expires_at = datetime.fromisoformat(invitation["expires_at"].replace("Z", "+00:00"))

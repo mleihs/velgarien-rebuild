@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { settingsApi } from '../../services/api/index.js';
@@ -5,24 +6,24 @@ import type { SimulationSetting } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 
 const COLOR_FIELDS = [
-  { key: 'color_primary', label: 'Primary', defaultValue: '#e63946' },
-  { key: 'color_secondary', label: 'Secondary', defaultValue: '#457b9d' },
-  { key: 'color_accent', label: 'Accent', defaultValue: '#f4a261' },
-  { key: 'color_background', label: 'Background', defaultValue: '#0a0a0a' },
-  { key: 'color_surface', label: 'Surface', defaultValue: '#141414' },
-  { key: 'color_text', label: 'Text', defaultValue: '#f5f5f5' },
-  { key: 'color_text_muted', label: 'Text Muted', defaultValue: '#737373' },
-  { key: 'color_border', label: 'Border', defaultValue: '#262626' },
-  { key: 'color_error', label: 'Error', defaultValue: '#ef4444' },
-  { key: 'color_success', label: 'Success', defaultValue: '#22c55e' },
-  { key: 'color_warning', label: 'Warning', defaultValue: '#eab308' },
-  { key: 'color_primary_hover', label: 'Primary Hover', defaultValue: '#c62c39' },
+  { key: 'color_primary', label: msg('Primary'), defaultValue: '#e63946' },
+  { key: 'color_secondary', label: msg('Secondary'), defaultValue: '#457b9d' },
+  { key: 'color_accent', label: msg('Accent'), defaultValue: '#f4a261' },
+  { key: 'color_background', label: msg('Background'), defaultValue: '#0a0a0a' },
+  { key: 'color_surface', label: msg('Surface'), defaultValue: '#141414' },
+  { key: 'color_text', label: msg('Text'), defaultValue: '#f5f5f5' },
+  { key: 'color_text_muted', label: msg('Text Muted'), defaultValue: '#737373' },
+  { key: 'color_border', label: msg('Border'), defaultValue: '#262626' },
+  { key: 'color_error', label: msg('Error'), defaultValue: '#ef4444' },
+  { key: 'color_success', label: msg('Success'), defaultValue: '#22c55e' },
+  { key: 'color_warning', label: msg('Warning'), defaultValue: '#eab308' },
+  { key: 'color_primary_hover', label: msg('Primary Hover'), defaultValue: '#c62c39' },
 ] as const;
 
 const FONT_FIELDS = [
-  { key: 'font_family', label: 'Font Family', placeholder: 'Inter, sans-serif' },
-  { key: 'font_heading', label: 'Heading Font', placeholder: 'Space Grotesk, sans-serif' },
-  { key: 'font_base_size', label: 'Base Font Size (px)', placeholder: '16' },
+  { key: 'font_family', label: msg('Font Family'), placeholder: 'Inter, sans-serif' },
+  { key: 'font_heading', label: msg('Heading Font'), placeholder: 'Space Grotesk, sans-serif' },
+  { key: 'font_base_size', label: msg('Base Font Size (px)'), placeholder: '16' },
 ] as const;
 
 const MAX_CUSTOM_CSS_LENGTH = 10240; // 10KB
@@ -335,13 +336,6 @@ export class VelgDesignSettingsPanel extends LitElement {
     return false;
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    if (this.simulationId) {
-      this._loadSettings();
-    }
-  }
-
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId) {
       this._loadSettings();
@@ -385,10 +379,10 @@ export class VelgDesignSettingsPanel extends LitElement {
         this._values = { ...vals };
         this._originalValues = { ...vals };
       } else {
-        this._error = response.error?.message ?? 'Failed to load design settings';
+        this._error = response.error?.message ?? msg('Failed to load design settings');
       }
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
@@ -409,7 +403,7 @@ export class VelgDesignSettingsPanel extends LitElement {
     // Validate custom CSS length
     const customCss = this._values.custom_css ?? '';
     if (customCss.length > MAX_CUSTOM_CSS_LENGTH) {
-      VelgToast.warning(`Custom CSS exceeds maximum of ${MAX_CUSTOM_CSS_LENGTH / 1024}KB.`);
+      VelgToast.warning(msg(str`Custom CSS exceeds maximum of ${MAX_CUSTOM_CSS_LENGTH / 1024}KB.`));
       return;
     }
 
@@ -436,17 +430,17 @@ export class VelgDesignSettingsPanel extends LitElement {
         });
 
         if (!response.success) {
-          this._error = response.error?.message ?? `Failed to save ${key}`;
-          VelgToast.error(`Failed to save ${key}`);
+          this._error = response.error?.message ?? msg(str`Failed to save ${key}`);
+          VelgToast.error(msg(str`Failed to save ${key}`));
           return;
         }
       }
 
       this._originalValues = { ...this._values };
-      VelgToast.success('Design settings saved successfully.');
+      VelgToast.success(msg('Design settings saved successfully.'));
       this.dispatchEvent(new CustomEvent('settings-saved', { bubbles: true, composed: true }));
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
       VelgToast.error(this._error);
     } finally {
       this._saving = false;
@@ -455,7 +449,7 @@ export class VelgDesignSettingsPanel extends LitElement {
 
   protected render() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading design settings..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading design settings...')}></velg-loading-state>`;
     }
 
     return html`
@@ -463,7 +457,7 @@ export class VelgDesignSettingsPanel extends LitElement {
         ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
 
         <div class="section">
-          <h2 class="section__title">Colors</h2>
+          <h2 class="section__title">${msg('Colors')}</h2>
           <div class="color-grid">
             ${COLOR_FIELDS.map(
               (cf) => html`
@@ -493,7 +487,7 @@ export class VelgDesignSettingsPanel extends LitElement {
         </div>
 
         <div class="section">
-          <h2 class="section__title">Typography</h2>
+          <h2 class="section__title">${msg('Typography')}</h2>
           <div class="font-grid">
             ${FONT_FIELDS.map(
               (ff) => html`
@@ -514,9 +508,9 @@ export class VelgDesignSettingsPanel extends LitElement {
         </div>
 
         <div class="section">
-          <h2 class="section__title">Custom CSS</h2>
+          <h2 class="section__title">${msg('Custom CSS')}</h2>
           <div class="form__group">
-            <label class="form__label" for="design-custom-css">Additional Styles</label>
+            <label class="form__label" for="design-custom-css">${msg('Additional Styles')}</label>
             <textarea
               class="form__textarea"
               id="design-custom-css"
@@ -525,14 +519,14 @@ export class VelgDesignSettingsPanel extends LitElement {
               @input=${(e: Event) => this._handleInput('custom_css', e)}
             ></textarea>
             <span class="form__hint">
-              Max ${MAX_CUSTOM_CSS_LENGTH / 1024}KB.
-              Current: ${((this._values.custom_css ?? '').length / 1024).toFixed(1)}KB
+              ${msg(str`Max ${MAX_CUSTOM_CSS_LENGTH / 1024}KB.`)}
+              ${msg(str`Current: ${((this._values.custom_css ?? '').length / 1024).toFixed(1)}KB`)}
             </span>
           </div>
         </div>
 
         <div class="section">
-          <h2 class="section__title">Live Preview</h2>
+          <h2 class="section__title">${msg('Live Preview')}</h2>
           ${this._renderPreview()}
         </div>
 
@@ -542,7 +536,7 @@ export class VelgDesignSettingsPanel extends LitElement {
             @click=${this._handleSave}
             ?disabled=${!this._hasChanges || this._saving}
           >
-            ${this._saving ? 'Saving...' : 'Save Design Settings'}
+            ${this._saving ? msg('Saving...') : msg('Save Design Settings')}
           </button>
         </div>
       </div>
@@ -568,7 +562,7 @@ export class VelgDesignSettingsPanel extends LitElement {
 
     return html`
       <div class="preview">
-        <h3 class="preview__title">Theme Preview</h3>
+        <h3 class="preview__title">${msg('Theme Preview')}</h3>
         <div
           class="preview__content"
           style="
@@ -583,36 +577,36 @@ export class VelgDesignSettingsPanel extends LitElement {
             class="preview__heading"
             style="font-family: ${headingFont}; color: ${text};"
           >
-            Simulation Title
+            ${msg('Simulation Title')}
           </h4>
           <p class="preview__text">
-            This is how body text will appear with the selected colors and fonts.
+            ${msg('This is how body text will appear with the selected colors and fonts.')}
           </p>
           <p class="preview__text preview__text--muted" style="color: ${textMuted};">
-            This is muted/secondary text.
+            ${msg('This is muted/secondary text.')}
           </p>
           <div class="preview__swatch-row">
-            <div class="preview__swatch" style="background: ${primary};" title="Primary"></div>
-            <div class="preview__swatch" style="background: ${secondary};" title="Secondary"></div>
-            <div class="preview__swatch" style="background: ${accent};" title="Accent"></div>
-            <div class="preview__swatch" style="background: ${surface};" title="Surface"></div>
-            <div class="preview__swatch" style="background: ${error};" title="Error"></div>
-            <div class="preview__swatch" style="background: ${success};" title="Success"></div>
-            <div class="preview__swatch" style="background: ${warning};" title="Warning"></div>
-            <div class="preview__swatch" style="background: ${primaryHover};" title="Primary Hover"></div>
+            <div class="preview__swatch" style="background: ${primary};" title=${msg('Primary')}></div>
+            <div class="preview__swatch" style="background: ${secondary};" title=${msg('Secondary')}></div>
+            <div class="preview__swatch" style="background: ${accent};" title=${msg('Accent')}></div>
+            <div class="preview__swatch" style="background: ${surface};" title=${msg('Surface')}></div>
+            <div class="preview__swatch" style="background: ${error};" title=${msg('Error')}></div>
+            <div class="preview__swatch" style="background: ${success};" title=${msg('Success')}></div>
+            <div class="preview__swatch" style="background: ${warning};" title=${msg('Warning')}></div>
+            <div class="preview__swatch" style="background: ${primaryHover};" title=${msg('Primary Hover')}></div>
           </div>
           <div class="preview__swatch-row">
             <div
               class="preview__btn"
               style="background: ${primary}; color: ${bg}; border-color: ${primary};"
             >
-              Primary Button
+              ${msg('Primary Button')}
             </div>
             <div
               class="preview__btn"
               style="background: transparent; color: ${text}; border-color: ${border};"
             >
-              Secondary
+              ${msg('Secondary')}
             </div>
           </div>
         </div>

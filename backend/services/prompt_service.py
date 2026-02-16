@@ -114,12 +114,13 @@ class PromptResolver:
             .select("setting_value")
             .eq("simulation_id", str(self._simulation_id))
             .eq("setting_key", "general.content_locale")
-            .maybe_single()
+            .limit(1)
             .execute()
         )
 
-        if response.data:
-            self._sim_locale = str(response.data.get("setting_value", "en"))
+        if response and response.data:
+            row = response.data[0] if isinstance(response.data, list) else response.data
+            self._sim_locale = str(row.get("setting_value", "en"))
         else:
             self._sim_locale = "en"
 
@@ -202,8 +203,10 @@ class PromptResolver:
         else:
             query = query.is_("simulation_id", "null")
 
-        response = query.maybe_single().execute()
-        return response.data
+        response = query.limit(1).execute()
+        if response and response.data:
+            return response.data[0] if isinstance(response.data, list) else response.data
+        return None
 
     @staticmethod
     def _to_resolved(template: dict, locale: str, source: str) -> ResolvedPrompt:

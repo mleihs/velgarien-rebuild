@@ -3,16 +3,60 @@ import { appState } from '../AppStateManager.js';
 import { supabase } from './client.js';
 
 export class SupabaseAuthService {
-  constructor() {
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        appState.setUser(session.user);
-        appState.setAccessToken(session.access_token);
-      } else {
-        appState.setUser(null);
-        appState.setAccessToken(null);
-      }
+  private _initialized = false;
+
+  /**
+   * Initialize auth: restore session from storage and set up the
+   * persistent auth state listener. Must be called once at app startup.
+   * Returns the restored session (or null).
+   */
+  async initialize(): Promise<Session | null> {
+    if (this._initialized) {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    }
+
+    // Wait for the INITIAL_SESSION event which fires once the session
+    // has been loaded from localStorage (or confirmed as absent).
+    const session = await new Promise<Session | null>((resolve) => {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, s) => {
+        if (event === 'INITIAL_SESSION') {
+          resolve(s);
+        }
+        // Keep the listener alive for all future auth events
+        // (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED, etc.)
+        this._syncAppState(s);
+      });
+      // Safety: if INITIAL_SESSION never fires (shouldn't happen), resolve after 2s
+      setTimeout(() => {
+        resolve(null);
+      }, 2000);
+      // Store subscription so we don't double-subscribe
+      this._subscription = subscription;
     });
+
+    this._initialized = true;
+    return session;
+  }
+
+  private _subscription: { unsubscribe: () => void } | null = null;
+
+  dispose(): void {
+    this._subscription?.unsubscribe();
+    this._subscription = null;
+    this._initialized = false;
+  }
+
+  private _syncAppState(session: Session | null): void {
+    if (session) {
+      appState.setUser(session.user);
+      appState.setAccessToken(session.access_token);
+    } else {
+      appState.setUser(null);
+      appState.setAccessToken(null);
+    }
   }
 
   async signUp(

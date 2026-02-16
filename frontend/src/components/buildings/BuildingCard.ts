@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing, svg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -137,34 +138,34 @@ export class VelgBuildingCard extends LitElement {
     .card__actions {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: var(--space-2);
-      padding: var(--space-2) var(--space-4) var(--space-4);
+      padding: var(--space-2) var(--space-4) var(--space-3);
+      margin-top: auto;
     }
 
     .card__action-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: var(--space-1-5) var(--space-3);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      border: var(--border-width-thin) solid var(--color-border);
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: transparent;
+      border: var(--border-width-thin) solid var(--color-border-light);
       cursor: pointer;
+      color: var(--color-text-secondary);
       transition: all var(--transition-fast);
     }
 
     .card__action-btn:hover {
       background: var(--color-surface-sunken);
+      color: var(--color-text-primary);
     }
 
     .card__action-btn--danger:hover {
-      background: var(--color-danger);
-      color: var(--color-text-inverse);
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
       border-color: var(--color-danger);
     }
   `;
@@ -203,6 +204,30 @@ export class VelgBuildingCard extends LitElement {
     if (normalized === 'poor') return 'card__badge--condition-poor';
     if (normalized === 'ruined') return 'card__badge--condition-ruined';
     return '';
+  }
+
+  private _editIcon() {
+    return svg`
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+        <path d="M16 5l3 3" />
+      </svg>
+    `;
+  }
+
+  private _deleteIcon() {
+    return svg`
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7l16 0" />
+        <path d="M10 11l0 6" />
+        <path d="M14 11l0 6" />
+        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+      </svg>
+    `;
   }
 
   private _handleClick(): void {
@@ -273,7 +298,7 @@ export class VelgBuildingCard extends LitElement {
           <div class="card__meta">
             ${
               b.population_capacity != null
-                ? html`<span class="card__meta-item">Cap: ${b.population_capacity}</span>`
+                ? html`<span class="card__meta-item">${msg(str`Cap: ${b.population_capacity}`)}</span>`
                 : nothing
             }
             ${locationText ? html`<span class="card__meta-item">${locationText}</span>` : nothing}
@@ -284,11 +309,21 @@ export class VelgBuildingCard extends LitElement {
           appState.canEdit.value
             ? html`
               <div class="card__actions">
-                <button class="card__action-btn" @click=${this._handleEdit}>
-                  Edit
+                <button
+                  class="card__action-btn"
+                  @click=${this._handleEdit}
+                  title=${msg('Edit')}
+                  aria-label=${msg('Edit building')}
+                >
+                  ${this._editIcon()}
                 </button>
-                <button class="card__action-btn card__action-btn--danger" @click=${this._handleDelete}>
-                  Delete
+                <button
+                  class="card__action-btn card__action-btn--danger"
+                  @click=${this._handleDelete}
+                  title=${msg('Delete')}
+                  aria-label=${msg('Delete building')}
+                >
+                  ${this._deleteIcon()}
                 </button>
               </div>
             `

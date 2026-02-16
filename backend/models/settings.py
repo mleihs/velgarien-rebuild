@@ -6,14 +6,19 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 # Encryption is handled at the application level via setting_key convention.
-# Keys in ENCRYPTED_SETTING_KEYS are stored encrypted and masked in responses.
-ENCRYPTED_SETTING_KEYS = frozenset({
+# Keys whose name *ends with* any of these suffixes are stored encrypted and masked.
+ENCRYPTED_KEY_SUFFIXES = (
     "api_key",
     "secret_key",
     "access_token",
     "encryption_key",
     "webhook_secret",
-})
+)
+
+
+def is_sensitive_key(setting_key: str) -> bool:
+    """Check if a setting key should be encrypted/masked."""
+    return any(setting_key.endswith(suffix) for suffix in ENCRYPTED_KEY_SUFFIXES)
 
 
 class SettingCreate(BaseModel):

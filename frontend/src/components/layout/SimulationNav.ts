@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -8,15 +9,17 @@ interface NavTab {
   requireAdmin?: boolean;
 }
 
-const TABS: NavTab[] = [
-  { label: 'Agents', path: 'agents' },
-  { label: 'Buildings', path: 'buildings' },
-  { label: 'Events', path: 'events' },
-  { label: 'Chat', path: 'chat' },
-  { label: 'Social', path: 'social' },
-  { label: 'Locations', path: 'locations' },
-  { label: 'Settings', path: 'settings', requireAdmin: true },
-];
+function getTabs(): NavTab[] {
+  return [
+    { label: msg('Agents'), path: 'agents' },
+    { label: msg('Buildings'), path: 'buildings' },
+    { label: msg('Events'), path: 'events' },
+    { label: msg('Chat'), path: 'chat' },
+    { label: msg('Social'), path: 'social' },
+    { label: msg('Locations'), path: 'locations' },
+    { label: msg('Settings'), path: 'settings', requireAdmin: true },
+  ];
+}
 
 @customElement('velg-simulation-nav')
 export class VelgSimulationNav extends LitElement {
@@ -74,7 +77,7 @@ export class VelgSimulationNav extends LitElement {
 
   private _detectActiveTab(): void {
     const path = window.location.pathname;
-    const tab = TABS.find((t) => path.includes(`/${t.path}`));
+    const tab = getTabs().find((t) => path.includes(`/${t.path}`));
     if (tab) {
       this._activeTab = tab.path;
     }
@@ -92,7 +95,7 @@ export class VelgSimulationNav extends LitElement {
   }
 
   private get _visibleTabs(): NavTab[] {
-    return TABS.filter((tab) => {
+    return getTabs().filter((tab) => {
       if (tab.requireAdmin && !appState.canAdmin.value) return false;
       return true;
     });

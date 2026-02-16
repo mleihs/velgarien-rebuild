@@ -12,42 +12,55 @@ logger = logging.getLogger(__name__)
 
 # Platform defaults — used when simulation has no model configured
 PLATFORM_DEFAULT_MODELS: dict[str, str] = {
-    "agent_description": "deepseek/deepseek-chat-v3-0324",
-    "agent_reactions": "meta-llama/llama-3.3-70b-instruct:free",
-    "building_description": "meta-llama/llama-3.3-70b-instruct:free",
-    "event_generation": "deepseek/deepseek-chat-v3-0324",
-    "chat_response": "deepseek/deepseek-chat-v3-0324",
-    "news_transformation": "meta-llama/llama-3.2-3b-instruct:free",
-    "social_trends": "meta-llama/llama-3.3-70b-instruct:free",
-    "default": "meta-llama/llama-3.3-70b-instruct:free",
-    "fallback": "shisa-ai/shisa-v2-llama3.3-70b:free",
+    "agent_description": "deepseek/deepseek-v3.2",
+    "agent_reactions": "deepseek/deepseek-v3.2",
+    "building_description": "deepseek/deepseek-v3.2",
+    "event_generation": "deepseek/deepseek-v3.2",
+    "chat_response": "deepseek/deepseek-v3.2",
+    "news_transformation": "deepseek/deepseek-v3.2",
+    "social_trends": "deepseek/deepseek-v3.2",
+    "default": "deepseek/deepseek-v3.2",
+    "fallback": "deepseek/deepseek-r1-0528:free",
 }
 
 PLATFORM_DEFAULT_IMAGE_MODELS: dict[str, dict[str, str]] = {
     "agent_portrait": {
         "model": "stability-ai/stable-diffusion",
-        "version": "ac732df83cea7fff2b7cf1003e0b4b7a9",
+        "version": "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
     },
     "building_image": {
         "model": "stability-ai/stable-diffusion",
-        "version": "ac732df83cea7fff2b7cf1003e0b4b7a9",
+        "version": "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
     },
     "fallback": {
         "model": "stability-ai/stable-diffusion",
-        "version": "ac732df83cea7fff2b7cf1003e0b4b7a9",
+        "version": "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
     },
 }
 
 PLATFORM_DEFAULT_PARAMS: dict[str, float | int | str] = {
     "temperature": 0.8,
-    "max_tokens": 500,
-    "image_width": 512,
-    "image_height": 512,
+    "max_tokens": 1500,
+    "image_width_portrait": 512,
+    "image_height_portrait": 768,
+    "image_width_building": 768,
+    "image_height_building": 512,
     "guidance_scale": 7.5,
     "num_inference_steps": 50,
     "scheduler": "K_EULER",
-    "negative_prompt_agent": "cartoon, anime, illustration, distorted, deformed, ugly, blurry",
-    "negative_prompt_building": "people, humans, characters, faces, text, watermark",
+    "negative_prompt_agent": (
+        "cartoon, anime, illustration, painting, drawing, artistic, "
+        "distorted, deformed, low quality, blurry, text, watermark, signature, "
+        "multiple people, group, crowd, couple, two people, two faces, "
+        "extra limbs, extra fingers, cropped, out of frame, full body, "
+        "bright colors, cheerful, happy, colorful, vibrant, sunny"
+    ),
+    "negative_prompt_building": (
+        "people, humans, characters, faces, text, watermark, "
+        "cartoon, anime, low quality, blurry, distorted, "
+        "bright colors, cheerful, happy, colorful, vibrant, sunny, "
+        "modern glass, clean minimalist, utopian"
+    ),
 }
 
 
@@ -57,7 +70,7 @@ class ResolvedModel:
 
     model_id: str
     temperature: float = 0.8
-    max_tokens: int = 500
+    max_tokens: int = 1500
     source: str = "platform_default"
 
 
@@ -100,7 +113,7 @@ class ModelResolver:
             self._supabase.table("simulation_settings")
             .select("setting_key, setting_value")
             .eq("simulation_id", str(self._simulation_id))
-            .like("setting_key", "ai.%")
+            .eq("category", "ai")
             .execute()
         )
 
@@ -130,10 +143,10 @@ class ModelResolver:
         ai_settings = await self._load_settings()
 
         # 1. Simulation-specific model for this purpose
-        sim_model = ai_settings.get(f"ai.models.{purpose}")
+        sim_model = ai_settings.get(f"model_{purpose}")
         if sim_model:
-            temp = self._get_float(ai_settings, f"ai.params.temperature.{purpose}", 0.8)
-            tokens = self._get_int(ai_settings, f"ai.params.max_tokens.{purpose}", 500)
+            temp = self._get_float(ai_settings, "default_temperature", 0.8)
+            tokens = self._get_int(ai_settings, "default_max_tokens", 1500)
             return ResolvedModel(
                 model_id=sim_model,
                 temperature=temp,
@@ -142,10 +155,10 @@ class ModelResolver:
             )
 
         # 2. Simulation default model
-        sim_default = ai_settings.get("ai.models.default")
+        sim_default = ai_settings.get("model_fallback")
         if sim_default:
-            temp = self._get_float(ai_settings, "ai.params.temperature.default", 0.8)
-            tokens = self._get_int(ai_settings, "ai.params.max_tokens.default", 500)
+            temp = self._get_float(ai_settings, "default_temperature", 0.8)
+            tokens = self._get_int(ai_settings, "default_max_tokens", 1500)
             return ResolvedModel(
                 model_id=sim_default,
                 temperature=temp,
@@ -159,7 +172,7 @@ class ModelResolver:
             return ResolvedModel(
                 model_id=platform_model,
                 temperature=float(PLATFORM_DEFAULT_PARAMS.get("temperature", 0.8)),
-                max_tokens=int(PLATFORM_DEFAULT_PARAMS.get("max_tokens", 500)),
+                max_tokens=int(PLATFORM_DEFAULT_PARAMS.get("max_tokens", 1500)),
                 source=f"platform.{purpose}",
             )
 
@@ -167,7 +180,7 @@ class ModelResolver:
         return ResolvedModel(
             model_id=PLATFORM_DEFAULT_MODELS["fallback"],
             temperature=0.7,
-            max_tokens=500,
+            max_tokens=1500,
             source="platform.fallback",
         )
 
@@ -175,9 +188,9 @@ class ModelResolver:
         """Resolve the best image model for the given purpose."""
         ai_settings = await self._load_settings()
 
-        # Check simulation-specific image model
-        sim_model = ai_settings.get(f"ai.image_models.{purpose}")
-        sim_version = ai_settings.get(f"ai.image_models.{purpose}.version")
+        # Check simulation-specific image model (not yet exposed in UI)
+        sim_model = ai_settings.get(f"image_model_{purpose}")
+        sim_version = ai_settings.get(f"image_model_{purpose}_version")
 
         if not sim_model:
             # Fall back to platform defaults
@@ -187,20 +200,23 @@ class ModelResolver:
             sim_model = platform["model"]
             sim_version = platform["version"]
 
-        # Load image parameters (simulation override or platform default)
-        width = self._get_int(ai_settings, "ai.image_params.width", 512)
-        height = self._get_int(ai_settings, "ai.image_params.height", 512)
-        guidance = self._get_float(ai_settings, "ai.image_params.guidance_scale", 7.5)
-        steps = self._get_int(ai_settings, "ai.image_params.num_inference_steps", 50)
+        # Load image parameters — use purpose-specific defaults
+        is_portrait = "portrait" in purpose
+        default_w = 512 if is_portrait else 768
+        default_h = 768 if is_portrait else 512
+        width = self._get_int(ai_settings, "image_width", default_w)
+        height = self._get_int(ai_settings, "image_height", default_h)
+        guidance = self._get_float(ai_settings, "image_guidance_scale", 7.5)
+        steps = self._get_int(ai_settings, "image_num_inference_steps", 50)
         scheduler = ai_settings.get(
-            "ai.image_params.scheduler",
+            "image_scheduler",
             str(PLATFORM_DEFAULT_PARAMS.get("scheduler", "K_EULER")),
         )
 
         # Negative prompt per purpose type
         neg_key = "agent" if "portrait" in purpose else "building"
         negative = ai_settings.get(
-            f"ai.params.negative_prompt.{neg_key}",
+            f"negative_prompt_{neg_key}",
             str(PLATFORM_DEFAULT_PARAMS.get(f"negative_prompt_{neg_key}", "")),
         )
 
@@ -213,7 +229,7 @@ class ModelResolver:
             num_inference_steps=steps,
             scheduler=scheduler,
             negative_prompt=negative,
-            source="simulation" if ai_settings.get(f"ai.image_models.{purpose}") else "platform",
+            source="simulation" if ai_settings.get(f"image_model_{purpose}") else "platform",
         )
 
     @staticmethod

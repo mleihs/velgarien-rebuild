@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { campaignsApi } from '../../services/api/index.js';
@@ -41,11 +42,10 @@ export class VelgCampaignDashboard extends LitElement {
     };
     const response = await campaignsApi.list(this.simulationId, params);
     if (response.success && response.data) {
-      const paginated = response.data;
-      this._campaigns = paginated?.data ?? [];
-      this._total = paginated?.total ?? this._campaigns.length;
+      this._campaigns = Array.isArray(response.data) ? response.data : [];
+      this._total = response.meta?.total ?? this._campaigns.length;
     } else {
-      this._error = response.error?.message || 'Failed to load campaigns';
+      this._error = response.error?.message || msg('Failed to load campaigns');
     }
     this._loading = false;
   }
@@ -59,12 +59,12 @@ export class VelgCampaignDashboard extends LitElement {
     return html`
       <div class="campaigns">
         <div class="campaigns__header">
-          <h1 class="campaigns__title">Campaigns</h1>
+          <h1 class="campaigns__title">${msg('Campaigns')}</h1>
         </div>
 
-        ${this._loading ? html`<velg-loading-state message="Loading campaigns..."></velg-loading-state>` : ''}
+        ${this._loading ? html`<velg-loading-state message=${msg('Loading campaigns...')}></velg-loading-state>` : ''}
         ${this._error ? html`<velg-error-state message=${this._error} @retry=${this._loadCampaigns}></velg-error-state>` : ''}
-        ${!this._loading && !this._error && this._campaigns.length === 0 ? html`<velg-empty-state message="No campaigns yet"></velg-empty-state>` : ''}
+        ${!this._loading && !this._error && this._campaigns.length === 0 ? html`<velg-empty-state message=${msg('No campaigns yet')}></velg-empty-state>` : ''}
 
         ${
           !this._loading && this._campaigns.length > 0

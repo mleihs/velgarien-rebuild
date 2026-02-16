@@ -50,15 +50,15 @@ class SocialMediaService:
             .select("*")
             .eq("simulation_id", str(simulation_id))
             .eq("id", str(post_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        if not response.data:
+        if not response or not response.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Social media post '{post_id}' not found.",
             )
-        return response.data
+        return response.data[0]
 
     @staticmethod
     async def store_posts(

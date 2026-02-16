@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { settingsApi } from '../../services/api/index.js';
@@ -21,69 +22,74 @@ interface IntegrationField {
 const SECTIONS: IntegrationSection[] = [
   {
     id: 'facebook',
-    title: 'Facebook Integration',
+    title: msg('Facebook Integration'),
     fields: [
       {
         key: 'facebook_page_id',
-        label: 'Page ID',
+        label: msg('Page ID'),
         type: 'text',
-        placeholder: 'Enter Facebook Page ID...',
+        placeholder: msg('Enter Facebook Page ID...'),
       },
       {
         key: 'facebook_access_token',
-        label: 'Access Token',
+        label: msg('Access Token'),
         type: 'password',
-        placeholder: 'Enter access token...',
+        placeholder: msg('Enter access token...'),
         sensitive: true,
       },
-      { key: 'facebook_api_version', label: 'API Version', type: 'text', placeholder: 'v19.0' },
-      { key: 'facebook_enabled', label: 'Enabled', type: 'toggle' },
+      {
+        key: 'facebook_api_version',
+        label: msg('API Version'),
+        type: 'text',
+        placeholder: 'v19.0',
+      },
+      { key: 'facebook_enabled', label: msg('Enabled'), type: 'toggle' },
     ],
   },
   {
     id: 'guardian',
-    title: 'The Guardian API',
+    title: msg('The Guardian API'),
     fields: [
       {
         key: 'guardian_api_key',
-        label: 'API Key',
+        label: msg('API Key'),
         type: 'password',
-        placeholder: 'Enter Guardian API key...',
+        placeholder: msg('Enter Guardian API key...'),
         sensitive: true,
       },
-      { key: 'guardian_enabled', label: 'Enabled', type: 'toggle' },
+      { key: 'guardian_enabled', label: msg('Enabled'), type: 'toggle' },
     ],
   },
   {
     id: 'newsapi',
-    title: 'NewsAPI',
+    title: msg('NewsAPI'),
     fields: [
       {
         key: 'newsapi_api_key',
-        label: 'API Key',
+        label: msg('API Key'),
         type: 'password',
-        placeholder: 'Enter NewsAPI key...',
+        placeholder: msg('Enter NewsAPI key...'),
         sensitive: true,
       },
-      { key: 'newsapi_enabled', label: 'Enabled', type: 'toggle' },
+      { key: 'newsapi_enabled', label: msg('Enabled'), type: 'toggle' },
     ],
   },
   {
     id: 'ai_providers',
-    title: 'AI Provider Overrides',
+    title: msg('AI Provider Overrides'),
     fields: [
       {
         key: 'openrouter_api_key',
-        label: 'OpenRouter API Key',
+        label: msg('OpenRouter API Key'),
         type: 'password',
-        placeholder: 'Enter OpenRouter key...',
+        placeholder: msg('Enter OpenRouter key...'),
         sensitive: true,
       },
       {
         key: 'replicate_api_key',
-        label: 'Replicate API Key',
+        label: msg('Replicate API Key'),
         type: 'password',
-        placeholder: 'Enter Replicate key...',
+        placeholder: msg('Enter Replicate key...'),
         sensitive: true,
       },
     ],
@@ -296,13 +302,6 @@ export class VelgIntegrationSettingsPanel extends LitElement {
   /** Track which fields came back with encrypted/masked values from the server. */
   @state() private _maskedFields: Set<string> = new Set();
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    if (this.simulationId) {
-      this._loadSettings();
-    }
-  }
-
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId) {
       this._loadSettings();
@@ -359,7 +358,7 @@ export class VelgIntegrationSettingsPanel extends LitElement {
           vals[setting.setting_key] = val;
 
           // Detect encrypted/masked values from server
-          if (val.startsWith('***') || val.startsWith('enc:')) {
+          if (val.startsWith('***')) {
             masked.add(setting.setting_key);
           }
         }
@@ -368,10 +367,10 @@ export class VelgIntegrationSettingsPanel extends LitElement {
         this._originalValues = { ...vals };
         this._maskedFields = masked;
       } else {
-        this._error = response.error?.message ?? 'Failed to load integration settings';
+        this._error = response.error?.message ?? msg('Failed to load integration settings');
       }
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
@@ -379,10 +378,11 @@ export class VelgIntegrationSettingsPanel extends LitElement {
 
   private _handleInput(key: string, e: Event): void {
     const target = e.target as HTMLInputElement;
-    this._values = { ...this._values, [key]: target.value };
+    const newValue = target.value;
+    this._values = { ...this._values, [key]: newValue };
 
-    // Once user starts typing into a masked field, it is no longer masked
-    if (this._maskedFields.has(key)) {
+    // Once user types a real (non-empty) value into a masked field, unmark it
+    if (this._maskedFields.has(key) && newValue && !newValue.startsWith('***')) {
       const updated = new Set(this._maskedFields);
       updated.delete(key);
       this._maskedFields = updated;
@@ -418,8 +418,8 @@ export class VelgIntegrationSettingsPanel extends LitElement {
         });
 
         if (!response.success) {
-          this._error = response.error?.message ?? `Failed to save ${field.label}`;
-          VelgToast.error(`Failed to save ${field.label}`);
+          this._error = response.error?.message ?? msg(str`Failed to save ${field.label}`);
+          VelgToast.error(msg(str`Failed to save ${field.label}`));
           return;
         }
       }
@@ -431,10 +431,10 @@ export class VelgIntegrationSettingsPanel extends LitElement {
       }
       this._originalValues = newOriginals;
 
-      VelgToast.success(`${section.title} settings saved.`);
+      VelgToast.success(msg(str`${section.title} settings saved.`));
       this.dispatchEvent(new CustomEvent('settings-saved', { bubbles: true, composed: true }));
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
       VelgToast.error(this._error);
     } finally {
       const removed = new Set(this._savingSections);
@@ -463,9 +463,7 @@ export class VelgIntegrationSettingsPanel extends LitElement {
     }
 
     const isMasked = this._maskedFields.has(field.key);
-    const displayValue = isMasked
-      ? (this._values[field.key] ?? '')
-      : (this._values[field.key] ?? '');
+    const displayValue = this._values[field.key] ?? '';
 
     return html`
       <div class="form__group">
@@ -478,14 +476,14 @@ export class VelgIntegrationSettingsPanel extends LitElement {
           .value=${displayValue}
           @input=${(e: Event) => this._handleInput(field.key, e)}
         />
-        ${field.sensitive ? html`<span class="sensitive-hint">Values are encrypted at rest</span>` : nothing}
+        ${field.sensitive ? html`<span class="sensitive-hint">${msg('Values are encrypted at rest')}</span>` : nothing}
       </div>
     `;
   }
 
   protected render() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading integration settings..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading integration settings...')}></velg-loading-state>`;
     }
 
     return html`
@@ -502,7 +500,7 @@ export class VelgIntegrationSettingsPanel extends LitElement {
                   @click=${() => this._handleSaveSection(section)}
                   ?disabled=${!this._hasSectionChanges(section) || this._savingSections.has(section.id)}
                 >
-                  ${this._savingSections.has(section.id) ? 'Saving...' : 'Save'}
+                  ${this._savingSections.has(section.id) ? msg('Saving...') : msg('Save')}
                 </button>
               </div>
               <div class="form">

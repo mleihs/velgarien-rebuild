@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { locationsApi } from '../../services/api/index.js';
@@ -82,19 +83,18 @@ export class VelgLocationEditModal extends LitElement {
       color: var(--color-text-danger);
     }
 
-    .form__actions {
+    .footer {
       display: flex;
+      align-items: center;
       justify-content: flex-end;
       gap: var(--space-3);
-      padding-top: var(--space-4);
-      border-top: var(--border-light);
     }
 
-    .form__btn {
+    .footer__btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: var(--space-2-5) var(--space-5);
+      padding: var(--space-2) var(--space-4);
       font-family: var(--font-brutalist);
       font-weight: var(--font-black);
       font-size: var(--text-sm);
@@ -106,28 +106,28 @@ export class VelgLocationEditModal extends LitElement {
       transition: all var(--transition-fast);
     }
 
-    .form__btn:hover {
+    .footer__btn:hover {
       transform: translate(-2px, -2px);
       box-shadow: var(--shadow-lg);
     }
 
-    .form__btn:active {
+    .footer__btn:active {
       transform: translate(0);
       box-shadow: var(--shadow-pressed);
     }
 
-    .form__btn:disabled {
+    .footer__btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
       pointer-events: none;
     }
 
-    .form__btn--cancel {
+    .footer__btn--cancel {
       background: var(--color-surface-raised);
       color: var(--color-text-primary);
     }
 
-    .form__btn--submit {
+    .footer__btn--save {
       background: var(--color-primary);
       color: var(--color-text-inverse);
     }
@@ -173,15 +173,15 @@ export class VelgLocationEditModal extends LitElement {
     const errors: Record<string, string> = {};
 
     if (!this._name.trim()) {
-      errors.name = 'Name is required';
+      errors.name = msg('Name is required');
     }
 
     this._errors = errors;
     return Object.keys(errors).length === 0;
   }
 
-  private async _handleSubmit(e: Event): Promise<void> {
-    e.preventDefault();
+  private async _handleSubmit(e?: Event): Promise<void> {
+    e?.preventDefault();
 
     if (!this._validate()) return;
 
@@ -230,8 +230,8 @@ export class VelgLocationEditModal extends LitElement {
       if (response.success && response.data) {
         VelgToast.success(
           this._isEdit
-            ? `${this._typeLabel} updated successfully`
-            : `${this._typeLabel} created successfully`,
+            ? msg(str`${this._typeLabel} updated successfully`)
+            : msg(str`${this._typeLabel} created successfully`),
         );
         this.dispatchEvent(
           new CustomEvent('location-saved', {
@@ -241,10 +241,10 @@ export class VelgLocationEditModal extends LitElement {
           }),
         );
       } else {
-        VelgToast.error(response.error?.message ?? `Failed to save ${this.type}`);
+        VelgToast.error(response.error?.message ?? msg(str`Failed to save ${this.type}`));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred');
+      VelgToast.error(msg('An unexpected error occurred'));
     } finally {
       this._saving = false;
     }
@@ -264,7 +264,9 @@ export class VelgLocationEditModal extends LitElement {
   }
 
   protected render() {
-    const title = this._isEdit ? `Edit ${this._typeLabel}` : `Create ${this._typeLabel}`;
+    const title = this._isEdit
+      ? msg(str`Edit ${this._typeLabel}`)
+      : msg(str`Create ${this._typeLabel}`);
 
     return html`
       <velg-base-modal ?open=${this.open} @modal-close=${this._handleClose}>
@@ -273,13 +275,13 @@ export class VelgLocationEditModal extends LitElement {
         <form class="form" @submit=${this._handleSubmit} novalidate>
           <div class="form__group">
             <label class="form__label" for="location-name">
-              Name <span class="form__required">*</span>
+              ${msg('Name')} <span class="form__required">*</span>
             </label>
             <input
               class="form__input ${this._errors.name ? 'form__input--error' : ''}"
               id="location-name"
               type="text"
-              placeholder="Enter ${this.type} name"
+              placeholder=${msg(str`Enter ${this.type} name`)}
               .value=${this._name}
               @input=${(e: Event) => {
                 this._name = (e.target as HTMLInputElement).value;
@@ -297,12 +299,12 @@ export class VelgLocationEditModal extends LitElement {
               ? html`
                 <div class="form__group">
                   <label class="form__label" for="location-description">
-                    Description
+                    ${msg('Description')}
                   </label>
                   <textarea
                     class="form__textarea"
                     id="location-description"
-                    placeholder="Describe the ${this.type}..."
+                    placeholder=${msg(str`Describe the ${this.type}...`)}
                     .value=${this._description}
                     @input=${(e: Event) => {
                       this._description = (e.target as HTMLTextAreaElement).value;
@@ -313,23 +315,24 @@ export class VelgLocationEditModal extends LitElement {
               : nothing
           }
 
-          <div slot="footer" class="form__actions">
-            <button
-              type="button"
-              class="form__btn form__btn--cancel"
-              @click=${this._handleClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="form__btn form__btn--submit"
-              ?disabled=${this._saving}
-            >
-              ${this._saving ? 'Saving...' : this._isEdit ? 'Update' : 'Create'}
-            </button>
-          </div>
         </form>
+
+        <div slot="footer" class="footer">
+          <button
+            class="footer__btn footer__btn--cancel"
+            @click=${this._handleClose}
+            ?disabled=${this._saving}
+          >
+            ${msg('Cancel')}
+          </button>
+          <button
+            class="footer__btn footer__btn--save"
+            @click=${this._handleSubmit}
+            ?disabled=${this._saving}
+          >
+            ${this._saving ? msg('Saving...') : this._isEdit ? msg('Save Changes') : msg(str`Create ${this._typeLabel}`)}
+          </button>
+        </div>
       </velg-base-modal>
     `;
   }

@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -225,7 +226,7 @@ export class VelgFormBuilder extends LitElement {
       if (field.required) {
         const val = this._formData[field.name];
         if (val === '' || val === undefined || val === null) {
-          errors[field.name] = `${field.label} is required`;
+          errors[field.name] = msg(str`${field.label} is required`);
         }
       }
     }
@@ -314,7 +315,7 @@ export class VelgFormBuilder extends LitElement {
               .value=${String(this._formData[field.name] ?? '')}
               @change=${(e: Event) => this._handleInput(field.name, e)}
             >
-              <option value="">Select ${field.label}...</option>
+              <option value="">${msg(str`Select ${field.label}...`)}</option>
               ${(field.options ?? []).map(
                 (opt) => html`
                   <option value=${opt.value}>${opt.label}</option>
@@ -362,7 +363,7 @@ export class VelgFormBuilder extends LitElement {
 
         <div class="form__actions">
           <button class="form__submit" type="submit">
-            Submit
+            ${msg('Submit')}
           </button>
         </div>
       </form>

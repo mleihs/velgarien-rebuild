@@ -1,7 +1,8 @@
 # 14 - I18N Architecture: Mehrsprachigkeit auf 3 Ebenen
 
-**Version:** 1.1
-**Datum:** 2026-02-15
+**Version:** 1.2
+**Datum:** 2026-02-16
+**Aenderung v1.2:** Ebene 1 (Plattform-UI) vollstaendig implementiert — 675 Strings mit msg() gewrappt, DE-Uebersetzungen in XLIFF, Locale-Toggle in PlatformHeader, FormatService fuer Datum/Zahlen
 **Änderung v1.1:** @lit/localize Modus von Build-Time auf Runtime korrigiert
 
 ---
@@ -34,22 +35,36 @@ Die Internationalisierung betrifft drei unabhangige Ebenen, die jeweils eigene M
 
 ---
 
-## Aktuelles Problem: Unkontrollierte Sprachmischung
+## Status: Ebene 1 IMPLEMENTIERT
 
-### Frontend: Hardcodierte Deutsche Strings
+### Frontend: Alle Strings mit msg() gewrappt
 
-| Komponente | String | Haufigkeit |
-|-----------|--------|-----------|
-| 15+ Komponenten | `'Laden...'` | Haufigster String |
-| AgentEditModal | `'Name und System sind erforderlich'` | Validierung |
-| VelgPortraitGenerator | `'Fehler bei der Portrait-Generierung'` | Fehlermeldung |
-| VelgBuildingsView | `'Gebaude werden geladen...'` | Loading State |
-| VelgEventsView | `'Events werden geladen...'` | Loading State |
-| VelgSocialTrendsView | `'Trends werden geladen...'` | Loading State |
-| VelgChatWindow | `'Nachricht senden'` | Button |
-| VelgAgentDetails | `'Keine Beschreibung verfugbar'` | Fallback |
-| VelgAuthModal | `'Anmelden'`, `'Registrieren'` | Auth UI |
-| VelgHeader | `'VELGARIEN'` | App-Titel (hardcodiert!) |
+**675 UI-Strings** in 66 Komponenten + 2 Services mit `msg()` / `msg(str\`...\`)` gewrappt.
+Komplette deutsche Uebersetzung in XLIFF (675 trans-units) und generiertem `de.ts`.
+
+| Bereich | Dateien | Strings |
+|---------|---------|---------|
+| Shared Components | 11 | ~30 |
+| Auth | 2 | ~20 |
+| Layout | 3 | ~10 |
+| Platform | 7 | ~70 |
+| Agents | 4 | ~50 |
+| Buildings | 4 | ~45 |
+| Events | 4 | ~35 |
+| Chat | 6 | ~25 |
+| Social | 13 | ~50 |
+| Locations | 5 | ~20 |
+| Settings | 8 | ~50 |
+| Services | 2 | ~20 |
+| **Gesamt** | **66+2** | **~675** |
+
+### Fruehere Probleme (GELOEST)
+
+Die folgenden Probleme aus dem Altsystem sind im Rebuild vollstaendig behoben:
+- Keine hardcodierten deutschen Strings mehr in Komponenten
+- Alle UI-Strings sind Englisch (Source Locale) mit `msg()` gewrappt
+- Deutsche Uebersetzungen dynamisch via `@lit/localize` Runtime Mode
+- GenerationProgressService nutzt `msg()` statt manueller Locale-Abfrage
 
 ### Backend: Gemischte Prompt-Sprachen
 
@@ -107,18 +122,19 @@ Runtime Translations (Empfohlen)
 
 > **Warum Runtime statt Build-Time?** Build-Time erzeugt separate Bundles pro Sprache und erfordert einen Page-Reload beim Sprachwechsel. Da die Plattform dynamischen Locale-Wechsel unterstützen muss (Benutzer-Präferenz + Simulations-Sprache), ist Runtime-Mode die richtige Wahl. Der Runtime-Overhead ist minimal (~1kb).
 
-### Konfiguration
+### Konfiguration (Implementiert)
 
 ```json
-// lit-localize.json
+// frontend/lit-localize.json
 {
   "sourceLocale": "en",
-  "targetLocales": ["de", "fr", "es"],
-  "tsConfig": "tsconfig.json",
+  "targetLocales": ["de"],
   "output": {
     "mode": "runtime",
-    "outputDir": "src/locales/generated"
+    "outputDir": "src/locales/generated",
+    "language": "ts"
   },
+  "inputFiles": ["src/**/*.ts"],
   "interchange": {
     "format": "xliff",
     "xliffDir": "src/locales/xliff"
@@ -155,201 +171,25 @@ export class VelgAgentsView extends LitElement {
 }
 ```
 
-### Translation-Dateien
+### Translation-Workflow (Implementiert)
 
-```json
-// locales/de.json
-{
-  "common": {
-    "loading": "Laden...",
-    "save": "Speichern",
-    "cancel": "Abbrechen",
-    "delete": "Loschen",
-    "edit": "Bearbeiten",
-    "create": "Erstellen",
-    "search": "Suchen",
-    "filter": "Filtern",
-    "noResults": "Keine Ergebnisse",
-    "confirm": "Bestatigen",
-    "back": "Zuruck",
-    "next": "Weiter",
-    "close": "Schliessen"
-  },
-  "auth": {
-    "login": "Anmelden",
-    "register": "Registrieren",
-    "logout": "Abmelden",
-    "email": "E-Mail-Adresse",
-    "password": "Passwort",
-    "forgotPassword": "Passwort vergessen?",
-    "loginFailed": "Anmeldung fehlgeschlagen",
-    "registerFailed": "Registrierung fehlgeschlagen"
-  },
-  "agents": {
-    "title": "Agenten",
-    "createAgent": "Agent erstellen",
-    "editAgent": "Agent bearbeiten",
-    "deleteAgent": "Agent loschen",
-    "name": "Name",
-    "system": "System",
-    "gender": "Geschlecht",
-    "profession": "Profession",
-    "character": "Charakter",
-    "background": "Hintergrund",
-    "noDescription": "Keine Beschreibung verfugbar",
-    "generateDescription": "Beschreibung generieren",
-    "generatePortrait": "Portrait generieren",
-    "portraitError": "Fehler bei der Portrait-Generierung",
-    "validation": {
-      "nameRequired": "Name ist erforderlich",
-      "systemRequired": "System ist erforderlich",
-      "nameSystemRequired": "Name und System sind erforderlich"
-    }
-  },
-  "buildings": {
-    "title": "Gebaude",
-    "loading": "Gebaude werden geladen...",
-    "createBuilding": "Gebaude erstellen",
-    "editBuilding": "Gebaude bearbeiten"
-  },
-  "events": {
-    "title": "Events",
-    "loading": "Events werden geladen...",
-    "createEvent": "Event erstellen"
-  },
-  "social": {
-    "title": "Social Trends",
-    "loading": "Trends werden geladen...",
-    "campaigns": "Kampagnen"
-  },
-  "chat": {
-    "sendMessage": "Nachricht senden",
-    "placeholder": "Schreibe eine Nachricht...",
-    "noConversations": "Keine Konversationen"
-  },
-  "generation": {
-    "generating": "Generierung lauft...",
-    "success": "Erfolgreich generiert",
-    "failed": "Generierung fehlgeschlagen",
-    "portrait": {
-      "generating": "Portrait wird generiert...",
-      "error": "Fehler bei der Portrait-Generierung"
-    }
-  },
-  "settings": {
-    "title": "Einstellungen",
-    "general": "Allgemein",
-    "world": "Welt",
-    "ai": "KI-Einstellungen",
-    "integrations": "Integrationen",
-    "design": "Design",
-    "access": "Zugang"
-  },
-  "simulation": {
-    "title": "Simulation",
-    "create": "Simulation erstellen",
-    "settings": "Simulationseinstellungen",
-    "members": "Mitglieder"
-  }
-}
+Uebersetzungen werden ueber den `@lit/localize` XLIFF-Workflow verwaltet (NICHT als JSON-Dateien):
+
+```
+1. Strings in Komponenten mit msg('English text') wrappen
+2. npx lit-localize extract        → generiert/aktualisiert src/locales/xliff/de.xlf
+3. Deutsche <target> in XLIFF eintragen
+4. npx lit-localize build          → generiert src/locales/generated/de.ts
 ```
 
-```json
-// locales/en.json
-{
-  "common": {
-    "loading": "Loading...",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "create": "Create",
-    "search": "Search",
-    "filter": "Filter",
-    "noResults": "No results",
-    "confirm": "Confirm",
-    "back": "Back",
-    "next": "Next",
-    "close": "Close"
-  },
-  "auth": {
-    "login": "Sign In",
-    "register": "Sign Up",
-    "logout": "Sign Out",
-    "email": "Email Address",
-    "password": "Password",
-    "forgotPassword": "Forgot Password?",
-    "loginFailed": "Login failed",
-    "registerFailed": "Registration failed"
-  },
-  "agents": {
-    "title": "Agents",
-    "createAgent": "Create Agent",
-    "editAgent": "Edit Agent",
-    "deleteAgent": "Delete Agent",
-    "name": "Name",
-    "system": "System",
-    "gender": "Gender",
-    "profession": "Profession",
-    "character": "Character",
-    "background": "Background",
-    "noDescription": "No description available",
-    "generateDescription": "Generate Description",
-    "generatePortrait": "Generate Portrait",
-    "portraitError": "Error generating portrait",
-    "validation": {
-      "nameRequired": "Name is required",
-      "systemRequired": "System is required",
-      "nameSystemRequired": "Name and system are required"
-    }
-  },
-  "buildings": {
-    "title": "Buildings",
-    "loading": "Loading buildings...",
-    "createBuilding": "Create Building",
-    "editBuilding": "Edit Building"
-  },
-  "events": {
-    "title": "Events",
-    "loading": "Loading events...",
-    "createEvent": "Create Event"
-  },
-  "social": {
-    "title": "Social Trends",
-    "loading": "Loading trends...",
-    "campaigns": "Campaigns"
-  },
-  "chat": {
-    "sendMessage": "Send Message",
-    "placeholder": "Type a message...",
-    "noConversations": "No conversations"
-  },
-  "generation": {
-    "generating": "Generating...",
-    "success": "Successfully generated",
-    "failed": "Generation failed",
-    "portrait": {
-      "generating": "Generating portrait...",
-      "error": "Error generating portrait"
-    }
-  },
-  "settings": {
-    "title": "Settings",
-    "general": "General",
-    "world": "World",
-    "ai": "AI Settings",
-    "integrations": "Integrations",
-    "design": "Design",
-    "access": "Access"
-  },
-  "simulation": {
-    "title": "Simulation",
-    "create": "Create Simulation",
-    "settings": "Simulation Settings",
-    "members": "Members"
-  }
-}
-```
+**Generierte Dateien:**
+- `frontend/src/locales/generated/locale-codes.ts` — Source/Target Locale Konstanten
+- `frontend/src/locales/generated/de.ts` — Hash-basierte Template-Map (675 Eintraege, auto-generiert)
+- `frontend/src/locales/xliff/de.xlf` — XLIFF 1.2 Interchange-Datei (675 trans-units)
+
+**Wichtig:** Die `de.ts` Datei wird automatisch generiert und darf NICHT manuell bearbeitet werden.
+Aenderungen erfolgen ausschliesslich ueber die XLIFF-Datei + `lit-localize build`.
+Die generierten Dateien sind von Biome-Checks ausgenommen (`biome.json` negation pattern).
 
 ### Locale-Service
 

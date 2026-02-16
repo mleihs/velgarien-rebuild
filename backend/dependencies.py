@@ -1,12 +1,16 @@
+import logging
 from typing import Annotated
 from uuid import UUID
 
+import httpx
 from fastapi import Depends, Header, HTTPException, Path, status
 from jose import JWTError, jwt
 
 from backend.config import settings
 from backend.models.common import CurrentUser
 from supabase import Client, create_client
+
+logger = logging.getLogger(__name__)
 
 # Role hierarchy: higher index = more privileges
 ROLE_HIERARCHY: dict[str, int] = {
@@ -15,6 +19,60 @@ ROLE_HIERARCHY: dict[str, int] = {
     "admin": 2,
     "owner": 3,
 }
+
+# Cached JWKS keys (populated on first use)
+_jwks_cache: dict | None = None
+
+
+def _get_jwks() -> dict:
+    """Fetch and cache the JWKS from the Supabase Auth server."""
+    global _jwks_cache  # noqa: PLW0603
+    if _jwks_cache is not None:
+        return _jwks_cache
+    try:
+        url = f"{settings.supabase_url}/auth/v1/.well-known/jwks.json"
+        resp = httpx.get(url, headers={"apikey": settings.supabase_anon_key}, timeout=5)
+        resp.raise_for_status()
+        _jwks_cache = resp.json()
+        logger.info("Fetched JWKS from %s (%d keys)", url, len(_jwks_cache.get("keys", [])))
+    except Exception:
+        logger.warning("Could not fetch JWKS, falling back to HS256 only")
+        _jwks_cache = {"keys": []}
+    return _jwks_cache
+
+
+def _decode_jwt(token: str) -> dict:
+    """Decode a JWT using JWKS (ES256) or shared secret (HS256)."""
+    # Read the unverified header to determine algorithm
+    header = jwt.get_unverified_header(token)
+    alg = header.get("alg", "HS256")
+
+    if alg == "HS256":
+        return jwt.decode(
+            token,
+            settings.supabase_jwt_secret,
+            algorithms=["HS256"],
+            audience="authenticated",
+        )
+
+    # For ES256+, look up the signing key from JWKS
+    kid = header.get("kid")
+    jwks_data = _get_jwks()
+    signing_key = None
+    for key_data in jwks_data.get("keys", []):
+        if key_data.get("kid") == kid:
+            signing_key = key_data
+            break
+
+    if not signing_key:
+        raise JWTError(f"No matching JWKS key found for kid={kid}")
+
+    return jwt.decode(
+        token,
+        signing_key,
+        algorithms=[alg],
+        audience="authenticated",
+    )
 
 
 async def get_current_user(
@@ -30,12 +88,7 @@ async def get_current_user(
     token = authorization.removeprefix("Bearer ").strip()
 
     try:
-        payload = jwt.decode(
-            token,
-            settings.supabase_jwt_secret,
-            algorithms=["HS256"],
-            audience="authenticated",
-        )
+        payload = _decode_jwt(token)
     except JWTError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -98,17 +151,23 @@ def require_role(required_role: str):
             .select("member_role")
             .eq("simulation_id", str(simulation_id))
             .eq("user_id", str(user.id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
 
-        if not response.data:
+        member = (
+            response.data[0]
+            if response and response.data and isinstance(response.data, list)
+            else (response.data if response and response.data else None)
+        )
+
+        if not member:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You are not a member of this simulation.",
             )
 
-        actual_role = response.data["member_role"]
+        actual_role = member["member_role"]
         required_level = ROLE_HIERARCHY.get(required_role, 0)
         actual_level = ROLE_HIERARCHY.get(actual_role, 0)
 

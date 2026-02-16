@@ -1,7 +1,8 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { chatApi } from '../../services/api/index.js';
-import type { ChatConversation, ChatMessage, PaginatedResponse } from '../../types/index.js';
+import type { ChatConversation, ChatMessage } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 
 import './MessageList.js';
@@ -185,14 +186,13 @@ export class VelgChatWindow extends LitElement {
       });
 
       if (response.success && response.data) {
-        const paginated = response.data as PaginatedResponse<ChatMessage>;
-        this._messages = paginated.data ?? [];
+        this._messages = Array.isArray(response.data) ? response.data : [];
         this._scrollToBottom();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to load messages.');
+        VelgToast.error(response.error?.message ?? msg('Failed to load messages.'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred while loading messages.');
+      VelgToast.error(msg('An unexpected error occurred while loading messages.'));
     } finally {
       this._loading = false;
     }
@@ -245,23 +245,23 @@ export class VelgChatWindow extends LitElement {
           } else {
             // AI response failed, but user message was saved — reload to show current state
             await this._loadMessages();
-            VelgToast.error(aiResponse.error?.message ?? 'Failed to get AI response.');
+            VelgToast.error(aiResponse.error?.message ?? msg('Failed to get AI response.'));
           }
         } catch {
           await this._loadMessages();
-          VelgToast.error('An unexpected error occurred while getting the AI response.');
+          VelgToast.error(msg('An unexpected error occurred while getting the AI response.'));
         } finally {
           this._aiTyping = false;
         }
       } else {
         // Remove optimistic message on error
         this._messages = this._messages.filter((m) => m.id !== optimisticMessage.id);
-        VelgToast.error(response.error?.message ?? 'Failed to send message.');
+        VelgToast.error(response.error?.message ?? msg('Failed to send message.'));
         this._sending = false;
       }
     } catch {
       this._messages = this._messages.filter((m) => m.id !== optimisticMessage.id);
-      VelgToast.error('An unexpected error occurred while sending the message.');
+      VelgToast.error(msg('An unexpected error occurred while sending the message.'));
       this._sending = false;
     }
   }
@@ -269,9 +269,9 @@ export class VelgChatWindow extends LitElement {
   private _renderNoConversation() {
     return html`
       <div class="window__empty">
-        <div class="window__empty-title">Select a Conversation</div>
+        <div class="window__empty-title">${msg('Select a Conversation')}</div>
         <div class="window__empty-text">
-          Choose a conversation from the list or start a new one by selecting an agent.
+          ${msg('Choose a conversation from the list or start a new one by selecting an agent.')}
         </div>
       </div>
     `;
@@ -282,7 +282,7 @@ export class VelgChatWindow extends LitElement {
       return this._renderNoConversation();
     }
 
-    const agentName = this.conversation.agent?.name ?? 'Agent';
+    const agentName = this.conversation.agent?.name ?? msg('Agent');
     const isArchived = this.conversation.status === 'archived';
 
     return html`
@@ -290,13 +290,13 @@ export class VelgChatWindow extends LitElement {
         <div class="window__header">
           <div class="window__agent-name">${agentName}</div>
           <div class="window__status">
-            ${isArchived ? 'Archived' : `${this.conversation.message_count} messages`}
+            ${isArchived ? msg('Archived') : msg(str`${this.conversation.message_count} messages`)}
           </div>
         </div>
 
         ${
           this._loading
-            ? html`<div class="window__loading">Loading messages...</div>`
+            ? html`<div class="window__loading">${msg('Loading messages...')}</div>`
             : html`
               <div class="window__messages">
                 <velg-message-list
@@ -307,7 +307,7 @@ export class VelgChatWindow extends LitElement {
             `
         }
 
-        ${this._sending ? html`<div class="window__sending-indicator">Sending...</div>` : null}
+        ${this._sending ? html`<div class="window__sending-indicator">${msg('Sending...')}</div>` : null}
 
         ${
           this._aiTyping

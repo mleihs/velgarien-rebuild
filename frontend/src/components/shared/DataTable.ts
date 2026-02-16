@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -261,7 +262,7 @@ export class VelgDataTable extends LitElement {
                 ? html`
                 <tr class="empty-row">
                   <td colspan=${this.columns.length + (this.selectable ? 1 : 0)}>
-                    No data available
+                    ${msg('No data available')}
                   </td>
                 </tr>
               `

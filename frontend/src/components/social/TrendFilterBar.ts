@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import type { FilterChangeDetail } from '../shared/SharedFilterBar.js';
@@ -18,30 +19,30 @@ export class VelgTrendFilterBar extends LitElement {
         .filters=${[
           {
             key: 'platform',
-            label: 'Platform',
+            label: msg('Platform'),
             type: 'select' as const,
             options: [
-              { value: 'guardian', label: 'Guardian' },
-              { value: 'newsapi', label: 'NewsAPI' },
+              { value: 'guardian', label: msg('Guardian') },
+              { value: 'newsapi', label: msg('NewsAPI') },
             ],
           },
           {
             key: 'sentiment',
-            label: 'Sentiment',
+            label: msg('Sentiment'),
             type: 'select' as const,
             options: [
-              { value: 'positive', label: 'Positive' },
-              { value: 'negative', label: 'Negative' },
-              { value: 'neutral', label: 'Neutral' },
+              { value: 'positive', label: msg('Positive') },
+              { value: 'negative', label: msg('Negative') },
+              { value: 'neutral', label: msg('Neutral') },
             ],
           },
           {
             key: 'is_processed',
-            label: 'Processed',
+            label: msg('Processed'),
             type: 'select' as const,
             options: [
-              { value: 'true', label: 'Yes' },
-              { value: 'false', label: 'No' },
+              { value: 'true', label: msg('Yes') },
+              { value: 'false', label: msg('No') },
             ],
           },
         ]}

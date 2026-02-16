@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { chatApi } from '../../services/api/index.js';
@@ -127,10 +128,10 @@ export class VelgChatView extends LitElement {
       if (response.success && response.data) {
         this._conversations = response.data;
       } else {
-        this._error = response.error?.message ?? 'Failed to load conversations.';
+        this._error = response.error?.message ?? msg('Failed to load conversations.');
       }
     } catch {
-      this._error = 'An unexpected error occurred while loading conversations.';
+      this._error = msg('An unexpected error occurred while loading conversations.');
     } finally {
       this._loading = false;
     }
@@ -146,7 +147,7 @@ export class VelgChatView extends LitElement {
     try {
       const response = await chatApi.archiveConversation(this.simulationId, conversation.id);
       if (response.success) {
-        VelgToast.success('Conversation archived.');
+        VelgToast.success(msg('Conversation archived.'));
         // Update the conversation in the list
         this._conversations = this._conversations.map((c) =>
           c.id === conversation.id ? { ...c, status: 'archived' as const } : c,
@@ -159,10 +160,10 @@ export class VelgChatView extends LitElement {
           };
         }
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to archive conversation.');
+        VelgToast.error(response.error?.message ?? msg('Failed to archive conversation.'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred while archiving the conversation.');
+      VelgToast.error(msg('An unexpected error occurred while archiving the conversation.'));
     }
   }
 
@@ -177,7 +178,7 @@ export class VelgChatView extends LitElement {
     try {
       const response = await chatApi.createConversation(this.simulationId, {
         agent_id: agent.id,
-        title: `Chat with ${agent.name}`,
+        title: msg(str`Chat with ${agent.name}`),
       });
 
       if (response.success && response.data) {
@@ -188,12 +189,12 @@ export class VelgChatView extends LitElement {
         };
         this._conversations = [newConversation, ...this._conversations];
         this._selectedConversation = newConversation;
-        VelgToast.success(`Conversation started with ${agent.name}.`);
+        VelgToast.success(msg(str`Conversation started with ${agent.name}.`));
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to create conversation.');
+        VelgToast.error(response.error?.message ?? msg('Failed to create conversation.'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred while creating the conversation.');
+      VelgToast.error(msg('An unexpected error occurred while creating the conversation.'));
     }
   }
 
@@ -205,16 +206,16 @@ export class VelgChatView extends LitElement {
     if (this._loading) {
       return html`
         <div class="chat-header">
-          <h1 class="chat-title">Chat</h1>
+          <h1 class="chat-title">${msg('Chat')}</h1>
         </div>
-        <velg-loading-state message="Loading conversations..."></velg-loading-state>
+        <velg-loading-state message=${msg('Loading conversations...')}></velg-loading-state>
       `;
     }
 
     if (this._error) {
       return html`
         <div class="chat-header">
-          <h1 class="chat-title">Chat</h1>
+          <h1 class="chat-title">${msg('Chat')}</h1>
         </div>
         <velg-error-state
           .message=${this._error}
@@ -226,15 +227,15 @@ export class VelgChatView extends LitElement {
 
     return html`
       <div class="chat-header">
-        <h1 class="chat-title">Chat</h1>
+        <h1 class="chat-title">${msg('Chat')}</h1>
       </div>
 
       <div class="chat-layout">
         <div class="sidebar">
           <div class="sidebar__header">
-            <div class="sidebar__title">Conversations</div>
+            <div class="sidebar__title">${msg('Conversations')}</div>
             <button class="sidebar__new-btn" @click=${this._handleNewConversation}>
-              + New
+              ${msg('+ New')}
             </button>
           </div>
           <div class="sidebar__list">

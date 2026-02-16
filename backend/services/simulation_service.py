@@ -61,7 +61,29 @@ class SimulationService:
         response = query.execute()
 
         total = response.count if response.count is not None else len(response.data or [])
-        return response.data or [], total
+        data = response.data or []
+
+        # Enrich with counts from the simulation_dashboard view
+        if data:
+            ids = [s["id"] for s in data]
+            count_response = (
+                supabase.table("simulation_dashboard")
+                .select("simulation_id, agent_count, building_count, event_count, member_count")
+                .in_("simulation_id", ids)
+                .execute()
+            )
+            counts_map = {
+                row["simulation_id"]: row
+                for row in (count_response.data or [])
+            }
+            for sim in data:
+                counts = counts_map.get(sim["id"], {})
+                sim["agent_count"] = counts.get("agent_count", 0)
+                sim["building_count"] = counts.get("building_count", 0)
+                sim["event_count"] = counts.get("event_count", 0)
+                sim["member_count"] = counts.get("member_count", 0)
+
+        return data, total
 
     @staticmethod
     async def create_simulation(
@@ -77,11 +99,11 @@ class SimulationService:
             supabase.table("simulations")
             .select("id")
             .eq("slug", slug)
-            .maybe_single()
+            .limit(1)
             .execute()
         )
 
-        if existing.data:
+        if existing and existing.data:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f"A simulation with slug '{slug}' already exists.",
@@ -131,17 +153,17 @@ class SimulationService:
             supabase.table("simulation_dashboard")
             .select("*")
             .eq("simulation_id", str(simulation_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
 
-        if not response.data:
+        if not response or not response.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Simulation '{simulation_id}' not found.",
             )
 
-        return response.data
+        return response.data[0]
 
     @staticmethod
     async def update_simulation(

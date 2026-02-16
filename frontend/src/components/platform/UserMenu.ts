@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -102,7 +103,7 @@ export class VelgUserMenu extends LitElement {
 
   protected render() {
     const user = appState.user.value;
-    const email = user?.email || 'User';
+    const email = user?.email || msg('User');
 
     return html`
       <button class="user-btn" @click=${this._toggleMenu}>
@@ -111,7 +112,7 @@ export class VelgUserMenu extends LitElement {
 
       <div class="dropdown ${this._open ? 'dropdown--open' : ''}">
         <button class="dropdown__item" @click=${this._handleSignOut}>
-          Sign Out
+          ${msg('Sign Out')}
         </button>
       </div>
     `;

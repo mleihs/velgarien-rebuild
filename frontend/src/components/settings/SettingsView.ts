@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -9,6 +10,7 @@ import './AISettingsPanel.js';
 import './IntegrationSettingsPanel.js';
 import './DesignSettingsPanel.js';
 import './AccessSettingsPanel.js';
+import './PromptsSettingsPanel.js';
 
 interface TabDef {
   key: SettingCategory;
@@ -17,12 +19,13 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  { key: 'general', label: 'General' },
-  { key: 'world', label: 'World' },
-  { key: 'ai', label: 'AI' },
-  { key: 'integration', label: 'Integration' },
-  { key: 'design', label: 'Design' },
-  { key: 'access', label: 'Access', ownerOnly: true },
+  { key: 'general', label: msg('General') },
+  { key: 'world', label: msg('World') },
+  { key: 'ai', label: msg('AI') },
+  { key: 'prompts', label: msg('Prompts') },
+  { key: 'integration', label: msg('Integration') },
+  { key: 'design', label: msg('Design') },
+  { key: 'access', label: msg('Access'), ownerOnly: true },
 ];
 
 @customElement('velg-settings-view')
@@ -206,6 +209,12 @@ export class VelgSettingsView extends LitElement {
             @settings-saved=${this._handleSettingsSaved}
           ></velg-ai-settings-panel>
         `;
+      case 'prompts':
+        return html`
+          <velg-prompts-settings-panel
+            .simulationId=${this.simulationId}
+          ></velg-prompts-settings-panel>
+        `;
       case 'integration':
         return html`
           <velg-integration-settings-panel
@@ -239,26 +248,26 @@ export class VelgSettingsView extends LitElement {
     return html`
       <div class="settings">
         <div class="settings__header">
-          <h1 class="settings__title">Settings</h1>
+          <h1 class="settings__title">${msg('Settings')}</h1>
         </div>
 
         ${
           this._pendingTab
             ? html`
               <div class="settings__unsaved-warning">
-                You have unsaved changes. Discard and switch tab?
+                ${msg('You have unsaved changes. Discard and switch tab?')}
                 <div class="settings__unsaved-actions">
                   <button
                     class="settings__unsaved-btn"
                     @click=${this._handleCancelSwitch}
                   >
-                    Stay
+                    ${msg('Stay')}
                   </button>
                   <button
                     class="settings__unsaved-btn"
                     @click=${this._handleDiscardAndSwitch}
                   >
-                    Discard
+                    ${msg('Discard')}
                   </button>
                 </div>
               </div>

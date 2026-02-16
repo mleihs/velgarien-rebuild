@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { authService } from '../../services/supabase/SupabaseAuthService.js';
@@ -164,12 +165,12 @@ export class VelgRegisterView extends LitElement {
     this._success = null;
 
     if (this._password !== this._confirmPassword) {
-      this._error = 'Passwords do not match.';
+      this._error = msg('Passwords do not match.');
       return;
     }
 
     if (this._password.length < 8) {
-      this._error = 'Password must be at least 8 characters.';
+      this._error = msg('Password must be at least 8 characters.');
       return;
     }
 
@@ -180,13 +181,15 @@ export class VelgRegisterView extends LitElement {
       if (error) {
         this._error = error.message;
       } else {
-        this._success = 'Registration successful. Please check your email to confirm your account.';
+        this._success = msg(
+          'Registration successful. Please check your email to confirm your account.',
+        );
         this._email = '';
         this._password = '';
         this._confirmPassword = '';
       }
     } catch {
-      this._error = 'An unexpected error occurred. Please try again.';
+      this._error = msg('An unexpected error occurred. Please try again.');
     } finally {
       this._loading = false;
     }
@@ -214,7 +217,7 @@ export class VelgRegisterView extends LitElement {
     return html`
       <div class="register-container">
         <div class="register-header">
-          <h1 class="register-title">Register</h1>
+          <h1 class="register-title">${msg('Register')}</h1>
         </div>
 
         <div class="register-body">
@@ -224,7 +227,7 @@ export class VelgRegisterView extends LitElement {
 
           <form @submit=${this._handleSubmit}>
             <div class="form-group">
-              <label class="form-label" for="email">Email</label>
+              <label class="form-label" for="email">${msg('Email')}</label>
               <input
                 class="form-input"
                 id="email"
@@ -237,7 +240,7 @@ export class VelgRegisterView extends LitElement {
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="password">Password</label>
+              <label class="form-label" for="password">${msg('Password')}</label>
               <input
                 class="form-input"
                 id="password"
@@ -251,7 +254,7 @@ export class VelgRegisterView extends LitElement {
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="confirm-password">Confirm Password</label>
+              <label class="form-label" for="confirm-password">${msg('Confirm Password')}</label>
               <input
                 class="form-input"
                 id="confirm-password"
@@ -269,14 +272,14 @@ export class VelgRegisterView extends LitElement {
               type="submit"
               ?disabled=${this._loading}
             >
-              ${this._loading ? 'Registering...' : 'Register'}
+              ${this._loading ? msg('Registering...') : msg('Register')}
             </button>
           </form>
         </div>
 
         <div class="register-footer">
-          Already have an account?
-          <a href="/login" @click=${this._handleLoginClick}>Sign In</a>
+          ${msg('Already have an account?')}
+          <a href="/login" @click=${this._handleLoginClick}>${msg('Sign In')}</a>
         </div>
       </div>
     `;

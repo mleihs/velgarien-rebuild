@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from uuid import UUID
 
 from backend.services.external.openrouter import (
@@ -40,8 +41,12 @@ class GenerationService:
         agent_gender: str,
         locale: str = "de",
     ) -> dict:
-        """Generate a full agent description (character + background)."""
-        return await self._generate(
+        """Generate a full agent description (character + background).
+
+        Parses JSON from the LLM response to return structured fields:
+        character, background, description.
+        """
+        result = await self._generate(
             template_type="agent_generation_full",
             model_purpose="agent_description",
             variables={
@@ -54,13 +59,23 @@ class GenerationService:
             locale=locale,
         )
 
+        # Parse JSON from LLM response to extract structured fields
+        parsed = self._parse_json_content(result.get("content", ""))
+        if parsed:
+            for field in ("character", "background", "description"):
+                if field in parsed:
+                    result[field] = parsed[field]
+            # Keep content as the character text for backwards compatibility
+            result["content"] = parsed.get("character", result.get("content", ""))
+        return result
+
     async def generate_agent_partial(
         self,
         agent_data: dict,
         locale: str = "de",
     ) -> dict:
         """Generate missing fields for a partially filled agent."""
-        return await self._generate(
+        result = await self._generate(
             template_type="agent_generation_partial",
             model_purpose="agent_description",
             variables={
@@ -74,13 +89,28 @@ class GenerationService:
             locale=locale,
         )
 
+        # Parse JSON from LLM response to extract structured fields
+        parsed = self._parse_json_content(result.get("content", ""))
+        if parsed:
+            for field in ("character", "background", "description"):
+                if field in parsed:
+                    result[field] = parsed[field]
+            result["content"] = parsed.get("character", result.get("content", ""))
+        return result
+
     async def generate_building(
         self,
         building_type: str,
         building_name: str | None = None,
+        building_style: str | None = None,
+        building_condition: str | None = None,
         locale: str = "de",
     ) -> dict:
-        """Generate a building description."""
+        """Generate a building description.
+
+        Parses JSON from the LLM response to return structured fields:
+        name, description, building_condition.
+        """
         template_type = (
             "building_generation_named" if building_name
             else "building_generation"
@@ -92,13 +122,27 @@ class GenerationService:
         }
         if building_name:
             variables["building_name"] = building_name
+        if building_style:
+            variables["building_style"] = building_style
+        if building_condition:
+            variables["building_condition"] = building_condition
 
-        return await self._generate(
+        result = await self._generate(
             template_type=template_type,
             model_purpose="building_description",
             variables=variables,
             locale=locale,
         )
+
+        # Parse JSON from LLM response to extract structured fields
+        parsed = self._parse_json_content(result.get("content", ""))
+        if parsed:
+            result["content"] = parsed.get("description", result.get("content", ""))
+            if "name" in parsed:
+                result["name"] = parsed["name"]
+            if "building_condition" in parsed:
+                result["building_condition"] = parsed["building_condition"]
+        return result
 
     async def generate_portrait_description(
         self,
@@ -222,6 +266,49 @@ class GenerationService:
             locale=locale,
         )
 
+    # --- JSON parsing ---
+
+    @staticmethod
+    def _parse_json_content(content: str) -> dict | None:
+        """Extract and parse JSON from LLM response.
+
+        Handles markdown code fences (```json ... ```) and raw JSON.
+        Falls back to regex extraction for truncated/incomplete JSON.
+        Returns parsed dict or None if parsing fails.
+        """
+        # Strip markdown code fences
+        cleaned = re.sub(r"^```(?:json)?\s*", "", content.strip())
+        cleaned = re.sub(r"\s*```$", "", cleaned.strip())
+
+        try:
+            return json.loads(cleaned)
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+        # Fallback: extract fields via regex from truncated JSON
+        return GenerationService._extract_json_fields(cleaned)
+
+    @staticmethod
+    def _extract_json_fields(text: str) -> dict | None:
+        """Extract string fields from potentially truncated JSON using regex.
+
+        Looks for "key": "value" patterns. Handles multi-line string values
+        by matching up to the next unescaped closing quote followed by a
+        comma, closing brace, or end of known field.
+        """
+        result: dict[str, str] = {}
+        # Match "key": "value" where value may span multiple lines
+        # Uses a pattern that finds complete key-value pairs
+        pattern = r'"(\w+)"\s*:\s*"((?:[^"\\]|\\.)*)"\s*[,}]'
+        for match in re.finditer(pattern, text, re.DOTALL):
+            key = match.group(1)
+            value = match.group(2)
+            # Unescape common JSON escapes
+            value = value.replace('\\"', '"').replace("\\n", "\n").replace("\\t", "\t")
+            result[key] = value
+
+        return result if result else None
+
     # --- Internal helpers ---
 
     async def _generate(
@@ -306,9 +393,9 @@ class GenerationService:
             self._supabase.table("simulations")
             .select("name")
             .eq("id", str(self._simulation_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        if response.data:
-            return response.data.get("name", "Unknown Simulation")
+        if response and response.data:
+            return response.data[0].get("name", "Unknown Simulation")
         return "Unknown Simulation"

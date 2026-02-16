@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { CampaignMetric } from '../../types/index.js';
@@ -19,7 +20,7 @@ export class VelgCampaignMetrics extends LitElement {
 
   protected render() {
     if (!this.metrics.length)
-      return html`<p style="color: var(--color-text-secondary)">No metrics available</p>`;
+      return html`<p style="color: var(--color-text-secondary)">${msg('No metrics available')}</p>`;
 
     return html`
       <div class="metrics">

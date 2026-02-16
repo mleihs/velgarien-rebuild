@@ -46,6 +46,9 @@ class OpenRouterService:
     ) -> str:
         """Generate text using the specified model.
 
+        Raises:
+            OpenRouterError: If no API key is configured.
+
         Args:
             model: OpenRouter model ID (e.g. "deepseek/deepseek-chat-v3-0324")
             messages: Chat messages in OpenAI format [{"role": "...", "content": "..."}]
@@ -60,6 +63,12 @@ class OpenRouterService:
             ModelUnavailableError: On 503 responses
             OpenRouterError: On other API errors
         """
+        if not self.api_key:
+            raise OpenRouterError(
+                "OpenRouter API key is not configured. "
+                "Set OPENROUTER_API_KEY in .env or in simulation settings."
+            )
+
         payload = {
             "model": model,
             "messages": messages,

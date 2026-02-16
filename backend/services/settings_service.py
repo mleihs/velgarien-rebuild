@@ -1,13 +1,16 @@
 """Service layer for simulation settings."""
 
+import logging
 from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import HTTPException, status
 
-from backend.models.settings import ENCRYPTED_SETTING_KEYS
-from backend.utils.encryption import encrypt, mask
+from backend.models.settings import is_sensitive_key
+from backend.utils.encryption import decrypt, encrypt, mask
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 
 class SettingsService:
@@ -46,15 +49,15 @@ class SettingsService:
             .select("*")
             .eq("simulation_id", str(simulation_id))
             .eq("id", str(setting_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        if not response.data:
+        if not response or not response.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Setting '{setting_id}' not found.",
             )
-        return _mask_if_encrypted(response.data)
+        return _mask_if_encrypted(response.data[0])
 
     @staticmethod
     async def upsert_setting(
@@ -68,7 +71,7 @@ class SettingsService:
         setting_value = data["setting_value"]
 
         # Encrypt sensitive values
-        if setting_key in ENCRYPTED_SETTING_KEYS and isinstance(setting_value, str):
+        if is_sensitive_key(setting_key) and isinstance(setting_value, str):
             setting_value = encrypt(setting_value)
 
         insert_data = {
@@ -117,8 +120,23 @@ class SettingsService:
 
 
 def _mask_if_encrypted(setting: dict) -> dict:
-    """Mask the value if this is an encrypted setting key."""
-    if setting.get("setting_key") in ENCRYPTED_SETTING_KEYS:
+    """Mask the value if this is an encrypted setting key.
+
+    If the stored value is a Fernet ciphertext, decrypt first so the mask
+    shows the last 4 chars of the *plaintext* (e.g. ``***...3a66``), not
+    the ciphertext.
+    """
+    if is_sensitive_key(setting.get("setting_key", "")):
         val = setting.get("setting_value", "")
-        setting["setting_value"] = mask(str(val)) if val else "***"
+        if not val:
+            setting["setting_value"] = "***"
+        else:
+            display_val = str(val)
+            # If encrypted, decrypt to get readable last-4 chars
+            if isinstance(val, str) and val.startswith("gAAAAA"):
+                try:
+                    display_val = decrypt(val)
+                except (ValueError, Exception):
+                    logger.debug("Could not decrypt setting for masking, using ciphertext")
+            setting["setting_value"] = mask(display_val)
     return setting

@@ -1,4 +1,9 @@
-import type { ApiResponse, PaginatedResponse, SocialTrend } from '../../types/index.js';
+import type {
+  ApiResponse,
+  PaginatedResponse,
+  Event as SimEvent,
+  SocialTrend,
+} from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class SocialTrendsApiService extends BaseApiService {
@@ -18,8 +23,19 @@ export class SocialTrendsApiService extends BaseApiService {
 
   transform(
     simulationId: string,
-    data: { trend_id: string; transformation_type?: string },
-  ): Promise<ApiResponse<Record<string, unknown>>> {
+    data: { trend_id: string },
+  ): Promise<
+    ApiResponse<{
+      trend_id: string;
+      original_title: string;
+      transformation: {
+        content: string;
+        model_used: string;
+        template_source: string;
+        locale: string;
+      };
+    }>
+  > {
     return this.post(`/simulations/${simulationId}/social-trends/transform`, data);
   }
 
@@ -27,12 +43,13 @@ export class SocialTrendsApiService extends BaseApiService {
     simulationId: string,
     data: {
       trend_id: string;
-      campaign_title: string;
-      campaign_type?: string;
-      target_demographic?: string;
-      urgency_level?: string;
+      title: string;
+      description?: string;
+      event_type?: string;
+      impact_level?: number;
+      tags?: string[];
     },
-  ): Promise<ApiResponse<Record<string, unknown>>> {
+  ): Promise<ApiResponse<SimEvent>> {
     return this.post(`/simulations/${simulationId}/social-trends/integrate`, data);
   }
 

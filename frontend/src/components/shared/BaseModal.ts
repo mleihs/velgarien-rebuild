@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
@@ -161,7 +162,7 @@ export class VelgBaseModal extends LitElement {
             <button
               class="modal__close"
               @click=${this._close}
-              aria-label="Close"
+              aria-label=${msg('Close')}
             >
               X
             </button>

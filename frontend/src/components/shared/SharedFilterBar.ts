@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -145,7 +146,7 @@ export class VelgFilterBar extends LitElement {
   `;
 
   @property({ type: Array }) filters: FilterConfig[] = [];
-  @property({ type: String, attribute: 'search-placeholder' }) searchPlaceholder = 'Search...';
+  @property({ type: String, attribute: 'search-placeholder' }) searchPlaceholder = msg('Search...');
 
   @state() private _search = '';
   @state() private _activeFilters: Record<string, string> = {};
@@ -259,7 +260,7 @@ export class VelgFilterBar extends LitElement {
                     <button
                       class="filter-bar__chip-remove"
                       @click=${() => this._removeFilter(key)}
-                      aria-label="Remove filter"
+                      aria-label=${msg('Remove filter')}
                     >
                       X
                     </button>
@@ -271,7 +272,7 @@ export class VelgFilterBar extends LitElement {
                 this._hasActiveFilters
                   ? html`
                   <button class="filter-bar__clear" @click=${this._clearAll}>
-                    Clear All
+                    ${msg('Clear All')}
                   </button>
                 `
                   : null

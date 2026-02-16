@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -208,10 +209,10 @@ export class VelgInvitationAcceptView extends LitElement {
       if (response.success && response.data) {
         this._invitation = response.data;
       } else {
-        this._error = response.error?.message ?? 'Failed to load invitation details.';
+        this._error = response.error?.message ?? msg('Failed to load invitation details.');
       }
     } catch {
-      this._error = 'An unexpected error occurred while loading the invitation.';
+      this._error = msg('An unexpected error occurred while loading the invitation.');
     } finally {
       this._loading = false;
     }
@@ -224,7 +225,7 @@ export class VelgInvitationAcceptView extends LitElement {
     try {
       const response = await invitationsApi.accept(this.token);
       if (response.success && response.data) {
-        VelgToast.success('Invitation accepted successfully.');
+        VelgToast.success(msg('Invitation accepted successfully.'));
         this.dispatchEvent(
           new CustomEvent('navigate', {
             detail: `/simulations/${response.data.simulation_id}/agents`,
@@ -233,11 +234,11 @@ export class VelgInvitationAcceptView extends LitElement {
           }),
         );
       } else {
-        this._error = response.error?.message ?? 'Failed to accept the invitation.';
+        this._error = response.error?.message ?? msg('Failed to accept the invitation.');
         VelgToast.error(this._error);
       }
     } catch {
-      this._error = 'An unexpected error occurred while accepting the invitation.';
+      this._error = msg('An unexpected error occurred while accepting the invitation.');
       VelgToast.error(this._error);
     } finally {
       this._accepting = false;
@@ -262,7 +263,7 @@ export class VelgInvitationAcceptView extends LitElement {
     if (inv.is_expired) {
       return html`
         <div class="invitation__status invitation__status--expired">
-          This invitation has expired.
+          ${msg('This invitation has expired.')}
         </div>
       `;
     }
@@ -270,7 +271,7 @@ export class VelgInvitationAcceptView extends LitElement {
     if (inv.is_accepted) {
       return html`
         <div class="invitation__status invitation__status--accepted">
-          This invitation was already accepted.
+          ${msg('This invitation was already accepted.')}
         </div>
       `;
     }
@@ -278,11 +279,11 @@ export class VelgInvitationAcceptView extends LitElement {
     if (!appState.isAuthenticated.value) {
       return html`
         <div class="invitation__status invitation__status--auth">
-          Please
+          ${msg('Please')}
           <a class="invitation__login-link" href="/login" @click=${this._handleLoginClick}>
-            log in
+            ${msg('log in')}
           </a>
-          first to accept this invitation.
+          ${msg('first to accept this invitation.')}
         </div>
       `;
     }
@@ -301,7 +302,7 @@ export class VelgInvitationAcceptView extends LitElement {
       return html`
         <div class="invitation">
           <div class="invitation__body">
-            <div class="loading-state">Loading invitation...</div>
+            <div class="loading-state">${msg('Loading invitation...')}</div>
           </div>
         </div>
       `;
@@ -311,7 +312,7 @@ export class VelgInvitationAcceptView extends LitElement {
       return html`
         <div class="invitation">
           <div class="invitation__header">
-            <h1 class="invitation__title">Invitation</h1>
+            <h1 class="invitation__title">${msg('Invitation')}</h1>
           </div>
           <div class="invitation__body">
             <div class="error-state">${this._error}</div>
@@ -326,7 +327,7 @@ export class VelgInvitationAcceptView extends LitElement {
     return html`
       <div class="invitation">
         <div class="invitation__header">
-          <h1 class="invitation__title">Invitation</h1>
+          <h1 class="invitation__title">${msg('Invitation')}</h1>
         </div>
 
         <div class="invitation__body">
@@ -335,9 +336,9 @@ export class VelgInvitationAcceptView extends LitElement {
           ${this._renderStatus()}
 
           <div class="invitation__message">
-            You've been invited to join
+            ${msg("You've been invited to join")}
             <span class="invitation__highlight">${inv.simulation_name}</span>
-            as
+            ${msg('as')}
             <span class="invitation__role-badge">${inv.invited_role}</span>
           </div>
         </div>
@@ -351,7 +352,7 @@ export class VelgInvitationAcceptView extends LitElement {
                 @click=${this._handleAccept}
                 ?disabled=${this._accepting}
               >
-                ${this._accepting ? 'Accepting...' : 'Accept Invitation'}
+                ${this._accepting ? msg('Accepting...') : msg('Accept Invitation')}
               </button>
             </div>
           `

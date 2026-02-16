@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { CityStreet } from '../../types/index.js';
@@ -70,7 +71,7 @@ export class VelgStreetList extends LitElement {
         ${this.streets.map(
           (street) => html`
             <div class="item">
-              <span class="item__name">${street.name ?? 'Unnamed Street'}</span>
+              <span class="item__name">${street.name ?? msg('Unnamed Street')}</span>
               <div class="item__meta">
                 ${
                   street.street_type

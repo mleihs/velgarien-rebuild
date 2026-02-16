@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { Zone } from '../../types/index.js';
@@ -109,7 +110,7 @@ export class VelgZoneList extends LitElement {
               ${
                 zone.population_estimate
                   ? html`<div class="item__meta">
-                    Est. Population: ${zone.population_estimate.toLocaleString()}
+                    ${msg(str`Est. Population: ${zone.population_estimate.toLocaleString()}`)}
                   </div>`
                   : nothing
               }

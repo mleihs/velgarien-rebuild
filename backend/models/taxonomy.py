@@ -43,4 +43,3 @@ class TaxonomyResponse(BaseModel):
     is_active: bool = True
     metadata: dict | None = None
     created_at: datetime
-    updated_at: datetime

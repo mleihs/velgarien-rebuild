@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { authService } from '../../services/supabase/SupabaseAuthService.js';
@@ -153,9 +154,12 @@ export class VelgLoginView extends LitElement {
       const { error } = await authService.signIn(this._email, this._password);
       if (error) {
         this._error = error.message;
+      } else {
+        window.history.pushState({}, '', '/dashboard');
+        window.dispatchEvent(new PopStateEvent('popstate'));
       }
     } catch {
-      this._error = 'An unexpected error occurred. Please try again.';
+      this._error = msg('An unexpected error occurred. Please try again.');
     } finally {
       this._loading = false;
     }
@@ -179,7 +183,7 @@ export class VelgLoginView extends LitElement {
     return html`
       <div class="login-container">
         <div class="login-header">
-          <h1 class="login-title">Sign In</h1>
+          <h1 class="login-title">${msg('Sign In')}</h1>
         </div>
 
         <div class="login-body">
@@ -187,7 +191,7 @@ export class VelgLoginView extends LitElement {
 
           <form @submit=${this._handleSubmit}>
             <div class="form-group">
-              <label class="form-label" for="email">Email</label>
+              <label class="form-label" for="email">${msg('Email')}</label>
               <input
                 class="form-input"
                 id="email"
@@ -200,7 +204,7 @@ export class VelgLoginView extends LitElement {
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="password">Password</label>
+              <label class="form-label" for="password">${msg('Password')}</label>
               <input
                 class="form-input"
                 id="password"
@@ -217,14 +221,14 @@ export class VelgLoginView extends LitElement {
               type="submit"
               ?disabled=${this._loading}
             >
-              ${this._loading ? 'Signing In...' : 'Sign In'}
+              ${this._loading ? msg('Signing In...') : msg('Sign In')}
             </button>
           </form>
         </div>
 
         <div class="login-footer">
-          No account yet?
-          <a href="/register" @click=${this._handleRegisterClick}>Register</a>
+          ${msg('No account yet?')}
+          <a href="/register" @click=${this._handleRegisterClick}>${msg('Register')}</a>
         </div>
       </div>
     `;

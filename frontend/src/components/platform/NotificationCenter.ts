@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { type AppNotification, notificationService } from '../../services/NotificationService.js';
@@ -285,12 +286,12 @@ export class VelgNotificationCenter extends LitElement {
     const diffMs = now.getTime() - date.getTime();
     const diffMin = Math.floor(diffMs / 60_000);
 
-    if (diffMin < 1) return 'just now';
-    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffMin < 1) return msg('just now');
+    if (diffMin < 60) return msg(str`${diffMin}m ago`);
     const diffHr = Math.floor(diffMin / 60);
-    if (diffHr < 24) return `${diffHr}h ago`;
+    if (diffHr < 24) return msg(str`${diffHr}h ago`);
     const diffDays = Math.floor(diffHr / 24);
-    return `${diffDays}d ago`;
+    return msg(str`${diffDays}d ago`);
   }
 
   private _renderBellIcon() {
@@ -307,7 +308,7 @@ export class VelgNotificationCenter extends LitElement {
       <button
         class="bell-btn"
         @click=${this._toggleDropdown}
-        aria-label="Notifications"
+        aria-label=${msg('Notifications')}
         aria-expanded=${this._open}
       >
         ${this._renderBellIcon()}
@@ -316,12 +317,12 @@ export class VelgNotificationCenter extends LitElement {
 
       <div class="dropdown ${this._open ? 'dropdown--open' : ''}">
         <div class="dropdown__header">
-          <span class="dropdown__title">Notifications</span>
+          <span class="dropdown__title">${msg('Notifications')}</span>
           ${
             this._unreadCount > 0
               ? html`
               <button class="mark-all-btn" @click=${this._handleMarkAllRead}>
-                Mark all read
+                ${msg('Mark all read')}
               </button>
             `
               : nothing
@@ -331,7 +332,7 @@ export class VelgNotificationCenter extends LitElement {
         <div class="dropdown__list">
           ${
             this._notifications.length === 0
-              ? html`<div class="dropdown__empty">No notifications</div>`
+              ? html`<div class="dropdown__empty">${msg('No notifications')}</div>`
               : this._notifications.map((n) => this._renderItem(n))
           }
         </div>
@@ -368,7 +369,7 @@ export class VelgNotificationCenter extends LitElement {
                     this._handleItemClick(notification);
                   }}
                 >
-                  View
+                  ${msg('View')}
                 </button>
               `
                 : nothing

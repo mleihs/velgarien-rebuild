@@ -1,9 +1,11 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { socialTrendsApi } from '../../services/api/index.js';
 import type { SocialTrend } from '../../types/index.js';
 import type { FilterChangeDetail } from '../shared/SharedFilterBar.js';
 import { VelgToast } from '../shared/Toast.js';
+import type { FetchTrendsDetail } from './FetchTrendsModal.js';
 
 import '../shared/SharedFilterBar.js';
 import '../shared/Pagination.js';
@@ -12,6 +14,7 @@ import '../shared/ErrorState.js';
 import '../shared/EmptyState.js';
 import './TrendCard.js';
 import './TransformationModal.js';
+import './FetchTrendsModal.js';
 
 @customElement('velg-social-trends-view')
 export class VelgSocialTrendsView extends LitElement {
@@ -71,6 +74,7 @@ export class VelgSocialTrendsView extends LitElement {
   @state() private _filters: Record<string, string> = {};
   @state() private _showTransformModal = false;
   @state() private _selectedTrend: SocialTrend | null = null;
+  @state() private _showFetchModal = false;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -88,31 +92,30 @@ export class VelgSocialTrendsView extends LitElement {
 
     const response = await socialTrendsApi.list(this.simulationId, params);
     if (response.success && response.data) {
-      const paginated = response.data;
-      this._trends = paginated?.data ?? [];
-      this._total = paginated?.total ?? this._trends.length;
+      this._trends = Array.isArray(response.data) ? response.data : [];
+      this._total = response.meta?.total ?? this._trends.length;
     } else {
-      this._error = response.error?.message || 'Failed to load trends';
+      this._error = response.error?.message || msg('Failed to load trends');
     }
     this._loading = false;
   }
 
-  private async _handleFetch(): Promise<void> {
-    const query = prompt('Enter search query for trends:');
-    if (!query) return;
-
+  private async _handleFetchTrends(e: CustomEvent<FetchTrendsDetail>): Promise<void> {
+    this._showFetchModal = false;
     this._loading = true;
+
+    const { source, query, limit } = e.detail;
     const response = await socialTrendsApi.fetch(this.simulationId, {
-      source: 'guardian',
+      source,
       query,
-      limit: 10,
+      limit,
     });
 
     if (response.success) {
-      VelgToast.success('Trends fetched successfully');
+      VelgToast.success(msg('Trends fetched successfully'));
       await this._loadTrends();
     } else {
-      VelgToast.error(response.error?.message || 'Failed to fetch trends');
+      VelgToast.error(response.error?.message || msg('Failed to fetch trends'));
       this._loading = false;
     }
   }
@@ -143,9 +146,13 @@ export class VelgSocialTrendsView extends LitElement {
     return html`
       <div class="trends">
         <div class="trends__header">
-          <h1 class="trends__title">Social Trends</h1>
+          <h1 class="trends__title">${msg('Social Trends')}</h1>
           <div class="trends__actions">
-            <button class="trends__btn" @click=${this._handleFetch}>Fetch Trends</button>
+            <button class="trends__btn" @click=${() => {
+              this._showFetchModal = true;
+            }}>
+              ${msg('Fetch Trends')}
+            </button>
           </div>
         </div>
 
@@ -153,43 +160,49 @@ export class VelgSocialTrendsView extends LitElement {
           .filters=${[
             {
               key: 'platform',
-              label: 'Platform',
+              label: msg('Platform'),
               type: 'select' as const,
               options: [
-                { value: 'guardian', label: 'Guardian' },
-                { value: 'newsapi', label: 'NewsAPI' },
-                { value: 'facebook', label: 'Facebook' },
+                { value: 'guardian', label: msg('Guardian') },
+                { value: 'newsapi', label: msg('NewsAPI') },
+                { value: 'facebook', label: msg('Facebook') },
               ],
             },
             {
               key: 'sentiment',
-              label: 'Sentiment',
+              label: msg('Sentiment'),
               type: 'select' as const,
               options: [
-                { value: 'positive', label: 'Positive' },
-                { value: 'negative', label: 'Negative' },
-                { value: 'neutral', label: 'Neutral' },
+                { value: 'positive', label: msg('Positive') },
+                { value: 'negative', label: msg('Negative') },
+                { value: 'neutral', label: msg('Neutral') },
               ],
             },
             {
               key: 'is_processed',
-              label: 'Processed',
+              label: msg('Processed'),
               type: 'select' as const,
               options: [
-                { value: 'true', label: 'Yes' },
-                { value: 'false', label: 'No' },
+                { value: 'true', label: msg('Yes') },
+                { value: 'false', label: msg('No') },
               ],
             },
           ]}
           @filter-change=${this._handleFilterChange}
         ></velg-filter-bar>
 
-        ${this._loading ? html`<velg-loading-state message="Loading trends..."></velg-loading-state>` : ''}
+        ${this._loading ? html`<velg-loading-state message=${msg('Loading trends...')}></velg-loading-state>` : ''}
         ${this._error ? html`<velg-error-state message=${this._error} @retry=${this._loadTrends}></velg-error-state>` : ''}
 
         ${
           !this._loading && !this._error && this._trends.length === 0
-            ? html`<velg-empty-state message="No trends found" actionLabel="Fetch Trends" @action=${this._handleFetch}></velg-empty-state>`
+            ? html`<velg-empty-state
+                message=${msg('No trends found')}
+                actionLabel=${msg('Fetch Trends')}
+                @action=${() => {
+                  this._showFetchModal = true;
+                }}
+              ></velg-empty-state>`
             : ''
         }
 
@@ -203,6 +216,7 @@ export class VelgSocialTrendsView extends LitElement {
                 .trend=${t}
                 .simulationId=${this.simulationId}
                 @trend-transform=${this._handleTransform}
+                @trend-integrate=${this._handleTransform}
               ></velg-trend-card>
             `,
             )}
@@ -218,13 +232,22 @@ export class VelgSocialTrendsView extends LitElement {
             : ''
         }
 
+        <velg-fetch-trends-modal
+          ?open=${this._showFetchModal}
+          @modal-close=${() => {
+            this._showFetchModal = false;
+          }}
+          @fetch-trends=${this._handleFetchTrends}
+        ></velg-fetch-trends-modal>
+
         ${
           this._showTransformModal && this._selectedTrend
             ? html`
           <velg-transformation-modal
             .trend=${this._selectedTrend}
             .simulationId=${this.simulationId}
-            @close=${() => {
+            ?open=${true}
+            @modal-close=${() => {
               this._showTransformModal = false;
             }}
             @transform-complete=${this._handleTransformComplete}

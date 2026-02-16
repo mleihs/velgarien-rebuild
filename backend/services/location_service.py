@@ -40,12 +40,12 @@ class LocationService:
             .select("*")
             .eq("simulation_id", str(simulation_id))
             .eq("id", str(city_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        if not response.data:
+        if not response or not response.data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"City '{city_id}' not found.")
-        return response.data
+        return response.data[0]
 
     @staticmethod
     async def create_city(supabase: Client, simulation_id: UUID, data: dict) -> dict:
@@ -108,12 +108,12 @@ class LocationService:
             .select("*")
             .eq("simulation_id", str(simulation_id))
             .eq("id", str(zone_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
-        if not response.data:
+        if not response or not response.data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Zone '{zone_id}' not found.")
-        return response.data
+        return response.data[0]
 
     @staticmethod
     async def create_zone(supabase: Client, simulation_id: UUID, data: dict) -> dict:

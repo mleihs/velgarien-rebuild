@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -6,22 +7,22 @@ import type { SimulationTaxonomy, TaxonomyType } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 
 const TAXONOMY_TYPES: Array<{ value: TaxonomyType; label: string }> = [
-  { value: 'gender', label: 'Gender' },
-  { value: 'profession', label: 'Profession' },
-  { value: 'system', label: 'System' },
-  { value: 'building_type', label: 'Building Type' },
-  { value: 'building_style', label: 'Building Style' },
-  { value: 'building_special_type', label: 'Building Special Type' },
-  { value: 'campaign_type', label: 'Campaign Type' },
-  { value: 'target_demographic', label: 'Target Demographic' },
-  { value: 'urgency_level', label: 'Urgency Level' },
-  { value: 'zone_type', label: 'Zone Type' },
-  { value: 'security_level', label: 'Security Level' },
-  { value: 'event_type', label: 'Event Type' },
-  { value: 'sentiment', label: 'Sentiment' },
-  { value: 'interaction_type', label: 'Interaction Type' },
-  { value: 'campaign_tone', label: 'Campaign Tone' },
-  { value: 'complexity_level', label: 'Complexity Level' },
+  { value: 'gender', label: msg('Gender') },
+  { value: 'profession', label: msg('Profession') },
+  { value: 'system', label: msg('System') },
+  { value: 'building_type', label: msg('Building Type') },
+  { value: 'building_style', label: msg('Building Style') },
+  { value: 'building_special_type', label: msg('Building Special Type') },
+  { value: 'campaign_type', label: msg('Campaign Type') },
+  { value: 'target_demographic', label: msg('Target Demographic') },
+  { value: 'urgency_level', label: msg('Urgency Level') },
+  { value: 'zone_type', label: msg('Zone Type') },
+  { value: 'security_level', label: msg('Security Level') },
+  { value: 'event_type', label: msg('Event Type') },
+  { value: 'sentiment', label: msg('Sentiment') },
+  { value: 'interaction_type', label: msg('Interaction Type') },
+  { value: 'campaign_tone', label: msg('Campaign Tone') },
+  { value: 'complexity_level', label: msg('Complexity Level') },
 ];
 
 interface NewTaxonomyForm {
@@ -317,13 +318,6 @@ export class VelgWorldSettingsPanel extends LitElement {
     return appState.currentSimulation.value?.content_locale ?? 'en';
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    if (this.simulationId) {
-      this._loadTaxonomies();
-    }
-  }
-
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId) {
       this._loadTaxonomies();
@@ -350,10 +344,10 @@ export class VelgWorldSettingsPanel extends LitElement {
           this._taxonomies = [];
         }
       } else {
-        this._error = response.error?.message ?? 'Failed to load taxonomies';
+        this._error = response.error?.message ?? msg('Failed to load taxonomies');
       }
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
@@ -387,7 +381,7 @@ export class VelgWorldSettingsPanel extends LitElement {
 
   private async _handleAddTaxonomy(): Promise<void> {
     if (!this._newForm.value.trim() || !this._newForm.label.trim()) {
-      VelgToast.warning('Value and label are required.');
+      VelgToast.warning(msg('Value and label are required.'));
       return;
     }
 
@@ -404,15 +398,15 @@ export class VelgWorldSettingsPanel extends LitElement {
       });
 
       if (response.success) {
-        VelgToast.success('Taxonomy value added.');
+        VelgToast.success(msg('Taxonomy value added.'));
         this._showAddForm = false;
         this._newForm = { value: '', label: '', sort_order: 0 };
         this._loadTaxonomies();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to add taxonomy value.');
+        VelgToast.error(response.error?.message ?? msg('Failed to add taxonomy value.'));
       }
     } catch (err) {
-      VelgToast.error(err instanceof Error ? err.message : 'An unknown error occurred.');
+      VelgToast.error(err instanceof Error ? err.message : msg('An unknown error occurred.'));
     } finally {
       this._addingSaving = false;
     }
@@ -426,29 +420,31 @@ export class VelgWorldSettingsPanel extends LitElement {
       });
 
       if (response.success) {
-        VelgToast.success(`Taxonomy value ${newActive ? 'activated' : 'deactivated'}.`);
+        VelgToast.success(
+          newActive ? msg('Taxonomy value activated.') : msg('Taxonomy value deactivated.'),
+        );
         this._loadTaxonomies();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to update taxonomy.');
+        VelgToast.error(response.error?.message ?? msg('Failed to update taxonomy.'));
       }
     } catch (err) {
-      VelgToast.error(err instanceof Error ? err.message : 'An unknown error occurred.');
+      VelgToast.error(err instanceof Error ? err.message : msg('An unknown error occurred.'));
     }
   }
 
   protected render() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading world taxonomies..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading world taxonomies...')}></velg-loading-state>`;
     }
 
     return html`
       <div class="panel">
-        <h2 class="panel__section-title">World Taxonomies</h2>
+        <h2 class="panel__section-title">${msg('World Taxonomies')}</h2>
 
         ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
 
         <div class="panel__controls">
-          <label class="form__label" for="taxonomy-type">Taxonomy Type</label>
+          <label class="form__label" for="taxonomy-type">${msg('Taxonomy Type')}</label>
           <select
             class="form__select"
             id="taxonomy-type"
@@ -469,7 +465,7 @@ export class VelgWorldSettingsPanel extends LitElement {
             @click=${this._handleShowAddForm}
             ?disabled=${this._showAddForm}
           >
-            + Add Value
+            ${msg('+ Add Value')}
           </button>
         </div>
 
@@ -479,11 +475,11 @@ export class VelgWorldSettingsPanel extends LitElement {
           <table class="table">
             <thead class="table__head">
               <tr>
-                <th class="table__th">Value</th>
-                <th class="table__th">Label</th>
-                <th class="table__th">Sort Order</th>
-                <th class="table__th">Status</th>
-                <th class="table__th">Actions</th>
+                <th class="table__th">${msg('Value')}</th>
+                <th class="table__th">${msg('Label')}</th>
+                <th class="table__th">${msg('Sort Order')}</th>
+                <th class="table__th">${msg('Status')}</th>
+                <th class="table__th">${msg('Actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -492,7 +488,7 @@ export class VelgWorldSettingsPanel extends LitElement {
                   ? html`
                     <tr>
                       <td class="table__empty" colspan="5">
-                        No values for this taxonomy type.
+                        ${msg('No values for this taxonomy type.')}
                       </td>
                     </tr>
                   `
@@ -504,7 +500,7 @@ export class VelgWorldSettingsPanel extends LitElement {
                         <td class="table__td">${tax.sort_order}</td>
                         <td class="table__td">
                           <span class="badge ${tax.is_active ? 'badge--active' : 'badge--inactive'}">
-                            ${tax.is_active ? 'Active' : 'Inactive'}
+                            ${tax.is_active ? msg('Active') : msg('Inactive')}
                           </span>
                         </td>
                         <td class="table__td">
@@ -512,7 +508,7 @@ export class VelgWorldSettingsPanel extends LitElement {
                             class="toggle-btn"
                             @click=${() => this._handleToggleActive(tax)}
                           >
-                            ${tax.is_active ? 'Deactivate' : 'Activate'}
+                            ${tax.is_active ? msg('Deactivate') : msg('Activate')}
                           </button>
                         </td>
                       </tr>
@@ -529,10 +525,10 @@ export class VelgWorldSettingsPanel extends LitElement {
   private _renderAddForm() {
     return html`
       <div class="add-form">
-        <h3 class="add-form__title">Add New ${this._selectedType.replace(/_/g, ' ')} Value</h3>
+        <h3 class="add-form__title">${msg(str`Add New ${this._selectedType.replace(/_/g, ' ')} Value`)}</h3>
         <div class="add-form__row">
           <div class="add-form__group">
-            <label class="form__label">Value (code)</label>
+            <label class="form__label">${msg('Value (code)')}</label>
             <input
               class="form__input"
               type="text"
@@ -542,7 +538,7 @@ export class VelgWorldSettingsPanel extends LitElement {
             />
           </div>
           <div class="add-form__group">
-            <label class="form__label">Label (display)</label>
+            <label class="form__label">${msg('Label (display)')}</label>
             <input
               class="form__input"
               type="text"
@@ -552,7 +548,7 @@ export class VelgWorldSettingsPanel extends LitElement {
             />
           </div>
           <div class="add-form__group add-form__group--narrow">
-            <label class="form__label">Sort</label>
+            <label class="form__label">${msg('Sort')}</label>
             <input
               class="form__input"
               type="number"
@@ -566,14 +562,14 @@ export class VelgWorldSettingsPanel extends LitElement {
             class="btn btn--secondary"
             @click=${this._handleCancelAdd}
           >
-            Cancel
+            ${msg('Cancel')}
           </button>
           <button
             class="btn btn--primary"
             @click=${this._handleAddTaxonomy}
             ?disabled=${this._addingSaving}
           >
-            ${this._addingSaving ? 'Adding...' : 'Add'}
+            ${this._addingSaving ? msg('Adding...') : msg('Add')}
           </button>
         </div>
       </div>

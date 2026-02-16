@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
@@ -33,7 +34,7 @@ export class VelgSentimentBadge extends LitElement {
   }
 
   protected render() {
-    return html`<span class="badge ${this._getClass()}">${this.sentiment || 'Unknown'}</span>`;
+    return html`<span class="badge ${this._getClass()}">${this.sentiment || msg('Unknown')}</span>`;
   }
 }
 

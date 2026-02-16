@@ -27,14 +27,14 @@ class TransformTrendRequest(BaseModel):
     """Request to transform a trend into simulation context."""
 
     trend_id: str
-    transformation_type: str = Field(default="dystopian")
 
 
 class IntegrateTrendRequest(BaseModel):
-    """Request to integrate a trend as a campaign."""
+    """Request to integrate a transformed trend as an event."""
 
     trend_id: str
-    campaign_title: str = Field(..., min_length=1, max_length=500)
-    campaign_type: str | None = None
-    target_demographic: str | None = None
-    urgency_level: str | None = None
+    title: str = Field(..., min_length=1, max_length=500)
+    description: str | None = None
+    event_type: str | None = None
+    impact_level: int = Field(default=5, ge=1, le=10)
+    tags: list[str] = Field(default_factory=list)

@@ -1,8 +1,9 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { eventsApi } from '../../services/api/index.js';
-import type { PaginatedResponse, Event as SimEvent } from '../../types/index.js';
+import type { Event as SimEvent } from '../../types/index.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import type { FilterChangeDetail } from '../shared/SharedFilterBar.js';
 import { VelgToast } from '../shared/Toast.js';
@@ -145,14 +146,13 @@ export class VelgEventsView extends LitElement {
       const response = await eventsApi.list(this.simulationId, params);
 
       if (response.success && response.data) {
-        const paginated = response.data as PaginatedResponse<SimEvent>;
-        this._events = paginated.data ?? [];
-        this._total = paginated.total ?? 0;
+        this._events = Array.isArray(response.data) ? response.data : [];
+        this._total = response.meta?.total ?? this._events.length;
       } else {
-        this._error = response.error?.message ?? 'Failed to load events';
+        this._error = response.error?.message ?? msg('Failed to load events');
       }
     } catch {
-      this._error = 'An unexpected error occurred';
+      this._error = msg('An unexpected error occurred');
     } finally {
       this._loading = false;
     }
@@ -187,9 +187,11 @@ export class VelgEventsView extends LitElement {
     this._showDetails = false;
 
     const confirmed = await VelgConfirmDialog.show({
-      title: 'Delete Event',
-      message: `Are you sure you want to delete "${evt.title}"? This action cannot be undone.`,
-      confirmLabel: 'Delete',
+      title: msg('Delete Event'),
+      message: msg(
+        str`Are you sure you want to delete "${evt.title}"? This action cannot be undone.`,
+      ),
+      confirmLabel: msg('Delete'),
       variant: 'danger',
     });
 
@@ -198,13 +200,13 @@ export class VelgEventsView extends LitElement {
     try {
       const response = await eventsApi.remove(this.simulationId, evt.id);
       if (response.success) {
-        VelgToast.success('Event deleted successfully');
+        VelgToast.success(msg('Event deleted successfully'));
         this._loadEvents();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to delete event');
+        VelgToast.error(response.error?.message ?? msg('Failed to delete event'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred');
+      VelgToast.error(msg('An unexpected error occurred'));
     }
   }
 
@@ -237,7 +239,7 @@ export class VelgEventsView extends LitElement {
     const filterConfigs = [
       {
         key: 'event_type',
-        label: 'Event Type',
+        label: msg('Event Type'),
         options: this._getEventTypeFilters(),
       },
     ];
@@ -245,7 +247,7 @@ export class VelgEventsView extends LitElement {
     return html`
       <div class="events">
         <div class="events__header">
-          <h1 class="events__title">Events</h1>
+          <h1 class="events__title">${msg('Events')}</h1>
           ${
             this._canEdit
               ? html`
@@ -253,7 +255,7 @@ export class VelgEventsView extends LitElement {
                 class="events__create-btn"
                 @click=${this._handleCreateClick}
               >
-                + Create Event
+                ${msg('+ Create Event')}
               </button>
             `
               : nothing
@@ -262,13 +264,13 @@ export class VelgEventsView extends LitElement {
 
         <velg-filter-bar
           .filters=${filterConfigs}
-          search-placeholder="Search events..."
+          search-placeholder=${msg('Search events...')}
           @filter-change=${this._handleFilterChange}
         ></velg-filter-bar>
 
         ${
           this._loading
-            ? html`<velg-loading-state message="Loading events..."></velg-loading-state>`
+            ? html`<velg-loading-state message=${msg('Loading events...')}></velg-loading-state>`
             : this._error
               ? html`
               <velg-error-state
@@ -280,8 +282,8 @@ export class VelgEventsView extends LitElement {
               : this._events.length === 0
                 ? html`
                 <velg-empty-state
-                  message="No events found."
-                  ${this._canEdit ? html`cta-label="Create Event"` : ''}
+                  message=${msg('No events found.')}
+                  ${this._canEdit ? html`cta-label=${msg('Create Event')}` : ''}
                   @cta-click=${this._handleCreateClick}
                 ></velg-empty-state>
               `

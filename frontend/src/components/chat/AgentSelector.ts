@@ -1,7 +1,8 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { agentsApi } from '../../services/api/index.js';
-import type { Agent, PaginatedResponse } from '../../types/index.js';
+import type { Agent } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 
 import '../shared/BaseModal.js';
@@ -154,13 +155,12 @@ export class VelgAgentSelector extends LitElement {
     try {
       const response = await agentsApi.list(this.simulationId, { page_size: '100' });
       if (response.success && response.data) {
-        const paginated = response.data as PaginatedResponse<Agent>;
-        this._agents = paginated.data ?? [];
+        this._agents = Array.isArray(response.data) ? response.data : [];
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to load agents.');
+        VelgToast.error(response.error?.message ?? msg('Failed to load agents.'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred while loading agents.');
+      VelgToast.error(msg('An unexpected error occurred while loading agents.'));
     } finally {
       this._loading = false;
     }
@@ -224,22 +224,22 @@ export class VelgAgentSelector extends LitElement {
   protected render() {
     return html`
       <velg-base-modal .open=${this.open}>
-        <span slot="header">Select Agent</span>
+        <span slot="header">${msg('Select Agent')}</span>
 
         <input
           class="selector__search"
           type="text"
-          placeholder="Search agents..."
+          placeholder=${msg('Search agents...')}
           .value=${this._searchQuery}
           @input=${this._handleSearch}
         />
 
         ${
           this._loading
-            ? html`<div class="selector__loading">Loading agents...</div>`
+            ? html`<div class="selector__loading">${msg('Loading agents...')}</div>`
             : this._filteredAgents.length === 0
               ? html`<div class="selector__empty">
-                  ${this._searchQuery ? 'No agents match your search.' : 'No agents available.'}
+                  ${this._searchQuery ? msg('No agents match your search.') : msg('No agents available.')}
                 </div>`
               : html`
                 <div class="selector__list">

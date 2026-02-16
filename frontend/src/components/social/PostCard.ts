@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { SocialMediaPost } from '../../types/index.js';
@@ -75,7 +76,7 @@ export class VelgPostCard extends LitElement {
     return html`
       <div class="card">
         <div class="card__header">
-          <span class="card__author">${p.author || 'Unknown'}</span>
+          <span class="card__author">${p.author || msg('Unknown')}</span>
           <span class="card__date">${this._formatDate(p.source_created_at)}</span>
         </div>
         <div class="card__body">
@@ -83,12 +84,12 @@ export class VelgPostCard extends LitElement {
           ${p.transformed_content ? html`<div class="card__transformed">${p.transformed_content}</div>` : ''}
           <div class="card__badges">
             <span class="card__badge card__badge--platform">${p.platform}</span>
-            ${p.transformed_content ? html`<span class="card__badge card__badge--transformed">${p.transformation_type || 'Transformed'}</span>` : ''}
+            ${p.transformed_content ? html`<span class="card__badge card__badge--transformed">${p.transformation_type || msg('Transformed')}</span>` : ''}
           </div>
         </div>
         <div class="card__actions">
-          <button class="card__action-btn" @click=${this._handleTransform}>Transform</button>
-          <button class="card__action-btn" @click=${this._handleAnalyze}>Sentiment</button>
+          <button class="card__action-btn" @click=${this._handleTransform}>${msg('Transform')}</button>
+          <button class="card__action-btn" @click=${this._handleAnalyze}>${msg('Sentiment')}</button>
         </div>
       </div>
     `;

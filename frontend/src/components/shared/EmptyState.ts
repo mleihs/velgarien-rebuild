@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, svg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
@@ -62,7 +63,7 @@ export class VelgEmptyState extends LitElement {
     }
   `;
 
-  @property({ type: String }) message = 'Nothing here yet.';
+  @property({ type: String }) message = msg('Nothing here yet.');
   @property({ type: String, attribute: 'cta-label' }) ctaLabel = '';
 
   private _placeholderIcon() {

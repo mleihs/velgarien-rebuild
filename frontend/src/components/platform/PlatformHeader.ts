@@ -1,6 +1,8 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
+import { localeService } from '../../services/i18n/locale-service.js';
 import type { Simulation } from '../../types/index.js';
 
 import './UserMenu.js';
@@ -71,6 +73,23 @@ export class VelgPlatformHeader extends LitElement {
       align-items: center;
       gap: var(--space-3);
     }
+
+    .locale-toggle {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      padding: var(--space-1) var(--space-2);
+      border: var(--border-default);
+      background: var(--color-surface);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .locale-toggle:hover {
+      background: var(--color-surface-hover);
+    }
   `;
 
   @state() private _simulations: Simulation[] = [];
@@ -84,6 +103,11 @@ export class VelgPlatformHeader extends LitElement {
     this.dispatchEvent(
       new CustomEvent('navigate', { detail: '/dashboard', bubbles: true, composed: true }),
     );
+  }
+
+  private async _toggleLocale(): Promise<void> {
+    const next = localeService.currentLocale === 'en' ? 'de' : 'en';
+    await localeService.setLocale(next);
   }
 
   private _handleSimulationChange(e: Event): void {
@@ -108,15 +132,15 @@ export class VelgPlatformHeader extends LitElement {
     return html`
       <div class="header">
         <div class="header__left">
-          <span class="header__title" @click=${this._handleTitleClick}>Velgarien</span>
+          <span class="header__title" @click=${this._handleTitleClick}>${msg('Velgarien')}</span>
 
           ${
             this._simulations.length > 0
               ? html`
               <div class="sim-selector">
-                <span class="sim-selector__label">Simulation:</span>
+                <span class="sim-selector__label">${msg('Simulation:')}</span>
                 <select class="sim-selector__select" @change=${this._handleSimulationChange}>
-                  <option value="">-- Select --</option>
+                  <option value="">${msg('-- Select --')}</option>
                   ${this._simulations.map(
                     (sim) => html`
                       <option value=${sim.id} ?selected=${currentSim?.id === sim.id}>
@@ -132,6 +156,9 @@ export class VelgPlatformHeader extends LitElement {
         </div>
 
         <div class="header__right">
+          <button class="locale-toggle" @click=${this._toggleLocale}>
+            ${localeService.currentLocale === 'en' ? 'DE' : 'EN'}
+          </button>
           <velg-user-menu></velg-user-menu>
         </div>
       </div>

@@ -28,5 +28,3 @@ class MemberResponse(BaseModel):
     member_role: str
     invited_by_id: UUID | None = None
     joined_at: datetime
-    created_at: datetime
-    updated_at: datetime

@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, svg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
@@ -62,7 +63,7 @@ export class VelgErrorState extends LitElement {
     }
   `;
 
-  @property({ type: String }) message = 'An error occurred.';
+  @property({ type: String }) message = msg('An error occurred.');
   @property({ type: Boolean, attribute: 'show-retry' }) showRetry = false;
 
   private _alertIcon() {
@@ -103,7 +104,7 @@ export class VelgErrorState extends LitElement {
           this.showRetry
             ? html`
             <button class="error__retry" @click=${this._handleRetry}>
-              Retry
+              ${msg('Retry')}
             </button>
           `
             : null

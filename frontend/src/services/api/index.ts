@@ -8,6 +8,7 @@ export { GenerationApiService, generationApi } from './GenerationApiService.js';
 export { InvitationsApiService, invitationsApi } from './InvitationsApiService.js';
 export { LocationsApiService, locationsApi } from './LocationsApiService.js';
 export { MembersApiService, membersApi } from './MembersApiService.js';
+export { PromptTemplatesApiService, promptTemplatesApi } from './PromptTemplatesApiService.js';
 export { SettingsApiService, settingsApi } from './SettingsApiService.js';
 export { SimulationsApiService, simulationsApi } from './SimulationsApiService.js';
 export { SocialMediaApiService, socialMediaApi } from './SocialMediaApiService.js';

@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { ChatConversation } from '../../types/index.js';
@@ -157,7 +158,7 @@ export class VelgConversationList extends LitElement {
       const diffHours = Math.floor(diffMs / 3600000);
       const diffDays = Math.floor(diffMs / 86400000);
 
-      if (diffMins < 1) return 'Now';
+      if (diffMins < 1) return msg('Now');
       if (diffMins < 60) return `${diffMins}m`;
       if (diffHours < 24) return `${diffHours}h`;
       if (diffDays < 7) return `${diffDays}d`;
@@ -196,8 +197,8 @@ export class VelgConversationList extends LitElement {
 
   private _renderConversation(conversation: ChatConversation) {
     const isActive = conversation.id === this.selectedId;
-    const agentName = conversation.agent?.name ?? 'Agent';
-    const lastPreview = conversation.title ?? 'No messages yet';
+    const agentName = conversation.agent?.name ?? msg('Agent');
+    const lastPreview = conversation.title ?? msg('No messages yet');
 
     return html`
       <div
@@ -222,13 +223,13 @@ export class VelgConversationList extends LitElement {
 
           ${
             conversation.status === 'archived'
-              ? html`<div class="conversation__status">Archived</div>`
+              ? html`<div class="conversation__status">${msg('Archived')}</div>`
               : html`
                 <button
                   class="conversation__archive-btn"
                   @click=${(e: Event) => this._handleArchive(e, conversation)}
                 >
-                  Archive
+                  ${msg('Archive')}
                 </button>
               `
           }
@@ -239,7 +240,7 @@ export class VelgConversationList extends LitElement {
 
   protected render() {
     if (this.conversations.length === 0) {
-      return html`<div class="empty">No conversations yet</div>`;
+      return html`<div class="empty">${msg('No conversations yet')}</div>`;
     }
 
     return html`

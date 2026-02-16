@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing, svg } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -418,11 +419,11 @@ export class VelgBuildingDetailsPanel extends LitElement {
 
   private _renderAgents() {
     if (this._loadingAgents) {
-      return html`<span class="panel__no-agents">Loading agents...</span>`;
+      return html`<span class="panel__no-agents">${msg('Loading agents...')}</span>`;
     }
 
     if (this._agents.length === 0) {
-      return html`<span class="panel__no-agents">No agents assigned to this building.</span>`;
+      return html`<span class="panel__no-agents">${msg('No agents assigned to this building.')}</span>`;
     }
 
     return html`
@@ -431,7 +432,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
           (rel) => html`
             <div class="panel__agent-item">
               <span class="panel__agent-name">
-                ${rel.agent?.name ?? `Agent ${rel.agent_id.slice(0, 8)}...`}
+                ${rel.agent?.name ?? msg(str`Agent ${rel.agent_id.slice(0, 8)}...`)}
               </span>
               <span class="panel__agent-role">${rel.relation_type}</span>
             </div>
@@ -451,11 +452,11 @@ export class VelgBuildingDetailsPanel extends LitElement {
       >
         <div class="panel">
           <div class="panel__header">
-            <h2 class="panel__title">Building Details</h2>
+            <h2 class="panel__title">${msg('Building Details')}</h2>
             <button
               class="panel__close"
               @click=${this._handleClose}
-              aria-label="Close"
+              aria-label=${msg('Close')}
             >
               X
             </button>
@@ -475,7 +476,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
 
                   <div class="panel__content">
                     <div class="panel__section">
-                      <h3 class="panel__section-title">Identity</h3>
+                      <h3 class="panel__section-title">${msg('Identity')}</h3>
                       <div class="panel__badges">
                         ${
                           b.building_type
@@ -497,7 +498,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                       b.description
                         ? html`
                           <div class="panel__section">
-                            <h3 class="panel__section-title">Description</h3>
+                            <h3 class="panel__section-title">${msg('Description')}</h3>
                             <p class="panel__description">${b.description}</p>
                           </div>
                         `
@@ -505,17 +506,17 @@ export class VelgBuildingDetailsPanel extends LitElement {
                     }
 
                     <div class="panel__section">
-                      <h3 class="panel__section-title">Details</h3>
+                      <h3 class="panel__section-title">${msg('Details')}</h3>
                       <div class="panel__detail-grid">
                         <div class="panel__detail-item">
-                          <span class="panel__detail-label">Population Capacity</span>
+                          <span class="panel__detail-label">${msg('Population Capacity')}</span>
                           <span class="panel__detail-value">${b.population_capacity ?? 0}</span>
                         </div>
                         ${
                           b.construction_year != null
                             ? html`
                               <div class="panel__detail-item">
-                                <span class="panel__detail-label">Construction Year</span>
+                                <span class="panel__detail-label">${msg('Construction Year')}</span>
                                 <span class="panel__detail-value">${b.construction_year}</span>
                               </div>
                             `
@@ -525,7 +526,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                           b.zone?.name
                             ? html`
                               <div class="panel__detail-item">
-                                <span class="panel__detail-label">Zone</span>
+                                <span class="panel__detail-label">${msg('Zone')}</span>
                                 <span class="panel__detail-value">${b.zone.name}</span>
                               </div>
                             `
@@ -535,7 +536,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                           b.city?.name
                             ? html`
                               <div class="panel__detail-item">
-                                <span class="panel__detail-label">City</span>
+                                <span class="panel__detail-label">${msg('City')}</span>
                                 <span class="panel__detail-value">${b.city.name}</span>
                               </div>
                             `
@@ -545,7 +546,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                           b.address
                             ? html`
                               <div class="panel__detail-item">
-                                <span class="panel__detail-label">Address</span>
+                                <span class="panel__detail-label">${msg('Address')}</span>
                                 <span class="panel__detail-value">${b.address}</span>
                               </div>
                             `
@@ -555,7 +556,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                           b.street?.name
                             ? html`
                               <div class="panel__detail-item">
-                                <span class="panel__detail-label">Street</span>
+                                <span class="panel__detail-label">${msg('Street')}</span>
                                 <span class="panel__detail-value">${b.street.name}</span>
                               </div>
                             `
@@ -565,7 +566,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                     </div>
 
                     <div class="panel__section">
-                      <h3 class="panel__section-title">Assigned Agents</h3>
+                      <h3 class="panel__section-title">${msg('Assigned Agents')}</h3>
                       ${this._renderAgents()}
                     </div>
                   </div>
@@ -573,10 +574,10 @@ export class VelgBuildingDetailsPanel extends LitElement {
 
                 <div class="panel__footer">
                   <button class="panel__btn panel__btn--edit" @click=${this._handleEdit}>
-                    Edit
+                    ${msg('Edit')}
                   </button>
                   <button class="panel__btn panel__btn--danger" @click=${this._handleDelete}>
-                    Delete
+                    ${msg('Delete')}
                   </button>
                 </div>
               `

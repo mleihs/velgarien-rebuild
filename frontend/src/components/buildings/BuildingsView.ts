@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -125,17 +126,17 @@ export class VelgBuildingsView extends LitElement {
     return [
       {
         key: 'building_type',
-        label: 'Type',
+        label: msg('Type'),
         options: buildingTypes,
       },
       {
         key: 'building_condition',
-        label: 'Condition',
+        label: msg('Condition'),
         options: [
-          { value: 'good', label: 'Good' },
-          { value: 'fair', label: 'Fair' },
-          { value: 'poor', label: 'Poor' },
-          { value: 'ruined', label: 'Ruined' },
+          { value: 'good', label: msg('Good') },
+          { value: 'fair', label: msg('Fair') },
+          { value: 'poor', label: msg('Poor') },
+          { value: 'ruined', label: msg('Ruined') },
         ],
       },
     ];
@@ -162,14 +163,13 @@ export class VelgBuildingsView extends LitElement {
       const response = await buildingsApi.list(this.simulationId, params);
 
       if (response.success && response.data) {
-        const paginated = response.data;
-        this._buildings = paginated.data ?? [];
-        this._total = paginated.total ?? 0;
+        this._buildings = Array.isArray(response.data) ? response.data : [];
+        this._total = response.meta?.total ?? this._buildings.length;
       } else {
-        this._error = response.error?.message ?? 'Failed to load buildings';
+        this._error = response.error?.message ?? msg('Failed to load buildings');
       }
     } catch {
-      this._error = 'An unexpected error occurred while loading buildings';
+      this._error = msg('An unexpected error occurred while loading buildings');
     } finally {
       this._loading = false;
     }
@@ -203,9 +203,11 @@ export class VelgBuildingsView extends LitElement {
     const building = e.detail;
 
     const confirmed = await VelgConfirmDialog.show({
-      title: 'Delete Building',
-      message: `Are you sure you want to delete "${building.name}"? This action cannot be undone.`,
-      confirmLabel: 'Delete',
+      title: msg('Delete Building'),
+      message: msg(
+        str`Are you sure you want to delete "${building.name}"? This action cannot be undone.`,
+      ),
+      confirmLabel: msg('Delete'),
       variant: 'danger',
     });
 
@@ -215,15 +217,15 @@ export class VelgBuildingsView extends LitElement {
       const response = await buildingsApi.remove(this.simulationId, building.id);
 
       if (response.success) {
-        VelgToast.success(`"${building.name}" has been deleted`);
+        VelgToast.success(msg(str`"${building.name}" has been deleted`));
         this._showDetails = false;
         this._selectedBuilding = null;
         this._loadBuildings();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to delete building');
+        VelgToast.error(response.error?.message ?? msg('Failed to delete building'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred while deleting');
+      VelgToast.error(msg('An unexpected error occurred while deleting'));
     }
   }
 
@@ -256,12 +258,12 @@ export class VelgBuildingsView extends LitElement {
     return html`
       <div class="view">
         <div class="view__header">
-          <h1 class="view__title">Buildings</h1>
+          <h1 class="view__title">${msg('Buildings')}</h1>
           ${
             this._canEdit
               ? html`
                 <button class="view__create-btn" @click=${this._handleCreateClick}>
-                  + Create Building
+                  ${msg('+ Create Building')}
                 </button>
               `
               : nothing
@@ -270,7 +272,7 @@ export class VelgBuildingsView extends LitElement {
 
         <velg-filter-bar
           .filters=${this._getFilterConfigs()}
-          search-placeholder="Search buildings..."
+          search-placeholder=${msg('Search buildings...')}
           @filter-change=${this._handleFilterChange}
         ></velg-filter-bar>
 
@@ -298,7 +300,7 @@ export class VelgBuildingsView extends LitElement {
 
   private _renderContent() {
     if (this._loading) {
-      return html`<velg-loading-state message="Loading buildings..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading buildings...')}></velg-loading-state>`;
     }
 
     if (this._error) {
@@ -314,15 +316,15 @@ export class VelgBuildingsView extends LitElement {
     if (this._buildings.length === 0) {
       return html`
         <velg-empty-state
-          message="No buildings found. Create one to get started."
-          cta-label=${this._canEdit ? 'Create Building' : ''}
+          message=${msg('No buildings found. Create one to get started.')}
+          cta-label=${this._canEdit ? msg('Create Building') : ''}
           @cta-click=${this._handleCreateClick}
         ></velg-empty-state>
       `;
     }
 
     return html`
-      <span class="view__count">${this._total} building${this._total !== 1 ? 's' : ''} total</span>
+      <span class="view__count">${this._total !== 1 ? msg(str`${this._total} buildings total`) : msg(str`${this._total} building total`)}</span>
 
       <div class="view__grid">
         ${this._buildings.map(

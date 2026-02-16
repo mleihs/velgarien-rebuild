@@ -103,15 +103,15 @@ async def get_prompt_template(
         supabase.table("prompt_templates")
         .select("*")
         .eq("id", str(template_id))
-        .maybe_single()
+        .limit(1)
         .execute()
     )
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Template '{template_id}' not found.",
         )
-    return {"success": True, "data": response.data}
+    return {"success": True, "data": response.data[0]}
 
 
 @router.post("", response_model=SuccessResponse[PromptTemplateResponse], status_code=201)

@@ -201,18 +201,20 @@ INSERT INTO prompt_templates (
     temperature, max_tokens, negative_prompt, is_system_default, created_by_id
 ) VALUES (
     NULL, 'portrait_description', 'generation', 'en', 'Portrait Description (EN)',
-    'Describe a photorealistic portrait of {agent_name}.
+    'Describe a photorealistic head-and-shoulders portrait of a SINGLE person: {agent_name}.
 
 Character traits: {agent_character}
 Background: {agent_background}
 
-Describe in detail: age, ethnicity, facial features, expression, hairstyle, clothing, lighting, mood.
+COMPOSITION: Close-up head-and-shoulders portrait, single subject centered in frame, shallow depth of field, studio-quality lighting.
+Describe in detail: age, ethnicity, facial features, expression, hairstyle, clothing visible at shoulders, lighting, mood.
 Write as a Stable Diffusion prompt — comma-separated descriptors, no sentences.
-Example: "middle-aged man, sharp features, grey temples, stern expression, military uniform, dramatic lighting"',
-    'You are a portrait description specialist for AI image generation. Write concise, visual descriptors.',
+IMPORTANT: Describe only ONE person. Never mention multiple people.
+Example: "single person, head-and-shoulders portrait, middle-aged man, sharp features, grey temples, stern expression, military uniform collar visible, dramatic side lighting, shallow depth of field"',
+    'You are a portrait description specialist for AI image generation. Write concise, visual descriptors for a single person portrait.',
     '[{"name": "agent_name"}, {"name": "agent_character"}, {"name": "agent_background"}]',
     'deepseek/deepseek-chat-v3-0324', 0.6, 200,
-    'cartoon, anime, illustration, distorted, deformed, ugly, blurry, low quality, text, watermark',
+    'cartoon, anime, illustration, distorted, deformed, ugly, blurry, low quality, text, watermark, multiple people, group, crowd, two people, two faces, extra limbs, extra fingers, cropped, out of frame, full body',
     true, admin_id
 ) ON CONFLICT DO NOTHING;
 
@@ -223,18 +225,20 @@ INSERT INTO prompt_templates (
     temperature, max_tokens, negative_prompt, is_system_default, created_by_id
 ) VALUES (
     NULL, 'portrait_description', 'generation', 'de', 'Portrait-Beschreibung (DE)',
-    'Beschreibe ein fotorealistisches Portrait von {agent_name}.
+    'Beschreibe ein fotorealistisches Kopf-und-Schulter-Portrait einer EINZELNEN Person: {agent_name}.
 
 Charaktereigenschaften: {agent_character}
 Hintergrund: {agent_background}
 
-Beschreibe detailliert: Alter, Ethnie, Gesichtszüge, Ausdruck, Frisur, Kleidung, Beleuchtung, Stimmung.
+KOMPOSITION: Nahaufnahme Kopf-und-Schulter-Portrait, einzelne Person zentriert, geringe Tiefenschärfe, Studio-Beleuchtung.
+Beschreibe detailliert: Alter, Ethnie, Gesichtszüge, Ausdruck, sichtbare Kleidung an Schultern, Beleuchtung, Stimmung.
 Schreibe als Stable-Diffusion-Prompt — kommagetrennte Deskriptoren, keine Sätze.
+WICHTIG: Beschreibe nur EINE Person. Erwähne niemals mehrere Personen.
 WICHTIG: Schreibe die Beschreibung auf ENGLISCH (für die Bildgenerierung).',
-    'Du bist ein Portrait-Beschreibungs-Spezialist für KI-Bildgenerierung. Schreibe prägnante, visuelle Deskriptoren auf Englisch.',
+    'Du bist ein Portrait-Beschreibungs-Spezialist für KI-Bildgenerierung. Schreibe prägnante, visuelle Deskriptoren auf Englisch für ein Einzelperson-Portrait.',
     '[{"name": "agent_name"}, {"name": "agent_character"}, {"name": "agent_background"}]',
     'deepseek/deepseek-chat-v3-0324', 0.6, 200,
-    'cartoon, anime, illustration, distorted, deformed, ugly, blurry, low quality, text, watermark',
+    'cartoon, anime, illustration, distorted, deformed, ugly, blurry, low quality, text, watermark, multiple people, group, crowd, two people, two faces, extra limbs, extra fingers, cropped, out of frame, full body',
     true, admin_id
 ) ON CONFLICT DO NOTHING;
 

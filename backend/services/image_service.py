@@ -105,7 +105,16 @@ class ImageService:
             building_name=building_name,
             locale="en",
         )
-        description = result.get("content", building_name)
+        raw_description = result.get("content", building_name)
+
+        # Format as SD-compatible prompt with architectural style keywords
+        description = (
+            f"architectural photograph, {building_type} building, "
+            f"brutalist dystopian style, concrete and steel, "
+            f"{raw_description[:300]}, "
+            "dramatic lighting, imposing structure, photorealistic, "
+            "high detail, cinematic composition"
+        )
 
         # 2. Generate image
         image_model = await self._model_resolver.resolve_image_model(

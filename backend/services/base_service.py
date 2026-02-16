@@ -2,12 +2,27 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from uuid import UUID
 
 from fastapi import HTTPException, status
 
 from supabase import Client
+
+
+def _serialize_for_json(data: dict) -> dict:
+    """Convert non-JSON-serializable values (datetime, UUID) to strings."""
+    result = {}
+    for key, value in data.items():
+        if isinstance(value, datetime):
+            result[key] = value.isoformat()
+        elif isinstance(value, date):
+            result[key] = value.isoformat()
+        elif isinstance(value, UUID):
+            result[key] = str(value)
+        else:
+            result[key] = value
+    return result
 
 
 class BaseService:
@@ -80,17 +95,23 @@ class BaseService:
             .select(select)
             .eq("simulation_id", str(simulation_id))
             .eq("id", str(entity_id))
-            .maybe_single()
+            .limit(1)
             .execute()
         )
 
-        if not response.data:
+        data = (
+            response.data[0]
+            if response and response.data and isinstance(response.data, list)
+            else (response.data if response and response.data else None)
+        )
+
+        if not data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{cls.table_name} '{entity_id}' not found in simulation '{simulation_id}'.",
             )
 
-        return response.data
+        return data
 
     @classmethod
     async def create(
@@ -101,10 +122,10 @@ class BaseService:
         data: dict,
     ) -> dict:
         """Create a new entity in a simulation."""
-        insert_data = {
+        insert_data = _serialize_for_json({
             **data,
             "simulation_id": str(simulation_id),
-        }
+        })
 
         # Set created_by_id if the table supports it
         if "created_by_id" not in insert_data:
@@ -152,7 +173,7 @@ class BaseService:
                 detail="No fields to update.",
             )
 
-        update_data = {**data, "updated_at": datetime.now(UTC).isoformat()}
+        update_data = _serialize_for_json({**data, "updated_at": datetime.now(UTC).isoformat()})
 
         query = (
             supabase.table(cls.table_name)
@@ -177,10 +198,10 @@ class BaseService:
                     .eq("simulation_id", str(simulation_id))
                     .eq("id", str(entity_id))
                     .is_("deleted_at", "null")
-                    .maybe_single()
+                    .limit(1)
                     .execute()
                 )
-                if exists.data:
+                if exists and exists.data:
                     raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
                         detail=(

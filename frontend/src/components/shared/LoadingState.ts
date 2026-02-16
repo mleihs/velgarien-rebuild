@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
@@ -42,7 +43,7 @@ export class VelgLoadingState extends LitElement {
     }
   `;
 
-  @property({ type: String }) message = 'Loading...';
+  @property({ type: String }) message = msg('Loading...');
 
   protected render() {
     return html`

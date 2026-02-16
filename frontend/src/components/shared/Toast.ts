@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
@@ -217,7 +218,7 @@ export class VelgToast extends LitElement {
             <button
               class="toast__close"
               @click=${() => this._handleClose(toast.id)}
-              aria-label="Close"
+              aria-label=${msg('Close')}
             >
               X
             </button>

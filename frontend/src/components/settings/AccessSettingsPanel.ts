@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -569,15 +570,6 @@ export class VelgAccessSettingsPanel extends LitElement {
     );
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    if (this.simulationId && this._isOwner) {
-      this._loadSettings();
-      this._loadMembers();
-      this._loadInvitations();
-    }
-  }
-
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId && this._isOwner) {
       this._loadSettings();
@@ -638,10 +630,10 @@ export class VelgAccessSettingsPanel extends LitElement {
         this._formData = { ...formData };
         this._originalData = { ...formData };
       } else {
-        this._error = response.error?.message ?? 'Failed to load access settings';
+        this._error = response.error?.message ?? msg('Failed to load access settings');
       }
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
@@ -715,17 +707,17 @@ export class VelgAccessSettingsPanel extends LitElement {
         });
 
         if (!response.success) {
-          this._error = response.error?.message ?? `Failed to save ${field.key}`;
-          VelgToast.error(`Failed to save ${field.key}`);
+          this._error = response.error?.message ?? msg(str`Failed to save ${field.key}`);
+          VelgToast.error(msg(str`Failed to save ${field.key}`));
           return;
         }
       }
 
       this._originalData = { ...this._formData };
-      VelgToast.success('Access settings saved successfully.');
+      VelgToast.success(msg('Access settings saved successfully.'));
       this.dispatchEvent(new CustomEvent('settings-saved', { bubbles: true, composed: true }));
     } catch (err) {
-      this._error = err instanceof Error ? err.message : 'An unknown error occurred';
+      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
       VelgToast.error(this._error);
     } finally {
       this._saving = false;
@@ -767,23 +759,23 @@ export class VelgAccessSettingsPanel extends LitElement {
         member_role: newRole,
       });
       if (response.success) {
-        VelgToast.success(`Role updated to ${newRole}.`);
+        VelgToast.success(msg(str`Role updated to ${newRole}.`));
         this._loadMembers();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to change role.');
+        VelgToast.error(response.error?.message ?? msg('Failed to change role.'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred.');
+      VelgToast.error(msg('An unexpected error occurred.'));
     }
   }
 
   private async _handleRemoveMember(member: SimulationMember): Promise<void> {
-    const displayName = member.user?.display_name ?? member.user?.email ?? 'this member';
+    const displayName = member.user?.display_name ?? member.user?.email ?? msg('this member');
 
     const confirmed = await VelgConfirmDialog.show({
-      title: 'Remove Member',
-      message: `Are you sure you want to remove ${displayName} from this simulation?`,
-      confirmLabel: 'Remove',
+      title: msg('Remove Member'),
+      message: msg(str`Are you sure you want to remove ${displayName} from this simulation?`),
+      confirmLabel: msg('Remove'),
       variant: 'danger',
     });
 
@@ -792,13 +784,13 @@ export class VelgAccessSettingsPanel extends LitElement {
     try {
       const response = await membersApi.remove(this.simulationId, member.id);
       if (response.success) {
-        VelgToast.success(`${displayName} has been removed.`);
+        VelgToast.success(msg(str`${displayName} has been removed.`));
         this._loadMembers();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to remove member.');
+        VelgToast.error(response.error?.message ?? msg('Failed to remove member.'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred.');
+      VelgToast.error(msg('An unexpected error occurred.'));
     }
   }
 
@@ -818,13 +810,13 @@ export class VelgAccessSettingsPanel extends LitElement {
       if (response.success && response.data) {
         const invitation = response.data as Invitation;
         this._createdInviteLink = `${window.location.origin}/invitations/${invitation.invite_token}`;
-        VelgToast.success('Invitation created.');
+        VelgToast.success(msg('Invitation created.'));
         this._loadInvitations();
       } else {
-        VelgToast.error(response.error?.message ?? 'Failed to create invitation.');
+        VelgToast.error(response.error?.message ?? msg('Failed to create invitation.'));
       }
     } catch {
-      VelgToast.error('An unexpected error occurred.');
+      VelgToast.error(msg('An unexpected error occurred.'));
     }
   }
 
@@ -832,32 +824,32 @@ export class VelgAccessSettingsPanel extends LitElement {
     if (!this._createdInviteLink) return;
     try {
       await navigator.clipboard.writeText(this._createdInviteLink);
-      VelgToast.success('Link copied to clipboard.');
+      VelgToast.success(msg('Link copied to clipboard.'));
     } catch {
-      VelgToast.error('Failed to copy link.');
+      VelgToast.error(msg('Failed to copy link.'));
     }
   }
 
   private _getInvitationStatus(inv: Invitation): { label: string; cssClass: string } {
     if (inv.accepted_at) {
-      return { label: 'Accepted', cssClass: 'invitations__status--accepted' };
+      return { label: msg('Accepted'), cssClass: 'invitations__status--accepted' };
     }
     const expired = new Date(inv.expires_at) < new Date();
     if (expired) {
-      return { label: 'Expired', cssClass: 'invitations__status--expired' };
+      return { label: msg('Expired'), cssClass: 'invitations__status--expired' };
     }
-    return { label: 'Pending', cssClass: '' };
+    return { label: msg('Pending'), cssClass: '' };
   }
 
   private _renderMembersSection() {
     if (!this._isOwner) return nothing;
 
     return html`
-      <h2 class="panel__section-title">Members</h2>
+      <h2 class="panel__section-title">${msg('Members')}</h2>
 
       ${
         this._loadingMembers
-          ? html`<velg-loading-state message="Loading members..."></velg-loading-state>`
+          ? html`<velg-loading-state message=${msg('Loading members...')}></velg-loading-state>`
           : html`
             <div class="members">
               ${
@@ -867,7 +859,7 @@ export class VelgAccessSettingsPanel extends LitElement {
                       ${this._members.map((member) => this._renderMemberRow(member))}
                     </div>
                   `
-                  : html`<div class="members__empty">No members found.</div>`
+                  : html`<div class="members__empty">${msg('No members found.')}</div>`
               }
 
               <div>
@@ -875,7 +867,7 @@ export class VelgAccessSettingsPanel extends LitElement {
                   class="btn btn--primary"
                   @click=${this._handleToggleInviteForm}
                 >
-                  ${this._showInviteForm ? 'Cancel' : 'Create Invitation'}
+                  ${this._showInviteForm ? msg('Cancel') : msg('Create Invitation')}
                 </button>
               </div>
 
@@ -889,7 +881,7 @@ export class VelgAccessSettingsPanel extends LitElement {
   }
 
   private _renderMemberRow(member: SimulationMember) {
-    const displayName = member.user?.display_name ?? member.user?.email ?? 'Unknown';
+    const displayName = member.user?.display_name ?? member.user?.email ?? msg('Unknown');
     const isOwnerMember = member.member_role === 'owner';
     const roleBadgeClass =
       member.member_role === 'owner'
@@ -911,9 +903,9 @@ export class VelgAccessSettingsPanel extends LitElement {
                 .value=${member.member_role}
                 @change=${(e: Event) => this._handleRoleChange(member, e)}
               >
-                <option value="admin" ?selected=${member.member_role === 'admin'}>Admin</option>
-                <option value="editor" ?selected=${member.member_role === 'editor'}>Editor</option>
-                <option value="viewer" ?selected=${member.member_role === 'viewer'}>Viewer</option>
+                <option value="admin" ?selected=${member.member_role === 'admin'}>${msg('Admin')}</option>
+                <option value="editor" ?selected=${member.member_role === 'editor'}>${msg('Editor')}</option>
+                <option value="viewer" ?selected=${member.member_role === 'viewer'}>${msg('Viewer')}</option>
               </select>
             `
         }
@@ -926,7 +918,7 @@ export class VelgAccessSettingsPanel extends LitElement {
                 class="members__remove-btn"
                 @click=${() => this._handleRemoveMember(member)}
               >
-                Remove
+                ${msg('Remove')}
               </button>
             `
         }
@@ -941,7 +933,7 @@ export class VelgAccessSettingsPanel extends LitElement {
           <input
             class="invite-form__input"
             type="email"
-            placeholder="Email (optional)"
+            placeholder=${msg('Email (optional)')}
             .value=${this._inviteEmail}
             @input=${(e: Event) => {
               this._inviteEmail = (e.target as HTMLInputElement).value;
@@ -954,15 +946,15 @@ export class VelgAccessSettingsPanel extends LitElement {
               this._inviteRole = (e.target as HTMLSelectElement).value as SimulationRole;
             }}
           >
-            <option value="admin">Admin</option>
-            <option value="editor">Editor</option>
-            <option value="viewer" selected>Viewer</option>
+            <option value="admin">${msg('Admin')}</option>
+            <option value="editor">${msg('Editor')}</option>
+            <option value="viewer" selected>${msg('Viewer')}</option>
           </select>
         </div>
 
         <div class="invite-form__actions">
           <button class="btn btn--primary" @click=${this._handleCreateInvitation}>
-            Create
+            ${msg('Create')}
           </button>
         </div>
 
@@ -972,7 +964,7 @@ export class VelgAccessSettingsPanel extends LitElement {
               <div class="invite-link">
                 <span class="invite-link__url">${this._createdInviteLink}</span>
                 <button class="invite-link__copy-btn" @click=${this._handleCopyInviteLink}>
-                  Copy
+                  ${msg('Copy')}
                 </button>
               </div>
             `
@@ -988,13 +980,13 @@ export class VelgAccessSettingsPanel extends LitElement {
 
     return html`
       <div>
-        <h3 class="form__label" style="margin-bottom: var(--space-2)">Pending Invitations</h3>
+        <h3 class="form__label" style="margin-bottom: var(--space-2)">${msg('Pending Invitations')}</h3>
         <div class="invitations__list">
           ${pending.map((inv) => {
             const status = this._getInvitationStatus(inv);
             return html`
               <div class="invitations__row">
-                <span class="invitations__email">${inv.invited_email ?? 'Open link'}</span>
+                <span class="invitations__email">${inv.invited_email ?? msg('Open link')}</span>
                 <span class="members__role-badge">${inv.invited_role}</span>
                 <span class="invitations__status ${status.cssClass}">${status.label}</span>
               </div>
@@ -1009,31 +1001,31 @@ export class VelgAccessSettingsPanel extends LitElement {
     if (!this._isOwner) {
       return html`
         <div class="panel__denied">
-          <h2 class="panel__denied-title">Access Denied</h2>
+          <h2 class="panel__denied-title">${msg('Access Denied')}</h2>
           <p class="panel__denied-text">
-            Only the simulation owner can manage access settings.
+            ${msg('Only the simulation owner can manage access settings.')}
           </p>
         </div>
       `;
     }
 
     if (this._loading) {
-      return html`<velg-loading-state message="Loading access settings..."></velg-loading-state>`;
+      return html`<velg-loading-state message=${msg('Loading access settings...')}></velg-loading-state>`;
     }
 
     return html`
       <div class="panel">
-        <h2 class="panel__section-title">Access Control</h2>
+        <h2 class="panel__section-title">${msg('Access Control')}</h2>
 
         <div class="panel__owner-notice">
-          Only the simulation owner can modify these settings.
+          ${msg('Only the simulation owner can modify these settings.')}
         </div>
 
         ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
 
         <div class="form">
           <div class="form__group">
-            <span class="form__label">Visibility</span>
+            <span class="form__label">${msg('Visibility')}</span>
             <div class="radio-group">
               <label class="radio">
                 <input
@@ -1044,7 +1036,7 @@ export class VelgAccessSettingsPanel extends LitElement {
                   ?checked=${this._formData.visibility === 'public'}
                   @change=${this._handleVisibilityChange}
                 />
-                <span class="radio__label">Public</span>
+                <span class="radio__label">${msg('Public')}</span>
               </label>
               <label class="radio">
                 <input
@@ -1055,11 +1047,11 @@ export class VelgAccessSettingsPanel extends LitElement {
                   ?checked=${this._formData.visibility === 'private'}
                   @change=${this._handleVisibilityChange}
                 />
-                <span class="radio__label">Private</span>
+                <span class="radio__label">${msg('Private')}</span>
               </label>
             </div>
             <span class="form__hint">
-              Public simulations are discoverable by all users. Private simulations require an invitation.
+              ${msg('Public simulations are discoverable by all users. Private simulations require an invitation.')}
             </span>
           </div>
 
@@ -1074,13 +1066,13 @@ export class VelgAccessSettingsPanel extends LitElement {
               <span class="toggle__slider"></span>
             </label>
             <div>
-              <span class="form__label">Allow Registration</span>
-              <span class="form__hint"> -- Users can request to join without an invitation</span>
+              <span class="form__label">${msg('Allow Registration')}</span>
+              <span class="form__hint"> -- ${msg('Users can request to join without an invitation')}</span>
             </div>
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="access-default-role">Default Role for New Members</label>
+            <label class="form__label" for="access-default-role">${msg('Default Role for New Members')}</label>
             <select
               class="form__select"
               id="access-default-role"
@@ -1088,20 +1080,20 @@ export class VelgAccessSettingsPanel extends LitElement {
               @change=${this._handleDefaultRoleChange}
             >
               <option value="viewer" ?selected=${this._formData.default_role === 'viewer'}>
-                Viewer
+                ${msg('Viewer')}
               </option>
               <option value="editor" ?selected=${this._formData.default_role === 'editor'}>
-                Editor
+                ${msg('Editor')}
               </option>
             </select>
             <span class="form__hint">
-              Role assigned to new members when they join.
+              ${msg('Role assigned to new members when they join.')}
             </span>
           </div>
 
           <div class="form__group">
             <label class="form__label" for="access-invitation-expiry">
-              Invitation Expiry (hours)
+              ${msg('Invitation Expiry (hours)')}
             </label>
             <input
               class="form__input"
@@ -1113,12 +1105,12 @@ export class VelgAccessSettingsPanel extends LitElement {
               @input=${(e: Event) => this._handleNumberInput('invitation_expiry_hours', e)}
             />
             <span class="form__hint">
-              How long invitation links remain valid. Max 8760 (1 year).
+              ${msg('How long invitation links remain valid. Max 8760 (1 year).')}
             </span>
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="access-max-members">Max Members</label>
+            <label class="form__label" for="access-max-members">${msg('Max Members')}</label>
             <input
               class="form__input"
               id="access-max-members"
@@ -1129,7 +1121,7 @@ export class VelgAccessSettingsPanel extends LitElement {
               @input=${(e: Event) => this._handleNumberInput('max_members', e)}
             />
             <span class="form__hint">
-              Maximum number of members allowed in this simulation.
+              ${msg('Maximum number of members allowed in this simulation.')}
             </span>
           </div>
         </div>
@@ -1140,7 +1132,7 @@ export class VelgAccessSettingsPanel extends LitElement {
             @click=${this._handleSave}
             ?disabled=${!this._hasChanges || this._saving}
           >
-            ${this._saving ? 'Saving...' : 'Save Access Settings'}
+            ${this._saving ? msg('Saving...') : msg('Save Access Settings')}
           </button>
         </div>
 

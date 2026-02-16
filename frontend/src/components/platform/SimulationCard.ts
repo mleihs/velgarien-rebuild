@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { Simulation } from '../../types/index.js';
@@ -180,16 +181,16 @@ export class VelgSimulationCard extends LitElement {
 
           <div class="card__stats">
             <div class="card__stat">
-              <span class="card__stat-value">--</span>
-              <span class="card__stat-label">Agents</span>
+              <span class="card__stat-value">${sim.agent_count ?? '--'}</span>
+              <span class="card__stat-label">${msg('Agents')}</span>
             </div>
             <div class="card__stat">
-              <span class="card__stat-value">--</span>
-              <span class="card__stat-label">Buildings</span>
+              <span class="card__stat-value">${sim.building_count ?? '--'}</span>
+              <span class="card__stat-label">${msg('Buildings')}</span>
             </div>
             <div class="card__stat">
-              <span class="card__stat-value">--</span>
-              <span class="card__stat-label">Events</span>
+              <span class="card__stat-value">${sim.event_count ?? '--'}</span>
+              <span class="card__stat-label">${msg('Events')}</span>
             </div>
           </div>
         </div>

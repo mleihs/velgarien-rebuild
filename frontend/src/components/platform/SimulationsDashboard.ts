@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -142,28 +143,35 @@ export class VelgSimulationsDashboard extends LitElement {
         this._simulations = response.data;
         appState.setSimulations(response.data);
       } else {
-        this._error = response.error?.message || 'Failed to load simulations.';
+        this._error = response.error?.message || msg('Failed to load simulations.');
       }
     } catch {
-      this._error = 'An unexpected error occurred while loading simulations.';
+      this._error = msg('An unexpected error occurred while loading simulations.');
     } finally {
       this._loading = false;
     }
   }
 
   private _handleCreateClick(): void {
-    // TODO: Implement simulation creation flow
+    this.dispatchEvent(
+      new CustomEvent('navigate', {
+        detail: '/new-simulation',
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   private _handleSimulationClick(e: CustomEvent<Simulation>): void {
     const simulation = e.detail;
     appState.setCurrentSimulation(simulation);
-    // TODO: Navigate to simulation detail view
+    window.history.pushState({}, '', `/simulations/${simulation.id}/agents`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
   }
 
   protected render() {
     if (this._loading) {
-      return html`<div class="loading-state">Loading Simulations...</div>`;
+      return html`<div class="loading-state">${msg('Loading Simulations...')}</div>`;
     }
 
     if (this._error) {
@@ -172,9 +180,9 @@ export class VelgSimulationsDashboard extends LitElement {
 
     return html`
       <div class="dashboard-header">
-        <h1 class="dashboard-title">Your Simulations</h1>
+        <h1 class="dashboard-title">${msg('Your Simulations')}</h1>
         <button class="btn-create" @click=${this._handleCreateClick}>
-          + Create Simulation
+          ${msg('+ Create Simulation')}
         </button>
       </div>
 
@@ -182,12 +190,12 @@ export class VelgSimulationsDashboard extends LitElement {
         this._simulations.length === 0
           ? html`
           <div class="empty-state">
-            <div class="empty-state__title">No Simulations Yet</div>
+            <div class="empty-state__title">${msg('No Simulations Yet')}</div>
             <div class="empty-state__text">
-              Create your first simulation to start building worlds with agents, buildings, and events.
+              ${msg('Create your first simulation to start building worlds with agents, buildings, and events.')}
             </div>
             <button class="btn-create" @click=${this._handleCreateClick}>
-              + Create Your First Simulation
+              ${msg('+ Create Your First Simulation')}
             </button>
           </div>
         `

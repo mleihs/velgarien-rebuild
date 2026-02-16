@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, svg } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -174,14 +175,14 @@ export class VelgEventEditModal extends LitElement {
       color: var(--color-danger);
     }
 
-    .form__actions {
+    .footer {
       display: flex;
       align-items: center;
       justify-content: flex-end;
       gap: var(--space-3);
     }
 
-    .form__btn {
+    .footer__btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -197,33 +198,30 @@ export class VelgEventEditModal extends LitElement {
       transition: all var(--transition-fast);
     }
 
-    .form__btn:hover:not(:disabled) {
+    .footer__btn:hover {
       transform: translate(-2px, -2px);
       box-shadow: var(--shadow-lg);
     }
 
-    .form__btn:active:not(:disabled) {
+    .footer__btn:active {
       transform: translate(0);
       box-shadow: var(--shadow-pressed);
     }
 
-    .form__btn:disabled {
+    .footer__btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      pointer-events: none;
     }
 
-    .form__btn--cancel {
+    .footer__btn--cancel {
       background: var(--color-surface-raised);
       color: var(--color-text-primary);
     }
 
-    .form__btn--submit {
+    .footer__btn--save {
       background: var(--color-primary);
       color: var(--color-text-inverse);
-    }
-
-    .form__btn--submit:hover:not(:disabled) {
-      background: var(--color-primary-hover);
     }
   `;
 
@@ -239,7 +237,6 @@ export class VelgEventEditModal extends LitElement {
   @state() private _tags: string[] = [];
   @state() private _tagInput = '';
   @state() private _location = '';
-  @state() private _dataSource = 'manual';
   @state() private _saving = false;
   @state() private _error: string | null = null;
 
@@ -248,7 +245,7 @@ export class VelgEventEditModal extends LitElement {
   }
 
   private get _modalTitle(): string {
-    return this._isEdit ? 'Edit Event' : 'Create Event';
+    return this._isEdit ? msg('Edit Event') : msg('Create Event');
   }
 
   private _getEventTypeTaxonomies() {
@@ -274,7 +271,6 @@ export class VelgEventEditModal extends LitElement {
       this._impactLevel = this.event.impact_level ?? 1;
       this._tags = [...(this.event.tags ?? [])];
       this._location = this.event.location ?? '';
-      this._dataSource = this.event.data_source ?? 'manual';
     } else {
       this._resetForm();
     }
@@ -285,12 +281,11 @@ export class VelgEventEditModal extends LitElement {
     this._title = '';
     this._eventType = '';
     this._description = '';
-    this._occurredAt = '';
+    this._occurredAt = this._toDateInputValue(new Date().toISOString());
     this._impactLevel = 1;
     this._tags = [];
     this._tagInput = '';
     this._location = '';
-    this._dataSource = 'manual';
     this._error = null;
   }
 
@@ -341,11 +336,11 @@ export class VelgEventEditModal extends LitElement {
     );
   }
 
-  private async _handleSubmit(e: SubmitEvent): Promise<void> {
-    e.preventDefault();
+  private async _handleSubmit(e?: Event): Promise<void> {
+    e?.preventDefault();
 
     if (!this._title.trim()) {
-      this._error = 'Title is required';
+      this._error = msg('Title is required');
       return;
     }
 
@@ -360,7 +355,6 @@ export class VelgEventEditModal extends LitElement {
       impact_level: this._impactLevel,
       tags: this._tags,
       location: this._location.trim() || undefined,
-      data_source: this._dataSource,
     };
 
     try {
@@ -370,7 +364,7 @@ export class VelgEventEditModal extends LitElement {
 
       if (response.success) {
         VelgToast.success(
-          this._isEdit ? 'Event updated successfully' : 'Event created successfully',
+          this._isEdit ? msg('Event updated successfully') : msg('Event created successfully'),
         );
         this.dispatchEvent(
           new CustomEvent('event-saved', {
@@ -380,11 +374,11 @@ export class VelgEventEditModal extends LitElement {
           }),
         );
       } else {
-        this._error = response.error?.message ?? 'Failed to save event';
+        this._error = response.error?.message ?? msg('Failed to save event');
         VelgToast.error(this._error);
       }
     } catch {
-      this._error = 'An unexpected error occurred';
+      this._error = msg('An unexpected error occurred');
       VelgToast.error(this._error);
     } finally {
       this._saving = false;
@@ -403,7 +397,7 @@ export class VelgEventEditModal extends LitElement {
 
         <form class="form" @submit=${this._handleSubmit}>
           <div class="form__group">
-            <label class="form__label form__label--required">Title</label>
+            <label class="form__label form__label--required">${msg('Title')}</label>
             <input
               class="form__input"
               type="text"
@@ -411,61 +405,44 @@ export class VelgEventEditModal extends LitElement {
               @input=${(e: InputEvent) => {
                 this._title = (e.target as HTMLInputElement).value;
               }}
-              placeholder="Event title"
+              placeholder=${msg('Event title')}
               required
             />
           </div>
 
-          <div class="form__row">
-            <div class="form__group">
-              <label class="form__label">Event Type</label>
-              <select
-                class="form__select"
-                .value=${this._eventType}
-                @change=${(e: Event) => {
-                  this._eventType = (e.target as HTMLSelectElement).value;
-                }}
-              >
-                <option value="">-- Select Type --</option>
-                ${eventTypes.map(
-                  (t) => html`
-                    <option value=${t.value}>${t.label?.en ?? t.value}</option>
-                  `,
-                )}
-              </select>
-            </div>
-
-            <div class="form__group">
-              <label class="form__label">Data Source</label>
-              <select
-                class="form__select"
-                .value=${this._dataSource}
-                @change=${(e: Event) => {
-                  this._dataSource = (e.target as HTMLSelectElement).value;
-                }}
-              >
-                <option value="manual">Manual</option>
-                <option value="imported">Imported</option>
-                <option value="ai">AI</option>
-              </select>
-            </div>
+          <div class="form__group">
+            <label class="form__label">${msg('Event Type')}</label>
+            <select
+              class="form__select"
+              .value=${this._eventType}
+              @change=${(e: Event) => {
+                this._eventType = (e.target as HTMLSelectElement).value;
+              }}
+            >
+              <option value="">${msg('-- Select Type --')}</option>
+              ${eventTypes.map(
+                (t) => html`
+                  <option value=${t.value}>${t.label?.en ?? t.value}</option>
+                `,
+              )}
+            </select>
           </div>
 
           <div class="form__group">
-            <label class="form__label">Description</label>
+            <label class="form__label">${msg('Description')}</label>
             <textarea
               class="form__textarea"
               .value=${this._description}
               @input=${(e: InputEvent) => {
                 this._description = (e.target as HTMLTextAreaElement).value;
               }}
-              placeholder="Event description..."
+              placeholder=${msg('Event description...')}
             ></textarea>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Occurred At</label>
+              <label class="form__label">${msg('Occurred At')}</label>
               <input
                 class="form__input"
                 type="datetime-local"
@@ -477,7 +454,7 @@ export class VelgEventEditModal extends LitElement {
             </div>
 
             <div class="form__group">
-              <label class="form__label">Location</label>
+              <label class="form__label">${msg('Location')}</label>
               <input
                 class="form__input"
                 type="text"
@@ -485,13 +462,13 @@ export class VelgEventEditModal extends LitElement {
                 @input=${(e: InputEvent) => {
                   this._location = (e.target as HTMLInputElement).value;
                 }}
-                placeholder="Optional location"
+                placeholder=${msg('Optional location')}
               />
             </div>
           </div>
 
           <div class="form__group">
-            <label class="form__label">Impact Level (${this._impactLevel}/10)</label>
+            <label class="form__label">${msg(str`Impact Level (${this._impactLevel}/10)`)}</label>
             <div class="form__impact-wrapper">
               <input
                 class="form__range"
@@ -509,7 +486,7 @@ export class VelgEventEditModal extends LitElement {
           </div>
 
           <div class="form__group">
-            <label class="form__label">Tags</label>
+            <label class="form__label">${msg('Tags')}</label>
             <div class="form__tags-container">
               ${
                 this._tags.length > 0
@@ -542,31 +519,31 @@ export class VelgEventEditModal extends LitElement {
                   this._tagInput = (e.target as HTMLInputElement).value;
                 }}
                 @keydown=${this._handleTagKeyDown}
-                placeholder="Type and press Enter to add"
+                placeholder=${msg('Type and press Enter to add')}
               />
-              <span class="form__tag-hint">Press Enter or comma to add a tag</span>
+              <span class="form__tag-hint">${msg('Press Enter or comma to add a tag')}</span>
             </div>
           </div>
 
           ${this._error ? html`<div class="form__error">${this._error}</div>` : null}
-
-          <div slot="footer" class="form__actions">
-            <button
-              type="button"
-              class="form__btn form__btn--cancel"
-              @click=${this._handleClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="form__btn form__btn--submit"
-              ?disabled=${this._saving}
-            >
-              ${this._saving ? 'Saving...' : this._isEdit ? 'Update' : 'Create'}
-            </button>
-          </div>
         </form>
+
+        <div slot="footer" class="footer">
+          <button
+            class="footer__btn footer__btn--cancel"
+            @click=${this._handleClose}
+            ?disabled=${this._saving}
+          >
+            ${msg('Cancel')}
+          </button>
+          <button
+            class="footer__btn footer__btn--save"
+            @click=${this._handleSubmit}
+            ?disabled=${this._saving}
+          >
+            ${this._saving ? msg('Saving...') : this._isEdit ? msg('Save Changes') : msg('Create Event')}
+          </button>
+        </div>
       </velg-base-modal>
     `;
   }

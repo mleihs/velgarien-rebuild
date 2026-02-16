@@ -16,7 +16,14 @@ export type SimulationStatus = 'draft' | 'configuring' | 'active' | 'paused' | '
 
 export type SimulationRole = 'owner' | 'admin' | 'editor' | 'viewer';
 
-export type SettingCategory = 'general' | 'world' | 'ai' | 'integration' | 'design' | 'access';
+export type SettingCategory =
+  | 'general'
+  | 'world'
+  | 'ai'
+  | 'integration'
+  | 'design'
+  | 'access'
+  | 'prompts';
 
 export type TaxonomyType =
   | 'gender'
@@ -85,6 +92,10 @@ export interface Simulation {
   updated_at: string;
   archived_at?: string;
   deleted_at?: string;
+  agent_count?: number;
+  building_count?: number;
+  event_count?: number;
+  member_count?: number;
   members?: SimulationMember[];
   settings?: SimulationSetting[];
   taxonomies?: SimulationTaxonomy[];
@@ -556,6 +567,7 @@ export interface ApiError {
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
+  meta?: { count?: number; total?: number; limit?: number; offset?: number };
   error?: ApiError;
 }
 

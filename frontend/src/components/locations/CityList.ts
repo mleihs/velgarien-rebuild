@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { City } from '../../types/index.js';
@@ -102,7 +103,7 @@ export class VelgCityList extends LitElement {
               }
               ${
                 city.population
-                  ? html`<div class="item__meta">Population: ${city.population.toLocaleString()}</div>`
+                  ? html`<div class="item__meta">${msg(str`Population: ${city.population.toLocaleString()}`)}</div>`
                   : nothing
               }
               <div class="item__footer">

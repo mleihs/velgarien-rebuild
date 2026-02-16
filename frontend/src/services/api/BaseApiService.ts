@@ -5,7 +5,7 @@ export class BaseApiService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_BACKEND_URL || '/api/v1';
+    this.baseUrl = '/api/v1';
   }
 
   private getHeaders(): Record<string, string> {
@@ -69,6 +69,7 @@ export class BaseApiService {
       return {
         success: true,
         data: json.data !== undefined ? json.data : json,
+        meta: json.meta,
       };
     } catch (err) {
       const message = err instanceof Error ? err.message : 'An unknown error occurred';

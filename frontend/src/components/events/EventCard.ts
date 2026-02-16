@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing, svg } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -363,7 +364,7 @@ export class VelgEventCard extends LitElement {
           <div class="card__badges">
             ${evt.event_type ? html`<span class="card__badge card__badge--type">${evt.event_type}</span>` : null}
             ${evt.data_source === 'ai' ? html`<span class="card__badge card__badge--ai">AI</span>` : null}
-            ${reactionCount > 0 ? html`<span class="card__badge card__badge--reactions">${reactionCount} Reactions</span>` : null}
+            ${reactionCount > 0 ? html`<span class="card__badge card__badge--reactions">${msg(str`${reactionCount} Reactions`)}</span>` : null}
           </div>
 
           <div class="card__meta">
@@ -408,16 +409,16 @@ export class VelgEventCard extends LitElement {
                 <button
                   class="card__action-btn"
                   @click=${this._handleEdit}
-                  title="Edit"
-                  aria-label="Edit event"
+                  title=${msg('Edit')}
+                  aria-label=${msg('Edit event')}
                 >
                   ${this._editIcon()}
                 </button>
                 <button
                   class="card__action-btn card__action-btn--danger"
                   @click=${this._handleDelete}
-                  title="Delete"
-                  aria-label="Delete event"
+                  title=${msg('Delete')}
+                  aria-label=${msg('Delete event')}
                 >
                   ${this._deleteIcon()}
                 </button>

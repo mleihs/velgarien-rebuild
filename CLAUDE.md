@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 5 phases complete. 138 tasks implemented. Platform ready for deployment.
+**Current Status:** All 5 phases complete + i18n fully implemented. 139 tasks. 675 localized UI strings (EN/DE). Platform ready for deployment.
 
 ## Tech Stack
 
@@ -66,6 +66,10 @@ frontend/             Lit + Vite application
       locations/      LocationsView, CityList, ZoneList, StreetList, LocationEditModal
       settings/       SettingsView + 7 panels (General, World, AI, Integration, Design, Access, View)
     services/         Supabase client, 16 API services, AppStateManager, NotificationService, RealtimeService, PresenceService
+      i18n/           LocaleService + FormatService
+    locales/          i18n files
+      generated/      Auto-generated: de.ts, locale-codes.ts (DO NOT EDIT)
+      xliff/          Translation interchange: de.xlf (EDIT THIS for translations)
     styles/           CSS design tokens (tokens/) + base styles (base/)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
   tests/              vitest tests (130 tests: validation + API + notification)
@@ -94,6 +98,8 @@ npm run dev                                    # Vite dev server on :5173
 npx vitest run                                 # Run tests
 npx biome check src/                          # Lint
 npx biome check --write src/                  # Auto-fix lint issues
+npx lit-localize extract                       # Extract msg() strings to XLIFF
+npx lit-localize build                         # Build de.ts from XLIFF translations
 
 # Database
 supabase start                                 # Start local Supabase
@@ -168,6 +174,57 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - **Event naming:** `import type { Event as SimEvent }` to avoid DOM `Event` conflict
 - **Taxonomy-driven options:** Dropdowns populated from `appState.getTaxonomiesByType()` with locale-aware labels
 - **AppStateManager signals:** `user`, `accessToken`, `currentSimulation`, `simulations`, `currentRole`, `taxonomies`, `settings`. Computed: `isAuthenticated`, `simulationId`, `isOwner`, `canAdmin`, `canEdit`
+
+## i18n — MANDATORY for ALL UI Strings
+
+**Every user-facing string MUST be wrapped with `msg()`.** This is non-negotiable.
+
+### Rules
+
+1. **All new UI strings must use `msg()`** — labels, buttons, placeholders, error messages, toast messages, aria-labels, empty states, loading states, validation messages
+2. **Static strings:** `msg('Save Changes')`
+3. **Dynamic strings with interpolation:** `msg(str\`Agent "${name}" deleted.\`)`
+4. **Import:** `import { msg } from '@lit/localize';` (add `str` only when using template literals)
+5. **Do NOT wrap:** CSS classes, HTML attributes, event names, route paths, property names, console messages, technical identifiers
+6. **Module-level arrays with msg():** Convert to functions (e.g., `const TABS = [...]` → `function getTabs() { return [...]; }`) because `msg()` must evaluate at render time for locale switching
+
+### German Translation — ALWAYS Required
+
+**When adding ANY new `msg()` string, you MUST also add the German translation to the XLIFF file.**
+
+Workflow:
+```bash
+# After adding msg() calls:
+cd frontend
+npx lit-localize extract    # Updates src/locales/xliff/de.xlf with new <trans-unit> entries
+# Add <target>German translation</target> to each new entry in de.xlf
+npx lit-localize build      # Regenerates src/locales/generated/de.ts
+```
+
+Alternatively, add `<target>` elements directly to `frontend/src/locales/xliff/de.xlf` before running extract+build.
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `frontend/lit-localize.json` | Config: sourceLocale=en, targetLocale=de, runtime mode |
+| `frontend/src/services/i18n/locale-service.ts` | LocaleService: initLocale, setLocale, getInitialLocale |
+| `frontend/src/services/i18n/format-service.ts` | FormatService: formatDate, formatDateTime, formatNumber, formatRelativeTime |
+| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (675 trans-units) — edit this for translations |
+| `frontend/src/locales/generated/de.ts` | Auto-generated — NEVER edit manually |
+| `frontend/src/locales/generated/locale-codes.ts` | Source/target locale constants |
+
+## Code Reusability — ALWAYS Check First
+
+**Before writing new code, ALWAYS search for existing reusable patterns:**
+
+1. **Check `components/shared/`** — 10 shared components exist (BaseModal, DataTable, SharedFilterBar, Pagination, Toast, ConfirmDialog, FormBuilder, ErrorState, LoadingState, EmptyState). Use them instead of creating one-off solutions.
+2. **Check `services/`** — BaseApiService provides CRUD patterns. Extend it for new API services. BaseService (backend) provides generic CRUD with soft-delete, audit logging, and optimistic locking.
+3. **Check existing components** for similar patterns — entity views follow a consistent 4-file pattern (ListView, Card, EditModal, DetailsPanel). Copy the pattern, don't reinvent it.
+4. **Check `styles/tokens/`** — Use existing CSS custom properties for spacing, colors, typography. Don't hardcode values.
+5. **Check `types/index.ts`** — Use existing TypeScript interfaces. Extend them if needed, don't duplicate.
+6. **Check `utils/`** — Icons utility, formatters, and other shared utilities exist. Add to them rather than creating parallel utilities.
+7. **Backend:** Check `services/base_service.py` before implementing CRUD logic. Check `models/common.py` for response types. Check `dependencies.py` for auth patterns.
 
 ## Spec Documents
 

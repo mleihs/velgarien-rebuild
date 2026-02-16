@@ -1,8 +1,8 @@
 # 00 - Project Overview: Velgarien Multi-Simulations-Plattform
 
-**Version:** 1.1
-**Datum:** 2026-02-15
-**Status:** Phase 1 + Phase 2 implementiert (Platform Foundation + Entity CRUD)
+**Version:** 1.2
+**Datum:** 2026-02-16
+**Status:** Alle 5 Phasen + i18n komplett (Platform Foundation, Entity CRUD, Settings/AI, Social/Realtime, Testing, i18n)
 
 ---
 

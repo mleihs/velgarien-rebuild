@@ -4,7 +4,12 @@
   "targetLocales": ["de"],
   "output": {
     "mode": "runtime",
-    "outputDir": "src/locales/generated"
+    "outputDir": "src/locales/generated",
+    "language": "ts"
   },
-  "inputFiles": ["src/**/*.ts"]
+  "inputFiles": ["src/**/*.ts"],
+  "interchange": {
+    "format": "xliff",
+    "xliffDir": "src/locales/xliff"
+  }
 }

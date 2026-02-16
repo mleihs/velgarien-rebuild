@@ -1,3 +1,4 @@
+import { msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { simulationsApi } from '../../services/api/index.js';
@@ -400,11 +401,11 @@ export class VelgCreateSimulationWizard extends LitElement {
     const errors: Record<string, string> = {};
 
     if (!this._formData.name.trim()) {
-      errors.name = 'Name is required';
+      errors.name = msg('Name is required');
     }
 
     if (!this._formData.slug.trim()) {
-      errors.slug = 'Slug is required';
+      errors.slug = msg('Slug is required');
     }
 
     this._errors = errors;
@@ -444,13 +445,7 @@ export class VelgCreateSimulationWizard extends LitElement {
       const response = await simulationsApi.create(payload);
 
       if (response.success && response.data) {
-        VelgToast.success(`Simulation "${response.data.name}" created.`);
-        this.dispatchEvent(
-          new CustomEvent('modal-close', {
-            bubbles: true,
-            composed: true,
-          }),
-        );
+        VelgToast.success(msg(str`Simulation "${response.data.name}" created.`));
         this.dispatchEvent(
           new CustomEvent('navigate', {
             detail: `/simulations/${response.data.id}/agents`,
@@ -459,11 +454,11 @@ export class VelgCreateSimulationWizard extends LitElement {
           }),
         );
       } else {
-        this._apiError = response.error?.message ?? 'Failed to create simulation.';
+        this._apiError = response.error?.message ?? msg('Failed to create simulation.');
         VelgToast.error(this._apiError);
       }
     } catch {
-      this._apiError = 'An unexpected error occurred.';
+      this._apiError = msg('An unexpected error occurred.');
       VelgToast.error(this._apiError);
     } finally {
       this._creating = false;
@@ -472,7 +467,8 @@ export class VelgCreateSimulationWizard extends LitElement {
 
   private _handleClose(): void {
     this.dispatchEvent(
-      new CustomEvent('modal-close', {
+      new CustomEvent('navigate', {
+        detail: '/dashboard',
         bubbles: true,
         composed: true,
       }),
@@ -487,9 +483,9 @@ export class VelgCreateSimulationWizard extends LitElement {
 
   private _renderStepIndicator() {
     const steps: Array<{ num: WizardStep; label: string }> = [
-      { num: 1, label: 'Basic Info' },
-      { num: 2, label: 'Taxonomies' },
-      { num: 3, label: 'Confirm' },
+      { num: 1, label: msg('Basic Info') },
+      { num: 2, label: msg('Taxonomies') },
+      { num: 3, label: msg('Confirm') },
     ];
 
     return html`
@@ -527,13 +523,13 @@ export class VelgCreateSimulationWizard extends LitElement {
       <div class="wizard__form">
         <div class="wizard__group">
           <label class="wizard__label" for="sim-name">
-            Name <span class="wizard__required">*</span>
+            ${msg('Name')} <span class="wizard__required">*</span>
           </label>
           <input
             class="wizard__input ${this._errors.name ? 'wizard__input--error' : ''}"
             id="sim-name"
             type="text"
-            placeholder="My Simulation..."
+            placeholder=${msg('My Simulation...')}
             .value=${this._formData.name}
             @input=${(e: Event) => this._handleInput('name', e)}
           />
@@ -545,7 +541,7 @@ export class VelgCreateSimulationWizard extends LitElement {
         </div>
 
         <div class="wizard__group">
-          <label class="wizard__label">Slug</label>
+          <label class="wizard__label">${msg('Slug')}</label>
           <div class="wizard__slug-preview">
             ${this._formData.slug || '---'}
           </div>
@@ -557,35 +553,35 @@ export class VelgCreateSimulationWizard extends LitElement {
         </div>
 
         <div class="wizard__group">
-          <label class="wizard__label" for="sim-desc">Description</label>
+          <label class="wizard__label" for="sim-desc">${msg('Description')}</label>
           <textarea
             class="wizard__textarea"
             id="sim-desc"
-            placeholder="Describe your simulation..."
+            placeholder=${msg('Describe your simulation...')}
             .value=${this._formData.description}
             @input=${(e: Event) => this._handleInput('description', e)}
           ></textarea>
         </div>
 
         <div class="wizard__group">
-          <label class="wizard__label" for="sim-theme">Theme</label>
+          <label class="wizard__label" for="sim-theme">${msg('Theme')}</label>
           <select
             class="wizard__select"
             id="sim-theme"
             .value=${this._formData.theme}
             @change=${(e: Event) => this._handleInput('theme', e)}
           >
-            <option value="dystopian">Dystopian</option>
-            <option value="utopian">Utopian</option>
-            <option value="fantasy">Fantasy</option>
-            <option value="scifi">Sci-Fi</option>
-            <option value="historical">Historical</option>
-            <option value="custom">Custom</option>
+            <option value="dystopian">${msg('Dystopian')}</option>
+            <option value="utopian">${msg('Utopian')}</option>
+            <option value="fantasy">${msg('Fantasy')}</option>
+            <option value="scifi">${msg('Sci-Fi')}</option>
+            <option value="historical">${msg('Historical')}</option>
+            <option value="custom">${msg('Custom')}</option>
           </select>
         </div>
 
         <div class="wizard__group">
-          <label class="wizard__label" for="sim-locale">Content Locale</label>
+          <label class="wizard__label" for="sim-locale">${msg('Content Locale')}</label>
           <select
             class="wizard__select"
             id="sim-locale"
@@ -604,25 +600,27 @@ export class VelgCreateSimulationWizard extends LitElement {
     const options: Array<{ value: TaxonomyChoice; title: string; desc: string }> = [
       {
         value: 'defaults',
-        title: 'Import Velgarien defaults',
-        desc: 'Start with the standard set of taxonomies for professions, building types, and more.',
+        title: msg('Import Velgarien defaults'),
+        desc: msg(
+          'Start with the standard set of taxonomies for professions, building types, and more.',
+        ),
       },
       {
         value: 'empty',
-        title: 'Start empty',
-        desc: 'Begin with a blank slate and define all taxonomies manually.',
+        title: msg('Start empty'),
+        desc: msg('Begin with a blank slate and define all taxonomies manually.'),
       },
       {
         value: 'custom',
-        title: 'Custom',
-        desc: 'Select specific taxonomy sets to import. (Not yet available)',
+        title: msg('Custom'),
+        desc: msg('Select specific taxonomy sets to import. (Not yet available)'),
       },
     ];
 
     return html`
       <div class="wizard__form">
         <div class="wizard__group">
-          <label class="wizard__label">Taxonomy Setup</label>
+          <label class="wizard__label">${msg('Taxonomy Setup')}</label>
           <div class="wizard__radio-group">
             ${options.map(
               (opt) => html`
@@ -656,18 +654,18 @@ export class VelgCreateSimulationWizard extends LitElement {
 
   private _renderStep3() {
     const themeLabels: Record<SimulationTheme, string> = {
-      dystopian: 'Dystopian',
-      utopian: 'Utopian',
-      fantasy: 'Fantasy',
-      scifi: 'Sci-Fi',
-      historical: 'Historical',
-      custom: 'Custom',
+      dystopian: msg('Dystopian'),
+      utopian: msg('Utopian'),
+      fantasy: msg('Fantasy'),
+      scifi: msg('Sci-Fi'),
+      historical: msg('Historical'),
+      custom: msg('Custom'),
     };
 
     const taxonomyLabels: Record<TaxonomyChoice, string> = {
-      defaults: 'Import Velgarien defaults',
-      empty: 'Start empty',
-      custom: 'Custom',
+      defaults: msg('Import Velgarien defaults'),
+      empty: msg('Start empty'),
+      custom: msg('Custom'),
     };
 
     const localeLabels: Record<string, string> = {
@@ -681,37 +679,37 @@ export class VelgCreateSimulationWizard extends LitElement {
 
         <div class="wizard__summary">
           <div class="wizard__summary-row">
-            <span class="wizard__summary-label">Name</span>
+            <span class="wizard__summary-label">${msg('Name')}</span>
             <span class="wizard__summary-value">${this._formData.name}</span>
           </div>
           <div class="wizard__summary-row">
-            <span class="wizard__summary-label">Slug</span>
+            <span class="wizard__summary-label">${msg('Slug')}</span>
             <span class="wizard__summary-value">${this._formData.slug}</span>
           </div>
           ${
             this._formData.description
               ? html`
               <div class="wizard__summary-row">
-                <span class="wizard__summary-label">Description</span>
+                <span class="wizard__summary-label">${msg('Description')}</span>
                 <span class="wizard__summary-value">${this._formData.description}</span>
               </div>
             `
               : nothing
           }
           <div class="wizard__summary-row">
-            <span class="wizard__summary-label">Theme</span>
+            <span class="wizard__summary-label">${msg('Theme')}</span>
             <span class="wizard__summary-value">
               ${themeLabels[this._formData.theme]}
             </span>
           </div>
           <div class="wizard__summary-row">
-            <span class="wizard__summary-label">Locale</span>
+            <span class="wizard__summary-label">${msg('Locale')}</span>
             <span class="wizard__summary-value">
               ${localeLabels[this._formData.content_locale] ?? this._formData.content_locale}
             </span>
           </div>
           <div class="wizard__summary-row">
-            <span class="wizard__summary-label">Taxonomies</span>
+            <span class="wizard__summary-label">${msg('Taxonomies')}</span>
             <span class="wizard__summary-value">
               ${taxonomyLabels[this._formData.taxonomy_choice]}
             </span>
@@ -746,7 +744,7 @@ export class VelgCreateSimulationWizard extends LitElement {
                 @click=${this._handleBack}
                 ?disabled=${this._creating}
               >
-                Back
+                ${msg('Back')}
               </button>
             `
               : nothing
@@ -758,7 +756,7 @@ export class VelgCreateSimulationWizard extends LitElement {
             @click=${this._handleClose}
             ?disabled=${this._creating}
           >
-            Cancel
+            ${msg('Cancel')}
           </button>
           ${
             this._step < 3
@@ -767,7 +765,7 @@ export class VelgCreateSimulationWizard extends LitElement {
                 class="footer__btn footer__btn--next"
                 @click=${this._handleNext}
               >
-                Next
+                ${msg('Next')}
               </button>
             `
               : html`
@@ -776,7 +774,7 @@ export class VelgCreateSimulationWizard extends LitElement {
                 @click=${this._handleCreate}
                 ?disabled=${this._creating}
               >
-                ${this._creating ? 'Creating...' : 'Create Simulation'}
+                ${this._creating ? msg('Creating...') : msg('Create Simulation')}
               </button>
             `
           }
@@ -787,9 +785,9 @@ export class VelgCreateSimulationWizard extends LitElement {
 
   protected render() {
     const stepTitles: Record<WizardStep, string> = {
-      1: 'Create Simulation - Basic Info',
-      2: 'Create Simulation - Taxonomies',
-      3: 'Create Simulation - Confirm',
+      1: msg('Create Simulation - Basic Info'),
+      2: msg('Create Simulation - Taxonomies'),
+      3: msg('Create Simulation - Confirm'),
     };
 
     return html`

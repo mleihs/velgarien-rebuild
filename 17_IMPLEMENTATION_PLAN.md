@@ -1,7 +1,8 @@
 # 17 - Implementation Plan: Step-by-Step Tasks
 
-**Version:** 2.6
+**Version:** 2.7
 **Datum:** 2026-02-16
+**Aenderung v2.7:** i18n msg()-Migration (P3.3.4) abgeschlossen — 675 Strings in 66 Komponenten + 2 Services gewrappt, DE-XLIFF komplett, FormatService implementiert, Locale-Toggle in PlatformHeader
 **Aenderung v2.6:** Phase 5 implementiert (Testing & Polish — 10 Tasks). Alle 5 Phasen abgeschlossen.
 **Aenderung v2.5:** Phase 4 implementiert (Social, Multi-User, Realtime — 20 Tasks)
 **Aenderung v2.4:** Phase 3 implementiert (Settings, i18n, AI-Pipelines, Prompt-System)
@@ -95,7 +96,7 @@
 
 ### Phase 3 — Ergebnis
 
-**28 von 30 Tasks erledigt.** 2 Tasks teilweise offen (P3.3.4 msg()-Migration auf alle Komponenten, P3.6.3 Security-Tests). Verifikation:
+**29 von 30 Tasks erledigt.** 1 Task teilweise offen (P3.6.3 Security-Tests). P3.3.4 msg()-Migration nachtraeglich komplett abgeschlossen (675 Strings, 66 Komponenten + 2 Services). Verifikation:
 
 | Objekt | Erwartet | Tatsaechlich |
 |--------|----------|-------------|
@@ -116,18 +117,21 @@
 | GenerationApiService | 1 | 1 |
 | ThemeService | 1 | 1 |
 | Error Handler | 1 | 1 |
-| i18n Setup (@lit/localize) | 3 | 3 (locale-service, locale-codes, de.ts) |
-| Formatters | 1 | 1 (5 Funktionen) |
+| i18n Setup (@lit/localize) | 3 | 4 (locale-service, locale-codes, de.ts, de.xlf) |
+| i18n msg() Migration | 66+ Dateien | 66 Komponenten + 2 Services (675 Strings) |
+| i18n DE-Uebersetzungen | komplett | 675 trans-units in XLIFF + generiertes de.ts |
+| i18n Locale-Toggle | 1 | PlatformHeader (EN/DE Umschaltung) |
+| Formatters | 1 | 1 (format-service.ts: 4 Funktionen) |
 | Frontend Components (gesamt) | ~44 | 44 (75 TS-Dateien gesamt) |
 | Backend Tests (gesamt) | bestanden | 52/52 |
 | Frontend Tests (gesamt) | bestanden | 8/8 |
 | TypeScript Kompilierung | 0 Fehler | 0 Fehler |
-| Biome Lint | clean | clean (75 Dateien) |
+| Biome Lint | clean | clean (107 Dateien) |
 | Ruff Lint | clean | clean |
 
 ### Phase 3 — Abweichungen von Plan
 
-1. **msg()-Migration (P3.3.4) aufgeschoben** — i18n-Infrastruktur steht (locale-service, formatters, lit-localize.json), aber hardcodierte Strings in allen 44 Komponenten noch nicht auf `msg()` umgestellt. Erfolgt schrittweise bei Bedarf.
+1. **msg()-Migration (P3.3.4) ERLEDIGT** — Alle 675 UI-Strings in 66 Komponenten + 2 Services mit `msg()` gewrappt. Komplette deutsche Uebersetzung in XLIFF (675 trans-units). Locale-Toggle (EN/DE) in PlatformHeader. FormatService fuer Datum/Zahlen. `lit-localize extract` (675 Messages) + `build` (de.ts generiert). TypeScript 0 Fehler, Biome clean (107 Dateien). Generierte Locale-Dateien von Biome ausgenommen (biome.json negation).
 2. **Security-Tests (P3.6.3) aufgeschoben** — CORS + Security Headers Middleware bereits in Phase 1 implementiert. Dedizierte Integration-Tests kommen bei Bedarf.
 3. **Pagination Standardisierung (P3.6.1)** — Bereits in Phase 2 standardisiert (PaginatedResponse, limit/offset/sort auf allen List-Endpoints). Kein zusaetzlicher Aufwand noetig.
 4. **LangChain nicht verwendet** — ChatAIService nutzt direktes OpenRouter-API statt LangChain. Simpler, weniger Dependencies. Memory via SQL-Abfrage der letzten 50 Nachrichten.

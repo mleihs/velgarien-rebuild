@@ -1,3 +1,4 @@
+import { msg } from '@lit/localize';
 import { css, html, LitElement, nothing, svg } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { agentsApi } from '../../services/api/index.js';
@@ -471,7 +472,7 @@ export class VelgAgentDetailsPanel extends LitElement {
   private _renderProfessions() {
     const professions = this.agent?.professions;
     if (!professions || professions.length === 0) {
-      return html`<span class="panel__empty">No professions assigned.</span>`;
+      return html`<span class="panel__empty">${msg('No professions assigned.')}</span>`;
     }
 
     return html`
@@ -484,7 +485,7 @@ export class VelgAgentDetailsPanel extends LitElement {
                 ${p.specialization ? html` - ${p.specialization}` : nothing}
               </span>
               <span>
-                ${p.is_primary ? html`<span class="panel__profession-primary">Primary</span>` : nothing}
+                ${p.is_primary ? html`<span class="panel__profession-primary">${msg('Primary')}</span>` : nothing}
                 <span class="panel__profession-level">Lvl ${p.qualification_level}</span>
               </span>
             </div>
@@ -496,11 +497,11 @@ export class VelgAgentDetailsPanel extends LitElement {
 
   private _renderReactions() {
     if (this._reactionsLoading) {
-      return html`<div class="panel__reactions-loading">Loading reactions...</div>`;
+      return html`<div class="panel__reactions-loading">${msg('Loading reactions...')}</div>`;
     }
 
     if (this._reactions.length === 0) {
-      return html`<span class="panel__empty">No reactions recorded.</span>`;
+      return html`<span class="panel__empty">${msg('No reactions recorded.')}</span>`;
     }
 
     return html`
@@ -530,11 +531,11 @@ export class VelgAgentDetailsPanel extends LitElement {
       >
         <div class="panel">
           <div class="panel__header">
-            <h2 class="panel__title">${agent?.name ?? 'Agent Details'}</h2>
+            <h2 class="panel__title">${agent?.name ?? msg('Agent Details')}</h2>
             <button
               class="panel__close"
               @click=${this._close}
-              aria-label="Close"
+              aria-label=${msg('Close')}
             >
               X
             </button>
@@ -558,14 +559,14 @@ export class VelgAgentDetailsPanel extends LitElement {
                   <div class="panel__badges">
                     ${agent.system ? html`<span class="panel__badge panel__badge--system">${agent.system}</span>` : nothing}
                     ${agent.gender ? html`<span class="panel__badge panel__badge--gender">${agent.gender}</span>` : nothing}
-                    ${agent.data_source === 'ai' ? html`<span class="panel__badge panel__badge--ai">AI Generated</span>` : nothing}
+                    ${agent.data_source === 'ai' ? html`<span class="panel__badge panel__badge--ai">${msg('AI Generated')}</span>` : nothing}
                   </div>
 
                   ${
                     agent.character
                       ? html`
                       <div class="panel__section">
-                        <h3 class="panel__section-title">Character</h3>
+                        <h3 class="panel__section-title">${msg('Character')}</h3>
                         <div class="panel__section-content">${agent.character}</div>
                       </div>
                     `
@@ -576,7 +577,7 @@ export class VelgAgentDetailsPanel extends LitElement {
                     agent.background
                       ? html`
                       <div class="panel__section">
-                        <h3 class="panel__section-title">Background</h3>
+                        <h3 class="panel__section-title">${msg('Background')}</h3>
                         <div class="panel__section-content">${agent.background}</div>
                       </div>
                     `
@@ -584,12 +585,12 @@ export class VelgAgentDetailsPanel extends LitElement {
                   }
 
                   <div class="panel__section">
-                    <h3 class="panel__section-title">Professions</h3>
+                    <h3 class="panel__section-title">${msg('Professions')}</h3>
                     ${this._renderProfessions()}
                   </div>
 
                   <div class="panel__section">
-                    <h3 class="panel__section-title">Reactions</h3>
+                    <h3 class="panel__section-title">${msg('Reactions')}</h3>
                     ${this._renderReactions()}
                   </div>
                 </div>
@@ -600,10 +601,10 @@ export class VelgAgentDetailsPanel extends LitElement {
 
           <div class="panel__footer">
             <button class="panel__btn panel__btn--danger" @click=${this._handleDelete}>
-              ${this._deleteIcon()} Delete
+              ${this._deleteIcon()} ${msg('Delete')}
             </button>
             <button class="panel__btn panel__btn--edit" @click=${this._handleEdit}>
-              ${this._editIcon()} Edit
+              ${this._editIcon()} ${msg('Edit')}
             </button>
           </div>
         </div>

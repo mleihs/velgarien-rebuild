@@ -43,6 +43,10 @@ class SimulationResponse(BaseModel):
     updated_at: datetime
     archived_at: datetime | None = None
     deleted_at: datetime | None = None
+    agent_count: int | None = None
+    building_count: int | None = None
+    event_count: int | None = None
+    member_count: int | None = None
 
 
 class SimulationDashboardResponse(BaseModel):
