@@ -21,8 +21,6 @@ router = APIRouter(
     tags=["campaigns"],
 )
 
-_service = CampaignService()
-
 
 @router.get("", response_model=PaginatedResponse[CampaignResponse])
 async def list_campaigns(
@@ -35,7 +33,7 @@ async def list_campaigns(
     offset: int = Query(default=0, ge=0),
 ) -> dict:
     """List campaigns with optional type filter."""
-    data, total = await _service.list_campaigns(
+    data, total = await CampaignService.list_campaigns(
         supabase, simulation_id, campaign_type=campaign_type, limit=limit, offset=offset,
     )
     return {
@@ -54,7 +52,7 @@ async def get_campaign(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Get a single campaign."""
-    campaign = await _service.get_campaign(supabase, simulation_id, campaign_id)
+    campaign = await CampaignService.get(supabase, simulation_id, campaign_id)
     return {"success": True, "data": campaign}
 
 
@@ -67,7 +65,9 @@ async def create_campaign(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Create a new campaign."""
-    campaign = await _service.create_campaign(supabase, simulation_id, body.model_dump(exclude_none=True))
+    campaign = await CampaignService.create(
+        supabase, simulation_id, user_id=user.id, data=body.model_dump(exclude_none=True),
+    )
     await AuditService.log_action(supabase, simulation_id, user.id, "campaigns", campaign["id"], "create")
     return {"success": True, "data": campaign}
 
@@ -82,7 +82,7 @@ async def update_campaign(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Update a campaign."""
-    campaign = await _service.update_campaign(
+    campaign = await CampaignService.update(
         supabase, simulation_id, campaign_id, body.model_dump(exclude_none=True),
     )
     await AuditService.log_action(supabase, simulation_id, user.id, "campaigns", campaign_id, "update")
@@ -98,7 +98,7 @@ async def delete_campaign(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Delete a campaign. Requires admin role."""
-    await _service.delete_campaign(supabase, simulation_id, campaign_id)
+    await CampaignService.hard_delete(supabase, simulation_id, campaign_id)
     await AuditService.log_action(supabase, simulation_id, user.id, "campaigns", campaign_id, "delete")
     return {"success": True, "data": {"message": "Campaign deleted."}}
 
@@ -112,7 +112,7 @@ async def get_campaign_events(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Get all events linked to a campaign."""
-    events = await _service.get_campaign_events(supabase, simulation_id, campaign_id)
+    events = await CampaignService.get_campaign_events(supabase, simulation_id, campaign_id)
     return {"success": True, "data": events}
 
 
@@ -127,7 +127,7 @@ async def add_campaign_event(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Link an event to a campaign."""
-    result = await _service.add_campaign_event(
+    result = await CampaignService.add_campaign_event(
         supabase, simulation_id, campaign_id, event_id, integration_type,
     )
     return {"success": True, "data": result}
@@ -142,5 +142,5 @@ async def get_campaign_metrics(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Get metrics for a campaign."""
-    metrics = await _service.get_campaign_metrics(supabase, simulation_id, campaign_id)
+    metrics = await CampaignService.get_campaign_metrics(supabase, simulation_id, campaign_id)
     return {"success": True, "data": metrics}

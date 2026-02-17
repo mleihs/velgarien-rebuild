@@ -22,6 +22,7 @@ from backend.models.location import (
     ZoneResponse,
     ZoneUpdate,
 )
+from backend.services.audit_service import AuditService
 from backend.services.location_service import LocationService
 from supabase import Client
 
@@ -77,6 +78,7 @@ async def create_city(
 ) -> dict:
     """Create a new city."""
     city = await _service.create_city(supabase, simulation_id, body.model_dump(exclude_none=True))
+    await AuditService.log_action(supabase, simulation_id, user.id, "cities", city["id"], "create")
     return {"success": True, "data": city}
 
 
@@ -91,6 +93,7 @@ async def update_city(
 ) -> dict:
     """Update a city. Requires admin role."""
     city = await _service.update_city(supabase, simulation_id, city_id, body.model_dump(exclude_none=True))
+    await AuditService.log_action(supabase, simulation_id, user.id, "cities", city_id, "update")
     return {"success": True, "data": city}
 
 
@@ -139,6 +142,7 @@ async def create_zone(
 ) -> dict:
     """Create a new zone."""
     zone = await _service.create_zone(supabase, simulation_id, body.model_dump(exclude_none=True))
+    await AuditService.log_action(supabase, simulation_id, user.id, "zones", zone["id"], "create")
     return {"success": True, "data": zone}
 
 
@@ -153,6 +157,7 @@ async def update_zone(
 ) -> dict:
     """Update a zone. Requires admin role."""
     zone = await _service.update_zone(supabase, simulation_id, zone_id, body.model_dump(exclude_none=True))
+    await AuditService.log_action(supabase, simulation_id, user.id, "zones", zone_id, "update")
     return {"success": True, "data": zone}
 
 
@@ -191,6 +196,7 @@ async def create_street(
 ) -> dict:
     """Create a new street."""
     street = await _service.create_street(supabase, simulation_id, body.model_dump(exclude_none=True))
+    await AuditService.log_action(supabase, simulation_id, user.id, "city_streets", street["id"], "create")
     return {"success": True, "data": street}
 
 
@@ -205,4 +211,5 @@ async def update_street(
 ) -> dict:
     """Update a street. Requires admin role."""
     street = await _service.update_street(supabase, simulation_id, street_id, body.model_dump(exclude_none=True))
+    await AuditService.log_action(supabase, simulation_id, user.id, "city_streets", street_id, "update")
     return {"success": True, "data": street}

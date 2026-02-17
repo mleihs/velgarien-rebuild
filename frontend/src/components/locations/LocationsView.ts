@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { locationsApi } from '../../services/api/index.js';
 import type { City, CityStreet, Zone } from '../../types/index.js';
+import { viewHeaderStyles } from '../shared/view-header-styles.js';
 import '../shared/LoadingState.js';
 import '../shared/ErrorState.js';
 import '../shared/EmptyState.js';
@@ -17,60 +18,11 @@ type LocationLevel = 'cities' | 'zones' | 'streets';
 @localized()
 @customElement('velg-locations-view')
 export class VelgLocationsView extends LitElement {
-  static styles = css`
+  static styles = [
+    viewHeaderStyles,
+    css`
     :host {
       display: block;
-    }
-
-    .view {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-5);
-    }
-
-    .view__header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-4);
-    }
-
-    .view__title {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-2xl);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      margin: 0;
-    }
-
-    .view__create-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2-5) var(--space-5);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      white-space: nowrap;
-    }
-
-    .view__create-btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .view__create-btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
     }
 
     .view__breadcrumb {
@@ -106,7 +58,8 @@ export class VelgLocationsView extends LitElement {
     .view__separator {
       color: var(--color-text-muted);
     }
-  `;
+  `,
+  ];
 
   @property({ type: String }) simulationId = '';
 

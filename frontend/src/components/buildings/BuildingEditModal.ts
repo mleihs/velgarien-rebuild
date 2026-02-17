@@ -1,149 +1,23 @@
 import { localized, msg } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { buildingsApi, generationApi } from '../../services/api/index.js';
 import { generationProgress } from '../../services/GenerationProgressService.js';
 import type { ApiResponse, Building } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 import '../shared/BaseModal.js';
+import { formStyles } from '../shared/form-styles.js';
 import { VelgToast } from '../shared/Toast.js';
 
 @localized()
 @customElement('velg-building-edit-modal')
 export class VelgBuildingEditModal extends LitElement {
-  static styles = css`
+  static styles = [
+    formStyles,
+    css`
     :host {
       display: block;
-    }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .form__group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1-5);
-    }
-
-    .form__row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-4);
-    }
-
-    .form__label {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-primary);
-    }
-
-    .form__required {
-      color: var(--color-danger);
-    }
-
-    .form__input,
-    .form__textarea,
-    .form__select {
-      font-family: var(--font-sans);
-      font-size: var(--text-base);
-      padding: var(--space-2-5) var(--space-3);
-      border: var(--border-medium);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .form__input:focus,
-    .form__textarea:focus,
-    .form__select:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-      box-shadow: var(--ring-focus);
-    }
-
-    .form__input::placeholder,
-    .form__textarea::placeholder {
-      color: var(--color-text-muted);
-    }
-
-    .form__textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .form__select {
-      cursor: pointer;
-    }
-
-    .form__error {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      color: var(--color-text-danger);
-    }
-
-    .form__input--error,
-    .form__textarea--error,
-    .form__select--error {
-      border-color: var(--color-border-danger);
-    }
-
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-    }
-
-    .footer__btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .footer__btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .footer__btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .footer__btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .footer__btn--cancel {
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-    }
-
-    .footer__btn--save {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
     }
 
     .image-section {
@@ -191,47 +65,8 @@ export class VelgBuildingEditModal extends LitElement {
       gap: var(--space-2);
     }
 
-    .gen-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-1-5);
-      padding: var(--space-1-5) var(--space-3);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      border: var(--border-width-default) solid var(--color-border);
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .gen-btn:hover {
-      background: var(--color-primary-bg);
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-
-    .gen-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .gen-btn--primary {
-      background: var(--color-info-bg);
-      border-color: var(--color-info);
-      color: var(--color-info);
-    }
-
-    .gen-btn--primary:hover {
-      background: var(--color-info);
-      color: var(--color-text-inverse);
-    }
-
-  `;
+  `,
+  ];
 
   @property({ attribute: false }) building: Building | null = null;
   @property({ type: String }) simulationId = '';
@@ -410,14 +245,6 @@ export class VelgBuildingEditModal extends LitElement {
     }
   }
 
-  private _sparkleIcon() {
-    return svg`<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 6a6 6 0 0 1 6 6a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6z" /></svg>`;
-  }
-
-  private _imageIcon() {
-    return svg`<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8h.01" /><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" /><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" /><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" /></svg>`;
-  }
-
   private async _handleSubmit(e?: Event): Promise<void> {
     e?.preventDefault();
 
@@ -570,7 +397,7 @@ export class VelgBuildingEditModal extends LitElement {
                 ?disabled=${this._generating}
                 @click=${this._handleGenerateDescription}
               >
-                ${this._sparkleIcon()}
+                ${icons.sparkle()}
                 ${msg('Generate Description')}
               </button>
             </div>
@@ -655,7 +482,7 @@ export class VelgBuildingEditModal extends LitElement {
                     ?disabled=${this._generating}
                     @click=${this._handleGenerateImage}
                   >
-                    ${this._imageIcon()}
+                    ${icons.image()}
                     ${msg('Generate Image')}
                   </button>
                 </div>

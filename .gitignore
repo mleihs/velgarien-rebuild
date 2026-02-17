@@ -16,6 +16,7 @@ static/dist/
 .env
 .env.local
 .env.*.local
+.env.mcp
 
 # IDE
 .idea/
@@ -40,3 +41,4 @@ htmlcov/
 
 # Build artifacts
 *.log
+.vite/

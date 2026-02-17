@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { locationsApi } from '../../services/api/index.js';
 import type { ApiResponse, City, CityStreet, Zone } from '../../types/index.js';
 import '../shared/BaseModal.js';
+import { formStyles } from '../shared/form-styles.js';
 import { VelgToast } from '../shared/Toast.js';
 
 type LocationType = 'city' | 'zone' | 'street';
@@ -11,128 +12,14 @@ type LocationType = 'city' | 'zone' | 'street';
 @localized()
 @customElement('velg-location-edit-modal')
 export class VelgLocationEditModal extends LitElement {
-  static styles = css`
+  static styles = [
+    formStyles,
+    css`
     :host {
       display: block;
     }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .form__group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1-5);
-    }
-
-    .form__label {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-primary);
-    }
-
-    .form__required {
-      color: var(--color-danger);
-    }
-
-    .form__input,
-    .form__textarea {
-      font-family: var(--font-sans);
-      font-size: var(--text-base);
-      padding: var(--space-2-5) var(--space-3);
-      border: var(--border-medium);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .form__input:focus,
-    .form__textarea:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-      box-shadow: var(--ring-focus);
-    }
-
-    .form__input::placeholder,
-    .form__textarea::placeholder {
-      color: var(--color-text-muted);
-    }
-
-    .form__textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .form__input--error,
-    .form__textarea--error {
-      border-color: var(--color-border-danger);
-    }
-
-    .form__error {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      color: var(--color-text-danger);
-    }
-
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-    }
-
-    .footer__btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .footer__btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .footer__btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .footer__btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .footer__btn--cancel {
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-    }
-
-    .footer__btn--save {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-    }
-  `;
+  `,
+  ];
 
   @property({ type: String }) type: LocationType = 'city';
   @property({ attribute: false }) item: City | Zone | CityStreet | null = null;

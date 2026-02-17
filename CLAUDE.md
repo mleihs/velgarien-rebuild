@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 5 phases complete + i18n fully implemented. 139 tasks. 675 localized UI strings (EN/DE). Platform ready for deployment.
+**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied. 139 tasks. 675 localized UI strings (EN/DE). Platform ready for deployment.
 
 ## Tech Stack
 
@@ -46,9 +46,9 @@ backend/              FastAPI application
   dependencies.py     JWT auth, Supabase client, role checking
   routers/            API endpoints — 19 routers, 100+ endpoints (/api/v1/...)
   models/             Pydantic request/response models (19 files)
-  services/           Business logic (BaseService + 12 entity + audit + simulation + external)
+  services/           Business logic (BaseService + 15 entity + audit + simulation + external)
   middleware/         Rate limiting, security headers
-  utils/              Encryption (AES-256 for settings)
+  utils/              Encryption (AES-256 for settings), search helpers
   tests/              pytest tests (130 tests: unit + integration + security + performance)
 frontend/             Lit + Vite application
   src/
@@ -57,7 +57,7 @@ frontend/             Lit + Vite application
       auth/           Login, Register views
       platform/       PlatformHeader, UserMenu, SimulationsDashboard, CreateSimulationWizard, UserProfileView, InvitationAcceptView, NotificationCenter
       layout/         SimulationShell, SimulationHeader, SimulationNav
-      shared/         17 reusable components + 1 shared CSS module (see Code Reusability)
+      shared/         17 reusable components + 3 shared CSS modules (see Code Reusability)
       agents/         AgentsView, AgentCard, AgentEditModal, AgentDetailsPanel
       buildings/      BuildingsView, BuildingCard, BuildingEditModal, BuildingDetailsPanel
       events/         EventsView, EventCard, EventEditModal, EventDetailsPanel
@@ -71,7 +71,7 @@ frontend/             Lit + Vite application
       generated/      Auto-generated: de.ts, locale-codes.ts (DO NOT EDIT)
       xliff/          Translation interchange: de.xlf (EDIT THIS for translations)
     styles/           CSS design tokens (tokens/) + base styles (base/)
-    utils/            Shared utilities (text.ts, formatters.ts, error-handler.ts)
+    utils/            Shared utilities (text.ts, formatters.ts, error-handler.ts, icons.ts)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
   tests/              vitest tests (130 tests: validation + API + notification)
 e2e/                  Playwright E2E tests (37 specs across 8 files)
@@ -79,7 +79,7 @@ e2e/                  Playwright E2E tests (37 specs across 8 files)
   helpers/            auth.ts, fixtures.ts
   tests/              auth, agents, buildings, events, chat, settings, multi-user, social
 supabase/
-  migrations/         12 SQL migration files (001-012)
+  migrations/         13 SQL migration files (001-013)
   seed/               5 SQL seed files (001-005): simulation, agents, entities, social/chat, verification
   config.toml         Local Supabase config
 ```
@@ -191,10 +191,12 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - **Auth:** `get_current_user()` validates JWT via python-jose, returns `CurrentUser(id, email, access_token)`
 - **Supabase client:** `get_supabase()` creates client with user's JWT (RLS enforced)
 - **Role checking:** `require_role("admin")` factory returns Depends() that checks simulation_members
-- **Rate limiting:** slowapi — 30/hr AI generation, 100/min standard
+- **Rate limiting:** slowapi — 30/hr AI generation, 10/min AI chat, 5/min external API, 100/min standard
 - **Models:** `PaginatedResponse[T]`, `SuccessResponse[T]`, `ErrorResponse` in `models/common.py`
-- **BaseService:** Generic CRUD in `services/base_service.py` — uses `active_*` views for soft-delete filtering, optional `include_deleted=True` for admin queries
-- **AuditService:** `services/audit_service.py` — logs CRUD operations to `audit_log` table with entity diffs
+- **BaseService:** Generic CRUD in `services/base_service.py` — uses `active_*` views for soft-delete filtering, optional `include_deleted=True` for admin queries. Set `view_name = None` for tables without soft-delete (e.g., campaigns, agent_professions).
+- **Entity services:** All CRUD routers use dedicated services — `AgentService`, `BuildingService`, `EventService`, `CampaignService` (extends BaseService), `LocationService` (facade for 3 tables), `AgentProfessionService` (extends BaseService), `PromptTemplateService` (custom, uses `is_active` for soft-delete), `MemberService` (with `LastOwnerError` exception), `SocialMediaService`, `SocialTrendsService`
+- **AuditService:** `services/audit_service.py` — logs CRUD operations to `audit_log` table with entity diffs. Applied to all data-changing endpoints across all routers.
+- **Search utility:** `utils/search.py` — `apply_search_filter(query, search, vector_field, fallback_fields)` for full-text search with ilike fallback
 - **Encryption:** `utils/encryption.py` — AES-256 via `cryptography` for sensitive settings values
 
 ## Frontend Patterns
@@ -205,7 +207,8 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - Routing via `@lit-labs/router` (Reactive Controller in app-shell)
 - All types in `frontend/src/types/index.ts`
 - Design tokens as CSS Custom Properties in `styles/tokens/`
-- **Shared components:** 17 reusable components + 1 shared CSS module in `components/shared/` — see Code Reusability section for full list
+- **Shared components:** 17 reusable components + 3 shared CSS modules in `components/shared/` — see Code Reusability section for full list
+- **Shared icons:** All SVG icons centralized in `utils/icons.ts` — import `{ icons }` and use `icons.edit()`, `icons.trash()`, etc. Never define inline SVG icon methods in components.
 - **Entity views:** Each entity has 4 files: ListView, Card, EditModal, DetailsPanel (except Chat which has 6)
 - **Event naming:** `import type { Event as SimEvent }` to avoid DOM `Event` conflict
 - **Taxonomy-driven options:** Dropdowns populated from `appState.getTaxonomiesByType()` with locale-aware labels
@@ -254,19 +257,23 @@ Alternatively, add `<target>` elements directly to `frontend/src/locales/xliff/d
 
 **Before writing new code, ALWAYS search for existing reusable patterns:**
 
-1. **Check `components/shared/`** — 17 shared components + 1 CSS module exist. Use them instead of creating one-off solutions:
+1. **Check `components/shared/`** — 17 shared components + 3 CSS modules exist. Use them instead of creating one-off solutions:
    - **Layout:** `VelgSidePanel` (slide-from-right detail panel shell with backdrop, Escape, 3 slots: media/content/footer), `BaseModal` (centered dialog)
    - **UI Primitives:** `VelgBadge` (6 color variants), `VelgAvatar` (portrait + initials fallback, 3 sizes), `VelgIconButton` (30px icon action button), `VelgSectionHeader` (section titles, 2 variants)
    - **Data Display:** `DataTable`, `Pagination`, `SharedFilterBar`
    - **Feedback:** `Toast`, `ConfirmDialog`, `LoadingState`, `EmptyState`, `ErrorState`, `GenerationProgress`
    - **Forms:** `FormBuilder`
    - **Media:** `Lightbox` (fullscreen image overlay with Escape/click-to-close)
-   - **Shared CSS:** `panel-button-styles.ts` — `panelButtonStyles` for detail panel footer buttons (`.panel__btn` base + `--edit`, `--danger`, `--generate` variants). Usage: `static styles = [panelButtonStyles, css\`...\`]`
+   - **Shared CSS:**
+     - `panel-button-styles.ts` — `panelButtonStyles` for detail panel footer buttons (`.panel__btn` base + `--edit`, `--danger`, `--generate` variants)
+     - `form-styles.ts` — `formStyles` for modal forms (`.form`, `.form__group`, `.form__row`, `.form__label`, `.form__input/.form__textarea/.form__select`, `.footer`, `.footer__btn--cancel/--save`, `.gen-btn`)
+     - `view-header-styles.ts` — `viewHeaderStyles` for entity list views (`.view`, `.view__header`, `.view__title`, `.view__create-btn`, `.view__count`)
+   - **Usage:** `static styles = [formStyles, css\`...\`]` — local styles win by cascade for per-component overrides
 2. **Check `services/`** — BaseApiService provides CRUD patterns. Extend it for new API services. BaseService (backend) provides generic CRUD with soft-delete, audit logging, and optimistic locking.
 3. **Check existing components** for similar patterns — entity views follow a consistent 4-file pattern (ListView, Card, EditModal, DetailsPanel). Copy the pattern, don't reinvent it.
 4. **Check `styles/tokens/`** — Use existing CSS custom properties for spacing, colors, typography. Don't hardcode values.
 5. **Check `types/index.ts`** — Use existing TypeScript interfaces. Extend them if needed, don't duplicate.
-6. **Check `utils/`** — `text.ts` (getInitials), `formatters.ts`, `error-handler.ts`. Add to them rather than creating parallel utilities.
+6. **Check `utils/`** — `text.ts` (getInitials), `formatters.ts`, `error-handler.ts`, `icons.ts` (centralized SVG icons). Add to them rather than creating parallel utilities. For icons, always import from `icons.ts` — never define inline SVG methods in components.
 7. **Backend:** Check `services/base_service.py` before implementing CRUD logic. Check `models/common.py` for response types. Check `dependencies.py` for auth patterns.
 
 ## Spec Documents

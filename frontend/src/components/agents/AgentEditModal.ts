@@ -1,13 +1,14 @@
 import { localized, msg } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { agentsApi, generationApi } from '../../services/api/index.js';
 import { generationProgress } from '../../services/GenerationProgressService.js';
 import type { Agent } from '../../types/index.js';
-import { VelgToast } from '../shared/Toast.js';
-
+import { icons } from '../../utils/icons.js';
 import '../shared/BaseModal.js';
+import { formStyles } from '../shared/form-styles.js';
+import { VelgToast } from '../shared/Toast.js';
 
 interface AgentFormData {
   name: string;
@@ -22,145 +23,11 @@ interface AgentFormData {
 @localized()
 @customElement('velg-agent-edit-modal')
 export class VelgAgentEditModal extends LitElement {
-  static styles = css`
+  static styles = [
+    formStyles,
+    css`
     :host {
       display: block;
-    }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .form__group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1-5);
-    }
-
-    .form__label {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-primary);
-    }
-
-    .form__required {
-      color: var(--color-danger);
-    }
-
-    .form__input,
-    .form__textarea,
-    .form__select {
-      font-family: var(--font-sans);
-      font-size: var(--text-base);
-      padding: var(--space-2-5) var(--space-3);
-      border: var(--border-medium);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .form__input:focus,
-    .form__textarea:focus,
-    .form__select:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-      box-shadow: var(--ring-focus);
-    }
-
-    .form__input::placeholder,
-    .form__textarea::placeholder {
-      color: var(--color-text-muted);
-    }
-
-    .form__textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .form__select {
-      cursor: pointer;
-    }
-
-    .form__error-message {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      color: var(--color-text-danger);
-    }
-
-    .form__input--error,
-    .form__textarea--error,
-    .form__select--error {
-      border-color: var(--color-border-danger);
-    }
-
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-    }
-
-    .footer__btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .footer__btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .footer__btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .footer__btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .footer__btn--cancel {
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-    }
-
-    .footer__btn--save {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-    }
-
-    .form__api-error {
-      padding: var(--space-3);
-      background: var(--color-danger-bg);
-      border: var(--border-width-default) solid var(--color-danger);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-sm);
-      color: var(--color-danger);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
     }
 
     .portrait-section {
@@ -208,50 +75,11 @@ export class VelgAgentEditModal extends LitElement {
       gap: var(--space-2);
     }
 
-    .gen-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-1-5);
-      padding: var(--space-1-5) var(--space-3);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      border: var(--border-width-default) solid var(--color-border);
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .gen-btn:hover {
-      background: var(--color-primary-bg);
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-
-    .gen-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .gen-btn--primary {
-      background: var(--color-info-bg);
-      border-color: var(--color-info);
-      color: var(--color-info);
-    }
-
-    .gen-btn--primary:hover {
-      background: var(--color-info);
-      color: var(--color-text-inverse);
-    }
-
     .form__textarea--sm {
       min-height: 60px;
     }
-  `;
+  `,
+  ];
 
   @property({ type: Object }) agent: Agent | null = null;
   @property({ type: String }) simulationId = '';
@@ -494,27 +322,6 @@ export class VelgAgentEditModal extends LitElement {
     }
   }
 
-  private _paletteIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
-        <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-        <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-        <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-      </svg>
-    `;
-  }
-
-  private _sparkleIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 6a6 6 0 0 1 6 6a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6z" />
-      </svg>
-    `;
-  }
-
   private async _handleSave(): Promise<void> {
     if (!this._validate()) return;
 
@@ -592,7 +399,7 @@ export class VelgAgentEditModal extends LitElement {
               .value=${this._formData.name}
               @input=${(e: Event) => this._handleInput('name', e)}
             />
-            ${this._errors.name ? html`<span class="form__error-message">${this._errors.name}</span>` : nothing}
+            ${this._errors.name ? html`<span class="form__error">${this._errors.name}</span>` : nothing}
           </div>
 
           <div class="form__group">
@@ -626,7 +433,7 @@ export class VelgAgentEditModal extends LitElement {
               ?disabled=${this._generating}
               @click=${this._handleGenerateCharacter}
             >
-              ${this._sparkleIcon()}
+              ${icons.sparkle()}
               ${msg('Generate Description')}
             </button>
           </div>
@@ -689,7 +496,7 @@ export class VelgAgentEditModal extends LitElement {
                     ?disabled=${this._generating}
                     @click=${this._handleGenerateDescription}
                   >
-                    ${this._sparkleIcon()}
+                    ${icons.sparkle()}
                     ${msg('Generate Portrait Desc')}
                   </button>
                   <button
@@ -698,7 +505,7 @@ export class VelgAgentEditModal extends LitElement {
                     ?disabled=${this._generating}
                     @click=${this._handleGeneratePortrait}
                   >
-                    ${this._paletteIcon()}
+                    ${icons.palette()}
                     ${msg('Generate Portrait')}
                   </button>
                 </div>

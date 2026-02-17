@@ -1,9 +1,9 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-
 import { buildingsApi } from '../../services/api/index.js';
 import type { Building, BuildingAgentRelation } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 import '../shared/Lightbox.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
 import '../shared/VelgBadge.js';
@@ -180,30 +180,6 @@ export class VelgBuildingDetailsPanel extends LitElement {
     }
   }
 
-  private _buildingIcon() {
-    return svg`
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M3 21l18 0" />
-        <path d="M5 21v-14l8 -4v18" />
-        <path d="M19 21v-10l-6 -4" />
-        <path d="M9 9v.01" />
-        <path d="M9 12v.01" />
-        <path d="M9 15v.01" />
-        <path d="M9 18v.01" />
-      </svg>
-    `;
-  }
-
   private _getConditionVariant(condition: string | undefined): string {
     if (!condition) return 'default';
     const normalized = condition.toLowerCase();
@@ -282,7 +258,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                             this._lightboxSrc = b.image_url ?? null;
                           }}
                         />`
-                      : html`<div class="panel__placeholder">${this._buildingIcon()}</div>`
+                      : html`<div class="panel__placeholder">${icons.building(64)}</div>`
                   }
                 </div>
               </div>

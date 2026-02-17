@@ -1,8 +1,9 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { agentsApi } from '../../services/api/index.js';
 import type { Agent, EventReaction } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import '../shared/Lightbox.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
@@ -208,52 +209,6 @@ export class VelgAgentDetailsPanel extends LitElement {
   @state() private _expandedReactions: Set<string> = new Set();
   @state() private _lightboxSrc: string | null = null;
 
-  private _chevronIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 6l6 6l-6 6" />
-      </svg>
-    `;
-  }
-
-  private _trashIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7l16 0" />
-        <path d="M10 11l0 6" />
-        <path d="M14 11l0 6" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-      </svg>
-    `;
-  }
-
-  private _editIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-        <path d="M16 5l3 3" />
-      </svg>
-    `;
-  }
-
-  private _deleteIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7l16 0" />
-        <path d="M10 11l0 6" />
-        <path d="M14 11l0 6" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-      </svg>
-    `;
-  }
-
   protected updated(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('agent') || changedProperties.has('open')) {
       if (this.open && this.agent && this.simulationId) {
@@ -384,7 +339,7 @@ export class VelgAgentDetailsPanel extends LitElement {
                 @click=${() => this._toggleReaction(r.id)}
               >
                 <span class="panel__reaction-chevron ${isOpen ? 'panel__reaction-chevron--open' : ''}">
-                  ${this._chevronIcon()}
+                  ${icons.chevronRight()}
                 </span>
                 <span class="panel__reaction-event">${eventTitle}</span>
                 ${r.emotion ? html`<span class="panel__reaction-emotion">${r.emotion}</span>` : nothing}
@@ -396,7 +351,7 @@ export class VelgAgentDetailsPanel extends LitElement {
                     this._handleDeleteReaction(r);
                   }}
                 >
-                  ${this._trashIcon()}
+                  ${icons.trash(14)}
                 </button>
               </div>
               ${
@@ -480,10 +435,10 @@ export class VelgAgentDetailsPanel extends LitElement {
               </div>
 
               <button slot="footer" class="panel__btn panel__btn--edit" @click=${this._handleEdit}>
-                ${this._editIcon()} ${msg('Edit')}
+                ${icons.edit()} ${msg('Edit')}
               </button>
               <button slot="footer" class="panel__btn panel__btn--danger" @click=${this._handleDelete}>
-                ${this._deleteIcon()} ${msg('Delete')}
+                ${icons.trash()} ${msg('Delete')}
               </button>
             `
             : nothing

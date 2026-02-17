@@ -5,6 +5,7 @@ from __future__ import annotations
 from uuid import UUID
 
 from backend.services.base_service import BaseService
+from backend.utils.search import apply_search_filter
 from supabase import Client
 
 
@@ -44,13 +45,7 @@ class AgentService(BaseService):
         if primary_profession:
             query = query.eq("primary_profession", primary_profession)
         if search:
-            try:
-                # Append :* for prefix matching so partial words work
-                fts_query = ":* & ".join(search.split()) + ":*"
-                query = query.fts("search_vector", fts_query)
-            except Exception:
-                safe = search.replace("%", "").replace("_", "")
-                query = query.ilike("name", f"%{safe}%")
+            query = apply_search_filter(query, search)
 
         query = query.range(offset, offset + limit - 1)
         response = query.execute()

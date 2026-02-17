@@ -3,10 +3,11 @@
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
 from backend.dependencies import get_current_user, get_supabase, require_role
-from backend.models.common import CurrentUser, PaginatedResponse, SuccessResponse
+from backend.middleware.rate_limit import RATE_LIMIT_AI_GENERATION, RATE_LIMIT_EXTERNAL_API, limiter
+from backend.models.common import CurrentUser, PaginatedResponse, PaginationMeta, SuccessResponse
 from backend.models.social import SocialMediaPostResponse
 from backend.models.social_media import (
     AnalyzeSentimentRequest,
@@ -46,12 +47,14 @@ async def list_posts(
     return {
         "success": True,
         "data": data,
-        "meta": {"count": len(data), "total": total, "limit": limit, "offset": offset},
+        "meta": PaginationMeta(count=len(data), total=total, limit=limit, offset=offset),
     }
 
 
 @router.post("/sync", response_model=SuccessResponse[dict])
+@limiter.limit(RATE_LIMIT_EXTERNAL_API)
 async def sync_posts(
+    request: Request,
     simulation_id: UUID,
     user: CurrentUser = Depends(get_current_user),
     _role_check: str = Depends(require_role("editor")),
@@ -87,11 +90,9 @@ async def sync_posts(
                         None,
                     )
                     if stored_post:
-                        supabase.table("social_media_comments").insert({
-                            "simulation_id": str(simulation_id),
-                            "post_id": stored_post["id"],
-                            **c,
-                        }).execute()
+                        await SocialMediaService.store_comment(
+                            supabase, simulation_id, stored_post["id"], c
+                        )
                         comments_count += 1
 
     return {
@@ -107,7 +108,9 @@ async def sync_posts(
     "/posts/{post_id}/transform",
     response_model=SuccessResponse[SocialMediaPostResponse],
 )
+@limiter.limit(RATE_LIMIT_AI_GENERATION)
 async def transform_post(
+    request: Request,
     simulation_id: UUID,
     post_id: UUID,
     body: TransformPostRequest,
@@ -147,7 +150,9 @@ async def transform_post(
     "/posts/{post_id}/analyze-sentiment",
     response_model=SuccessResponse[SocialMediaPostResponse],
 )
+@limiter.limit(RATE_LIMIT_AI_GENERATION)
 async def analyze_sentiment(
+    request: Request,
     simulation_id: UUID,
     post_id: UUID,
     body: AnalyzeSentimentRequest,
@@ -192,7 +197,9 @@ async def analyze_sentiment(
     "/posts/{post_id}/generate-reactions",
     response_model=SuccessResponse[list[dict]],
 )
+@limiter.limit(RATE_LIMIT_AI_GENERATION)
 async def generate_reactions(
+    request: Request,
     simulation_id: UUID,
     post_id: UUID,
     body: GenerateReactionsRequest,

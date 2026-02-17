@@ -6,16 +6,18 @@ import { socialTrendsApi } from '../../services/api/index.js';
 import type { BrowseArticle } from '../../services/api/SocialTrendsApiService.js';
 import { generationProgress } from '../../services/GenerationProgressService.js';
 import type { SocialTrend } from '../../types/index.js';
-import { VelgToast } from '../shared/Toast.js';
-
 import '../shared/BaseModal.js';
+import { formStyles } from '../shared/form-styles.js';
+import { VelgToast } from '../shared/Toast.js';
 
 type Step = 'preview' | 'transform' | 'integrate';
 
 @localized()
 @customElement('velg-transformation-modal')
 export class VelgTransformationModal extends LitElement {
-  static styles = css`
+  static styles = [
+    formStyles,
+    css`
     :host {
       display: block;
     }
@@ -214,56 +216,8 @@ export class VelgTransformationModal extends LitElement {
       color: var(--color-danger);
     }
 
-    /* Footer */
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-    }
-
-    .footer__btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .footer__btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .footer__btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .footer__btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .footer__btn--cancel {
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-    }
-
-    .footer__btn--save {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-    }
-  `;
+  `,
+  ];
 
   @property({ type: Object }) trend?: SocialTrend;
   @property({ type: Object }) article?: BrowseArticle;

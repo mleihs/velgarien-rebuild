@@ -12,7 +12,7 @@ CREATE TABLE public.chat_conversation_agents (
 
 -- 2. chat_conversations: agent_id nullable, remove old UNIQUE constraint
 ALTER TABLE chat_conversations ALTER COLUMN agent_id DROP NOT NULL;
-DROP INDEX IF EXISTS chat_conversations_simulation_id_user_id_agent_id_key;
+ALTER TABLE chat_conversations DROP CONSTRAINT IF EXISTS chat_conversations_simulation_id_user_id_agent_id_key;
 
 -- 3. chat_messages: agent_id for Agent attribution (which agent responded)
 ALTER TABLE chat_messages ADD COLUMN agent_id uuid REFERENCES agents(id) ON DELETE SET NULL;

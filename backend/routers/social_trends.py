@@ -4,10 +4,11 @@ import logging
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
 from backend.dependencies import get_current_user, get_supabase, require_role
-from backend.models.common import CurrentUser, PaginatedResponse, SuccessResponse
+from backend.middleware.rate_limit import RATE_LIMIT_AI_GENERATION, RATE_LIMIT_EXTERNAL_API, limiter
+from backend.models.common import CurrentUser, PaginatedResponse, PaginationMeta, SuccessResponse
 from backend.models.social import SocialTrendResponse
 from backend.models.social_trend import (
     BrowseArticlesRequest,
@@ -54,12 +55,14 @@ async def list_trends(
     return {
         "success": True,
         "data": data,
-        "meta": {"count": len(data), "total": total, "limit": limit, "offset": offset},
+        "meta": PaginationMeta(count=len(data), total=total, limit=limit, offset=offset),
     }
 
 
 @router.post("/fetch", response_model=SuccessResponse[list[SocialTrendResponse]])
+@limiter.limit(RATE_LIMIT_EXTERNAL_API)
 async def fetch_trends(
+    request: Request,
     simulation_id: UUID,
     body: FetchTrendsRequest,
     user: CurrentUser = Depends(get_current_user),
@@ -114,7 +117,9 @@ async def fetch_trends(
 
 
 @router.post("/transform", response_model=SuccessResponse[dict])
+@limiter.limit(RATE_LIMIT_AI_GENERATION)
 async def transform_trend(
+    request: Request,
     simulation_id: UUID,
     body: TransformTrendRequest,
     user: CurrentUser = Depends(get_current_user),
@@ -229,7 +234,9 @@ async def integrate_trend(
 
 
 @router.post("/workflow", response_model=SuccessResponse[dict])
+@limiter.limit(RATE_LIMIT_EXTERNAL_API)
 async def workflow(
+    request: Request,
     simulation_id: UUID,
     body: FetchTrendsRequest,
     user: CurrentUser = Depends(get_current_user),
@@ -362,7 +369,9 @@ async def _generate_reactions_for_event(
 
 
 @router.post("/browse", response_model=SuccessResponse[list[dict]])
+@limiter.limit(RATE_LIMIT_EXTERNAL_API)
 async def browse_articles(
+    request: Request,
     simulation_id: UUID,
     body: BrowseArticlesRequest,
     user: CurrentUser = Depends(get_current_user),
@@ -420,7 +429,9 @@ async def browse_articles(
 
 
 @router.post("/transform-article", response_model=SuccessResponse[dict])
+@limiter.limit(RATE_LIMIT_AI_GENERATION)
 async def transform_article(
+    request: Request,
     simulation_id: UUID,
     body: TransformArticleRequest,
     user: CurrentUser = Depends(get_current_user),

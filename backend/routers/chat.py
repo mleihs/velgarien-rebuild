@@ -2,9 +2,10 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 
 from backend.dependencies import get_current_user, get_supabase, require_role
+from backend.middleware.rate_limit import RATE_LIMIT_AI_CHAT, limiter
 from backend.models.chat import (
     AddAgentRequest,
     ConversationCreate,
@@ -75,7 +76,9 @@ async def get_messages(
     response_model=SuccessResponse[MessageResponse | list[MessageResponse]],
     status_code=201,
 )
+@limiter.limit(RATE_LIMIT_AI_CHAT)
 async def send_message(
+    request: Request,
     simulation_id: UUID,
     conversation_id: UUID,
     body: MessageCreate,

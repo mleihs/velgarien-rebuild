@@ -110,6 +110,30 @@ class SocialMediaService:
         return response.data[0]
 
     @staticmethod
+    async def store_comment(
+        supabase: Client,
+        simulation_id: UUID,
+        post_id: UUID,
+        data: dict,
+    ) -> dict:
+        """Store a single comment for a post."""
+        response = (
+            supabase.table("social_media_comments")
+            .insert({
+                **data,
+                "simulation_id": str(simulation_id),
+                "post_id": str(post_id),
+            })
+            .execute()
+        )
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to store comment.",
+            )
+        return response.data[0]
+
+    @staticmethod
     async def get_comments(
         supabase: Client,
         simulation_id: UUID,

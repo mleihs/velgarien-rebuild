@@ -2,16 +2,18 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query
 
 from backend.dependencies import get_current_user, get_supabase, require_role
-from backend.models.common import CurrentUser, PaginatedResponse, SuccessResponse
+from backend.models.common import CurrentUser, PaginatedResponse, PaginationMeta, SuccessResponse
 from backend.models.prompt_template import (
     PromptTemplateCreate,
     PromptTemplateResponse,
     PromptTemplateUpdate,
 )
+from backend.services.audit_service import AuditService
 from backend.services.prompt_service import PromptResolver
+from backend.services.prompt_template_service import PromptTemplateService
 from supabase import Client
 
 router = APIRouter(
@@ -33,60 +35,20 @@ async def list_prompt_templates(
     offset: int = Query(default=0, ge=0),
 ) -> dict:
     """List prompt templates (simulation-specific + optionally platform defaults)."""
-    # Simulation-specific templates
-    query = (
-        supabase.table("prompt_templates")
-        .select("*", count="exact")
-        .eq("simulation_id", str(simulation_id))
-        .eq("is_active", True)
-        .order("template_type")
+    data, total = await PromptTemplateService.list_templates(
+        supabase,
+        simulation_id,
+        locale=locale,
+        prompt_category=prompt_category,
+        include_platform=include_platform,
+        limit=limit,
+        offset=offset,
     )
-    if locale:
-        query = query.eq("locale", locale)
-    if prompt_category:
-        query = query.eq("prompt_category", prompt_category)
-
-    query = query.range(offset, offset + limit - 1)
-    sim_response = query.execute()
-
-    templates = sim_response.data or []
-    total = sim_response.count or len(templates)
-
-    # Optionally include platform defaults
-    if include_platform:
-        platform_query = (
-            supabase.table("prompt_templates")
-            .select("*")
-            .is_("simulation_id", "null")
-            .eq("is_active", True)
-            .order("template_type")
-        )
-        if locale:
-            platform_query = platform_query.eq("locale", locale)
-        if prompt_category:
-            platform_query = platform_query.eq("prompt_category", prompt_category)
-
-        platform_response = platform_query.execute()
-        platform_templates = platform_response.data or []
-
-        # Only include platform templates not overridden by simulation
-        sim_types = {
-            (t["template_type"], t["locale"]) for t in templates
-        }
-        for pt in platform_templates:
-            if (pt["template_type"], pt["locale"]) not in sim_types:
-                templates.append(pt)
-                total += 1
 
     return {
         "success": True,
-        "data": templates,
-        "meta": {
-            "count": len(templates),
-            "total": total,
-            "limit": limit,
-            "offset": offset,
-        },
+        "data": data,
+        "meta": PaginationMeta(count=len(data), total=total, limit=limit, offset=offset),
     }
 
 
@@ -99,19 +61,8 @@ async def get_prompt_template(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Get a single prompt template."""
-    response = (
-        supabase.table("prompt_templates")
-        .select("*")
-        .eq("id", str(template_id))
-        .limit(1)
-        .execute()
-    )
-    if not response or not response.data:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Template '{template_id}' not found.",
-        )
-    return {"success": True, "data": response.data[0]}
+    data = await PromptTemplateService.get(supabase, template_id)
+    return {"success": True, "data": data}
 
 
 @router.post("", response_model=SuccessResponse[PromptTemplateResponse], status_code=201)
@@ -123,25 +74,11 @@ async def create_prompt_template(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Create a new prompt template for this simulation."""
-    insert_data = {
-        **body.model_dump(),
-        "simulation_id": str(simulation_id),
-        "created_by_id": str(user.id),
-    }
-
-    response = (
-        supabase.table("prompt_templates")
-        .insert(insert_data)
-        .execute()
+    data = await PromptTemplateService.create(
+        supabase, simulation_id, user.id, body.model_dump()
     )
-
-    if not response.data:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create prompt template.",
-        )
-
-    return {"success": True, "data": response.data[0]}
+    await AuditService.log_action(supabase, simulation_id, user.id, "prompt_templates", data["id"], "create")
+    return {"success": True, "data": data}
 
 
 @router.put("/{template_id}", response_model=SuccessResponse[PromptTemplateResponse])
@@ -154,28 +91,11 @@ async def update_prompt_template(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Update a prompt template."""
-    update_data = body.model_dump(exclude_none=True)
-    if not update_data:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No fields to update.",
-        )
-
-    response = (
-        supabase.table("prompt_templates")
-        .update(update_data)
-        .eq("id", str(template_id))
-        .eq("simulation_id", str(simulation_id))
-        .execute()
+    data = await PromptTemplateService.update(
+        supabase, simulation_id, template_id, body.model_dump(exclude_none=True)
     )
-
-    if not response.data:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Template '{template_id}' not found in simulation.",
-        )
-
-    return {"success": True, "data": response.data[0]}
+    await AuditService.log_action(supabase, simulation_id, user.id, "prompt_templates", template_id, "update")
+    return {"success": True, "data": data}
 
 
 @router.delete("/{template_id}", response_model=SuccessResponse[dict])
@@ -187,20 +107,8 @@ async def delete_prompt_template(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Soft-delete a prompt template (set is_active=False)."""
-    response = (
-        supabase.table("prompt_templates")
-        .update({"is_active": False})
-        .eq("id", str(template_id))
-        .eq("simulation_id", str(simulation_id))
-        .execute()
-    )
-
-    if not response.data:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Template '{template_id}' not found.",
-        )
-
+    await PromptTemplateService.deactivate(supabase, simulation_id, template_id)
+    await AuditService.log_action(supabase, simulation_id, user.id, "prompt_templates", template_id, "delete")
     return {"success": True, "data": {"id": str(template_id), "deleted": True}}
 
 
@@ -213,11 +121,10 @@ async def test_prompt_template(
     template_type: str = Query(..., description="Template type to test"),
     locale: str = Query(default="en"),
 ) -> dict:
-    """Test prompt resolution — shows which template would be used."""
+    """Test prompt resolution -- shows which template would be used."""
     resolver = PromptResolver(supabase, simulation_id)
     resolved = await resolver.resolve(template_type, locale)
 
-    # Fill with example variables
     example_vars = {
         "agent_name": "Test Agent",
         "agent_system": "politics",

@@ -1,38 +1,27 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, svg } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { eventsApi } from '../../services/api/index.js';
 import type { Event as SimEvent } from '../../types/index.js';
-import { VelgToast } from '../shared/Toast.js';
+import { icons } from '../../utils/icons.js';
 import '../shared/BaseModal.js';
+import { formStyles } from '../shared/form-styles.js';
+import { VelgToast } from '../shared/Toast.js';
 
 @localized()
 @customElement('velg-event-edit-modal')
 export class VelgEventEditModal extends LitElement {
-  static styles = css`
+  static styles = [
+    formStyles,
+    css`
     :host {
       display: block;
     }
 
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .form__group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1-5);
-    }
-
     .form__label {
-      font-family: var(--font-brutalist);
       font-weight: var(--font-bold);
       font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
       color: var(--color-text-secondary);
     }
 
@@ -44,32 +33,7 @@ export class VelgEventEditModal extends LitElement {
     .form__input,
     .form__select,
     .form__textarea {
-      font-family: var(--font-sans);
-      font-size: var(--text-base);
       padding: var(--space-2) var(--space-3);
-      border: var(--border-medium);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    }
-
-    .form__input:focus,
-    .form__select:focus,
-    .form__textarea:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-      box-shadow: var(--ring-focus);
-    }
-
-    .form__textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .form__row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-4);
     }
 
     /* Impact level slider */
@@ -167,64 +131,8 @@ export class VelgEventEditModal extends LitElement {
       color: var(--color-text-muted);
     }
 
-    .form__error {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-danger);
-    }
-
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-    }
-
-    .footer__btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .footer__btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .footer__btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .footer__btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .footer__btn--cancel {
-      background: var(--color-surface-raised);
-      color: var(--color-text-primary);
-    }
-
-    .footer__btn--save {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-    }
-  `;
+  `,
+  ];
 
   @property({ type: Object }) event: SimEvent | null = null;
   @property({ type: String }) simulationId = '';
@@ -316,16 +224,6 @@ export class VelgEventEditModal extends LitElement {
 
   private _removeTag(tag: string): void {
     this._tags = this._tags.filter((t) => t !== tag);
-  }
-
-  private _closeIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 6l-12 12" />
-        <path d="M6 6l12 12" />
-      </svg>
-    `;
   }
 
   private _handleClose(): void {
@@ -503,7 +401,7 @@ export class VelgEventEditModal extends LitElement {
                             @click=${() => this._removeTag(tag)}
                             aria-label="Remove tag ${tag}"
                           >
-                            ${this._closeIcon()}
+                            ${icons.close()}
                           </button>
                         </span>
                       `,

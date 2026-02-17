@@ -1,8 +1,9 @@
 import { localized, msg } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import type { Agent } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 import '../shared/Lightbox.js';
 import '../shared/VelgAvatar.js';
 import '../shared/VelgBadge.js';
@@ -91,30 +92,6 @@ export class VelgAgentCard extends LitElement {
   @property({ type: Object }) agent!: Agent;
   @state() private _lightboxSrc: string | null = null;
 
-  private _editIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-        <path d="M16 5l3 3" />
-      </svg>
-    `;
-  }
-
-  private _deleteIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7l16 0" />
-        <path d="M10 11l0 6" />
-        <path d="M14 11l0 6" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-      </svg>
-    `;
-  }
-
   private _handleClick(): void {
     this.dispatchEvent(
       new CustomEvent('agent-click', {
@@ -183,10 +160,10 @@ export class VelgAgentCard extends LitElement {
             ? html`
               <div class="card__actions">
                 <velg-icon-button .label=${msg('Edit agent')} @icon-click=${this._handleEdit}>
-                  ${this._editIcon()}
+                  ${icons.edit()}
                 </velg-icon-button>
                 <velg-icon-button variant="danger" .label=${msg('Delete agent')} @icon-click=${this._handleDelete}>
-                  ${this._deleteIcon()}
+                  ${icons.trash()}
                 </velg-icon-button>
               </div>
             `

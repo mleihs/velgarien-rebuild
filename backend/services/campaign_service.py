@@ -1,18 +1,25 @@
 """Service layer for campaign operations."""
 
-from datetime import UTC, datetime
+from __future__ import annotations
+
 from uuid import UUID
 
 from fastapi import HTTPException, status
 
+from backend.services.base_service import BaseService
 from supabase import Client
 
 
-class CampaignService:
-    """Service for campaign CRUD and related operations."""
+class CampaignService(BaseService):
+    """Campaign CRUD — no soft-delete, with related events and metrics."""
 
-    @staticmethod
+    table_name = "campaigns"
+    view_name = None
+    supports_created_by = False
+
+    @classmethod
     async def list_campaigns(
+        cls,
         supabase: Client,
         simulation_id: UUID,
         *,
@@ -21,99 +28,23 @@ class CampaignService:
         offset: int = 0,
     ) -> tuple[list[dict], int]:
         """List campaigns with optional type filter."""
-        query = (
-            supabase.table("campaigns")
-            .select("*", count="exact")
-            .eq("simulation_id", str(simulation_id))
-            .order("created_at", desc=True)
-        )
-
+        filters = {}
         if campaign_type:
-            query = query.eq("campaign_type", campaign_type)
+            filters["campaign_type"] = campaign_type
 
-        query = query.range(offset, offset + limit - 1)
-        response = query.execute()
-
-        total = response.count if response.count is not None else len(response.data or [])
-        return response.data or [], total
-
-    @staticmethod
-    async def get_campaign(supabase: Client, simulation_id: UUID, campaign_id: UUID) -> dict:
-        """Get a single campaign."""
-        response = (
-            supabase.table("campaigns")
-            .select("*")
-            .eq("simulation_id", str(simulation_id))
-            .eq("id", str(campaign_id))
-            .limit(1)
-            .execute()
+        return await cls.list(
+            supabase,
+            simulation_id,
+            filters=filters,
+            order_by="created_at",
+            order_desc=True,
+            limit=limit,
+            offset=offset,
         )
-        if not response or not response.data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Campaign '{campaign_id}' not found.",
-            )
-        return response.data[0]
 
-    @staticmethod
-    async def create_campaign(supabase: Client, simulation_id: UUID, data: dict) -> dict:
-        """Create a new campaign."""
-        response = (
-            supabase.table("campaigns")
-            .insert({**data, "simulation_id": str(simulation_id)})
-            .execute()
-        )
-        if not response.data:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to create campaign.",
-            )
-        return response.data[0]
-
-    @staticmethod
-    async def update_campaign(
-        supabase: Client,
-        simulation_id: UUID,
-        campaign_id: UUID,
-        data: dict,
-    ) -> dict:
-        """Update a campaign."""
-        if not data:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No fields to update.")
-        data["updated_at"] = datetime.now(UTC).isoformat()
-        response = (
-            supabase.table("campaigns")
-            .update(data)
-            .eq("simulation_id", str(simulation_id))
-            .eq("id", str(campaign_id))
-            .execute()
-        )
-        if not response.data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Campaign '{campaign_id}' not found.",
-            )
-        return response.data[0]
-
-    @staticmethod
-    async def delete_campaign(supabase: Client, simulation_id: UUID, campaign_id: UUID) -> dict:
-        """Delete a campaign (hard delete)."""
-        response = (
-            supabase.table("campaigns")
-            .delete()
-            .eq("simulation_id", str(simulation_id))
-            .eq("id", str(campaign_id))
-            .execute()
-        )
-        if not response.data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Campaign '{campaign_id}' not found.",
-            )
-        return response.data[0]
-
-    @staticmethod
+    @classmethod
     async def get_campaign_events(
+        cls,
         supabase: Client,
         simulation_id: UUID,
         campaign_id: UUID,
@@ -129,8 +60,9 @@ class CampaignService:
         )
         return response.data or []
 
-    @staticmethod
+    @classmethod
     async def add_campaign_event(
+        cls,
         supabase: Client,
         simulation_id: UUID,
         campaign_id: UUID,
@@ -155,8 +87,9 @@ class CampaignService:
             )
         return response.data[0]
 
-    @staticmethod
+    @classmethod
     async def get_campaign_metrics(
+        cls,
         supabase: Client,
         simulation_id: UUID,
         campaign_id: UUID,

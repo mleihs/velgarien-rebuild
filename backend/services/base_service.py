@@ -181,8 +181,11 @@ class BaseService:
             .update(update_data)
             .eq("simulation_id", str(simulation_id))
             .eq("id", str(entity_id))
-            .is_("deleted_at", "null")
         )
+
+        # Only filter by deleted_at when the service supports soft-delete
+        if cls.view_name is not None:
+            query = query.is_("deleted_at", "null")
 
         if if_updated_at is not None:
             query = query.eq("updated_at", if_updated_at)
@@ -193,15 +196,16 @@ class BaseService:
             # Distinguish "not found" from "conflict" when optimistic locking is active.
             if if_updated_at is not None:
                 # Check whether the entity actually exists (ignoring the timestamp).
-                exists = (
+                exists_query = (
                     supabase.table(cls.table_name)
                     .select("id")
                     .eq("simulation_id", str(simulation_id))
                     .eq("id", str(entity_id))
-                    .is_("deleted_at", "null")
                     .limit(1)
-                    .execute()
                 )
+                if cls.view_name is not None:
+                    exists_query = exists_query.is_("deleted_at", "null")
+                exists = exists_query.execute()
                 if exists and exists.data:
                     raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
@@ -211,6 +215,37 @@ class BaseService:
                         ),
                     )
 
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"{cls.table_name} '{entity_id}' not found.",
+            )
+
+        return response.data[0]
+
+    @classmethod
+    async def hard_delete(
+        cls,
+        supabase: Client,
+        simulation_id: UUID,
+        entity_id: UUID,
+        *,
+        extra_filters: dict | None = None,
+    ) -> dict:
+        """Hard-delete an entity (permanent removal)."""
+        query = (
+            supabase.table(cls.table_name)
+            .delete()
+            .eq("simulation_id", str(simulation_id))
+            .eq("id", str(entity_id))
+        )
+
+        if extra_filters:
+            for key, value in extra_filters.items():
+                query = query.eq(key, str(value))
+
+        response = query.execute()
+
+        if not response.data:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{cls.table_name} '{entity_id}' not found.",

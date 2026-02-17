@@ -1,8 +1,9 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import type { Event as SimEvent } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
 
@@ -168,52 +169,6 @@ export class VelgEventCard extends LitElement {
 
   @property({ type: Object }) event!: SimEvent;
 
-  private _editIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-        <path d="M16 5l3 3" />
-      </svg>
-    `;
-  }
-
-  private _deleteIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7l16 0" />
-        <path d="M10 11l0 6" />
-        <path d="M14 11l0 6" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-      </svg>
-    `;
-  }
-
-  private _calendarIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
-        <path d="M16 3v4" />
-        <path d="M8 3v4" />
-        <path d="M4 11h16" />
-      </svg>
-    `;
-  }
-
-  private _locationIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-        <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
-      </svg>
-    `;
-  }
-
   private _formatDate(dateStr: string): string {
     try {
       const date = new Date(dateStr);
@@ -320,7 +275,7 @@ export class VelgEventCard extends LitElement {
               evt.occurred_at
                 ? html`
                 <span class="card__meta-item">
-                  <span class="card__meta-icon">${this._calendarIcon()}</span>
+                  <span class="card__meta-icon">${icons.calendar()}</span>
                   ${this._formatDate(evt.occurred_at)}
                 </span>
               `
@@ -330,7 +285,7 @@ export class VelgEventCard extends LitElement {
               evt.location
                 ? html`
                 <span class="card__meta-item">
-                  <span class="card__meta-icon">${this._locationIcon()}</span>
+                  <span class="card__meta-icon">${icons.location()}</span>
                   ${evt.location}
                 </span>
               `
@@ -355,10 +310,10 @@ export class VelgEventCard extends LitElement {
             ? html`
               <div class="card__actions">
                 <velg-icon-button .label=${msg('Edit event')} @icon-click=${this._handleEdit}>
-                  ${this._editIcon()}
+                  ${icons.edit()}
                 </velg-icon-button>
                 <velg-icon-button variant="danger" .label=${msg('Delete event')} @icon-click=${this._handleDelete}>
-                  ${this._deleteIcon()}
+                  ${icons.trash()}
                 </velg-icon-button>
               </div>
             `

@@ -5,6 +5,7 @@ import { appState } from '../../services/AppStateManager.js';
 import { buildingsApi } from '../../services/api/index.js';
 import type { Building } from '../../types/index.js';
 import type { FilterChangeDetail } from '../shared/SharedFilterBar.js';
+import { viewHeaderStyles } from '../shared/view-header-styles.js';
 import '../shared/SharedFilterBar.js';
 import '../shared/Pagination.js';
 import '../shared/LoadingState.js';
@@ -19,60 +20,11 @@ import './BuildingDetailsPanel.js';
 @localized()
 @customElement('velg-buildings-view')
 export class VelgBuildingsView extends LitElement {
-  static styles = css`
+  static styles = [
+    viewHeaderStyles,
+    css`
     :host {
       display: block;
-    }
-
-    .view {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-5);
-    }
-
-    .view__header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-4);
-    }
-
-    .view__title {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-2xl);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      margin: 0;
-    }
-
-    .view__create-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2-5) var(--space-5);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      white-space: nowrap;
-    }
-
-    .view__create-btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .view__create-btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
     }
 
     .view__grid {
@@ -80,16 +32,8 @@ export class VelgBuildingsView extends LitElement {
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: var(--space-5);
     }
-
-    .view__count {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-secondary);
-    }
-  `;
+  `,
+  ];
 
   @property({ type: String }) simulationId = '';
 

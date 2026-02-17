@@ -1,8 +1,9 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import type { Building } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 import '../shared/Lightbox.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
@@ -116,30 +117,6 @@ export class VelgBuildingCard extends LitElement {
   @property({ attribute: false }) building!: Building;
   @state() private _lightboxSrc: string | null = null;
 
-  private _buildingIcon() {
-    return svg`
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="48"
-        height="48"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M3 21l18 0" />
-        <path d="M5 21v-14l8 -4v18" />
-        <path d="M19 21v-10l-6 -4" />
-        <path d="M9 9v.01" />
-        <path d="M9 12v.01" />
-        <path d="M9 15v.01" />
-        <path d="M9 18v.01" />
-      </svg>
-    `;
-  }
-
   private _getConditionVariant(condition: string | undefined): string {
     if (!condition) return 'default';
     const normalized = condition.toLowerCase();
@@ -147,30 +124,6 @@ export class VelgBuildingCard extends LitElement {
     if (normalized === 'fair') return 'warning';
     if (normalized === 'poor' || normalized === 'ruined') return 'danger';
     return 'default';
-  }
-
-  private _editIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-        <path d="M16 5l3 3" />
-      </svg>
-    `;
-  }
-
-  private _deleteIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7l16 0" />
-        <path d="M10 11l0 6" />
-        <path d="M14 11l0 6" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-      </svg>
-    `;
   }
 
   private _handleClick(): void {
@@ -228,7 +181,7 @@ export class VelgBuildingCard extends LitElement {
                     this._lightboxSrc = b.image_url ?? null;
                   }}
                 />`
-              : html`<div class="card__placeholder">${this._buildingIcon()}</div>`
+              : html`<div class="card__placeholder">${icons.building()}</div>`
           }
         </div>
 
@@ -261,10 +214,10 @@ export class VelgBuildingCard extends LitElement {
             ? html`
               <div class="card__actions">
                 <velg-icon-button .label=${msg('Edit building')} @icon-click=${this._handleEdit}>
-                  ${this._editIcon()}
+                  ${icons.edit()}
                 </velg-icon-button>
                 <velg-icon-button variant="danger" .label=${msg('Delete building')} @icon-click=${this._handleDelete}>
-                  ${this._deleteIcon()}
+                  ${icons.trash()}
                 </velg-icon-button>
               </div>
             `

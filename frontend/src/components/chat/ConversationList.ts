@@ -274,8 +274,9 @@ export class VelgConversationList extends LitElement {
 
     return html`
       <div class="conversation__portraits">
-        ${visible.map((agent, i) =>
-          html`<velg-avatar
+        ${visible.map(
+          (agent, i) =>
+            html`<velg-avatar
             .src=${agent.portrait_image_url ?? ''}
             .name=${agent.name}
             size="xs"

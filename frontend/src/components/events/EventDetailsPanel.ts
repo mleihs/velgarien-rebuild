@@ -1,9 +1,10 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { eventsApi } from '../../services/api/index.js';
 import { generationProgress } from '../../services/GenerationProgressService.js';
 import type { EventReaction, Event as SimEvent } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
 import { VelgToast } from '../shared/Toast.js';
@@ -326,66 +327,6 @@ export class VelgEventDetailsPanel extends LitElement {
     return 'active';
   }
 
-  private _chevronIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 6l6 6l-6 6" />
-      </svg>
-    `;
-  }
-
-  private _trashIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7l16 0" />
-        <path d="M10 11l0 6" />
-        <path d="M14 11l0 6" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-      </svg>
-    `;
-  }
-
-  private _editIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-        <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-        <path d="M16 5l3 3" />
-      </svg>
-    `;
-  }
-
-  private _deleteIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 7l16 0" />
-        <path d="M10 11l0 6" />
-        <path d="M14 11l0 6" />
-        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-      </svg>
-    `;
-  }
-
-  private _brainIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8" />
-        <path d="M8.5 13a3.5 3.5 0 0 1 3.5 3.5v1a3.5 3.5 0 0 1 -7 0v-1.8" />
-        <path d="M17.5 16a3.5 3.5 0 0 0 0 -7h-.5" />
-        <path d="M19 9.3v-2.8a3.5 3.5 0 0 0 -7 0" />
-        <path d="M6.5 16a3.5 3.5 0 0 1 0 -7h.5" />
-        <path d="M5 9.3v-2.8a3.5 3.5 0 0 1 7 0v10" />
-      </svg>
-    `;
-  }
-
   private _handleEdit(): void {
     this.dispatchEvent(
       new CustomEvent('event-edit', {
@@ -543,7 +484,7 @@ export class VelgEventDetailsPanel extends LitElement {
                 @click=${() => this._toggleReaction(reaction.id)}
               >
                 <span class="panel__reaction-chevron ${isOpen ? 'panel__reaction-chevron--open' : ''}">
-                  ${this._chevronIcon()}
+                  ${icons.chevronRight()}
                 </span>
                 <span class="panel__reaction-agent">${agentName}</span>
                 ${
@@ -559,7 +500,7 @@ export class VelgEventDetailsPanel extends LitElement {
                     this._handleDeleteReaction(reaction);
                   }}
                 >
-                  ${this._trashIcon()}
+                  ${icons.trash(14)}
                 </button>
               </div>
               ${
@@ -674,7 +615,7 @@ export class VelgEventDetailsPanel extends LitElement {
                 @click=${this._handleGenerateReactions}
                 ?disabled=${this._generatingReactions}
               >
-                ${this._brainIcon()}
+                ${icons.brain()}
                 ${this._generatingReactions ? msg('Generating...') : msg('Generate Reactions')}
               </button>
               <button
@@ -682,7 +623,7 @@ export class VelgEventDetailsPanel extends LitElement {
                 class="panel__btn panel__btn--edit"
                 @click=${this._handleEdit}
               >
-                ${this._editIcon()}
+                ${icons.edit()}
                 ${msg('Edit')}
               </button>
               <button
@@ -690,7 +631,7 @@ export class VelgEventDetailsPanel extends LitElement {
                 class="panel__btn panel__btn--danger"
                 @click=${this._handleDelete}
               >
-                ${this._deleteIcon()}
+                ${icons.trash()}
                 ${msg('Delete')}
               </button>
             `
