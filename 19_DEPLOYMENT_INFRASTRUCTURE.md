@@ -11,29 +11,36 @@
 ### Production Topology
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        Internet                              │
-│                                                              │
-│   User Browser ──────┬──────────────────────────────┐       │
-│                      │                              │       │
-│           ┌──────────▼──────────┐    ┌──────────────▼────┐  │
-│           │   Railway (Docker)   │    │  Supabase Hosted  │  │
-│           │   FastAPI + Uvicorn  │    │  PostgreSQL + RLS │  │
-│           │   Static SPA files   │    │  Auth (ES256/JWKS)│  │
-│           │   Port 8000          │    │  Storage (S3)     │  │
-│           └──────────┬──────────┘    │  Realtime (WS)    │  │
-│                      │               └──────────┬────────┘  │
-│                      │                          │           │
-│                      └──────────────────────────┘           │
-│                         User-JWT (RLS active)                │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                          Internet                                 │
+│                                                                   │
+│   User Browser ─── https://metaverse.center ────┐                │
+│                      │                          │                │
+│           ┌──────────▼──────────┐               │                │
+│           │   Cloudflare (CDN)   │               │                │
+│           │   SSL termination    │               │                │
+│           │   DNS + WAF          │               │                │
+│           └──────────┬──────────┘               │                │
+│                      │ HTTPS (Full strict)      │                │
+│           ┌──────────▼──────────┐    ┌──────────▼─────────┐     │
+│           │   Railway (Docker)   │    │  Supabase Hosted   │     │
+│           │   FastAPI + Uvicorn  │    │  PostgreSQL + RLS  │     │
+│           │   Static SPA files   │    │  Auth (ES256/JWKS) │     │
+│           │   Port 8000          │    │  Storage (S3)      │     │
+│           └──────────┬──────────┘    │  Realtime (WS)     │     │
+│                      │               └──────────┬─────────┘     │
+│                      │                          │                │
+│                      └──────────────────────────┘                │
+│                         User-JWT (RLS active)                     │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 **Production URLs:**
 
 | Component | URL |
 |-----------|-----|
-| Backend (Railway) | `https://backend-production-8f7a.up.railway.app` |
+| App (custom domain) | `https://metaverse.center` |
+| Railway (internal) | `https://backend-production-8f7a.up.railway.app` |
 | Supabase (hosted) | `https://bffjoupddfjaljqrwqck.supabase.co` |
 | Supabase MCP | `https://mcp.supabase.com/mcp?project_ref=bffjoupddfjaljqrwqck` |
 
@@ -61,6 +68,8 @@
 
 | Aspect | Local Development | Production |
 |--------|------------------|------------|
+| Domain | `http://localhost:5173` | `https://metaverse.center` |
+| CDN/SSL | None | Cloudflare (Full strict SSL) |
 | Backend | `uvicorn --reload` on :8000 | Railway Docker on :8000 |
 | Frontend | Vite dev server on :5173 | Static files served by FastAPI |
 | Database | Docker PostgreSQL :54322 | Supabase hosted PostgreSQL |
@@ -426,6 +435,21 @@ restartPolicyMaxRetries = 3
 
 See `.env.production.example` for the full list including optional AI/external service keys.
 
+### Custom Domain + Cloudflare
+
+**Domain:** `metaverse.center` — managed via Cloudflare DNS.
+
+**DNS records** (only the records relevant to the app):
+
+| Type | Name | Target | Proxy |
+|------|------|--------|-------|
+| CNAME | `metaverse.center` | Railway CNAME target | Proxied |
+| CNAME | `www` | Railway CNAME target | Proxied |
+
+**Cloudflare SSL/TLS:** Set to **Full (strict)**. This is critical — "Flexible" mode causes an infinite redirect loop because Cloudflare connects to Railway over HTTP, Railway redirects to HTTPS, and Cloudflare proxies the redirect again.
+
+**CORS:** The Railway env var `BACKEND_CORS_ORIGINS` must be set to `https://metaverse.center`.
+
 ### Supabase Hosted Setup
 
 **Project ref:** `bffjoupddfjaljqrwqck`
@@ -632,7 +656,7 @@ git push origin main
 
 Railway handles the rest. Monitor via the Railway dashboard or:
 ```bash
-curl -s https://backend-production-8f7a.up.railway.app/api/v1/health
+curl -s https://metaverse.center/api/v1/health
 ```
 
 ### Schema-Only Deploy (No Code Changes)
@@ -651,7 +675,7 @@ No Railway build triggered since `supabase/migrations/` is not in the watch patt
 
 ```bash
 # Backend health endpoint
-curl -s https://backend-production-8f7a.up.railway.app/api/v1/health
+curl -s https://metaverse.center/api/v1/health
 
 # Supabase health (returns project status)
 curl -s https://bffjoupddfjaljqrwqck.supabase.co/rest/v1/ \
@@ -673,6 +697,7 @@ supabase status
 | `supabase db push` hangs | Network/IPv6 issues | Check `SUPABASE_ACCESS_TOKEN` is set; retry |
 | Railway deploy fails | Build error | Check Dockerfile; ensure `npm run build` succeeds locally |
 | RLS policy denied | Missing simulation_members row | Verify user is a member of the simulation |
+| ERR_TOO_MANY_REDIRECTS | Cloudflare SSL set to "Flexible" | Change to **Full (strict)** in Cloudflare SSL/TLS settings |
 | Port 8000/5173 in use (local) | Orphaned processes | Follow Server Restart sequence in CLAUDE.md |
 
 ### Credentials Reference

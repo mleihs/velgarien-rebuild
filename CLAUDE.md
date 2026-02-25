@@ -148,7 +148,7 @@ Two MCP servers configured in `.mcp.json`:
 
 | Component | URL |
 |-----------|-----|
-| Backend (Railway) | `https://backend-production-8f7a.up.railway.app` |
+| App (Railway + Cloudflare) | `https://metaverse.center` |
 | Supabase (hosted) | `https://bffjoupddfjaljqrwqck.supabase.co` |
 
 **Auth:** Production uses ES256 (ECC P-256) tokens verified via JWKS. Local uses HS256 with shared secret.
