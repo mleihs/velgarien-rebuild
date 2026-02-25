@@ -18,9 +18,11 @@ from backend.models.event import (
     EventUpdate,
     GenerateEventReactionsRequest,
 )
+from backend.services.agent_service import AgentService
 from backend.services.audit_service import AuditService
 from backend.services.event_service import EventService
 from backend.services.external_service_resolver import ExternalServiceResolver
+from backend.services.generation_service import GenerationService
 from supabase import Client
 
 logger = logging.getLogger(__name__)
@@ -195,28 +197,21 @@ async def generate_reactions(
     """Generate AI reactions from agents for an event."""
     event = await _service.get(supabase, simulation_id, event_id)
 
+    resolver = ExternalServiceResolver(supabase, simulation_id)
+    ai_config = await resolver.get_ai_provider_config()
+    gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
+
     if body.agent_ids:
-        # Specific agents requested — use custom query
-        agent_query = (
-            supabase.table("active_agents")
-            .select("id, name, character, system")
-            .eq("simulation_id", str(simulation_id))
-            .in_("id", body.agent_ids)
+        # Specific agents requested
+        agents = await AgentService.list_for_reaction(
+            supabase, simulation_id, agent_ids=body.agent_ids,
         )
-        agents = (agent_query.execute()).data or []
 
         if not agents:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="No agents found for reaction generation.",
             )
-
-        resolver = ExternalServiceResolver(supabase, simulation_id)
-        ai_config = await resolver.get_ai_provider_config()
-
-        from backend.services.generation_service import GenerationService
-
-        gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
 
         existing = await _service.get_reactions(supabase, simulation_id, event_id)
         existing_map: dict[str, dict] = {r["agent_id"]: r for r in existing}
@@ -256,11 +251,9 @@ async def generate_reactions(
             except Exception as e:
                 logger.warning("Failed to generate reaction for agent %s: %s", agent["name"], e)
     else:
-        # Use shared helper for general reaction generation
-        from backend.routers.social_trends import _generate_reactions_for_event
-
-        reactions = await _generate_reactions_for_event(
-            supabase, simulation_id, event,
+        # General reaction generation via EventService
+        reactions = await EventService.generate_reactions(
+            supabase, simulation_id, event, gen,
             max_agents=body.max_agents,
         )
 

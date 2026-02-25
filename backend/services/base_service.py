@@ -10,7 +10,7 @@ from fastapi import HTTPException, status
 from supabase import Client
 
 
-def _serialize_for_json(data: dict) -> dict:
+def serialize_for_json(data: dict) -> dict:
     """Convert non-JSON-serializable values (datetime, UUID) to strings."""
     result = {}
     for key, value in data.items():
@@ -123,7 +123,7 @@ class BaseService:
         data: dict,
     ) -> dict:
         """Create a new entity in a simulation."""
-        insert_data = _serialize_for_json({
+        insert_data = serialize_for_json({
             **data,
             "simulation_id": str(simulation_id),
         })
@@ -174,7 +174,7 @@ class BaseService:
                 detail="No fields to update.",
             )
 
-        update_data = _serialize_for_json({**data, "updated_at": datetime.now(UTC).isoformat()})
+        update_data = serialize_for_json({**data, "updated_at": datetime.now(UTC).isoformat()})
 
         query = (
             supabase.table(cls.table_name)

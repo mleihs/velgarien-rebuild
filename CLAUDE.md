@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied + lore expansion + dashboard LoreScroll. 139 tasks. 797 localized UI strings (EN/DE). Platform ready for deployment.
+**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll. 139 tasks. 797 localized UI strings (EN/DE). Platform ready for deployment.
 
 ## Tech Stack
 
@@ -49,7 +49,7 @@ backend/              FastAPI application
   services/           Business logic (BaseService + 15 entity + audit + simulation + external)
   middleware/         Rate limiting, security headers
   utils/              Encryption (AES-256 for settings), search helpers
-  tests/              pytest tests (130 tests: unit + integration + security + performance)
+  tests/              pytest tests (239 tests: unit + integration + security + performance)
 frontend/             Lit + Vite application
   src/
     app-shell.ts      Main app with @lit-labs/router (auth + simulation-scoped routes)
@@ -73,7 +73,7 @@ frontend/             Lit + Vite application
     styles/           CSS design tokens (tokens/) + base styles (base/)
     utils/            Shared utilities (text.ts, formatters.ts, error-handler.ts, icons.ts)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
-  tests/              vitest tests (130 tests: validation + API + notification)
+  tests/              vitest tests (87 tests: validation + API + notification)
 e2e/                  Playwright E2E tests (37 specs across 8 files)
   playwright.config.ts
   helpers/            auth.ts, fixtures.ts
@@ -195,8 +195,9 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - **Role checking:** `require_role("admin")` factory returns Depends() that checks simulation_members
 - **Rate limiting:** slowapi — 30/hr AI generation, 10/min AI chat, 5/min external API, 100/min standard
 - **Models:** `PaginatedResponse[T]`, `SuccessResponse[T]`, `ErrorResponse` in `models/common.py`
-- **BaseService:** Generic CRUD in `services/base_service.py` — uses `active_*` views for soft-delete filtering, optional `include_deleted=True` for admin queries. Set `view_name = None` for tables without soft-delete (e.g., campaigns, agent_professions).
-- **Entity services:** All CRUD routers use dedicated services — `AgentService`, `BuildingService`, `EventService`, `CampaignService` (extends BaseService), `LocationService` (facade for 3 tables), `AgentProfessionService` (extends BaseService), `PromptTemplateService` (custom, uses `is_active` for soft-delete), `MemberService` (with `LastOwnerError` exception), `SocialMediaService`, `SocialTrendsService`
+- **BaseService:** Generic CRUD in `services/base_service.py` — uses `active_*` views for soft-delete filtering, optional `include_deleted=True` for admin queries. Set `view_name = None` for tables without soft-delete (e.g., campaigns, agent_professions, locations). Public `serialize_for_json()` utility for datetime/UUID/date conversion.
+- **Entity services:** All CRUD routers use dedicated services — `AgentService` (with `list_for_reaction()` for lightweight AI queries), `BuildingService`, `EventService` (with `generate_reactions()` for AI reaction generation), `CampaignService` (extends BaseService), `LocationService` (facade delegating to `CityService`/`ZoneService`/`StreetService`, all extending BaseService), `AgentProfessionService` (extends BaseService), `PromptTemplateService` (custom, uses `is_active` for soft-delete), `MemberService` (with `LastOwnerError` exception + `get_user_memberships()`), `SocialMediaService`, `SocialTrendsService`
+- **Router discipline:** Routers handle HTTP only — no direct DB queries, no business logic helpers, no late-binding imports. All service imports at module level. External service imports (Guardian, NewsAPI, Facebook, GenerationService) at module level.
 - **AuditService:** `services/audit_service.py` — logs CRUD operations to `audit_log` table with entity diffs. Applied to all data-changing endpoints across all routers.
 - **Search utility:** `utils/search.py` — `apply_search_filter(query, search, vector_field, fallback_fields)` for full-text search with ilike fallback
 - **Encryption:** `utils/encryption.py` — AES-256 via `cryptography` for sensitive settings values
@@ -205,7 +206,8 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 
 - Components extend `LitElement` with `@customElement('velg-...')`
 - State via Preact Signals (`appState` in `AppStateManager.ts`)
-- API calls through `BaseApiService` (auto-attaches JWT from appState)
+- API calls through `BaseApiService` (auto-attaches JWT from appState). Always import existing API service singletons (e.g., `simulationsApi`, `buildingsApi`) — never create inline service classes in components.
+- **API contract:** Backend endpoints using query params (e.g., `assign-agent?agent_id=...`, `profession-requirements?profession=...`) must use `URLSearchParams` in the frontend — never send these as JSON body. `PaginatedResponse<T>` uses `meta?: { count, total, limit, offset }` matching the backend structure.
 - Routing via `@lit-labs/router` (Reactive Controller in app-shell)
 - All types in `frontend/src/types/index.ts`
 - Design tokens as CSS Custom Properties in `styles/tokens/`

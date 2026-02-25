@@ -434,26 +434,42 @@ describe('BuildingsApiService — URL construction', () => {
     expect(init.method).toBe('POST');
   });
 
-  it('assignAgent should call POST /simulations/{simId}/buildings/{buildingId}/agents', async () => {
+  it('assignAgent should call POST .../assign-agent with query params', async () => {
     const spy = mockFetch([{ body: { data: {} } }]);
-    await service.post('/simulations/sim-123/buildings/bld-789/agents', {
-      agent_id: 'agent-456',
-      relation_type: 'resident',
-    });
+    // Replicate the URL the real service builds:
+    const params = new URLSearchParams({ agent_id: 'agent-456' });
+    params.set('relation_type', 'resident');
+    await service.post(
+      `/simulations/sim-123/buildings/bld-789/assign-agent?${params}`,
+    );
     const [url, init] = spy.mock.calls[0] as [string, RequestInit];
-    expect(url).toContain('/simulations/sim-123/buildings/bld-789/agents');
+    expect(url).toContain('/buildings/bld-789/assign-agent');
+    expect(url).toContain('agent_id=agent-456');
+    expect(url).toContain('relation_type=resident');
     expect(init.method).toBe('POST');
-    expect(JSON.parse(init.body as string)).toEqual({
-      agent_id: 'agent-456',
-      relation_type: 'resident',
-    });
+    // Body should be absent (params go in query string)
+    expect(init.body).toBeUndefined();
   });
 
-  it('unassignAgent should call DELETE /simulations/{simId}/buildings/{buildingId}/agents/{agentId}', async () => {
+  it('assignAgent without relationType should omit relation_type param', async () => {
     const spy = mockFetch([{ body: { data: {} } }]);
-    await service.delete('/simulations/sim-123/buildings/bld-789/agents/agent-456');
+    const params = new URLSearchParams({ agent_id: 'agent-456' });
+    await service.post(
+      `/simulations/sim-123/buildings/bld-789/assign-agent?${params}`,
+    );
+    const [url] = spy.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain('agent_id=agent-456');
+    expect(url).not.toContain('relation_type');
+  });
+
+  it('unassignAgent should call DELETE .../unassign-agent with agent_id query param', async () => {
+    const spy = mockFetch([{ body: { data: {} } }]);
+    await service.delete(
+      '/simulations/sim-123/buildings/bld-789/unassign-agent?agent_id=agent-456',
+    );
     const [url, init] = spy.mock.calls[0] as [string, RequestInit];
-    expect(url).toContain('/simulations/sim-123/buildings/bld-789/agents/agent-456');
+    expect(url).toContain('/buildings/bld-789/unassign-agent');
+    expect(url).toContain('agent_id=agent-456');
     expect(init.method).toBe('DELETE');
   });
 
@@ -462,5 +478,23 @@ describe('BuildingsApiService — URL construction', () => {
     await service.get('/simulations/sim-123/buildings/bld-789/profession-requirements');
     const [url] = spy.mock.calls[0] as [string, RequestInit];
     expect(url).toContain('/simulations/sim-123/buildings/bld-789/profession-requirements');
+  });
+
+  it('setProfessionRequirement should call POST .../profession-requirements with query params', async () => {
+    const spy = mockFetch([{ body: { data: {} } }]);
+    const params = new URLSearchParams();
+    params.set('profession', 'baker');
+    params.set('min_qualification_level', '3');
+    params.set('is_mandatory', 'true');
+    await service.post(
+      `/simulations/sim-123/buildings/bld-789/profession-requirements?${params}`,
+    );
+    const [url, init] = spy.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain('/profession-requirements');
+    expect(url).toContain('profession=baker');
+    expect(url).toContain('min_qualification_level=3');
+    expect(url).toContain('is_mandatory=true');
+    expect(init.method).toBe('POST');
+    expect(init.body).toBeUndefined();
   });
 });

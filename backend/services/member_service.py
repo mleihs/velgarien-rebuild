@@ -29,6 +29,21 @@ class MemberService:
     table_name = "simulation_members"
 
     @classmethod
+    async def get_user_memberships(
+        cls,
+        supabase: Client,
+        user_id: UUID,
+    ) -> list[dict]:
+        """Get all simulation memberships for a user, including simulation names."""
+        response = (
+            supabase.table(cls.table_name)
+            .select("simulation_id, member_role, simulations(name)")
+            .eq("user_id", str(user_id))
+            .execute()
+        )
+        return response.data or []
+
+    @classmethod
     async def list_members(
         cls,
         supabase: Client,

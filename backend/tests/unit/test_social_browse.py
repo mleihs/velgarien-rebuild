@@ -274,10 +274,10 @@ class TestIntegrateArticleRequestModel:
 
 
 class TestGenerateReactionsHelper:
-    """Test _generate_reactions_for_event shared helper."""
+    """Test EventService.generate_reactions (moved from router helper)."""
 
     async def test_returns_empty_when_no_agents(self):
-        from backend.routers.social_trends import _generate_reactions_for_event
+        from backend.services.event_service import EventService
 
         mock_sb = MagicMock()
         # No agents found
@@ -286,18 +286,10 @@ class TestGenerateReactionsHelper:
         )
 
         event = {"id": str(uuid4()), "title": "Test", "description": "Test event"}
+        mock_gen = MagicMock()
 
-        with patch(
-            "backend.routers.social_trends.ExternalServiceResolver"
-        ) as mock_resolver_cls:
-            mock_resolver = MagicMock()
-            mock_resolver.get_ai_provider_config = AsyncMock(
-                return_value=MagicMock(openrouter_api_key="test")
-            )
-            mock_resolver_cls.return_value = mock_resolver
-
-            reactions = await _generate_reactions_for_event(
-                mock_sb, MOCK_SIM_ID, event, max_agents=5
-            )
+        reactions = await EventService.generate_reactions(
+            mock_sb, MOCK_SIM_ID, event, mock_gen, max_agents=5
+        )
 
         assert reactions == []

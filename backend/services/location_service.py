@@ -1,146 +1,99 @@
-"""Service layer for location operations (cities, zones, streets)."""
+"""Service layer for location operations (cities, zones, streets).
 
-from datetime import UTC, datetime
+Uses thin BaseService subclasses for CRUD, with LocationService as a
+convenience facade that delegates to CityService, ZoneService, and
+StreetService.
+"""
+
+from __future__ import annotations
+
 from uuid import UUID
 
-from fastapi import HTTPException, status
-
+from backend.services.base_service import BaseService
 from supabase import Client
+
+# Placeholder user_id — location tables have no created_by_id column, so
+# BaseService.create() never writes this value (supports_created_by = False).
+_NO_USER = UUID(int=0)
+
+
+class CityService(BaseService):
+    table_name = "cities"
+    view_name = None
+    supports_created_by = False
+
+
+class ZoneService(BaseService):
+    table_name = "zones"
+    view_name = None
+    supports_created_by = False
+
+
+class StreetService(BaseService):
+    table_name = "city_streets"
+    view_name = None
+    supports_created_by = False
 
 
 class LocationService:
-    """Service for cities, zones, and streets — not using BaseService since no soft-delete."""
-
-    # --- Generic helpers ---
-
-    @staticmethod
-    async def _list(
-        supabase: Client,
-        table: str,
-        simulation_id: UUID,
-        filters: dict | None = None,
-        limit: int = 25,
-        offset: int = 0,
-    ) -> tuple[list[dict], int]:
-        """Generic list with optional equality filters."""
-        query = (
-            supabase.table(table)
-            .select("*", count="exact")
-            .eq("simulation_id", str(simulation_id))
-            .order("name")
-        )
-        for key, value in (filters or {}).items():
-            if value is not None:
-                query = query.eq(key, str(value))
-        query = query.range(offset, offset + limit - 1)
-        response = query.execute()
-        total = response.count if response.count is not None else len(response.data or [])
-        return response.data or [], total
-
-    @staticmethod
-    async def _get(
-        supabase: Client,
-        table: str,
-        simulation_id: UUID,
-        entity_id: UUID,
-        label: str,
-    ) -> dict:
-        """Generic get-by-id."""
-        response = (
-            supabase.table(table)
-            .select("*")
-            .eq("simulation_id", str(simulation_id))
-            .eq("id", str(entity_id))
-            .limit(1)
-            .execute()
-        )
-        if not response or not response.data:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{label} '{entity_id}' not found.")
-        return response.data[0]
-
-    @staticmethod
-    async def _create(
-        supabase: Client,
-        table: str,
-        simulation_id: UUID,
-        data: dict,
-        label: str,
-    ) -> dict:
-        """Generic create."""
-        response = (
-            supabase.table(table)
-            .insert({**data, "simulation_id": str(simulation_id)})
-            .execute()
-        )
-        if not response.data:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Failed to create {label.lower()}.",
-            )
-        return response.data[0]
-
-    @staticmethod
-    async def _update(
-        supabase: Client,
-        table: str,
-        simulation_id: UUID,
-        entity_id: UUID,
-        data: dict,
-        label: str,
-    ) -> dict:
-        """Generic update."""
-        if not data:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No fields to update.")
-        data["updated_at"] = datetime.now(UTC).isoformat()
-        response = (
-            supabase.table(table)
-            .update(data)
-            .eq("simulation_id", str(simulation_id))
-            .eq("id", str(entity_id))
-            .execute()
-        )
-        if not response.data:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{label} '{entity_id}' not found.")
-        return response.data[0]
+    """Facade for cities, zones, and streets — delegates to sub-services."""
 
     # --- Cities ---
 
     @classmethod
-    async def list_cities(cls, supabase: Client, simulation_id: UUID, limit: int = 25, offset: int = 0):
-        return await cls._list(supabase, "cities", simulation_id, limit=limit, offset=offset)
+    async def list_cities(
+        cls, supabase: Client, simulation_id: UUID, limit: int = 25, offset: int = 0,
+    ) -> tuple[list[dict], int]:
+        return await CityService.list(
+            supabase, simulation_id,
+            order_by="name", order_desc=False, limit=limit, offset=offset,
+        )
 
     @classmethod
-    async def get_city(cls, supabase: Client, simulation_id: UUID, city_id: UUID):
-        return await cls._get(supabase, "cities", simulation_id, city_id, "City")
+    async def get_city(cls, supabase: Client, simulation_id: UUID, city_id: UUID) -> dict:
+        return await CityService.get(supabase, simulation_id, city_id)
 
     @classmethod
-    async def create_city(cls, supabase: Client, simulation_id: UUID, data: dict):
-        return await cls._create(supabase, "cities", simulation_id, data, "City")
+    async def create_city(cls, supabase: Client, simulation_id: UUID, data: dict) -> dict:
+        return await CityService.create(supabase, simulation_id, _NO_USER, data)
 
     @classmethod
-    async def update_city(cls, supabase: Client, simulation_id: UUID, city_id: UUID, data: dict):
-        return await cls._update(supabase, "cities", simulation_id, city_id, data, "City")
+    async def update_city(
+        cls, supabase: Client, simulation_id: UUID, city_id: UUID, data: dict,
+    ) -> dict:
+        return await CityService.update(supabase, simulation_id, city_id, data)
 
     # --- Zones ---
 
     @classmethod
     async def list_zones(
-        cls, supabase: Client, simulation_id: UUID, city_id: UUID | None = None, limit: int = 25, offset: int = 0,
-    ):
-        filters = {"city_id": city_id}
-        return await cls._list(supabase, "zones", simulation_id, filters=filters, limit=limit, offset=offset)
+        cls,
+        supabase: Client,
+        simulation_id: UUID,
+        city_id: UUID | None = None,
+        limit: int = 25,
+        offset: int = 0,
+    ) -> tuple[list[dict], int]:
+        filters = {"city_id": str(city_id)} if city_id else None
+        return await ZoneService.list(
+            supabase, simulation_id,
+            filters=filters, order_by="name", order_desc=False,
+            limit=limit, offset=offset,
+        )
 
     @classmethod
-    async def get_zone(cls, supabase: Client, simulation_id: UUID, zone_id: UUID):
-        return await cls._get(supabase, "zones", simulation_id, zone_id, "Zone")
+    async def get_zone(cls, supabase: Client, simulation_id: UUID, zone_id: UUID) -> dict:
+        return await ZoneService.get(supabase, simulation_id, zone_id)
 
     @classmethod
-    async def create_zone(cls, supabase: Client, simulation_id: UUID, data: dict):
-        return await cls._create(supabase, "zones", simulation_id, data, "Zone")
+    async def create_zone(cls, supabase: Client, simulation_id: UUID, data: dict) -> dict:
+        return await ZoneService.create(supabase, simulation_id, _NO_USER, data)
 
     @classmethod
-    async def update_zone(cls, supabase: Client, simulation_id: UUID, zone_id: UUID, data: dict):
-        return await cls._update(supabase, "zones", simulation_id, zone_id, data, "Zone")
+    async def update_zone(
+        cls, supabase: Client, simulation_id: UUID, zone_id: UUID, data: dict,
+    ) -> dict:
+        return await ZoneService.update(supabase, simulation_id, zone_id, data)
 
     # --- Streets ---
 
@@ -153,17 +106,24 @@ class LocationService:
         zone_id: UUID | None = None,
         limit: int = 25,
         offset: int = 0,
-    ):
-        return await cls._list(
-            supabase, "city_streets", simulation_id,
-            filters={"city_id": city_id, "zone_id": zone_id},
+    ) -> tuple[list[dict], int]:
+        filters: dict = {}
+        if city_id:
+            filters["city_id"] = str(city_id)
+        if zone_id:
+            filters["zone_id"] = str(zone_id)
+        return await StreetService.list(
+            supabase, simulation_id,
+            filters=filters or None, order_by="name", order_desc=False,
             limit=limit, offset=offset,
         )
 
     @classmethod
-    async def create_street(cls, supabase: Client, simulation_id: UUID, data: dict):
-        return await cls._create(supabase, "city_streets", simulation_id, data, "Street")
+    async def create_street(cls, supabase: Client, simulation_id: UUID, data: dict) -> dict:
+        return await StreetService.create(supabase, simulation_id, _NO_USER, data)
 
     @classmethod
-    async def update_street(cls, supabase: Client, simulation_id: UUID, street_id: UUID, data: dict):
-        return await cls._update(supabase, "city_streets", simulation_id, street_id, data, "Street")
+    async def update_street(
+        cls, supabase: Client, simulation_id: UUID, street_id: UUID, data: dict,
+    ) -> dict:
+        return await StreetService.update(supabase, simulation_id, street_id, data)

@@ -54,6 +54,28 @@ class AgentService(BaseService):
         return response.data or [], total
 
     @classmethod
+    async def list_for_reaction(
+        cls,
+        supabase: Client,
+        simulation_id: UUID,
+        *,
+        agent_ids: list[str] | None = None,
+        limit: int = 20,
+        select: str = "id, name, character, system",
+    ) -> list[dict]:
+        """Fetch agents for reaction generation (lightweight select)."""
+        query = (
+            supabase.table(cls._read_table())
+            .select(select)
+            .eq("simulation_id", str(simulation_id))
+        )
+        if agent_ids:
+            query = query.in_("id", agent_ids)
+        else:
+            query = query.limit(limit)
+        return (query.execute()).data or []
+
+    @classmethod
     async def get_reactions(
         cls,
         supabase: Client,

@@ -1,5 +1,6 @@
 """Social media integration endpoints."""
 
+import logging
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -14,9 +15,14 @@ from backend.models.social_media import (
     GenerateReactionsRequest,
     TransformPostRequest,
 )
+from backend.services.agent_service import AgentService
+from backend.services.external.facebook import FacebookService
 from backend.services.external_service_resolver import ExternalServiceResolver
+from backend.services.generation_service import GenerationService
 from backend.services.social_media_service import SocialMediaService
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api/v1/simulations/{simulation_id}/social-media",
@@ -70,8 +76,6 @@ async def sync_posts(
             detail="Facebook integration not configured for this simulation.",
         )
 
-    from backend.services.external.facebook import FacebookService
-
     fb = FacebookService(fb_config.access_token, fb_config.api_version)
     raw_posts = await fb.get_page_feed(fb_config.page_id)
 
@@ -124,8 +128,6 @@ async def transform_post(
     resolver = ExternalServiceResolver(supabase, simulation_id)
     ai_config = await resolver.get_ai_provider_config()
 
-    from backend.services.generation_service import GenerationService
-
     gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
     result = await gen.generate_social_media_transform(
         original_text=post.get("message", ""),
@@ -165,8 +167,6 @@ async def analyze_sentiment(
 
     resolver = ExternalServiceResolver(supabase, simulation_id)
     ai_config = await resolver.get_ai_provider_config()
-
-    from backend.services.generation_service import GenerationService
 
     gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
 
@@ -210,19 +210,14 @@ async def generate_reactions(
     """Generate agent reactions to a social media post."""
     post = await SocialMediaService.get_post(supabase, simulation_id, post_id)
 
-    # Get agents to react
-    agent_query = (
-        supabase.table("active_agents")
-        .select("id, name, system")
-        .eq("simulation_id", str(simulation_id))
+    # Get agents to react via service
+    agents = await AgentService.list_for_reaction(
+        supabase,
+        simulation_id,
+        agent_ids=body.agent_ids,
+        limit=body.max_agents,
+        select="id, name, system",
     )
-    if body.agent_ids:
-        agent_query = agent_query.in_("id", body.agent_ids)
-    else:
-        agent_query = agent_query.limit(body.max_agents)
-
-    agents_response = agent_query.execute()
-    agents = agents_response.data or []
 
     if not agents:
         raise HTTPException(
@@ -232,8 +227,6 @@ async def generate_reactions(
 
     resolver = ExternalServiceResolver(supabase, simulation_id)
     ai_config = await resolver.get_ai_provider_config()
-
-    from backend.services.generation_service import GenerationService
 
     gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
 
@@ -262,8 +255,7 @@ async def generate_reactions(
             )
             reactions.append(reaction)
         except Exception as e:
-            import logging
-            logging.getLogger(__name__).warning(
+            logger.warning(
                 "Failed to generate reaction for agent %s: %s", agent["name"], e
             )
 

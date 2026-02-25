@@ -18,7 +18,13 @@ from backend.models.social_trend import (
     TransformArticleRequest,
     TransformTrendRequest,
 )
+from backend.services.audit_service import AuditService
+from backend.services.base_service import serialize_for_json
+from backend.services.event_service import EventService
+from backend.services.external.guardian import GuardianService
+from backend.services.external.newsapi import NewsAPIService
 from backend.services.external_service_resolver import ExternalServiceResolver
+from backend.services.generation_service import GenerationService
 from backend.services.social_trends_service import SocialTrendsService
 from supabase import Client
 
@@ -80,8 +86,6 @@ async def fetch_trends(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Guardian API not configured for this simulation.",
                 )
-            from backend.services.external.guardian import GuardianService
-
             service = GuardianService(config.api_key)
             raw_trends = await service.search(body.query, limit=body.limit)
 
@@ -92,8 +96,6 @@ async def fetch_trends(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="NewsAPI not configured for this simulation.",
                 )
-            from backend.services.external.newsapi import NewsAPIService
-
             service = NewsAPIService(config.api_key)
             raw_trends = await service.search(body.query, limit=body.limit)
         else:
@@ -133,8 +135,6 @@ async def transform_trend(
 
     resolver = ExternalServiceResolver(supabase, simulation_id)
     ai_config = await resolver.get_ai_provider_config()
-
-    from backend.services.generation_service import GenerationService
 
     gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
 
@@ -180,11 +180,7 @@ async def integrate_trend(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Integrate a transformed trend as an event."""
-    from backend.services.audit_service import AuditService
-    from backend.services.base_service import _serialize_for_json
-    from backend.services.event_service import EventService
-
-    event_data = _serialize_for_json({
+    event_data = serialize_for_json({
         "title": body.title,
         "description": body.description,
         "event_type": body.event_type or "news",
@@ -254,8 +250,6 @@ async def workflow(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Guardian API not configured.",
                 )
-            from backend.services.external.guardian import GuardianService
-
             service = GuardianService(config.api_key)
             raw_trends = await service.search(body.query, limit=body.limit)
         else:
@@ -265,8 +259,6 @@ async def workflow(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="NewsAPI not configured.",
                 )
-            from backend.services.external.newsapi import NewsAPIService
-
             service = NewsAPIService(config.api_key)
             raw_trends = await service.search(body.query, limit=body.limit)
     except HTTPException:
@@ -297,77 +289,6 @@ async def workflow(
 # ---------------------------------------------------------------------------
 
 
-async def _generate_reactions_for_event(
-    supabase: Client,
-    simulation_id: UUID,
-    event: dict,
-    *,
-    max_agents: int = 20,
-) -> list[dict]:
-    """Generate AI reactions from agents for an event. Shared helper."""
-    from backend.services.event_service import EventService
-    from backend.services.generation_service import GenerationService
-
-    resolver = ExternalServiceResolver(supabase, simulation_id)
-    ai_config = await resolver.get_ai_provider_config()
-
-    gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
-
-    agent_query = (
-        supabase.table("active_agents")
-        .select("id, name, character, system")
-        .eq("simulation_id", str(simulation_id))
-        .limit(max_agents)
-    )
-    agents = (agent_query.execute()).data or []
-
-    if not agents:
-        return []
-
-    _service = EventService()
-    event_id = UUID(event["id"])
-
-    existing = await _service.get_reactions(supabase, simulation_id, event_id)
-    existing_map: dict[str, dict] = {r["agent_id"]: r for r in existing}
-
-    reactions: list[dict] = []
-    for agent in agents:
-        try:
-            reaction_text = await gen.generate_agent_reaction(
-                agent_data={
-                    "name": agent["name"],
-                    "character": agent.get("character", ""),
-                    "system": agent.get("system", ""),
-                },
-                event_data={
-                    "title": event["title"],
-                    "description": event.get("description", ""),
-                },
-            )
-
-            prev = existing_map.get(agent["id"])
-            if prev:
-                reaction = await _service.update_reaction(
-                    supabase, prev["id"],
-                    {"reaction_text": reaction_text, "data_source": "ai_generated"},
-                )
-            else:
-                reaction = await _service.add_reaction(
-                    supabase, simulation_id, event_id,
-                    {
-                        "agent_id": agent["id"],
-                        "agent_name": agent["name"],
-                        "reaction_text": reaction_text,
-                        "data_source": "ai_generated",
-                    },
-                )
-            reactions.append(reaction)
-        except Exception as e:
-            logger.warning("Failed to generate reaction for agent %s: %s", agent["name"], e)
-
-    return reactions
-
-
 @router.post("/browse", response_model=SuccessResponse[list[dict]])
 @limiter.limit(RATE_LIMIT_EXTERNAL_API)
 async def browse_articles(
@@ -389,8 +310,6 @@ async def browse_articles(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Guardian API not configured for this simulation.",
                 )
-            from backend.services.external.guardian import GuardianService
-
             service = GuardianService(config.api_key)
             if body.query:
                 articles = await service.search(body.query, section=body.section, limit=body.limit)
@@ -404,8 +323,6 @@ async def browse_articles(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="NewsAPI not configured for this simulation.",
                 )
-            from backend.services.external.newsapi import NewsAPIService
-
             service = NewsAPIService(config.api_key)
             if body.query:
                 articles = await service.search(body.query, limit=body.limit)
@@ -441,8 +358,6 @@ async def transform_article(
     """Transform an ephemeral article (not from DB) into the simulation context using AI."""
     resolver = ExternalServiceResolver(supabase, simulation_id)
     ai_config = await resolver.get_ai_provider_config()
-
-    from backend.services.generation_service import GenerationService
 
     gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
 
@@ -486,12 +401,8 @@ async def integrate_article(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Integrate an article as an event with optional agent reaction generation."""
-    from backend.services.audit_service import AuditService
-    from backend.services.base_service import _serialize_for_json
-    from backend.services.event_service import EventService
-
     tags = [*body.tags, "imported", "news"]
-    event_data = _serialize_for_json({
+    event_data = serialize_for_json({
         "title": body.title,
         "description": body.description,
         "event_type": body.event_type or "news",
@@ -530,8 +441,12 @@ async def integrate_article(
     reactions: list[dict] = []
     if body.generate_reactions:
         try:
-            reactions = await _generate_reactions_for_event(
-                supabase, simulation_id, event,
+            resolver = ExternalServiceResolver(supabase, simulation_id)
+            ai_config = await resolver.get_ai_provider_config()
+            gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
+
+            reactions = await EventService.generate_reactions(
+                supabase, simulation_id, event, gen,
                 max_agents=body.max_reaction_agents,
             )
         except Exception:

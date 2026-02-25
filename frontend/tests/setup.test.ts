@@ -95,16 +95,21 @@ describe('Type definitions', () => {
     expect(response.error?.code).toBe('NOT_FOUND');
   });
 
-  it('should compile PaginatedResponse type', () => {
+  it('should compile PaginatedResponse type with meta', () => {
     const response: PaginatedResponse<Agent> = {
       success: true,
       data: [],
-      total: 0,
-      page: 1,
-      page_size: 20,
-      total_pages: 0,
+      meta: { count: 0, total: 0, limit: 25, offset: 0 },
     };
-    expect(response.total_pages).toBe(0);
-    expect(response.page_size).toBe(20);
+    expect(response.meta?.total).toBe(0);
+    expect(response.meta?.limit).toBe(25);
+  });
+
+  it('should compile PaginatedResponse type without meta', () => {
+    const response: PaginatedResponse<Agent> = {
+      success: true,
+      data: [],
+    };
+    expect(response.meta).toBeUndefined();
   });
 });

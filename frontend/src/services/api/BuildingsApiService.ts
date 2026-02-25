@@ -48,10 +48,9 @@ export class BuildingsApiService extends BaseApiService {
     agentId: string,
     relationType?: string,
   ): Promise<ApiResponse<BuildingAgentRelation>> {
-    return this.post(`/simulations/${simulationId}/buildings/${buildingId}/agents`, {
-      agent_id: agentId,
-      relation_type: relationType,
-    });
+    const params = new URLSearchParams({ agent_id: agentId });
+    if (relationType) params.set('relation_type', relationType);
+    return this.post(`/simulations/${simulationId}/buildings/${buildingId}/assign-agent?${params}`);
   }
 
   unassignAgent(
@@ -59,7 +58,9 @@ export class BuildingsApiService extends BaseApiService {
     buildingId: string,
     agentId: string,
   ): Promise<ApiResponse<void>> {
-    return this.delete(`/simulations/${simulationId}/buildings/${buildingId}/agents/${agentId}`);
+    return this.delete(
+      `/simulations/${simulationId}/buildings/${buildingId}/unassign-agent?agent_id=${agentId}`,
+    );
   }
 
   getProfessionRequirements(
@@ -74,9 +75,13 @@ export class BuildingsApiService extends BaseApiService {
     buildingId: string,
     data: Partial<BuildingProfessionRequirement>,
   ): Promise<ApiResponse<BuildingProfessionRequirement>> {
+    const params = new URLSearchParams();
+    if (data.profession) params.set('profession', data.profession);
+    if (data.min_qualification_level != null)
+      params.set('min_qualification_level', String(data.min_qualification_level));
+    if (data.is_mandatory != null) params.set('is_mandatory', String(data.is_mandatory));
     return this.post(
-      `/simulations/${simulationId}/buildings/${buildingId}/profession-requirements`,
-      data,
+      `/simulations/${simulationId}/buildings/${buildingId}/profession-requirements?${params}`,
     );
   }
 }

@@ -317,9 +317,9 @@ class TestFullTransformPipeline:
             result = await generation_service.generate_news_transformation("T", "C")
 
         # Build event data as the /integrate endpoint would
-        from backend.services.base_service import _serialize_for_json
+        from backend.services.base_service import serialize_for_json
 
-        event_data = _serialize_for_json({
+        event_data = serialize_for_json({
             "title": result.get("title", "Fallback"),
             "description": result.get("description"),
             "event_type": result.get("event_type", "news"),

@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends
 from backend.dependencies import get_current_user, get_supabase
 from backend.models.common import CurrentUser, SuccessResponse
 from backend.models.user import MembershipInfo, UserWithMemberships
+from backend.services.member_service import MemberService
 from supabase import Client
 
 router = APIRouter(prefix="/api/v1/users", tags=["users"])
@@ -14,16 +15,10 @@ async def get_me(
     supabase: Client = Depends(get_supabase),
 ) -> dict:
     """Get the current user's profile with simulation memberships."""
-    # Query memberships joined with simulation names
-    response = (
-        supabase.table("simulation_members")
-        .select("simulation_id, member_role, simulations(name)")
-        .eq("user_id", str(user.id))
-        .execute()
-    )
+    rows = await MemberService.get_user_memberships(supabase, user.id)
 
     memberships = []
-    for row in response.data or []:
+    for row in rows:
         sim_name = ""
         if row.get("simulations"):
             sim_name = row["simulations"].get("name", "")

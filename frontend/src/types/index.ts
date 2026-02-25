@@ -597,9 +597,6 @@ export interface ApiResponse<T> {
 export interface PaginatedResponse<T> {
   success: boolean;
   data?: T[];
-  total: number;
-  page: number;
-  page_size: number;
-  total_pages: number;
+  meta?: { count: number; total: number; limit: number; offset: number };
   error?: ApiError;
 }
