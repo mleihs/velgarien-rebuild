@@ -47,7 +47,19 @@ export class VelgCampaignDetailView extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._loadData();
+    if (this.simulationId && this.campaignId) {
+      this._loadData();
+    }
+  }
+
+  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+    if (
+      (changedProperties.has('simulationId') || changedProperties.has('campaignId')) &&
+      this.simulationId &&
+      this.campaignId
+    ) {
+      this._loadData();
+    }
   }
 
   private async _loadData(): Promise<void> {

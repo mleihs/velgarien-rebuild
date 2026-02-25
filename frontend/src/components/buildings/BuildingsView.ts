@@ -52,7 +52,16 @@ export class VelgBuildingsView extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._loadBuildings();
+    if (this.simulationId) {
+      this._loadBuildings();
+    }
+  }
+
+  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('simulationId') && this.simulationId) {
+      this._offset = 0;
+      this._loadBuildings();
+    }
   }
 
   private get _canEdit(): boolean {

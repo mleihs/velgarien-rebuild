@@ -127,6 +127,12 @@ export class VelgChatView extends LitElement {
     await this._loadConversations();
   }
 
+  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('simulationId') && this.simulationId) {
+      this._loadConversations();
+    }
+  }
+
   private async _loadConversations(): Promise<void> {
     if (!this.simulationId) return;
 

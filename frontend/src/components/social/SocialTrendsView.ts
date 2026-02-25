@@ -257,7 +257,15 @@ export class VelgSocialTrendsView extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._loadArticles();
+    if (this.simulationId) {
+      this._loadArticles();
+    }
+  }
+
+  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('simulationId') && this.simulationId) {
+      this._loadArticles();
+    }
   }
 
   private async _loadArticles(): Promise<void> {

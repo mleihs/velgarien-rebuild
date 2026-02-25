@@ -47,7 +47,15 @@ export class VelgSocialMediaView extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._loadPosts();
+    if (this.simulationId) {
+      this._loadPosts();
+    }
+  }
+
+  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('simulationId') && this.simulationId) {
+      this._loadPosts();
+    }
   }
 
   private async _loadPosts(): Promise<void> {

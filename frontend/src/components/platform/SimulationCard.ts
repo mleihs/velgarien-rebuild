@@ -1,8 +1,17 @@
 import { localized, msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import type { Simulation } from '../../types/index.js';
+import type { Simulation, SimulationTheme } from '../../types/index.js';
 import '../shared/VelgBadge.js';
+
+const THEME_COLORS: Record<SimulationTheme, string> = {
+  dystopian: '#ef4444',
+  fantasy: '#f59e0b',
+  utopian: '#22c55e',
+  scifi: '#06b6d4',
+  historical: '#a78bfa',
+  custom: '#a855f7',
+};
 
 @localized()
 @customElement('velg-simulation-card')
@@ -12,41 +21,103 @@ export class VelgSimulationCard extends LitElement {
       display: block;
     }
 
-    .card {
-      background: var(--color-surface-raised);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
+    .shard {
+      position: relative;
+      min-height: 280px;
+      border: 2px solid var(--color-gray-700);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
       border-radius: var(--border-radius);
       overflow: hidden;
       cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .card:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .card:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .card__header {
-      padding: var(--space-3) var(--space-4);
-      background: var(--color-surface-header);
-      border-bottom: var(--border-medium);
+      transition: all var(--transition-normal);
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      justify-content: flex-end;
     }
 
-    .card__title {
+    .shard:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+      border-color: var(--color-gray-500);
+    }
+
+    .shard:hover .shard__bleed {
+      opacity: 1;
+    }
+
+    .shard:hover .shard__image {
+      filter: brightness(0.5);
+      transform: scale(1.03);
+    }
+
+    .shard:active {
+      transform: translate(0);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .shard__image {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.4);
+      transition: all var(--transition-slow);
+    }
+
+    .shard__placeholder {
+      position: absolute;
+      inset: 0;
+      background: var(--color-gray-900);
+    }
+
+    .shard__placeholder::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        var(--shard-color, #888) 20px,
+        var(--shard-color, #888) 21px
+      );
+    }
+
+    .shard__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.92) 0%,
+        rgba(0, 0, 0, 0.5) 50%,
+        transparent 100%
+      );
+    }
+
+    .shard__content {
+      position: relative;
+      z-index: 1;
+      padding: var(--space-4) var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .shard__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+
+    .shard__name {
       font-family: var(--font-brutalist);
       font-weight: var(--font-black);
+      font-size: var(--text-lg);
       text-transform: uppercase;
-      font-size: var(--text-md);
       letter-spacing: var(--tracking-brutalist);
+      color: #fff;
       margin: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -57,55 +128,74 @@ export class VelgSimulationCard extends LitElement {
       flex-shrink: 0;
     }
 
-    .card__body {
-      padding: var(--space-4);
-    }
-
-    .card__theme {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
+    .shard__description {
       font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-secondary);
-      margin-bottom: var(--space-2);
-    }
-
-    .card__description {
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
+      color: rgba(255, 255, 255, 0.7);
       line-height: var(--leading-relaxed);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      margin-bottom: var(--space-4);
+      margin: 0;
     }
 
-    .card__stats {
+    .shard__stats {
       display: flex;
       gap: var(--space-4);
-      border-top: var(--border-light);
-      padding-top: var(--space-3);
+      padding-top: var(--space-2);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    .card__stat {
+    .shard__stat {
       display: flex;
-      flex-direction: column;
-      gap: var(--space-0-5);
+      align-items: baseline;
+      gap: var(--space-1);
     }
 
-    .card__stat-value {
+    .shard__stat-value {
       font-family: var(--font-brutalist);
       font-weight: var(--font-black);
-      font-size: var(--text-lg);
+      font-size: var(--text-md);
+      color: #fff;
     }
 
-    .card__stat-label {
+    .shard__stat-label {
       font-size: var(--text-xs);
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
-      color: var(--color-text-muted);
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .shard__enter {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      color: var(--shard-color, rgba(255, 255, 255, 0.6));
+      align-self: flex-end;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all var(--transition-normal);
+    }
+
+    .shard:hover .shard__enter {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .shard__bleed {
+      position: absolute;
+      inset: 0;
+      border: 2px solid var(--shard-color, #888);
+      border-radius: var(--border-radius);
+      box-shadow:
+        inset 0 0 20px var(--shard-color-alpha, rgba(136, 136, 136, 0.2)),
+        0 0 15px var(--shard-color-alpha, rgba(136, 136, 136, 0.15));
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+      pointer-events: none;
+      z-index: 2;
     }
   `;
 
@@ -121,49 +211,67 @@ export class VelgSimulationCard extends LitElement {
     );
   }
 
-  private _getStatusVariant(status: string): string {
+  private _getThemeVariant(theme: SimulationTheme): string {
     const map: Record<string, string> = {
-      active: 'success',
-      draft: 'warning',
-      paused: 'info',
-      configuring: 'info',
+      dystopian: 'danger',
+      fantasy: 'warning',
+      utopian: 'success',
+      scifi: 'info',
+      historical: 'default',
+      custom: 'primary',
     };
-    return map[status] ?? 'default';
+    return map[theme] ?? 'default';
   }
 
   protected render() {
     const sim = this.simulation;
     if (!sim) return html``;
 
+    const color = THEME_COLORS[sim.theme] ?? '#888';
+    const colorAlpha = `${color}33`;
+
     return html`
-      <div class="card" @click=${this._handleClick}>
-        <div class="card__header">
-          <h3 class="card__title">${sim.name}</h3>
-          <velg-badge variant=${this._getStatusVariant(sim.status)}>
-            ${sim.status}
-          </velg-badge>
-        </div>
+      <div
+        class="shard"
+        style="--shard-color: ${color}; --shard-color-alpha: ${colorAlpha}"
+        @click=${this._handleClick}
+      >
+        ${
+          sim.banner_url
+            ? html`<div class="shard__image" style="background-image: url(${sim.banner_url})"></div>`
+            : html`<div class="shard__placeholder"></div>`
+        }
+        <div class="shard__overlay"></div>
 
-        <div class="card__body">
-          <div class="card__theme">${sim.theme}</div>
+        <div class="shard__content">
+          <div class="shard__header">
+            <h3 class="shard__name">${sim.name}</h3>
+            <velg-badge variant=${this._getThemeVariant(sim.theme)}>
+              ${sim.theme}
+            </velg-badge>
+          </div>
 
-          ${sim.description ? html`<div class="card__description">${sim.description}</div>` : null}
+          ${sim.description ? html`<p class="shard__description">${sim.description}</p>` : null}
 
-          <div class="card__stats">
-            <div class="card__stat">
-              <span class="card__stat-value">${sim.agent_count ?? '--'}</span>
-              <span class="card__stat-label">${msg('Agents')}</span>
+          <div class="shard__stats">
+            <div class="shard__stat">
+              <span class="shard__stat-value">${sim.agent_count ?? 0}</span>
+              <span class="shard__stat-label">${msg('Agents')}</span>
             </div>
-            <div class="card__stat">
-              <span class="card__stat-value">${sim.building_count ?? '--'}</span>
-              <span class="card__stat-label">${msg('Buildings')}</span>
+            <div class="shard__stat">
+              <span class="shard__stat-value">${sim.building_count ?? 0}</span>
+              <span class="shard__stat-label">${msg('Buildings')}</span>
             </div>
-            <div class="card__stat">
-              <span class="card__stat-value">${sim.event_count ?? '--'}</span>
-              <span class="card__stat-label">${msg('Events')}</span>
+            <div class="shard__stat">
+              <span class="shard__stat-value">${sim.event_count ?? 0}</span>
+              <span class="shard__stat-label">${msg('Events')}</span>
             </div>
           </div>
+
+          <span class="shard__enter">${msg('Enter Shard')}&ensp;&rarr;</span>
         </div>
+
+        <div class="shard__bleed"></div>
       </div>
     `;
   }

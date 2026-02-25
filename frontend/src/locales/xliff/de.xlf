@@ -1226,26 +1226,6 @@
   <source>Loading Simulations...</source>
   <target>Simulationen werden geladen...</target>
 </trans-unit>
-<trans-unit id="s5dde9aaefb151626">
-  <source>Your Simulations</source>
-  <target>Deine Simulationen</target>
-</trans-unit>
-<trans-unit id="s3d7f15e5d58e5e41">
-  <source>+ Create Simulation</source>
-  <target>+ Simulation erstellen</target>
-</trans-unit>
-<trans-unit id="s7365016e0a4fd408">
-  <source>No Simulations Yet</source>
-  <target>Noch keine Simulationen</target>
-</trans-unit>
-<trans-unit id="sef3975f4c7216e72">
-  <source>Create your first simulation to start building worlds with agents, buildings, and events.</source>
-  <target>Erstelle deine erste Simulation, um Welten mit Agenten, Gebäuden und Ereignissen zu bauen.</target>
-</trans-unit>
-<trans-unit id="sc630ad861c8c7a9e">
-  <source>+ Create Your First Simulation</source>
-  <target>+ Erstelle deine erste Simulation</target>
-</trans-unit>
 <trans-unit id="sa48f81f001b893d2">
   <source>User</source>
   <target>Benutzer</target>
@@ -3016,6 +2996,46 @@
 <trans-unit id="se752da3b2b28d9cb">
   <source>LoRA Scale</source>
   <target>LoRA-Skalierung</target>
+</trans-unit>
+<trans-unit id="s69880e767c59b721">
+  <source>Enter Shard</source>
+  <target>Scherbe betreten</target>
+</trans-unit>
+<trans-unit id="sba76034e2f6cea8e">
+  <source>The Cartographer's Map</source>
+  <target>Die Karte des Kartographen</target>
+</trans-unit>
+<trans-unit id="s61f8c04d625ecfcd">
+  <source>There was once a single world. Something broke it into shards. Each shard runs on its own rules, its own physics of power. The edges don't quite fit together anymore. But they do touch.</source>
+  <target>Es gab einst eine einzige Welt. Etwas zerbrach sie in Scherben. Jede Scherbe folgt ihren eigenen Regeln, ihrer eigenen Physik der Macht. Die Ränder passen nicht mehr ganz zusammen. Aber sie berühren sich.</target>
+</trans-unit>
+<trans-unit id="s9c973cc1b56c1501">
+  <source>The Bleed — Where shards press against each other, reality thins</source>
+  <target>Die Blutung — Wo Scherben aufeinander drücken, wird die Realität dünn</target>
+</trans-unit>
+<trans-unit id="s15c8510e7d13ad11">
+  <source>No Shards Yet</source>
+  <target>Noch keine Scherben</target>
+</trans-unit>
+<trans-unit id="se9fc1c9c928fa8f7">
+  <source>Fracture reality and create your first shard — a world with its own agents, buildings, and events.</source>
+  <target>Breche die Realität und erschaffe deine erste Scherbe — eine Welt mit eigenen Agenten, Gebäuden und Ereignissen.</target>
+</trans-unit>
+<trans-unit id="s9142aa57b3ac34ae">
+  <source>Fracture a New Shard</source>
+  <target>Eine neue Scherbe brechen</target>
+</trans-unit>
+<trans-unit id="s0fd90cce6341b9f0">
+  <source>Active Shards</source>
+  <target>Aktive Scherben</target>
+</trans-unit>
+<trans-unit id="se2776d7d7e4f5780">
+  <source>worlds</source>
+  <target>Welten</target>
+</trans-unit>
+<trans-unit id="sb84fd428fdb1d53d">
+  <source>The Cartographers are watching. They always are.</source>
+  <target>Die Kartographen beobachten. Das tun sie immer.</target>
 </trans-unit>
 
 </body>

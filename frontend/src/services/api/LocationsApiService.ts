@@ -8,15 +8,15 @@ export class LocationsApiService extends BaseApiService {
     simulationId: string,
     params?: Record<string, string>,
   ): Promise<ApiResponse<PaginatedResponse<City>>> {
-    return this.get(`/simulations/${simulationId}/cities`, params);
+    return this.get(`/simulations/${simulationId}/locations/cities`, params);
   }
 
   getCity(simulationId: string, cityId: string): Promise<ApiResponse<City>> {
-    return this.get(`/simulations/${simulationId}/cities/${cityId}`);
+    return this.get(`/simulations/${simulationId}/locations/cities/${cityId}`);
   }
 
   createCity(simulationId: string, data: Partial<City>): Promise<ApiResponse<City>> {
-    return this.post(`/simulations/${simulationId}/cities`, data);
+    return this.post(`/simulations/${simulationId}/locations/cities`, data);
   }
 
   updateCity(
@@ -24,7 +24,7 @@ export class LocationsApiService extends BaseApiService {
     cityId: string,
     data: Partial<City>,
   ): Promise<ApiResponse<City>> {
-    return this.put(`/simulations/${simulationId}/cities/${cityId}`, data);
+    return this.put(`/simulations/${simulationId}/locations/cities/${cityId}`, data);
   }
 
   // --- Zones ---
@@ -33,15 +33,15 @@ export class LocationsApiService extends BaseApiService {
     simulationId: string,
     params?: Record<string, string>,
   ): Promise<ApiResponse<PaginatedResponse<Zone>>> {
-    return this.get(`/simulations/${simulationId}/zones`, params);
+    return this.get(`/simulations/${simulationId}/locations/zones`, params);
   }
 
   getZone(simulationId: string, zoneId: string): Promise<ApiResponse<Zone>> {
-    return this.get(`/simulations/${simulationId}/zones/${zoneId}`);
+    return this.get(`/simulations/${simulationId}/locations/zones/${zoneId}`);
   }
 
   createZone(simulationId: string, data: Partial<Zone>): Promise<ApiResponse<Zone>> {
-    return this.post(`/simulations/${simulationId}/zones`, data);
+    return this.post(`/simulations/${simulationId}/locations/zones`, data);
   }
 
   updateZone(
@@ -49,7 +49,7 @@ export class LocationsApiService extends BaseApiService {
     zoneId: string,
     data: Partial<Zone>,
   ): Promise<ApiResponse<Zone>> {
-    return this.put(`/simulations/${simulationId}/zones/${zoneId}`, data);
+    return this.put(`/simulations/${simulationId}/locations/zones/${zoneId}`, data);
   }
 
   // --- Streets ---
@@ -58,11 +58,11 @@ export class LocationsApiService extends BaseApiService {
     simulationId: string,
     params?: Record<string, string>,
   ): Promise<ApiResponse<PaginatedResponse<CityStreet>>> {
-    return this.get(`/simulations/${simulationId}/streets`, params);
+    return this.get(`/simulations/${simulationId}/locations/streets`, params);
   }
 
   createStreet(simulationId: string, data: Partial<CityStreet>): Promise<ApiResponse<CityStreet>> {
-    return this.post(`/simulations/${simulationId}/streets`, data);
+    return this.post(`/simulations/${simulationId}/locations/streets`, data);
   }
 
   updateStreet(
@@ -70,7 +70,7 @@ export class LocationsApiService extends BaseApiService {
     streetId: string,
     data: Partial<CityStreet>,
   ): Promise<ApiResponse<CityStreet>> {
-    return this.put(`/simulations/${simulationId}/streets/${streetId}`, data);
+    return this.put(`/simulations/${simulationId}/locations/streets/${streetId}`, data);
   }
 }
 

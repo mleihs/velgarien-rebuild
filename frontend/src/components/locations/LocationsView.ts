@@ -81,7 +81,18 @@ export class VelgLocationsView extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._loadCities();
+    if (this.simulationId) {
+      this._loadCities();
+    }
+  }
+
+  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('simulationId') && this.simulationId) {
+      this._level = 'cities';
+      this._selectedCity = null;
+      this._selectedZone = null;
+      this._loadCities();
+    }
   }
 
   private async _loadCities(): Promise<void> {
@@ -92,7 +103,7 @@ export class VelgLocationsView extends LitElement {
       const response = await locationsApi.listCities(this.simulationId);
 
       if (response.success && response.data) {
-        this._cities = response.data.data ?? [];
+        this._cities = response.data ?? [];
       } else {
         this._error = response.error?.message ?? msg('Failed to load cities');
       }
@@ -111,7 +122,7 @@ export class VelgLocationsView extends LitElement {
       const response = await locationsApi.listZones(this.simulationId, { city_id: cityId });
 
       if (response.success && response.data) {
-        this._zones = response.data.data ?? [];
+        this._zones = response.data ?? [];
       } else {
         this._error = response.error?.message ?? msg('Failed to load zones');
       }
@@ -130,7 +141,7 @@ export class VelgLocationsView extends LitElement {
       const response = await locationsApi.listStreets(this.simulationId, { zone_id: zoneId });
 
       if (response.success && response.data) {
-        this._streets = response.data.data ?? [];
+        this._streets = response.data ?? [];
       } else {
         this._error = response.error?.message ?? msg('Failed to load streets');
       }

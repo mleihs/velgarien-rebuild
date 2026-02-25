@@ -31,7 +31,15 @@ export class VelgCampaignDashboard extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._loadCampaigns();
+    if (this.simulationId) {
+      this._loadCampaigns();
+    }
+  }
+
+  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('simulationId') && this.simulationId) {
+      this._loadCampaigns();
+    }
   }
 
   private async _loadCampaigns(): Promise<void> {
