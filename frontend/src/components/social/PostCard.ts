@@ -3,18 +3,19 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { SocialMediaPost } from '../../types/index.js';
 import '../shared/VelgBadge.js';
+import { cardStyles } from '../shared/card-styles.js';
 
 @localized()
 @customElement('velg-post-card')
 export class VelgPostCard extends LitElement {
-  static styles = css`
+  static styles = [
+    cardStyles,
+    css`
     :host { display: block; }
     .card {
       background: var(--color-surface-raised); border: var(--border-default);
       box-shadow: var(--shadow-md); display: flex; flex-direction: column;
-      transition: all var(--transition-fast);
     }
-    .card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-lg); }
     .card__header {
       display: flex; align-items: center; justify-content: space-between;
       padding: var(--space-3) var(--space-4); background: var(--color-surface-header);
@@ -35,7 +36,8 @@ export class VelgPostCard extends LitElement {
       cursor: pointer; color: var(--color-text-secondary); transition: all var(--transition-fast);
     }
     .card__action-btn:hover { background: var(--color-surface-sunken); color: var(--color-text-primary); }
-  `;
+  `,
+  ];
 
   @property({ type: Object }) post!: SocialMediaPost;
 

@@ -9,6 +9,7 @@ from jose import JWTError, jwt
 from backend.config import settings
 from backend.models.common import CurrentUser
 from supabase import Client, create_client
+from supabase_auth.errors import AuthApiError
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +116,13 @@ async def get_supabase(
     This ensures RLS policies are applied for the current user.
     """
     client = create_client(settings.supabase_url, settings.supabase_anon_key)
-    client.auth.set_session(user.access_token, "")
+    try:
+        client.auth.set_session(user.access_token, "")
+    except AuthApiError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Session expired or invalid: {e}",
+        ) from e
     return client
 
 

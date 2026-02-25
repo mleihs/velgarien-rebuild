@@ -7,11 +7,14 @@ import { icons } from '../../utils/icons.js';
 import '../shared/Lightbox.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
+import { cardStyles } from '../shared/card-styles.js';
 
 @localized()
 @customElement('velg-building-card')
 export class VelgBuildingCard extends LitElement {
-  static styles = css`
+  static styles = [
+    cardStyles,
+    css`
     :host {
       display: block;
     }
@@ -22,19 +25,7 @@ export class VelgBuildingCard extends LitElement {
       background: var(--color-surface-raised);
       border: var(--border-default);
       box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
       overflow: hidden;
-    }
-
-    .card:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .card:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
     }
 
     .card__image {
@@ -112,7 +103,8 @@ export class VelgBuildingCard extends LitElement {
       margin-top: auto;
     }
 
-  `;
+  `,
+  ];
 
   @property({ attribute: false }) building!: Building;
   @state() private _lightboxSrc: string | null = null;

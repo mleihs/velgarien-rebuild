@@ -10,7 +10,6 @@ from backend.config import settings as app_settings
 from backend.middleware.rate_limit import limiter
 from backend.middleware.security import SecurityHeadersMiddleware
 from backend.routers import (
-    admin,
     agent_professions,
     agents,
     buildings,
@@ -92,4 +91,3 @@ app.include_router(prompt_templates.router)
 app.include_router(invitations.router)
 app.include_router(social_trends.router)
 app.include_router(social_media.router)
-app.include_router(admin.router)

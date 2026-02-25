@@ -6,10 +6,9 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from backend.models.agent import AgentCreate, AgentFilter, AgentResponse, AgentUpdate
+from backend.models.agent import AgentCreate, AgentResponse, AgentUpdate
 from backend.models.building import (
     BuildingCreate,
-    BuildingFilter,
     BuildingUpdate,
 )
 from backend.models.campaign import CampaignCreate, CampaignResponse
@@ -22,7 +21,7 @@ from backend.models.chat import (
     MessageCreate,
     MessageResponse,
 )
-from backend.models.event import EventCreate, EventFilter, EventUpdate
+from backend.models.event import EventCreate, EventUpdate
 from backend.models.member import MemberCreate, MemberUpdate
 
 # --- Agent Models ---
@@ -79,20 +78,6 @@ class TestAgentResponse:
         assert resp.deleted_at is None
 
 
-class TestAgentFilter:
-    def test_all_none(self):
-        f = AgentFilter()
-        assert f.system is None
-        assert f.gender is None
-        assert f.search is None
-
-    def test_with_values(self):
-        f = AgentFilter(system="rebel", gender="female", search="test")
-        assert f.system == "rebel"
-        assert f.gender == "female"
-        assert f.search == "test"
-
-
 # --- Building Models ---
 
 
@@ -118,12 +103,6 @@ class TestBuildingUpdate:
         update = BuildingUpdate(building_condition="good")
         assert update.building_condition == "good"
         assert update.name is None
-
-
-class TestBuildingFilter:
-    def test_with_type(self):
-        f = BuildingFilter(building_type="residential")
-        assert f.building_type == "residential"
 
 
 # --- Event Models ---
@@ -157,13 +136,6 @@ class TestEventUpdate:
         u = EventUpdate(impact_level=5)
         assert u.impact_level == 5
         assert u.title is None
-
-
-class TestEventFilter:
-    def test_with_values(self):
-        f = EventFilter(event_type="natural", tag="flood")
-        assert f.event_type == "natural"
-        assert f.tag == "flood"
 
 
 # --- Chat Models ---

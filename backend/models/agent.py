@@ -51,12 +51,3 @@ class AgentResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     deleted_at: datetime | None = None
-
-
-class AgentFilter(BaseModel):
-    """Query filters for agent listing."""
-
-    system: str | None = None
-    gender: str | None = None
-    primary_profession: str | None = None
-    search: str | None = None

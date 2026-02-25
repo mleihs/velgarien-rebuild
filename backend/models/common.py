@@ -55,11 +55,3 @@ class ErrorResponse(BaseModel):
     success: bool = False
     error: ErrorDetail
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
-
-
-class SimulationContext(BaseModel):
-    """Context for simulation-scoped operations."""
-
-    simulation_id: UUID
-    user: CurrentUser
-    member_role: str

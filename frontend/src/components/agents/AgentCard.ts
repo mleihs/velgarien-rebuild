@@ -8,11 +8,14 @@ import '../shared/Lightbox.js';
 import '../shared/VelgAvatar.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
+import { cardStyles } from '../shared/card-styles.js';
 
 @localized()
 @customElement('velg-agent-card')
 export class VelgAgentCard extends LitElement {
-  static styles = css`
+  static styles = [
+    cardStyles,
+    css`
     :host {
       display: block;
     }
@@ -22,20 +25,8 @@ export class VelgAgentCard extends LitElement {
       border: var(--border-default);
       box-shadow: var(--shadow-md);
       overflow: hidden;
-      cursor: pointer;
-      transition: all var(--transition-fast);
       display: flex;
       flex-direction: column;
-    }
-
-    .card:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .card:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
     }
 
     .card__body {
@@ -87,7 +78,8 @@ export class VelgAgentCard extends LitElement {
       padding: var(--space-2) var(--space-4) var(--space-3);
       margin-top: auto;
     }
-  `;
+  `,
+  ];
 
   @property({ type: Object }) agent!: Agent;
   @state() private _lightboxSrc: string | null = null;

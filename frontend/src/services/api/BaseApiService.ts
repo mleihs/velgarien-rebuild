@@ -1,5 +1,6 @@
 import type { ApiResponse } from '../../types/index.js';
 import { appState } from '../AppStateManager.js';
+import { supabase } from '../supabase/client.js';
 
 export class BaseApiService {
   private baseUrl: string;
@@ -65,6 +66,12 @@ export class BaseApiService {
         } catch {
           // Response body is not JSON — use statusText
         }
+
+        // Stale or invalid session — sign out so the auth listener redirects to login
+        if (response.status === 401) {
+          await supabase.auth.signOut();
+        }
+
         return {
           success: false,
           error: { code: errorCode, message: errorMessage },

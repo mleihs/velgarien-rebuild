@@ -191,8 +191,6 @@ class TestUnauthenticatedAccess:
         ("POST", f"/api/v1/simulations/{SIM_ID}/generate/agent"),
         # Prompt templates
         ("GET", f"/api/v1/simulations/{SIM_ID}/prompt-templates"),
-        # Admin
-        ("POST", "/api/v1/admin/refresh-views"),
     ]
 
     @pytest.mark.parametrize("method,path", PROTECTED_ENDPOINTS)

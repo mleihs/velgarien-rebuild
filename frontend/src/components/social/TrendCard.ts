@@ -3,20 +3,20 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { SocialTrend } from '../../types/index.js';
 import '../shared/VelgBadge.js';
+import { cardStyles } from '../shared/card-styles.js';
 
 @localized()
 @customElement('velg-trend-card')
 export class VelgTrendCard extends LitElement {
-  static styles = css`
+  static styles = [
+    cardStyles,
+    css`
     :host { display: block; }
 
     .card {
       background: var(--color-surface-raised); border: var(--border-default);
       box-shadow: var(--shadow-md); display: flex; flex-direction: column;
-      transition: all var(--transition-fast);
     }
-
-    .card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-lg); }
 
     .card__header {
       display: flex; align-items: flex-start; justify-content: space-between;
@@ -63,7 +63,8 @@ export class VelgTrendCard extends LitElement {
 
     .card__action-btn:hover { background: var(--color-surface-sunken); color: var(--color-text-primary); }
     .card__action-btn--primary:hover { background: var(--color-primary-bg); color: var(--color-primary); border-color: var(--color-primary); }
-  `;
+  `,
+  ];
 
   @property({ type: Object }) trend!: SocialTrend;
   @property({ type: String }) simulationId = '';

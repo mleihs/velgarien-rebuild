@@ -75,13 +75,3 @@ class BuildingResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     deleted_at: datetime | None = None
-
-
-class BuildingFilter(BaseModel):
-    """Query filters for building listing."""
-
-    building_type: str | None = None
-    building_condition: str | None = None
-    zone_id: UUID | None = None
-    city_id: UUID | None = None
-    search: str | None = None

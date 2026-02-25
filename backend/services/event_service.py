@@ -7,6 +7,7 @@ from uuid import UUID
 from fastapi import HTTPException, status
 
 from backend.services.base_service import BaseService
+from backend.utils.search import apply_search_filter
 from supabase import Client
 
 
@@ -47,8 +48,7 @@ class EventService(BaseService):
         if tag:
             query = query.contains("tags", [tag])
         if search:
-            safe = search.replace("%", "").replace("_", "")
-            query = query.or_(f"title.ilike.%{safe}%,description.ilike.%{safe}%")
+            query = apply_search_filter(query, search, "search_vector", "title")
 
         query = query.range(offset, offset + limit - 1)
         response = query.execute()

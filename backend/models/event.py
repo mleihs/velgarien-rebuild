@@ -70,15 +70,6 @@ class EventResponse(BaseModel):
     deleted_at: datetime | None = None
 
 
-class EventFilter(BaseModel):
-    """Query filters for event listing."""
-
-    event_type: str | None = None
-    impact_level: int | None = None
-    tag: str | None = None
-    search: str | None = None
-
-
 class GenerateEventReactionsRequest(BaseModel):
     """Request to generate agent reactions to an event."""
 
