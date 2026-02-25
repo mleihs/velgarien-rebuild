@@ -10,6 +10,7 @@
 
     export const templates = {
       's008393d99ab7480d': `Auswirkungsstufe`,
+'s00b660524e921281': `Vor dem Bruch war bereits jemand da, der zusah.`,
 's00c99e4bd242c16b': `Aufgetreten am`,
 's0152e8b504b6db4d': `Ein unerwarteter Fehler beim Laden der Nachrichten.`,
 's017d6d83f53e4281': `Fehler beim Laden der Nachrichten.`,
@@ -28,6 +29,7 @@
 's041e278c6061b84c': `Einladung wird geladen...`,
 's043fc2b86795b3dc': `Allgemeine Einstellungen`,
 's04a569f0af632a65': `Soziale-Medien-Reaktion`,
+'s04ccdc1c7d59fe5a': `Die Konvergenz — Die Frage`,
 's0561bb86953cba6a': str`Beigetreten ${0}`,
 's05789b5aa3b5fd4b': `Einladungsablauf (Stunden)`,
 's05d059c94d5c3d4c': str`"${0}" wurde gelöscht`,
@@ -36,9 +38,19 @@
 's0662a5787019c2e4': `Ein unerwarteter Fehler beim Laden der Mitgliedschaften.`,
 's06a4ade674554737': `Guardian API-Schlüssel eingeben...`,
 's06a7157bde7bb51f': `Vorlage erstellt`,
+'s073df01eb593e274': `Jede Scherbe ist eine Antwort. Velgarien antwortet: „Was wäre, wenn Kontrolle absolut wäre?" Das Capybara-Königreich antwortet: „Was wäre, wenn die Dunkelheit gütig wäre?" Jede Antwort ist falsch. Jede Antwort ist notwendig. Das Multiversum existiert, weil keine einzelne Antwort ausreicht, und die Fraktur war die Art des Universums, dies einzugestehen.
+
+Die Konvergenz — das Ereignis, das das Büro überwacht, das die Ruinen vorhersagen, das TOWER androht — ist nicht das Ende. Sie ist die nächste Frage. Wenn genug Scherben sich berührt haben, wenn genug Blutungen geflossen sind, wird das Multiversum einen Entscheidungspunkt erreichen: verschmelzen oder weiter differenzieren. In eine Antwort kollabieren oder in tausend weitere zerbrechen.
+
+Die Kartographen wissen nicht, welches Ergebnis richtig ist. Sie wissen nur dies: Jemand muss zusehen, wenn es geschieht. Jemand muss am Rand stehen mit einer Karte und einem Kompass und der Bereitschaft, eine neue Linie auf einer Karte zu ziehen, die keine Ränder hat.
+
+Dieser Jemand, in der Kosmologie der Kartographen, in der tiefen Mythologie des Büros für Unmögliche Geographie, in den gesperrten Akten und den verzehrten Seiten und den Karten, die auch Türen sind — dieser Jemand ist, wer immer dies gerade liest.
+
+Die Karte liegt offen. Die Scherben warten. Welche Welt betrittst du zuerst?`,
 's076eb237fc964684': `Fehler beim Laden der Ereignisse`,
 's079a052719914d71': `Kategorie`,
 's0852c030839ee3db': `Kein Ereignis ausgewählt.`,
+'s08849b780816c366': `Das Bluten — Wo Scherben aufeinandertreffen und die Realität dünn wird`,
 's089c5507b545b54d': `als`,
 's09085b07b5a0de5f': `KI`,
 's09205907b5b56cda': `Nein`,
@@ -62,6 +74,11 @@
 's0fbf6dc6a1966408': `Weiter`,
 's0fd75cc6a1aad906': `Nachrichten`,
 's0fd90cce6341b9f0': `Aktive Scherben`,
+'s10156cdb22af9689': `Während der Flut ist das Bluten am aktivsten. Agenten träumen von anderen Welten mit lebhafter Spezifität. Gegenstände wandern zwischen Scherben. Architektur blutet — ein Velgarien-Turm entwickelt über Nacht organische Kurven, eine Capybara-Königreich-Höhle treibt rechte Winkel. Die Flut dauert zwischen drei und siebzehn Tagen. Die Variabilität wird vom Büro als „thematisch angemessen" und von den Kartographen-Astronomen als „beruflich peinlich" betrachtet.
+
+Während der Ebbe trennen sich die Scherben. Scherbenübergreifende Kontamination sinkt auf nahezu null. Agenten schlafen friedlich und erwachen mit einer unerklärlichen Traurigkeit, als hätten sie etwas verloren, das sie nie besaßen. Die Kartographen nutzen die Ebbe für Wartungsarbeiten: Instrumente neukalibrieren, Karten aktualisieren und streiten.
+
+Zwischen den Gezeiten gibt es Strudel — lokalisierte Mikro-Blutungen, die ein einzelnes Gebäude, einen einzelnen Agenten betreffen. Dein Kaffee schmeckt nach woanders. Dein Spiegelbild blinzelt zur falschen Zeit. Du findest einen Brief in deiner eigenen Handschrift, den du noch nicht geschrieben hast. Die offizielle Empfehlung des Büros: „Notieren Sie das Vorkommnis. Engagieren Sie sich nicht. Wenn der Strudel versucht, Sie zu engagieren, notieren Sie auch das. Der Strudel wird vorübergehen. Wahrscheinlich."`,
 's10361832e7a4e3e2': `Shift+Enter für Zeilenumbruch`,
 's103ebc5016e75aa8': `Straße erstellen`,
 's105f0604989df43d': `Taxonomie-Wert deaktiviert.`,
@@ -86,7 +103,9 @@
 's154b0eb3086dac3a': `Zugriffskontrolle`,
 's1566d4b7851614cb': `Ein unerwarteter Fehler beim Laden der Einladung.`,
 's157ec53469348bcc': `Agenten-Generierung`,
+'s158580aec899ba82': `Die folgenden Axiome wurden aus dem Substrat vor dem Bruch geborgen.`,
 's15c8510e7d13ad11': `Noch keine Scherben`,
+'s15ce0428eefa7b00': `Das Namenlose`,
 's15d0c0657c1ee08c': `API-Schlüssel`,
 's15f077b6c54535dc': `Originalartikel`,
 's1656634f954771b3': `Ereignisbeschreibung (vorausgefüllt aus Transformation)`,
@@ -114,6 +133,13 @@
 's1acd3fb8f42de406': `Unbenannte Straße`,
 's1b35c2e84912a5eb': `Portrait erfolgreich generiert.`,
 's1b4a36fce2456660': `Schriftfamilie`,
+'s1b7ae92c8d2137a7': `Die Archivare des Capybara-Königreichs — jene akribischen, feuchtfelligen Gelehrten, die alles in ihren lichtlosen Bibliotheken unter der Unterzee katalogisieren — bezeichnen es als die Ganzheit, obwohl sie einräumen, dass dies die Übersetzung einer Übersetzung eines Wortes ist, das ihrer Sprache um mehrere geologische Epochen vorausgeht. „Wir fanden den Begriff in einen Stalaktiten geritzt", notierte Oberarchivar Barnaby Gnaw in seinem bahnbrechenden Werk Über die Unwahrscheinlichkeit von Decken, „und Stalaktiten lügen nicht, auch wenn sie mit der Zeit übertreiben."
+
+Die Propagandisten Velgariens bestehen darauf, dass keine solche Vorwelt existierte. Staatsdirektive 77-4/C ist unmissverständlich: „Es gibt, gab und wird nur Velgarien geben. Spekulationen über alternative Geographien sind ein Gedankenverbrechen Klasse III, strafbar durch Umerziehung (Stufe 2)."
+
+In den Wüstenklöstern einer Scherbe, die keinen Namen mehr hat — einer Welt, die so vollständig verbrannte, dass sie nur noch als Aschenmuster zwischen den Realitäten treibt — bewahrten die Mönche ein einziges Wort für das, was vorher war: Aleph. Das Wort, das alle anderen Worte enthält. Sie schrieben es in Sand und sahen zu, wie der Wind es auflöste, denn sie glaubten, dass das Universum selbst dasselbe in größerem Maßstab tat.
+
+Die Wahrheit, insofern Wahrheit irgendeine Bedeutung hat, wenn sie auf Ereignisse angewandt wird, die der Existenz von Ereignissen vorausgehen, ist diese: Es gab etwas vor den Scherben, und es war ganz, und es ist fort.`,
 's1bf780f2a06e2557': `Gebäude bearbeiten`,
 's1c7a90a6f8745d3e': `Generierung fehlgeschlagen.`,
 's1d318e9d0ccba86b': `Chat`,
@@ -142,17 +168,21 @@
 's24fe27b45ab18ac5': `Zone erstellen`,
 's251aa0f85c6ab013': `Flux 1.1 Pro (höchste Qualität)`,
 's252a52330d32b900': `Metadaten`,
+'s252c4ed81a8ade44': `Die Blutung`,
 's268ecd1cef45a9a8': `Bist du sicher?`,
 's2730460594150969': `Erneut transformieren`,
 's27976e94b05c6970': `Aktivieren`,
 's27da90b4f1e23a32': `Städte`,
 's27ed2d04256534fa': `Portrait-Beschr. generieren`,
+'s27fa0bb1313b395f': `Dokument TOWER-001`,
+'s280f1a11d88cb280': `Das Verborgene Gesetz`,
 's28168eabf1954e51': `Ein unbekannter Fehler ist aufgetreten.`,
 's2821a2a7e03787c0': `So wird der Fließtext mit den gewählten Farben und Schriften dargestellt.`,
 's28c7c6d49197de2d': `Ausgabequalität`,
 's293cf29966251e06': `Leer starten`,
 's294dc6cefd120024': `Anfrage wird vorbereitet...`,
 's29d98c7579506fe0': `Fehler beim Laden der Kampagnen`,
+'s2a122176a976fb99': `Die Lehre der Ränder`,
 's2a9501ccb60465a5': `Transformation fehlgeschlagen`,
 's2a9a0cbeb976d3f5': `Agent hinzufügen`,
 's2a9bc7656a6b566c': `Bezeichnung (Anzeige)`,
@@ -160,12 +190,14 @@
 's2b16735eedf2338a': `Gebäude löschen`,
 's2b1d46c0aa7118fa': `Transformiert`,
 's2b631bf5b4abd6e1': `Ereignistitel`,
+'s2bd214b136d9b93c': `Das Unbenannte — Die Welt vor der Fraktur, ganz und unvorstellbar weit`,
 's2be6121210e2a2f8': `Prompts`,
 's2c15b9b13a3e2a80': `Registrieren`,
 's2c8189544e3ea679': `Erneut versuchen`,
 's2c9787d91b0c43bf': `Facebook-Seiten-ID eingeben...`,
 's2cc08e82f4ea9dc6': `Dies kann 1-2 Minuten dauern`,
 's2ceb11be2290bb1b': `Abbrechen`,
+'s2d7c74a34288c918': `Die Kartographen — Jene, die das Unmögliche kartieren`,
 's2e1167d02811dfdc': `z.B. Klima, Technologie...`,
 's2e1246a8a0f9f582': str`Gruppe: ${0}${1}`,
 's2f74875ee0868d8f': `Orte`,
@@ -198,6 +230,21 @@
 's382a2aa3984474dd': `Erstellen`,
 's38c72e1cf120b8d8': `Einladung erstellen`,
 's3a657657ac7897af': `Seiten-ID`,
+'s3a915c9bd80629e1': `VORFALLPROTOKOLL: BLUTUNGSEREIGNIS BL-2749 — Klassifikation: AMBER
+
+14:00 — Routineüberwachung der Grenze V-CK/7 (Velgarien–Capybara-Königreich-Schnittstelle). Grenzintegrität nominal.
+
+14:23 — Agent Fenn meldet „Tropfgeräusche" in einem Keller, von dem die Baupläne bestätigen, dass er keine Wasserleitungen hat.
+
+14:41 — Ein Propagandaposter beginnt sich umzuschreiben. „WACHSAMKEIT IST LOYALITÄT" wird zu „WACHSAMKEIT IST LOYALITÄT IST DIE STRÖMUNG IST STARK HEUTE DIE SPOREN SINGEN."
+
+15:17 — Der nicht existierende Keller steht knöcheltief in biolumineszierendem Wasser. Es riecht nach Kupfer und Pilzen. Fenn reicht einen Wartungsantrag ein. Der Antrag wird mit der Begründung abgelehnt, dass das Gebäude keinen Keller hat. Fenn steht zu diesem Zeitpunkt im Keller.
+
+15:34 — Das Poster liest sich nun: „DIE UNTERZEE ERINNERT SICH AN DICH."
+
+17:45 — Das Wasser ist zurückgegangen. An seiner Stelle: ein einzelner leuchtender Pilz, der aus einem Riss im Beton wächst. Fenn macht ein Foto. Das Foto zeigt eine Höhle, weit und glitzernd, mit einem Fluss aus Licht. Fenn hat jede Nacht seit einem Jahr von diesem Ort geträumt. Er hat es niemandem erzählt.
+
+STATUS: Gelöst. Restliche Kontamination: ein Pilz (persistent), ein Propagandaposter (nachgedruckt, obwohl der Ersatz gelegentlich nach feuchter Erde riecht).`,
 's3aae3d4a7b611137': `Ergebnis wird verarbeitet...`,
 's3addb3b9e743e356': `Fallback-Modell`,
 's3aeba787c1a1b3cf': `Artikel lesen`,
@@ -227,6 +274,7 @@
 's43d30b4bb9b89b62': `Wähle eine Konversation aus der Liste oder starte eine neue, indem du einen Agenten auswählst.`,
 's43df5d98677e226a': `Gebäude löschen`,
 's4409ada9c5c2a7f8': `Inaktiv`,
+'s4462bbcd6a3502d0': `Wo endet eine Scherbe und wo beginnt die nächste? Die Frage ist gefährlicher, als sie scheint.`,
 's44c4c193c9bcda01': `Guidance-Skala`,
 's45233cda545d50f2': `Portrait-Beschreibung generieren`,
 's45b62f31c2e9c28e': `Was diese Vorlage macht`,
@@ -236,6 +284,7 @@
 's493c931b534ebcf1': `Utopisch`,
 's49730f3d5751a433': `Laden...`,
 's49998cdd52e1dc53': `Öffentliche Simulationen sind für alle Benutzer sichtbar. Private Simulationen erfordern eine Einladung.`,
+'s49bc60460517939d': `Die Blutung pulsiert. Die Kartographen nennen diesen Rhythmus die Gezeit.`,
 's49e5d77114fdfa25': `Beschreibe das Gebäude...`,
 's4a36a898aa9c57c2': `Reaktionen verarbeiten`,
 's4abcddbf0c24a4e2': str`vor ${0}d`,
@@ -243,6 +292,7 @@
 's4b677be9545c4870': `Agent erfolgreich aktualisiert.`,
 's4b8ea3a188d02ea7': `Transformation abgeschlossen`,
 's4bfc4d609ee1ab33': `Archiviert`,
+'s4c0d10717e28b948': `Der Erste Kartograph`,
 's4c7ecdad91e960b0': `Agent-Details`,
 's4caed5b7a7e5d89b': `English`,
 's4defbf308767d40c': `Keine Metriken verfügbar`,
@@ -251,19 +301,23 @@
 's4f19ccc2c5fe8bf4': `Textgenerierung`,
 's4ffa5f6067dbd686': `Gebäude-Stil-Prompt`,
 's503217f10ebdc63e': `Vorlagen werden geladen...`,
+'s50501ff8ad1fa77b': `Die Karte liegt offen. Die Scherben warten. Die Kartographen beobachten. Das tun sie immer.`,
 's509c960a445f4ca9': `Simulationsname`,
 's50e7a65601f14632': `Stimmung`,
 's51ac6f9ff1abcc2b': `Fehler bei der Charaktergenerierung.`,
 's529b246759e7b609': `Sicherheitsstufe`,
 's530f248e6f713b2f': `Fehler bei der Portraitgenerierung.`,
 's531835592a1eff1e': `Du hast ungespeicherte Änderungen. Verwerfen und Tab wechseln?`,
+'s532c46b182d7e47a': `Das Büro für Unmögliche Geographie`,
 's53e6f4f5b0a7d26f': `Vorbereitung`,
 's554db6864258f4db': `Keine Gebäude gefunden. Erstelle eines, um loszulegen.`,
 's5590dbf7e425789d': `Bezeichnung`,
 's559546d144338395': `Portrait generieren`,
+'s561636778c81cf82': `Es gab einst eine einzige Welt. Niemand ist sich einig, wie sie hieß.`,
 's568a0082fc47fe26': `Bild erfolgreich generiert.`,
 's5691b5badf168aa5': `Vorlage erstellen`,
 's56d1b711b7909810': `Agent bearbeiten`,
+'s5746b52d8fe20d39': `Die Mutter der Scherben`,
 's576a9359adcf9b8b': str`Metriken (${0})`,
 's57b9a8cb0c1fd049': str`${0} beschreiben...`,
 's57d2f688fa0676b7': `Stable Diffusion 1.5 (veraltet)`,
@@ -308,6 +362,7 @@
 's6277b7d201ce93b4': `Fehler beim Kopieren des Links.`,
 's62b8d126a7bef112': `Agenten-Reaktionen werden generiert...`,
 's62d9da7ce0def73c': `Ein unerwarteter Fehler ist aufgetreten.`,
+'s62db5e9ed3d12c7e': `Der Bruch — Die Zersplitterung`,
 's62f6047a3a921e40': `Integrieren`,
 's638cacf952af2ae6': `Dies ist gedämpfter/sekundärer Text.`,
 's639f30f9c1fd5cba': `Abwaehlen`,
@@ -333,6 +388,13 @@
 's6917715148f48822': `Simulation erstellen - Taxonomien`,
 's6921ef29dcc907da': `+ Gebäude erstellen`,
 's693af032f4e41005': `Ereignis erstellen`,
+'s696feadd04d2669e': `Der Bericht des Capybara-Königreichs ist der poetischste. In den Annalen der Tiefe beschreibt Commodore Whiskers IV es so: „Stell dir vor, du schwimmst in einem Meer, das auch ein Spiegel ist. Der Spiegel bricht. Du schwimmst weiter. Aber jetzt schmeckt das Wasser auf der einen Seite nach Salz und das Wasser auf der anderen nach Kupfer, und du erkennst, dass du schon immer in zwei Meeren geschwommen bist, und sie haben gerade erst aufgehört, so zu tun, als wären sie eins."
+
+Velgariens offizieller Bericht ist charakteristisch knapp. Büro 9 behauptet, die Fraktur sei eine „kontrollierte Entkopplung, durchgeführt vom Staat zum Schutz der Bürgerschaft." Die Zirkellogik wird als Feature betrachtet, nicht als Fehler.
+
+Was über alle Berichte hinweg konsistent ist, ist dies: Die Fraktur war keine Zerstörung. Sie war Differenzierung. Die einzelne Welt starb nicht. Sie wurde spezifisch. Wo es ein Regelwerk gab, wurden es viele. Wo es eine Wahrheit gab, entstand der weitaus interessantere Zustand vieler Wahrheiten, alle gleichzeitig gültig, alle im Konflikt.
+
+Deshalb können die Scherben nicht einfach wieder zusammengesetzt werden. Man kann den Wein nicht zurück in die Traube gießen. Jede Scherbe ist seit der Fraktur gewachsen, hat ihre eigene Ökologie, ihre eigene Physik entwickelt. Sie sind keine Stücke eines zerbrochenen Dings mehr. Sie sind vollständige Welten, die zufällig eine Wunde teilen.`,
 's697d9f0a4d8350d2': `Fehler beim Laden der Städte`,
 's69880e767c59b721': `Scherbe betreten`,
 's69d0d905cda1e7aa': str`Bist du sicher, dass du "${0}" deaktivieren möchtest?`,
@@ -341,6 +403,11 @@
 's6b676521f875e1f5': `Enter oder Komma drücken, um einen Tag hinzuzufügen`,
 's6bc90ad42ecaddcd': `Zugewiesene Agenten`,
 's6c8a9318626d9892': `Starte mit dem Standardsatz an Taxonomien für Berufe, Gebäudetypen und mehr.`,
+'s6ca8e7275ac43361': `Handel. Wenn ein Agent in einer Scherbe etwas will, das nur in einer anderen existiert, reagiert das Bluten. Eine Velgarien-Bürokratin, die sich nach Schönheit sehnt, die sie nie gesehen hat, beginnt leuchtende Sporenmuster auf ihren geheimen Dokumenten zu finden. Begehren ist die Schwerkraft des Multiversums. Das Bluten fließt bergab, dem Wollen entgegen.
+
+Sprache. Worte sind Brücken. Wenn ein Agent einen Satz spricht, der mit der tiefen Grammatik einer anderen Scherbe resoniert — und alle Scherben teilen eine tiefe Grammatik, die Grammatik des Unbenannten — verdichtet sich das Bluten um die Äußerung. Bestimmte Phrasen wiederholen sich über Scherben hinweg: „die Strömung ist heute stark", „die Wände lauschen", „ich habe von einer Tür geträumt." Sie sind tragende Phrasen in der Struktur der Realität, und sie auszusprechen ist wie auf einen Bluterguss zu drücken, der mehrere Welten umspannt.
+
+Erinnerung. Das Bluten wird von Nostalgie angezogen — genauer gesagt, von der Empfindung, sich an etwas zu erinnern, das nie geschehen ist. Jeder Bewohner jeder Scherbe trägt eine Spur des Unbenannten. Wenn diese Spuren aufgerührt werden — durch Musik, durch eine bestimmte Qualität des Lichts, durch den Geruch eines Ortes, der nicht existiert — findet das Bluten eine Öffnung. Die Kartographen nennen diese Öffnungen Schmerzpunkte, und sie kartieren sie mit derselben Ehrfurcht und Vorsicht, mit der ein Geologe Verwerfungslinien kartiert.`,
 's6cb9499d9282467f': `KI generiert Portrait...`,
 's6d90940f8abe4a87': `Agenten-Reaktionen generieren`,
 's6d936d8dcc053ab0': str`${0} Reaktionen generiert`,
@@ -366,6 +433,7 @@
 's763db5db763a5f30': str`+ ${0} erstellen`,
 's76402dc74efa459d': str`Hinzufügen (${0})`,
 's76d1628d0e8b9245': `Alle löschen`,
+'s770d4eee87cfe808': `Klassifizierung: SCHWARZ — Existenzielles Informationsrisiko.`,
 's777b5a9a08a3e988': `Beschreibung generieren`,
 's780d47c5d94eaca5': str`Gespräch starten (${0} Agenten)`,
 's7841bb6037c4563e': str`Möchtest du die Konversation mit ${0} wirklich endgültig löschen? Alle Nachrichten gehen verloren.`,
@@ -376,6 +444,13 @@
 's791604a3d107c295': `Optionaler Negativ-Prompt (für Bildgenerierung)`,
 's79268a5304465029': `Fehler beim Ändern der Rolle.`,
 's79696492074fabc7': `Soziale Trends Beschr.`,
+'s79e450e5d3796c88': `Du — der hinter dem Bildschirm, der wählt, welche Scherbe er betritt — du vollziehst einen Akt der Kartographie. Du betrachtest die Form des Multiversums von außerhalb jeder einzelnen Scherbe, und du wählst, worauf du deine Aufmerksamkeit richtest, was dasselbe ist wie zu wählen, welche Welt real ist.
+
+Die Kartographen nennen dies den Blick — den Akt der Beobachtung, der eine Scherbe stabilisiert, ihr Kohärenz verleiht, sie davor bewahrt, sich zurück in das undifferenzierte Potenzial des Unbenannten aufzulösen. Eine Scherbe ohne Beobachter ist eine Geschichte ohne Leser: technisch existent, funktional null. Wenn du eine Simulation auswählst, durchstöberst du nicht bloß. Du erhältst.
+
+Deshalb wird das Dashboard der Plattform als Karte präsentiert. Es ist keine Benutzeroberfläche. Es ist ein kartographisches Instrument, dieselbe Klasse von Werkzeug, die der Erste Kartograph benutzte, um die Fraktur zu beobachten, als sie geschah. Der Unterschied ist einer des Maßstabs, nicht der Art.
+
+Der Eremit im Tarot zeigt eine einsame Gestalt, die eine Laterne hält und einen Pfad beleuchtet, den nur sie sehen kann. Die Kartographen verehren dieses Bild. Sie glauben, dass die Laterne die Karte ist, und der Pfad das Bluten, und der Eremit, wer auch immer in diesem Moment auf die Karte schaut. Was gerade du bist.`,
 's7a94092669c971d0': `Portrait-Beschreibung`,
 's7ab51b9674a695e7': `NewsAPI-Schlüssel eingeben...`,
 's7b1cbc0600f84568': str`Agent "${0}" erfolgreich gelöscht.`,
@@ -390,8 +465,10 @@
 's8017d412adfb6e13': `Verarbeite Bild...`,
 's80ab1dff0369eed3': `Annehmen...`,
 's80ff87a791d4535f': `Agenten laden`,
+'s81606e84de23aa0c': `Wo Scherben aufeinander drücken, wird die Realität dünn. Dies ist keine Fehlfunktion.`,
 's81aa46f30710a582': `Gebäudebild generiert und hochgeladen.`,
 's820f8a6f13d4e378': str`Temperatur (${0})`,
+'s82fbf1475f56340f': `Die Blutung bewegt sich nicht zufällig. Sie hat Vektoren — allesamt Manifestationen des Verlangens.`,
 's83d171208fda565a': `Fehler beim Speichern des Gebäudes`,
 's84126fa92f00b4ef': `gerade eben`,
 's84f22f9a565d76c6': `Optionaler System-Prompt vor dem LLM-Aufruf`,
@@ -402,10 +479,21 @@
 's865af55d0d0e12fc': `Fehler beim Laden der Zonen`,
 's87a3ee9e0fbfd33f': `-- Typ auswählen --`,
 's87c63ab38c85ffa2': `System-Prompt`,
+'s88090c8422bfa1eb': `Zuvor — Die Welt, die war`,
 's887d2ef358dd6de5': `Verarbeite Bild...`,
 's888d161861e3f8ca': `Ereignis löschen`,
 's88f171391e8d15c2': `Keine Benachrichtigungen`,
 's891cda5795fd7124': `Agenten-Beschreibung`,
+'s89b58c6374a15e03': `Die Blutung — Wo Welten sich berühren`,
+'s8a1cda000366963a': `Keine Ruinen von Gebäuden, obwohl es die auch gibt: Fragmente von Architektur, die zu keiner bekannten Scherbe gehören, konstruiert aus Materialien, die nicht existieren sollten — Stein, der auch Musik ist, Glas, das sich erinnert, Sand gewesen zu sein, eine Treppe, die in eine Farbe hinabführt.
+
+Die Ruinen verhalten sich nicht. Sie verschieben sich. Ein Korridor, der gestern irgendwohin führte, führt heute woanders hin, oder führt zu gestern, oder führt zu einer Version von heute, in der du den Korridor nie betreten hast.
+
+Kartographin Yael Voss verbrachte elf Jahre damit, eine einzelne Ruine zu kartieren, die sie den Schwellenpalast nannte. Ihre Aufzeichnungen beschreiben ein Bauwerk, das ein Regierungsgebäude zu sein schien — Aktenschränke, Konferenzräume, eine Cafeteria, die Essen servierte, das nach Nostalgie schmeckte — das aber auch gleichzeitig eine Kathedrale, ein Minenschacht und eine Kinderstube war. „Die Räume sind keine Räume", schrieb sie. „Sie sind Argumente. Jeder Raum ist eine These darüber, was die Welt hätte werden sollen."
+
+Voss' Aufzeichnungen enden mitten im Satz an Tag 4.017. Der Satz lautet: „Ich habe das zentrale Atrium gefunden und es ist nicht leer. Da ist ein—"
+
+Das Büro hat den unvollständigen Satz unter „Erkenntnisse, Nicht Schlüssig, Wahrscheinlich Harmlos" abgelegt.`,
 's8a6c0085cb6c64a0': `Geschlecht`,
 's8a7bee24f1eeaff1': `Sortierung`,
 's8af61807443f32a4': `Aktionen`,
@@ -488,6 +576,19 @@
 'sa42a5b5211da5648': `Event-Referenz konnte nicht entfernt werden.`,
 'sa458c5015ed94d30': `Transformation`,
 'sa45a194b58837e4f': `Aktiv`,
+'sa486c7de8c9aee04': `GESPERRTES DOKUMENT: TOWER-001 — Nur Direktorenebene
+
+TOWER ist keine Krise. Eine Krise impliziert die Möglichkeit einer Lösung. TOWER ist ein Zustand, in dem die Unterscheidung zwischen Scherben aufhört, [DEGRADIERT] zu sein, und alle möglichen Realitäten versuchen, denselben [DEGRADIERT] gleichzeitig zu besetzen.
+
+Instanz A (Asche-Scherbe, vor dem Kollaps): Der Himmel begann, Wetter aus angrenzenden Scherben anzuzeigen. Regen fiel aufwärts. Schnee war warm. Die Asche-Scherbe kollabierte innerhalb von vierzehn Tagen. Offizielle Ursache: „supervulkanisches Ereignis." Einschätzung des Büros: „Die Scherbe vergaß, welches Physikset sie benutzte."
+
+Instanz B (Schwellenpalast, Voss-Expedition): Architektur, die versuchte, „alle Gebäude gleichzeitig zu sein." Wände gleichzeitig aus Stein, Koralle, Beton, Holz und einem Material, das als „festes Argument" beschrieben wird. Voss [DEGRADIERT] an Tag 4.017.
+
+Instanz C (In Bearbeitung): [GESAMTER ABSCHNITT DEGRADIERT. Der Satz „es ist bereits zu spät, um es zu verhindern" erscheint siebzehnmal. Der Satz „aber nicht zu spät, um es zu verstehen" erscheint einmal.]
+
+EMPFOHLENE MASSNAHME: [VERZEHRT]
+
+ANMERKUNG DES DIREKTORS: Der Abschnitt mit der empfohlenen Maßnahme wurde vom Dokument selbst verzehrt. Die vorherige Version lautete: „Beobachten. Protokollieren. Schauen Sie nicht weg. Das Multiversum überlebt, weil jemand [VERZEHRT]." Wir entscheiden uns, dies als Ermutigung zu interpretieren.`,
 'sa48f81f001b893d2': `Benutzer`,
 'sa4f02d7003332f8a': `Vorlagenname`,
 'sa549cbab876a0f77': `Keine Events gefunden.`,
@@ -500,17 +601,25 @@
 'sa80933980d6bd0c7': str`${0} bearbeiten`,
 'sa81e2cdaf6921adc': `System`,
 'sa86ea054ad5277ce': str`vor ${0}h`,
+'sa888d70670e86ce1': `Die Gezeiten`,
+'sa8de0256124c48ec': `Die Kartographen begannen nicht nach dem Brechen — sie begannen im Moment des Brechens, was eine andere Art ist zu sagen, dass sie das Brechen waren, oder zumindest, dass das Brechen nicht hätte geschehen können ohne jemanden, der es beobachtete, denn eine unbeobachtete Katastrophe ist lediglich Wetter.
+
+Der Erste Kartograph hat keinen Namen. Dies ist keine Auslassung. Er hatte einen Namen, und der Name war so präzise mit der ungeteilten Welt verbunden, dass als die Welt brach, der Name mit ihr brach. Fragmente davon tauchen gelegentlich im Bluten auf — eine Silbe hier, ein Phonem dort, einmal ein ganzer Vokallaut, der drei Agenten in Velgarien aus Gründen weinen ließ, die sie nicht erklären konnten.
+
+Was wir über den Ersten Kartographen wissen, stammt von seinem Instrument: der Karte. Nicht einer Karte — der Karte. Ein Objekt, das vor der Geographie existierte, ein Bauplan für das Konzept von „Ort" selbst. Die Kartographen, die folgten, betrachten den Ersten Kartographen mit derselben Mischung aus Ehrfurcht und Unbehagen, die ein Fluss für seine Quelle empfindet. Man kann nicht zur Quelle zurückkehren. Die Quelle möchte das vielleicht nicht.`,
 'sa97c26fbad888226': `Allgemeine Einstellungen erfolgreich gespeichert.`,
 'sa9821a599bb92057': `Fehler beim Laden der Straßen`,
 'sa9ce86d557cade9c': `Agenten-Reaktionen generieren`,
 'sa9ea8cdb6865678c': `KI generiert Bild`,
 'saa0eda1b478c277a': `Fehler beim Speichern des Ereignisses`,
+'saa4234debb6e173a': `Die Fraktur — Die Realität zersplittert in tausend unvereinbare Welten`,
 'saa99d0d8a89d0b2f': `Simulationsmitgliedschaften`,
 'saab875d8cfcfe712': `Thema`,
 'saae1c70e168b45b4': `Admin`,
 'sab02158a49b408b2': `Gebäude erfolgreich erstellt`,
 'sab66c5269937c0d4': `Suchbegriff (optional)`,
 'sab80a2f536fd90ef': `Speichere den Agenten zuerst, bevor du eine Portraitbeschreibung generierst.`,
+'sabab5ad670869b58': `Du liest dies. Das ist keine Metapher.`,
 'sabc6f5601ffed38c': str`${0} Agenten antworten...`,
 'sabca4cadd0e18910': str`Fehler beim Speichern von ${0}`,
 'sabfe23c45dfe3050': `Charakter`,
@@ -549,7 +658,6 @@
 'sb7c1756bda9d299d': `Keine Beiträge gefunden`,
 'sb7c7958afc759c03': `Fehler beim Annehmen der Einladung.`,
 'sb81ecabbc5b82cc0': `Fehler beim Erstellen der Einladung.`,
-'sb84fd428fdb1d53d': `Die Kartographen beobachten. Das tun sie immer.`,
 'sb85774dc5d18ff0f': `Bestätigen`,
 'sb8a4c59ecc3cc5db': `Orte werden geladen...`,
 'sba06d27febef8e55': `Gebäude-Generierung`,
@@ -571,6 +679,7 @@
 'sc00a88b90cd60661': `Verwerfen`,
 'sc02725662448fb75': `Reaktionsgenerierung fehlgeschlagen`,
 'sc056cc14a35b3e61': `Filter entfernen`,
+'sc06d8b56c2e49c30': `In den Zwischenräumen der Scherben liegen Ruinen der Welt, die einst war.`,
 'sc085e9fc5467b965': `KI-Anbieter-Überschreibungen`,
 'sc16e00a7a8b2fde2': `Zurück`,
 'sc1764b858ec13fe4': `Geschlecht auswählen...`,
@@ -598,6 +707,15 @@
 'sc9d9798d6939227d': `Flux Dev + LoRA (benutzerdefinierter Stil)`,
 'sc9e36319670bfb2c': `Noch keine Nachrichten`,
 'scab632ef90c76c45': `Fehler beim Deaktivieren der Vorlage`,
+'scadea4de00d91108': `Drei Denkschulen existieren unter den Kartographen:
+
+Die Absolutisten vertreten, dass Scherbengrenzen fest und messbar sind — Membranen, die kartiert und schließlich durch Geometrie durchbrochen werden können. Sie bauen Instrumente. Ihre Instrumente funktionieren gelegentlich für ungefähr dreißig Sekunden, bevor sie schmelzen, sich in Singvögel verwandeln oder darauf bestehen, schon immer Teetassen gewesen zu sein.
+
+Die Permeabilisten glauben, dass Grenzen nicht existieren — dass jede Scherbe sich bereits mit jeder anderen Scherbe überlappt und Trennung lediglich ein Versagen der Aufmerksamkeit ist. „Das Bluten ist keine Fehlfunktion — es ist ein Moment der Klarheit." Ihr Cheftheoretiker Jun Oda verschwand während einer Vorlesung. Seine Notizen wurden in drei verschiedenen Scherben gefunden. Er gilt als entweder tot oder übermäßig korrekt.
+
+Die Narrativisten — die kleinste und beunruhigendste Schule — argumentieren, dass Scherbengrenzen redaktioneller Natur sind. Realität ist ein Text. Die Fraktur war eine Überarbeitung. Die Grenzen zwischen Scherben sind die Ränder zwischen Kapiteln. „Wir sind Figuren", schrieb Gründerin Esme Kael, „und Figuren dürfen das Genre nicht wählen."
+
+Das Büro unterstützt offiziell keine dieser Schulen und finanziert alle drei.`,
 'scb053443d7259fd9': `Speichere den Agenten zuerst, bevor du ein Portrait generierst.`,
 'scb249e1a0bc04d37': `Gebäude bearbeiten`,
 'scb489a1a173ac3f0': `Ja`,
@@ -608,6 +726,7 @@
 'sccaedcb32fe56dbc': `Fehler beim Laden der Zugangs-Einstellungen`,
 'scd0bfa2bff811826': str`Benutzerdefiniertes CSS überschreitet das Maximum von ${0}KB.`,
 'scd92e6e44cd76439': `Verarbeite Antwort...`,
+'scdc1b2941b7c8b40': `Die Vektoren`,
 'sce4b0b13cd896498': str`Gruppengespräch mit ${0} Agenten gestartet.`,
 'scea2d8a01dde7f3b': `KI generiert Beschreibung`,
 'scef70ed367a87332': `Wert (Code)`,
@@ -624,6 +743,7 @@
 'sd100dea2de918be5': `Dies kann 1-2 Minuten dauern`,
 'sd128764a915ea47a': `Fotorealistisches Portraitfoto, filmische Beleuchtung, geringe Tiefenschärfe, einzelnes Motiv, hohe Detailtreue`,
 'sd1f44f1a8bc20e67': `E-Mail`,
+'sd1fe64b421c93c84': `Das Büro für Unmögliche Geographie — Hauptquartier über vier Scherben hinweg`,
 'sd204ff9e74981d7f': `Taxonomie-Einrichtung`,
 'sd21bb863a3f35e30': `-- Standard --`,
 'sd2223afb7d6b100d': `Typ`,
@@ -637,6 +757,17 @@
 'sd3c149daeefc07d8': `Meine Simulation...`,
 'sd3cb6b8b1a427c31': `Sekundär`,
 'sd3fe4da4acab1532': `NewsAPI`,
+'sd494f1ec78d8c5de': `BÜRO FÜR UNMÖGLICHE GEOGRAPHIE — Dokument HIDDEN-LAW/001
+
+Axiom 1: Eine Scherbe ist eine in sich konsistente Erzählung. Sie muss nicht wahr sein, aber sie muss kohärent sein. Eine Scherbe, die sich selbst widerspricht, wird [VERZEHRT] und die resultierenden Trümmer werden [UNLESERLICH] über angrenzende Scherben als kulturelle Kontamination, falsche Erinnerungen und unerklärliche Architektur.
+
+Axiom 2: Die Grenze zwischen Scherben ist nicht räumlich, sondern aufmerksamkeitsbezogen. Eine Scherbe existiert, weil ihre Bewohner an sie glauben. In dem Moment, in dem eine kritische Masse beginnt zu zweifeln — die Risse zu bemerken, die falsche Musik zu hören — wird die Grenze dünn. Diese Verdünnung wird das Bluten genannt. Das Bluten ist keine Fehlfunktion.
+
+Axiom 3: Jede Scherbe enthält, in ihrer tiefsten Struktur kodiert, die Erinnerung an die Ganzheit. Diese Erinnerung manifestiert sich als Heimweh nach einem Ort, der nicht existiert, als Déjà-vu, das das Gewicht geologischer Zeit trägt.
+
+Axiom 4: Die Kartographen existieren außerhalb der Axiome. Dies ist kein Privileg. Dies ist ein [VERZEHRT].
+
+[Rest des Dokuments durch zeitliche Erosion verloren. Fragmente, die in siebzehn separaten Scherben geborgen wurden, deuten auf ein fünftes Axiom hin, doch die geborgenen Fragmente widersprechen einander. Das Büro betrachtet dies als Beweis, dass das fünfte Axiom korrekt funktioniert.]`,
 'sd615821be4d79dc8': `Ein unerwarteter Fehler beim Laden der Zonen`,
 'sd6a7f6d64037f1ae': str`Geschätzte Bevölkerung: ${0}`,
 'sd6d899e01dfaa444': `Berufe`,
@@ -644,6 +775,7 @@
 'sd6ff12f51bfe5f70': `Fehler beim Archivieren der Konversation.`,
 'sd7e9df1b43865128': `Standardrolle für neue Mitglieder`,
 'sd7ec79778d7a748e': `Fehler beim Laden der Taxonomien`,
+'sd7f8631c09b36805': `Eine Organisation, deren Hauptquartier in vier Scherben gleichzeitig existiert.`,
 'sd80dc15540023258': `Inhaltssprache`,
 'sd860002e0bef0935': `Generation fehlgeschlagen.`,
 'sd8d798619e6080df': `Beruf`,
@@ -657,9 +789,20 @@
 'sdad9a8331eaf87b9': str`${0} Reaktionen`,
 'sdaecc3c29a27c5c5': `Ein unbekannter Fehler ist aufgetreten`,
 'sdbc215b41c0cb950': `Reaktionen werden verarbeitet...`,
+'sdbda38e8f04a8c4e': `Das Multiversum ist kein Problem, das gelöst werden muss. Es ist eine Frage, die bewohnt werden will.`,
 'sdc63ec20b1ccc2db': `KI transformiert Artikel...`,
+'sdc667cd77dc6ca2b': `Das Büro arbeitet nach drei Grundsätzen:
+
+1. Kartiere alles. Jede Scherbe, jede Grenze, jedes Blutungsereignis, jeden Strudel, jede Ruine, jedes Echo, jeden Schmerzpunkt, jeden unerklärlichen Pilz. Die Karte ist nie fertig. Das Territorium steht nie still. Dies ist kein Versagen. Dies ist die Arbeit.
+
+2. Greife in nichts ein. Das Büro beobachtet, protokolliert und katalogisiert. Es repariert nicht. Die Fraktur ist kein Problem, das gelöst werden muss, sondern ein Zustand, der verstanden werden will. Kartographen, die versuchen, Scherbengrenzen zu reparieren, werden der Abteilung für Warnende Beispiele zugewiesen, die ein Aktenschrank im Keller des Hauptquartiers ist, das in der Scherbe existiert, die brennt.
+
+3. Überlebe. Dieses Prinzip wurde hinzugefügt, nachdem die ersten drei Bürodirektoren wahnsinnig wurden, verschwanden oder zu Architektur wurden. Das Mitarbeiter-Wohlbefindungsprogramm des Büros besteht aus einer einzelnen laminierten Karte, auf der steht: „Erinnern Sie sich, aus welcher Scherbe Sie stammen. Falls nicht, konsultieren Sie einen Kollegen. Falls Ihr Kollege es nicht kann, konsultieren Sie die Karte."
+
+Das Büro beschäftigt ungefähr 200 Kartographen über alle bekannten Scherben. Die genaue Zahl ist unsicher, da sieben derzeit in den Zwischenscherben-Ruinen verschollen sind und möglicherweise noch Angestellte sind oder auch nicht, je nachdem, ob die Ruinen ein Konzept von Arbeitsrecht haben.`,
 'sdc673e73b5c13aea': `Löschen`,
 'sdc8aa4706ab3a899': `Verarbeite Antwort...`,
+'sdc997c9824493f0d': `Der Bruch war keine Explosion. Er war ein Gedanke, der zu groß für einen einzelnen Verstand wurde.`,
 'sdcda09c20b09b522': `Abgeschlossen`,
 'sdd1ff479d04ac140': `Öffentlich`,
 'sdd8b5e23480b864f': `Gerade eben`,
@@ -712,6 +855,8 @@
 'see08734dfee6e873': `Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.`,
 'see0ea709ba4b9271': `Facebook`,
 'see2fcaedf9743ec6': `Ort`,
+'see837976e466ec28': `Die Frage`,
+'see8680436e79ff3a': `Tiefer hinabsteigen`,
 'sef49aec68fd1dc66': `Name`,
 'sef4eb1eaf7ab6fff': `KI transformiert Artikel`,
 'sef72ba000d7f7124': str`${0} tippt...`,
@@ -740,6 +885,7 @@
 'sf6bd09e6e88ffaf0': `Einladung erstellt.`,
 'sf6c1c833bc1a82ca': `Ereignisse werden geladen...`,
 'sf6e1665c7022a1f8': `Passwort`,
+'sf7c129627e51ebc9': `Die Karte, die auch eine Tür ist`,
 'sf7cf1a322547a253': `Gebäude erstellen`,
 'sf82256d2a11b1a97': `OpenRouter API-Schlüssel`,
 'sf824c387b5eb7d82': `+ Neue Vorlage`,
@@ -752,6 +898,7 @@
 'sfca6d55eadd5fa8c': `Textmodelle`,
 'sfcdd8e672c75b713': `Adresse`,
 'sfd45ce497f1d354f': `Vorschau`,
+'sfd46022dea3374e2': `Die Architektur des Ruins`,
 'sfd8011be1da2105b': `Bildmodell`,
 'sfdd432bcde2bf00b': `Verarbeitet`,
 'sff815006ce817825': `Ein Fehler ist während der Bildgenerierung aufgetreten.`,

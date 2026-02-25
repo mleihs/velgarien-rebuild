@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied. 139 tasks. 675 localized UI strings (EN/DE). Platform ready for deployment.
+**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied + lore expansion + dashboard LoreScroll. 139 tasks. 797 localized UI strings (EN/DE). Platform ready for deployment.
 
 ## Tech Stack
 
@@ -55,7 +55,7 @@ frontend/             Lit + Vite application
     app-shell.ts      Main app with @lit-labs/router (auth + simulation-scoped routes)
     components/
       auth/           Login, Register views
-      platform/       PlatformHeader, UserMenu, SimulationsDashboard, CreateSimulationWizard, UserProfileView, InvitationAcceptView, NotificationCenter
+      platform/       PlatformHeader, UserMenu, SimulationsDashboard, LoreScroll, CreateSimulationWizard, UserProfileView, InvitationAcceptView, NotificationCenter
       layout/         SimulationShell, SimulationHeader, SimulationNav
       shared/         17 reusable components + 3 shared CSS modules (see Code Reusability)
       agents/         AgentsView, AgentCard, AgentEditModal, AgentDetailsPanel
@@ -82,6 +82,8 @@ supabase/
   migrations/         13 SQL migration files (001-013)
   seed/               5 SQL seed files (001-005): simulation, agents, entities, social/chat, verification
   config.toml         Local Supabase config
+scripts/              Utility scripts (image generation via Replicate)
+concept.md            Game design proposal (~9300 words) with expanded meta-lore + research appendix
 ```
 
 ## Important Commands
@@ -212,6 +214,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - **Entity views:** Each entity has 4 files: ListView, Card, EditModal, DetailsPanel (except Chat which has 6)
 - **Event naming:** `import type { Event as SimEvent }` to avoid DOM `Event` conflict
 - **Taxonomy-driven options:** Dropdowns populated from `appState.getTaxonomiesByType()` with locale-aware labels
+- **LoreScroll accordion:** `Set<string>`-based expand/collapse pattern (same as AgentDetailsPanel, EventDetailsPanel). Sections defined via `getLoreSections()` function (not `const` — `msg()` must evaluate at render time). Body text, titles, epigraphs, and image captions all localised via `msg()`. Uses `velg-lightbox` for image enlargement.
 - **AppStateManager signals:** `user`, `accessToken`, `currentSimulation`, `simulations`, `currentRole`, `taxonomies`, `settings`. Computed: `isAuthenticated`, `simulationId`, `isOwner`, `canAdmin`, `canEdit`
 
 ## i18n — MANDATORY for ALL UI Strings
@@ -249,7 +252,7 @@ Alternatively, add `<target>` elements directly to `frontend/src/locales/xliff/d
 | `frontend/lit-localize.json` | Config: sourceLocale=en, targetLocale=de, runtime mode |
 | `frontend/src/services/i18n/locale-service.ts` | LocaleService: initLocale, setLocale, getInitialLocale |
 | `frontend/src/services/i18n/format-service.ts` | FormatService: formatDate, formatDateTime, formatNumber, formatRelativeTime |
-| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (675 trans-units) — edit this for translations |
+| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (797 trans-units) — edit this for translations |
 | `frontend/src/locales/generated/de.ts` | Auto-generated — NEVER edit manually |
 | `frontend/src/locales/generated/locale-codes.ts` | Source/target locale constants |
 
@@ -263,7 +266,7 @@ Alternatively, add `<target>` elements directly to `frontend/src/locales/xliff/d
    - **Data Display:** `DataTable`, `Pagination`, `SharedFilterBar`
    - **Feedback:** `Toast`, `ConfirmDialog`, `LoadingState`, `EmptyState`, `ErrorState`, `GenerationProgress`
    - **Forms:** `FormBuilder`
-   - **Media:** `Lightbox` (fullscreen image overlay with Escape/click-to-close)
+   - **Media:** `Lightbox` (fullscreen image overlay with Escape/click-to-close, optional `caption` property)
    - **Shared CSS:**
      - `panel-button-styles.ts` — `panelButtonStyles` for detail panel footer buttons (`.panel__btn` base + `--edit`, `--danger`, `--generate` variants)
      - `form-styles.ts` — `formStyles` for modal forms (`.form`, `.form__group`, `.form__row`, `.form__label`, `.form__input/.form__textarea/.form__select`, `.footer`, `.footer__btn--cancel/--save`, `.gen-btn`)

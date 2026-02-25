@@ -65,9 +65,27 @@ export class VelgLightbox extends LitElement {
       background: var(--color-danger, #e53e3e);
       color: var(--color-text-inverse, #fff);
     }
+
+    .lightbox__caption {
+      position: absolute;
+      bottom: var(--space-6, 24px);
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 80vw;
+      padding: var(--space-2, 8px) var(--space-4, 16px);
+      font-family: var(--font-mono, monospace);
+      font-size: var(--text-sm, 14px);
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: var(--border-radius, 4px);
+      text-align: center;
+      pointer-events: none;
+    }
   `;
 
   @property({ type: String }) src: string | null = null;
+  @property({ type: String }) caption = '';
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -111,6 +129,7 @@ export class VelgLightbox extends LitElement {
           @click=${(e: Event) => e.stopPropagation()}
         />
         <button class="lightbox__close" aria-label="Close">&times;</button>
+        ${this.caption ? html`<div class="lightbox__caption">${this.caption}</div>` : nothing}
       </div>
     `;
   }

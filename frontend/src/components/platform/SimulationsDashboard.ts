@@ -6,6 +6,7 @@ import { BaseApiService } from '../../services/api/BaseApiService.js';
 import type { ApiResponse, Simulation } from '../../types/index.js';
 
 import './SimulationCard.js';
+import './LoreScroll.js';
 
 /**
  * Hero background image path in simulation.assets bucket.
@@ -122,7 +123,7 @@ export class VelgSimulationsDashboard extends LitElement {
       font-size: var(--text-xs);
       letter-spacing: var(--tracking-wider);
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.35);
       text-align: center;
       white-space: nowrap;
     }
@@ -378,6 +379,9 @@ export class VelgSimulationsDashboard extends LitElement {
         </span>
       </div>
 
+      <!-- Lore Scroll -->
+      <velg-lore-scroll></velg-lore-scroll>
+
       <!-- Shards -->
       ${
         count === 0
@@ -415,7 +419,7 @@ export class VelgSimulationsDashboard extends LitElement {
             </div>
 
             <div class="footer-lore">
-              ${msg('The Cartographers are watching. They always are.')}
+              ${msg('The map is open. The Shards are waiting. The Cartographers are watching. They always are.')}
             </div>
           </div>
         `

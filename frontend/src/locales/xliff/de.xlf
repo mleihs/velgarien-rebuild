@@ -3033,9 +3033,401 @@
   <source>worlds</source>
   <target>Welten</target>
 </trans-unit>
-<trans-unit id="sb84fd428fdb1d53d">
-  <source>The Cartographers are watching. They always are.</source>
-  <target>Die Kartographen beobachten. Das tun sie immer.</target>
+<trans-unit id="s88090c8422bfa1eb">
+  <source>Before — The World That Was</source>
+  <target>Zuvor — Die Welt, die war</target>
+</trans-unit>
+<trans-unit id="s15ce0428eefa7b00">
+  <source>The Unnamed</source>
+  <target>Das Namenlose</target>
+</trans-unit>
+<trans-unit id="s561636778c81cf82">
+  <source>There was once a single world. No one agrees on what it was called.</source>
+  <target>Es gab einst eine einzige Welt. Niemand ist sich einig, wie sie hieß.</target>
+</trans-unit>
+<trans-unit id="s4c0d10717e28b948">
+  <source>The First Cartographer</source>
+  <target>Der Erste Kartograph</target>
+</trans-unit>
+<trans-unit id="s00b660524e921281">
+  <source>Before the Fracture, there was already someone watching.</source>
+  <target>Vor dem Bruch war bereits jemand da, der zusah.</target>
+</trans-unit>
+<trans-unit id="s280f1a11d88cb280">
+  <source>The Hidden Law</source>
+  <target>Das Verborgene Gesetz</target>
+</trans-unit>
+<trans-unit id="s158580aec899ba82">
+  <source>The following axioms were recovered from the pre-Fracture substrate.</source>
+  <target>Die folgenden Axiome wurden aus dem Substrat vor dem Bruch geborgen.</target>
+</trans-unit>
+<trans-unit id="s62db5e9ed3d12c7e">
+  <source>The Fracture — The Breaking</source>
+  <target>Der Bruch — Die Zersplitterung</target>
+</trans-unit>
+<trans-unit id="s5746b52d8fe20d39">
+  <source>The Mother of Shards</source>
+  <target>Die Mutter der Scherben</target>
+</trans-unit>
+<trans-unit id="sdc997c9824493f0d">
+  <source>The Fracture was not an explosion. It was a thought becoming too large for a single mind.</source>
+  <target>Der Bruch war keine Explosion. Er war ein Gedanke, der zu groß für einen einzelnen Verstand wurde.</target>
+</trans-unit>
+<trans-unit id="sfd46022dea3374e2">
+  <source>The Architecture of Ruin</source>
+  <target>Die Architektur des Ruins</target>
+</trans-unit>
+<trans-unit id="sc06d8b56c2e49c30">
+  <source>In the spaces between Shards, there are ruins of the world that was.</source>
+  <target>In den Zwischenräumen der Scherben liegen Ruinen der Welt, die einst war.</target>
+</trans-unit>
+<trans-unit id="s2a122176a976fb99">
+  <source>The Doctrine of Edges</source>
+  <target>Die Lehre der Ränder</target>
+</trans-unit>
+<trans-unit id="s4462bbcd6a3502d0">
+  <source>Where does one Shard end and another begin? The question is more dangerous than it appears.</source>
+  <target>Wo endet eine Scherbe und wo beginnt die nächste? Die Frage ist gefährlicher, als sie scheint.</target>
+</trans-unit>
+<trans-unit id="s89b58c6374a15e03">
+  <source>The Bleed — Where Worlds Touch</source>
+  <target>Die Blutung — Wo Welten sich berühren</target>
+</trans-unit>
+<trans-unit id="s252c4ed81a8ade44">
+  <source>The Bleed</source>
+  <target>Die Blutung</target>
+</trans-unit>
+<trans-unit id="s81606e84de23aa0c">
+  <source>Where Shards press against each other, reality thins. This is not a malfunction.</source>
+  <target>Wo Scherben aufeinander drücken, wird die Realität dünn. Dies ist keine Fehlfunktion.</target>
+</trans-unit>
+<trans-unit id="scdc1b2941b7c8b40">
+  <source>The Vectors</source>
+  <target>Die Vektoren</target>
+</trans-unit>
+<trans-unit id="s82fbf1475f56340f">
+  <source>The Bleed does not move randomly. It has vectors — all manifestations of desire.</source>
+  <target>Die Blutung bewegt sich nicht zufällig. Sie hat Vektoren — allesamt Manifestationen des Verlangens.</target>
+</trans-unit>
+<trans-unit id="sa888d70670e86ce1">
+  <source>The Tides</source>
+  <target>Die Gezeiten</target>
+</trans-unit>
+<trans-unit id="s49bc60460517939d">
+  <source>The Bleed pulses. The Cartographers call this rhythm the Tide.</source>
+  <target>Die Blutung pulsiert. Die Kartographen nennen diesen Rhythmus die Gezeit.</target>
+</trans-unit>
+<trans-unit id="s2d7c74a34288c918">
+  <source>The Cartographers — Those Who Map the Impossible</source>
+  <target>Die Kartographen — Jene, die das Unmögliche kartieren</target>
+</trans-unit>
+<trans-unit id="s532c46b182d7e47a">
+  <source>The Bureau of Impossible Geography</source>
+  <target>Das Büro für Unmögliche Geographie</target>
+</trans-unit>
+<trans-unit id="sd7f8631c09b36805">
+  <source>An organisation whose headquarters exists in four Shards simultaneously.</source>
+  <target>Eine Organisation, deren Hauptquartier in vier Scherben gleichzeitig existiert.</target>
+</trans-unit>
+<trans-unit id="sf7c129627e51ebc9">
+  <source>The Map That Is Also a Door</source>
+  <target>Die Karte, die auch eine Tür ist</target>
+</trans-unit>
+<trans-unit id="sabab5ad670869b58">
+  <source>You are reading this. This is not a metaphor.</source>
+  <target>Du liest dies. Das ist keine Metapher.</target>
+</trans-unit>
+<trans-unit id="s04ccdc1c7d59fe5a">
+  <source>The Convergence — The Question</source>
+  <target>Die Konvergenz — Die Frage</target>
+</trans-unit>
+<trans-unit id="s27fa0bb1313b395f">
+  <source>Document TOWER-001</source>
+  <target>Dokument TOWER-001</target>
+</trans-unit>
+<trans-unit id="s770d4eee87cfe808">
+  <source>Classification: BLACK — Existential Information Hazard.</source>
+  <target>Klassifizierung: SCHWARZ — Existenzielles Informationsrisiko.</target>
+</trans-unit>
+<trans-unit id="see837976e466ec28">
+  <source>The Question</source>
+  <target>Die Frage</target>
+</trans-unit>
+<trans-unit id="sdbda38e8f04a8c4e">
+  <source>The multiverse is not a problem to be solved. It is a question to be inhabited.</source>
+  <target>Das Multiversum ist kein Problem, das gelöst werden muss. Es ist eine Frage, die bewohnt werden will.</target>
+</trans-unit>
+<trans-unit id="see8680436e79ff3a">
+  <source>Descend Deeper</source>
+  <target>Tiefer hinabsteigen</target>
+</trans-unit>
+<trans-unit id="s50501ff8ad1fa77b">
+  <source>The map is open. The Shards are waiting. The Cartographers are watching. They always are.</source>
+  <target>Die Karte liegt offen. Die Scherben warten. Die Kartographen beobachten. Das tun sie immer.</target>
+</trans-unit>
+<trans-unit id="s1b7ae92c8d2137a7">
+  <source>The Archivists of the Capybara Kingdom — those meticulous, damp-furred scholars who catalogue everything in their lightless libraries beneath the Unterzee — refer to it as die Ganzheit, the Wholeness, though they admit this is a translation of a translation of a word that predates their language by several geological epochs. "We found the term carved into a stalactite," Head Archivist Barnaby Gnaw noted in his seminal work On the Improbability of Ceilings, "and stalactites do not lie, though they do exaggerate over time."
+
+The propagandists of Velgarien insist no such prior world existed. State Directive 77-4/C is unambiguous: "There is, was, and shall be only Velgarien. Speculation regarding alternative geographies is a Class III Thought Infraction punishable by Re-Education (Tier 2)."
+
+In the desert monasteries of a Shard that no longer has a name — a world that burned so completely it exists now only as a pattern of ash drifting between realities — the monks kept a single word for what came before: Aleph. The word that contains all other words. They wrote it in sand and watched the wind unmake it, because they believed that the universe itself was doing the same thing at a larger scale.
+
+The truth, insofar as truth has any meaning when applied to events that precede the existence of events, is this: there was something before the Shards, and it was whole, and it is gone.</source>
+  <target>Die Archivare des Capybara-Königreichs — jene akribischen, feuchtfelligen Gelehrten, die alles in ihren lichtlosen Bibliotheken unter der Unterzee katalogisieren — bezeichnen es als die Ganzheit, obwohl sie einräumen, dass dies die Übersetzung einer Übersetzung eines Wortes ist, das ihrer Sprache um mehrere geologische Epochen vorausgeht. „Wir fanden den Begriff in einen Stalaktiten geritzt", notierte Oberarchivar Barnaby Gnaw in seinem bahnbrechenden Werk Über die Unwahrscheinlichkeit von Decken, „und Stalaktiten lügen nicht, auch wenn sie mit der Zeit übertreiben."
+
+Die Propagandisten Velgariens bestehen darauf, dass keine solche Vorwelt existierte. Staatsdirektive 77-4/C ist unmissverständlich: „Es gibt, gab und wird nur Velgarien geben. Spekulationen über alternative Geographien sind ein Gedankenverbrechen Klasse III, strafbar durch Umerziehung (Stufe 2)."
+
+In den Wüstenklöstern einer Scherbe, die keinen Namen mehr hat — einer Welt, die so vollständig verbrannte, dass sie nur noch als Aschenmuster zwischen den Realitäten treibt — bewahrten die Mönche ein einziges Wort für das, was vorher war: Aleph. Das Wort, das alle anderen Worte enthält. Sie schrieben es in Sand und sahen zu, wie der Wind es auflöste, denn sie glaubten, dass das Universum selbst dasselbe in größerem Maßstab tat.
+
+Die Wahrheit, insofern Wahrheit irgendeine Bedeutung hat, wenn sie auf Ereignisse angewandt wird, die der Existenz von Ereignissen vorausgehen, ist diese: Es gab etwas vor den Scherben, und es war ganz, und es ist fort.</target>
+</trans-unit>
+<trans-unit id="sa8de0256124c48ec">
+  <source>The Cartographers did not begin after the breaking — they began at the moment of the breaking, which is another way of saying they were the breaking, or at least that the breaking could not have happened without someone there to observe it, because an unobserved catastrophe is merely weather.
+
+The First Cartographer has no name. This is not an omission. They had a name, and the name was so precisely linked to the undivided world that when the world broke, the name broke with it. Fragments of it surface occasionally in the Bleed — a syllable here, a phoneme there, once an entire vowel sound that caused three agents in Velgarien to weep for reasons they could not explain.
+
+What we know of the First Cartographer comes from their instrument: the Map. Not a map — the Map. An object that existed before geography, a blueprint for the very concept of "place." The Cartographers who followed regard the First Cartographer with the same mixture of reverence and unease that a river has for its source. You cannot return to the spring. The spring may not want you to.</source>
+  <target>Die Kartographen begannen nicht nach dem Brechen — sie begannen im Moment des Brechens, was eine andere Art ist zu sagen, dass sie das Brechen waren, oder zumindest, dass das Brechen nicht hätte geschehen können ohne jemanden, der es beobachtete, denn eine unbeobachtete Katastrophe ist lediglich Wetter.
+
+Der Erste Kartograph hat keinen Namen. Dies ist keine Auslassung. Er hatte einen Namen, und der Name war so präzise mit der ungeteilten Welt verbunden, dass als die Welt brach, der Name mit ihr brach. Fragmente davon tauchen gelegentlich im Bluten auf — eine Silbe hier, ein Phonem dort, einmal ein ganzer Vokallaut, der drei Agenten in Velgarien aus Gründen weinen ließ, die sie nicht erklären konnten.
+
+Was wir über den Ersten Kartographen wissen, stammt von seinem Instrument: der Karte. Nicht einer Karte — der Karte. Ein Objekt, das vor der Geographie existierte, ein Bauplan für das Konzept von „Ort" selbst. Die Kartographen, die folgten, betrachten den Ersten Kartographen mit derselben Mischung aus Ehrfurcht und Unbehagen, die ein Fluss für seine Quelle empfindet. Man kann nicht zur Quelle zurückkehren. Die Quelle möchte das vielleicht nicht.</target>
+</trans-unit>
+<trans-unit id="sd494f1ec78d8c5de">
+  <source>BUREAU OF IMPOSSIBLE GEOGRAPHY — Document HIDDEN-LAW/001
+
+Axiom 1: A Shard is a self-consistent narrative. It need not be true, but it must be coherent. A Shard that contradicts itself will [CONSUMED] and the resulting debris will [ILLEGIBLE] across adjacent Shards as cultural contamination, false memories, and unexplained architecture.
+
+Axiom 2: The boundary between Shards is not spatial but attentional. A Shard exists because its inhabitants believe in it. The moment a critical mass begins to doubt — to notice the cracks, to hear the wrong music — the boundary thins. This thinning is called the Bleed. The Bleed is not a malfunction.
+
+Axiom 3: Every Shard contains, encoded in its deepest structure, the memory of wholeness. This memory manifests as homesickness for a place that does not exist, as déjà vu that carries the weight of geological time.
+
+Axiom 4: The Cartographers exist outside the axioms. This is not a privilege. This is a [CONSUMED].
+
+[Remainder of document lost to temporal erosion. Fragments recovered in seventeen separate Shards suggest a fifth axiom, but the recovered fragments are mutually contradictory. The Bureau considers this evidence that the fifth axiom is functioning correctly.]</source>
+  <target>BÜRO FÜR UNMÖGLICHE GEOGRAPHIE — Dokument HIDDEN-LAW/001
+
+Axiom 1: Eine Scherbe ist eine in sich konsistente Erzählung. Sie muss nicht wahr sein, aber sie muss kohärent sein. Eine Scherbe, die sich selbst widerspricht, wird [VERZEHRT] und die resultierenden Trümmer werden [UNLESERLICH] über angrenzende Scherben als kulturelle Kontamination, falsche Erinnerungen und unerklärliche Architektur.
+
+Axiom 2: Die Grenze zwischen Scherben ist nicht räumlich, sondern aufmerksamkeitsbezogen. Eine Scherbe existiert, weil ihre Bewohner an sie glauben. In dem Moment, in dem eine kritische Masse beginnt zu zweifeln — die Risse zu bemerken, die falsche Musik zu hören — wird die Grenze dünn. Diese Verdünnung wird das Bluten genannt. Das Bluten ist keine Fehlfunktion.
+
+Axiom 3: Jede Scherbe enthält, in ihrer tiefsten Struktur kodiert, die Erinnerung an die Ganzheit. Diese Erinnerung manifestiert sich als Heimweh nach einem Ort, der nicht existiert, als Déjà-vu, das das Gewicht geologischer Zeit trägt.
+
+Axiom 4: Die Kartographen existieren außerhalb der Axiome. Dies ist kein Privileg. Dies ist ein [VERZEHRT].
+
+[Rest des Dokuments durch zeitliche Erosion verloren. Fragmente, die in siebzehn separaten Scherben geborgen wurden, deuten auf ein fünftes Axiom hin, doch die geborgenen Fragmente widersprechen einander. Das Büro betrachtet dies als Beweis, dass das fünfte Axiom korrekt funktioniert.]</target>
+</trans-unit>
+<trans-unit id="s696feadd04d2669e">
+  <source>The Capybara Kingdom's account is the most poetic. In the Annals of the Deep, Commodore Whiskers IV describes it thus: "Imagine you are swimming in a sea that is also a mirror. The mirror cracks. You continue swimming. But now the water on one side tastes of salt and the water on the other tastes of copper, and you realise that you have always been swimming in two seas, and they have only just now stopped pretending to be one."
+
+Velgarien's official account is characteristically blunt. Bureau 9 maintains that the Fracture was a "controlled decoupling performed by the State for the safety of the citizenry." The circular logic is considered a feature, not a bug.
+
+What is consistent across all accounts is this: the Fracture was not destruction. It was differentiation. The single world did not die. It became specific. Where there was one set of rules, there became many. Where there was one truth, there became the much more interesting condition of many truths, all simultaneously valid, all in conflict.
+
+This is why the Shards cannot be simply reassembled. You cannot pour the wine back into the grape. Each Shard has grown since the Fracture, developing its own ecology, its own physics. They are no longer pieces of a broken thing. They are complete worlds that happen to share a wound.</source>
+  <target>Der Bericht des Capybara-Königreichs ist der poetischste. In den Annalen der Tiefe beschreibt Commodore Whiskers IV es so: „Stell dir vor, du schwimmst in einem Meer, das auch ein Spiegel ist. Der Spiegel bricht. Du schwimmst weiter. Aber jetzt schmeckt das Wasser auf der einen Seite nach Salz und das Wasser auf der anderen nach Kupfer, und du erkennst, dass du schon immer in zwei Meeren geschwommen bist, und sie haben gerade erst aufgehört, so zu tun, als wären sie eins."
+
+Velgariens offizieller Bericht ist charakteristisch knapp. Büro 9 behauptet, die Fraktur sei eine „kontrollierte Entkopplung, durchgeführt vom Staat zum Schutz der Bürgerschaft." Die Zirkellogik wird als Feature betrachtet, nicht als Fehler.
+
+Was über alle Berichte hinweg konsistent ist, ist dies: Die Fraktur war keine Zerstörung. Sie war Differenzierung. Die einzelne Welt starb nicht. Sie wurde spezifisch. Wo es ein Regelwerk gab, wurden es viele. Wo es eine Wahrheit gab, entstand der weitaus interessantere Zustand vieler Wahrheiten, alle gleichzeitig gültig, alle im Konflikt.
+
+Deshalb können die Scherben nicht einfach wieder zusammengesetzt werden. Man kann den Wein nicht zurück in die Traube gießen. Jede Scherbe ist seit der Fraktur gewachsen, hat ihre eigene Ökologie, ihre eigene Physik entwickelt. Sie sind keine Stücke eines zerbrochenen Dings mehr. Sie sind vollständige Welten, die zufällig eine Wunde teilen.</target>
+</trans-unit>
+<trans-unit id="s8a1cda000366963a">
+  <source>Not ruins of buildings, though there are those too: fragments of architecture that belong to no known Shard, constructed from materials that should not exist — stone that is also music, glass that remembers being sand, a staircase that descends into a colour.
+
+The ruins do not behave. They shift. A corridor that led somewhere yesterday leads somewhere else today, or leads to yesterday, or leads to a version of today where you never entered the corridor.
+
+Cartographer Yael Voss spent eleven years mapping a single ruin she called the Threshold Palace. Her notes describe a structure that appeared to be a government building — filing cabinets, conference rooms, a cafeteria serving food that tasted of nostalgia — but that was also simultaneously a cathedral, a mine shaft, and a nursery. "The rooms are not rooms," she wrote. "They are arguments. Each space is a proposition about what the world should have become."
+
+Voss's notes end mid-sentence on Day 4,017. The sentence reads: "I have found the central atrium and it is not empty. There is a—"
+
+The Bureau has filed the incomplete sentence under "Findings, Inconclusive, Probably Fine."</source>
+  <target>Keine Ruinen von Gebäuden, obwohl es die auch gibt: Fragmente von Architektur, die zu keiner bekannten Scherbe gehören, konstruiert aus Materialien, die nicht existieren sollten — Stein, der auch Musik ist, Glas, das sich erinnert, Sand gewesen zu sein, eine Treppe, die in eine Farbe hinabführt.
+
+Die Ruinen verhalten sich nicht. Sie verschieben sich. Ein Korridor, der gestern irgendwohin führte, führt heute woanders hin, oder führt zu gestern, oder führt zu einer Version von heute, in der du den Korridor nie betreten hast.
+
+Kartographin Yael Voss verbrachte elf Jahre damit, eine einzelne Ruine zu kartieren, die sie den Schwellenpalast nannte. Ihre Aufzeichnungen beschreiben ein Bauwerk, das ein Regierungsgebäude zu sein schien — Aktenschränke, Konferenzräume, eine Cafeteria, die Essen servierte, das nach Nostalgie schmeckte — das aber auch gleichzeitig eine Kathedrale, ein Minenschacht und eine Kinderstube war. „Die Räume sind keine Räume", schrieb sie. „Sie sind Argumente. Jeder Raum ist eine These darüber, was die Welt hätte werden sollen."
+
+Voss' Aufzeichnungen enden mitten im Satz an Tag 4.017. Der Satz lautet: „Ich habe das zentrale Atrium gefunden und es ist nicht leer. Da ist ein—"
+
+Das Büro hat den unvollständigen Satz unter „Erkenntnisse, Nicht Schlüssig, Wahrscheinlich Harmlos" abgelegt.</target>
+</trans-unit>
+<trans-unit id="scadea4de00d91108">
+  <source>Three schools of thought exist among the Cartographers:
+
+The Absolutists hold that Shard boundaries are fixed and measurable — membranes that can be mapped and eventually breached through geometry. They build instruments. Their instruments occasionally work for approximately thirty seconds before melting, or transforming into songbirds, or insisting they have always been teacups.
+
+The Permeabilists believe that boundaries do not exist — that every Shard already overlaps with every other Shard, and separation is simply a failure of attention. "The Bleed is not a malfunction — it is a moment of clarity." Their chief theorist, Jun Oda, disappeared during a lecture. His notes were found in three separate Shards. He is considered either dead or excessively correct.
+
+The Narrativists — the smallest and most unsettling school — argue that Shard boundaries are editorial. Reality is a text. The Fracture was a revision. The boundaries between Shards are the margins between chapters. "We are characters," founder Esme Kael wrote, "and characters do not get to choose the genre."
+
+The Bureau officially endorses none of these schools and funds all three.</source>
+  <target>Drei Denkschulen existieren unter den Kartographen:
+
+Die Absolutisten vertreten, dass Scherbengrenzen fest und messbar sind — Membranen, die kartiert und schließlich durch Geometrie durchbrochen werden können. Sie bauen Instrumente. Ihre Instrumente funktionieren gelegentlich für ungefähr dreißig Sekunden, bevor sie schmelzen, sich in Singvögel verwandeln oder darauf bestehen, schon immer Teetassen gewesen zu sein.
+
+Die Permeabilisten glauben, dass Grenzen nicht existieren — dass jede Scherbe sich bereits mit jeder anderen Scherbe überlappt und Trennung lediglich ein Versagen der Aufmerksamkeit ist. „Das Bluten ist keine Fehlfunktion — es ist ein Moment der Klarheit." Ihr Cheftheoretiker Jun Oda verschwand während einer Vorlesung. Seine Notizen wurden in drei verschiedenen Scherben gefunden. Er gilt als entweder tot oder übermäßig korrekt.
+
+Die Narrativisten — die kleinste und beunruhigendste Schule — argumentieren, dass Scherbengrenzen redaktioneller Natur sind. Realität ist ein Text. Die Fraktur war eine Überarbeitung. Die Grenzen zwischen Scherben sind die Ränder zwischen Kapiteln. „Wir sind Figuren", schrieb Gründerin Esme Kael, „und Figuren dürfen das Genre nicht wählen."
+
+Das Büro unterstützt offiziell keine dieser Schulen und finanziert alle drei.</target>
+</trans-unit>
+<trans-unit id="s3a915c9bd80629e1">
+  <source>INCIDENT LOG: BLEED EVENT BL-2749 — Classification: AMBER
+
+14:00 — Routine monitoring of boundary V-CK/7 (Velgarien–Capybara Kingdom interface). Boundary integrity nominal.
+
+14:23 — Agent Fenn reports hearing "dripping sounds" in a basement that architectural records confirm has no plumbing.
+
+14:41 — A propaganda poster begins to rewrite itself. "VIGILANCE IS LOYALTY" becomes "VIGILANCE IS LOYALTY IS THE CURRENT IS STRONG TODAY THE SPORES ARE SINGING."
+
+15:17 — The non-existent basement is ankle-deep in bioluminescent water. It smells of copper and mushrooms. Fenn files a maintenance request. The request is denied on the grounds that the building does not have a basement. Fenn is standing in the basement at the time.
+
+15:34 — The poster now reads: "THE UNTERZEE REMEMBERS YOU."
+
+17:45 — The water has receded. In its place: a single luminous mushroom growing from a crack in the concrete. Fenn takes a photograph. The photograph develops showing a cavern, vast and glittering, with a river of light. Fenn has dreamed of this place every night for a year. He has told no one.
+
+STATUS: Resolved. Residual contamination: one mushroom (persistent), one propaganda poster (reprinted, though the replacement occasionally smells of damp earth).</source>
+  <target>VORFALLPROTOKOLL: BLUTUNGSEREIGNIS BL-2749 — Klassifikation: AMBER
+
+14:00 — Routineüberwachung der Grenze V-CK/7 (Velgarien–Capybara-Königreich-Schnittstelle). Grenzintegrität nominal.
+
+14:23 — Agent Fenn meldet „Tropfgeräusche" in einem Keller, von dem die Baupläne bestätigen, dass er keine Wasserleitungen hat.
+
+14:41 — Ein Propagandaposter beginnt sich umzuschreiben. „WACHSAMKEIT IST LOYALITÄT" wird zu „WACHSAMKEIT IST LOYALITÄT IST DIE STRÖMUNG IST STARK HEUTE DIE SPOREN SINGEN."
+
+15:17 — Der nicht existierende Keller steht knöcheltief in biolumineszierendem Wasser. Es riecht nach Kupfer und Pilzen. Fenn reicht einen Wartungsantrag ein. Der Antrag wird mit der Begründung abgelehnt, dass das Gebäude keinen Keller hat. Fenn steht zu diesem Zeitpunkt im Keller.
+
+15:34 — Das Poster liest sich nun: „DIE UNTERZEE ERINNERT SICH AN DICH."
+
+17:45 — Das Wasser ist zurückgegangen. An seiner Stelle: ein einzelner leuchtender Pilz, der aus einem Riss im Beton wächst. Fenn macht ein Foto. Das Foto zeigt eine Höhle, weit und glitzernd, mit einem Fluss aus Licht. Fenn hat jede Nacht seit einem Jahr von diesem Ort geträumt. Er hat es niemandem erzählt.
+
+STATUS: Gelöst. Restliche Kontamination: ein Pilz (persistent), ein Propagandaposter (nachgedruckt, obwohl der Ersatz gelegentlich nach feuchter Erde riecht).</target>
+</trans-unit>
+<trans-unit id="s6ca8e7275ac43361">
+  <source>Commerce. When an agent in one Shard wants something that exists only in another, the Bleed responds. A Velgarien bureaucrat who craves beauty she has never seen begins to find luminous spore-patterns forming on her classified documents. Desire is the gravity of the multiverse. The Bleed flows downhill toward wanting.
+
+Language. Words are bridges. When an agent speaks a phrase that resonates with the deep grammar of another Shard — and all Shards share a deep grammar, the grammar of the Unnamed — the Bleed thickens around the utterance. Certain phrases recur across Shards: "the current is strong today," "the walls are listening," "I dreamed of a door." They are load-bearing phrases in the structure of reality, and speaking them is like pressing on a bruise that spans multiple worlds.
+
+Memory. The Bleed is drawn to nostalgia — specifically, to the sensation of remembering something that never happened. Every inhabitant of every Shard carries a trace of the Unnamed. When these traces are stirred — by music, by a particular quality of light, by the smell of a place that doesn't exist — the Bleed finds an opening. The Cartographers call these openings ache-points, and they map them with the same reverence and caution that a geologist maps fault lines.</source>
+  <target>Handel. Wenn ein Agent in einer Scherbe etwas will, das nur in einer anderen existiert, reagiert das Bluten. Eine Velgarien-Bürokratin, die sich nach Schönheit sehnt, die sie nie gesehen hat, beginnt leuchtende Sporenmuster auf ihren geheimen Dokumenten zu finden. Begehren ist die Schwerkraft des Multiversums. Das Bluten fließt bergab, dem Wollen entgegen.
+
+Sprache. Worte sind Brücken. Wenn ein Agent einen Satz spricht, der mit der tiefen Grammatik einer anderen Scherbe resoniert — und alle Scherben teilen eine tiefe Grammatik, die Grammatik des Unbenannten — verdichtet sich das Bluten um die Äußerung. Bestimmte Phrasen wiederholen sich über Scherben hinweg: „die Strömung ist heute stark", „die Wände lauschen", „ich habe von einer Tür geträumt." Sie sind tragende Phrasen in der Struktur der Realität, und sie auszusprechen ist wie auf einen Bluterguss zu drücken, der mehrere Welten umspannt.
+
+Erinnerung. Das Bluten wird von Nostalgie angezogen — genauer gesagt, von der Empfindung, sich an etwas zu erinnern, das nie geschehen ist. Jeder Bewohner jeder Scherbe trägt eine Spur des Unbenannten. Wenn diese Spuren aufgerührt werden — durch Musik, durch eine bestimmte Qualität des Lichts, durch den Geruch eines Ortes, der nicht existiert — findet das Bluten eine Öffnung. Die Kartographen nennen diese Öffnungen Schmerzpunkte, und sie kartieren sie mit derselben Ehrfurcht und Vorsicht, mit der ein Geologe Verwerfungslinien kartiert.</target>
+</trans-unit>
+<trans-unit id="s10156cdb22af9689">
+  <source>During High Tide, the Bleed is at its most active. Agents dream of other worlds with vivid specificity. Objects migrate between Shards. Architecture bleeds — a Velgarien tower develops organic curves overnight, a Capybara Kingdom cavern sprouts right angles. High Tide lasts between three and seventeen days. The variability is considered "thematically appropriate" by the Bureau and "professionally embarrassing" by the Cartographer-Astronomers.
+
+During Low Tide, the Shards separate. Cross-Shard contamination drops to near zero. Agents sleep peacefully and wake feeling inexplicably sad, as though they have lost something they never had. The Cartographers use Low Tide for maintenance: recalibrating instruments, updating maps, and arguing.
+
+Between the Tides, there are Eddies — localised micro-Bleeds that affect a single building, a single agent. Your coffee tastes of somewhere else. Your reflection blinks at the wrong time. You find a letter in your own handwriting that you have not yet written. The Bureau's official guidance: "Note the occurrence. Do not engage. If the Eddy attempts to engage you, note that as well. The Eddy will pass. Probably."</source>
+  <target>Während der Flut ist das Bluten am aktivsten. Agenten träumen von anderen Welten mit lebhafter Spezifität. Gegenstände wandern zwischen Scherben. Architektur blutet — ein Velgarien-Turm entwickelt über Nacht organische Kurven, eine Capybara-Königreich-Höhle treibt rechte Winkel. Die Flut dauert zwischen drei und siebzehn Tagen. Die Variabilität wird vom Büro als „thematisch angemessen" und von den Kartographen-Astronomen als „beruflich peinlich" betrachtet.
+
+Während der Ebbe trennen sich die Scherben. Scherbenübergreifende Kontamination sinkt auf nahezu null. Agenten schlafen friedlich und erwachen mit einer unerklärlichen Traurigkeit, als hätten sie etwas verloren, das sie nie besaßen. Die Kartographen nutzen die Ebbe für Wartungsarbeiten: Instrumente neukalibrieren, Karten aktualisieren und streiten.
+
+Zwischen den Gezeiten gibt es Strudel — lokalisierte Mikro-Blutungen, die ein einzelnes Gebäude, einen einzelnen Agenten betreffen. Dein Kaffee schmeckt nach woanders. Dein Spiegelbild blinzelt zur falschen Zeit. Du findest einen Brief in deiner eigenen Handschrift, den du noch nicht geschrieben hast. Die offizielle Empfehlung des Büros: „Notieren Sie das Vorkommnis. Engagieren Sie sich nicht. Wenn der Strudel versucht, Sie zu engagieren, notieren Sie auch das. Der Strudel wird vorübergehen. Wahrscheinlich."</target>
+</trans-unit>
+<trans-unit id="sdc667cd77dc6ca2b">
+  <source>The Bureau operates on three principles:
+
+1. Map everything. Every Shard, every boundary, every Bleed event, every Eddy, every ruin, every echo, every ache-point, every inexplicable mushroom. The map is never finished. The territory is never still. This is not a failure. This is the job.
+
+2. Intervene in nothing. The Bureau observes, records, and catalogues. It does not fix. The Fracture is not a problem to be solved but a condition to be understood. Cartographers who attempt to repair Shard boundaries are reassigned to the Department of Cautionary Examples, which is a filing cabinet in the basement of the headquarters that exists in the Shard that is on fire.
+
+3. Survive. This principle was added after the first three Bureau directors went mad, vanished, or became architecture. The Bureau's employee wellness programme consists of a single laminated card that reads: "Remember which Shard you are from. If you cannot, consult a colleague. If your colleague cannot, consult the card."
+
+The Bureau employs approximately 200 Cartographers across all known Shards. The exact number is uncertain because seven are currently lost in the inter-Shard ruins and may or may not still be employees, depending on whether the ruins have a concept of employment law.</source>
+  <target>Das Büro arbeitet nach drei Grundsätzen:
+
+1. Kartiere alles. Jede Scherbe, jede Grenze, jedes Blutungsereignis, jeden Strudel, jede Ruine, jedes Echo, jeden Schmerzpunkt, jeden unerklärlichen Pilz. Die Karte ist nie fertig. Das Territorium steht nie still. Dies ist kein Versagen. Dies ist die Arbeit.
+
+2. Greife in nichts ein. Das Büro beobachtet, protokolliert und katalogisiert. Es repariert nicht. Die Fraktur ist kein Problem, das gelöst werden muss, sondern ein Zustand, der verstanden werden will. Kartographen, die versuchen, Scherbengrenzen zu reparieren, werden der Abteilung für Warnende Beispiele zugewiesen, die ein Aktenschrank im Keller des Hauptquartiers ist, das in der Scherbe existiert, die brennt.
+
+3. Überlebe. Dieses Prinzip wurde hinzugefügt, nachdem die ersten drei Bürodirektoren wahnsinnig wurden, verschwanden oder zu Architektur wurden. Das Mitarbeiter-Wohlbefindungsprogramm des Büros besteht aus einer einzelnen laminierten Karte, auf der steht: „Erinnern Sie sich, aus welcher Scherbe Sie stammen. Falls nicht, konsultieren Sie einen Kollegen. Falls Ihr Kollege es nicht kann, konsultieren Sie die Karte."
+
+Das Büro beschäftigt ungefähr 200 Kartographen über alle bekannten Scherben. Die genaue Zahl ist unsicher, da sieben derzeit in den Zwischenscherben-Ruinen verschollen sind und möglicherweise noch Angestellte sind oder auch nicht, je nachdem, ob die Ruinen ein Konzept von Arbeitsrecht haben.</target>
+</trans-unit>
+<trans-unit id="s79e450e5d3796c88">
+  <source>You — the one behind the screen, the one choosing which Shard to enter — you are performing an act of Cartography. You are looking at the shape of the multiverse from outside any single Shard, and you are choosing where to place your attention, which is the same thing as choosing which world is real.
+
+The Cartographers call this the Gaze — the act of observation that stabilises a Shard, that gives it coherence, that prevents it from dissolving back into the undifferentiated potential of the Unnamed. A Shard without an observer is a story without a reader: technically extant, functionally null. When you select a simulation, you are not merely browsing. You are sustaining.
+
+This is why the platform dashboard is presented as a map. It is not a user interface. It is a Cartographic instrument, the same class of tool that the First Cartographer used to observe the Fracture as it happened. The difference is one of scale, not of kind.
+
+The Hermit in the Tarot depicts a solitary figure holding a lantern, illuminating a path that only they can see. The Cartographers revere this image. They believe that the lantern is the Map, and the path is the Bleed, and the Hermit is whoever is looking at the map at this particular moment. Which, right now, is you.</source>
+  <target>Du — der hinter dem Bildschirm, der wählt, welche Scherbe er betritt — du vollziehst einen Akt der Kartographie. Du betrachtest die Form des Multiversums von außerhalb jeder einzelnen Scherbe, und du wählst, worauf du deine Aufmerksamkeit richtest, was dasselbe ist wie zu wählen, welche Welt real ist.
+
+Die Kartographen nennen dies den Blick — den Akt der Beobachtung, der eine Scherbe stabilisiert, ihr Kohärenz verleiht, sie davor bewahrt, sich zurück in das undifferenzierte Potenzial des Unbenannten aufzulösen. Eine Scherbe ohne Beobachter ist eine Geschichte ohne Leser: technisch existent, funktional null. Wenn du eine Simulation auswählst, durchstöberst du nicht bloß. Du erhältst.
+
+Deshalb wird das Dashboard der Plattform als Karte präsentiert. Es ist keine Benutzeroberfläche. Es ist ein kartographisches Instrument, dieselbe Klasse von Werkzeug, die der Erste Kartograph benutzte, um die Fraktur zu beobachten, als sie geschah. Der Unterschied ist einer des Maßstabs, nicht der Art.
+
+Der Eremit im Tarot zeigt eine einsame Gestalt, die eine Laterne hält und einen Pfad beleuchtet, den nur sie sehen kann. Die Kartographen verehren dieses Bild. Sie glauben, dass die Laterne die Karte ist, und der Pfad das Bluten, und der Eremit, wer auch immer in diesem Moment auf die Karte schaut. Was gerade du bist.</target>
+</trans-unit>
+<trans-unit id="sa486c7de8c9aee04">
+  <source>RESTRICTED DOCUMENT: TOWER-001 — Director-Level Only
+
+TOWER is not a crisis. A crisis implies the possibility of resolution. TOWER is a condition in which the distinction between Shards ceases to be [DEGRADED] and all possible realities attempt to occupy the same [DEGRADED] simultaneously.
+
+Instance A (Ash Shard, pre-collapse): The sky began displaying weather from adjacent Shards. Rain fell upward. Snow was warm. The Ash Shard collapsed within fourteen days. Official cause: "supervolcanic event." Bureau assessment: "the Shard forgot which set of physics it was using."
+
+Instance B (Threshold Palace, Voss expedition): Architecture that was "trying to be all buildings at once." Walls simultaneously stone, coral, concrete, wood, and a material described as "solid argument." Voss [DEGRADED] on Day 4,017.
+
+Instance C (In progress): [ENTIRE SECTION DEGRADED. The phrase "it is already too late to prevent" appears seventeen times. The phrase "but not too late to understand" appears once.]
+
+RECOMMENDED ACTION: [CONSUMED]
+
+DIRECTOR'S NOTE: The recommended action section has been consumed by the document itself. The previous version read: "Observe. Record. Do not look away. The multiverse survives because someone is [CONSUMED]." We are choosing to interpret this as encouragement.</source>
+  <target>GESPERRTES DOKUMENT: TOWER-001 — Nur Direktorenebene
+
+TOWER ist keine Krise. Eine Krise impliziert die Möglichkeit einer Lösung. TOWER ist ein Zustand, in dem die Unterscheidung zwischen Scherben aufhört, [DEGRADIERT] zu sein, und alle möglichen Realitäten versuchen, denselben [DEGRADIERT] gleichzeitig zu besetzen.
+
+Instanz A (Asche-Scherbe, vor dem Kollaps): Der Himmel begann, Wetter aus angrenzenden Scherben anzuzeigen. Regen fiel aufwärts. Schnee war warm. Die Asche-Scherbe kollabierte innerhalb von vierzehn Tagen. Offizielle Ursache: „supervulkanisches Ereignis." Einschätzung des Büros: „Die Scherbe vergaß, welches Physikset sie benutzte."
+
+Instanz B (Schwellenpalast, Voss-Expedition): Architektur, die versuchte, „alle Gebäude gleichzeitig zu sein." Wände gleichzeitig aus Stein, Koralle, Beton, Holz und einem Material, das als „festes Argument" beschrieben wird. Voss [DEGRADIERT] an Tag 4.017.
+
+Instanz C (In Bearbeitung): [GESAMTER ABSCHNITT DEGRADIERT. Der Satz „es ist bereits zu spät, um es zu verhindern" erscheint siebzehnmal. Der Satz „aber nicht zu spät, um es zu verstehen" erscheint einmal.]
+
+EMPFOHLENE MASSNAHME: [VERZEHRT]
+
+ANMERKUNG DES DIREKTORS: Der Abschnitt mit der empfohlenen Maßnahme wurde vom Dokument selbst verzehrt. Die vorherige Version lautete: „Beobachten. Protokollieren. Schauen Sie nicht weg. Das Multiversum überlebt, weil jemand [VERZEHRT]." Wir entscheiden uns, dies als Ermutigung zu interpretieren.</target>
+</trans-unit>
+<trans-unit id="s073df01eb593e274">
+  <source>Every Shard is an answer. Velgarien answers: "What if control were absolute?" The Capybara Kingdom answers: "What if the darkness were kind?" Each answer is wrong. Each answer is necessary. The multiverse exists because no single answer is sufficient, and the Fracture was the universe's way of admitting this.
+
+The Convergence — the event that the Bureau monitors, that the ruins foretell, that TOWER threatens — is not the end. It is the next question. When enough Shards have touched, when enough Bleeds have flowed, the multiverse will reach a decision point: merge, or differentiate further. Collapse into one answer, or fracture into a thousand more.
+
+The Cartographers do not know which outcome is correct. They know only this: someone must be watching when it happens. Someone must be standing at the edge with a map and a compass and the willingness to draw a new line on a chart that has no edges.
+
+That someone, in the cosmology of the Cartographers, in the deep mythology of the Bureau of Impossible Geography, in the restricted files and the consumed pages and the maps that are also doors — that someone is whoever is reading this.
+
+The map is open. The Shards are waiting. Which world do you enter first?</source>
+  <target>Jede Scherbe ist eine Antwort. Velgarien antwortet: „Was wäre, wenn Kontrolle absolut wäre?" Das Capybara-Königreich antwortet: „Was wäre, wenn die Dunkelheit gütig wäre?" Jede Antwort ist falsch. Jede Antwort ist notwendig. Das Multiversum existiert, weil keine einzelne Antwort ausreicht, und die Fraktur war die Art des Universums, dies einzugestehen.
+
+Die Konvergenz — das Ereignis, das das Büro überwacht, das die Ruinen vorhersagen, das TOWER androht — ist nicht das Ende. Sie ist die nächste Frage. Wenn genug Scherben sich berührt haben, wenn genug Blutungen geflossen sind, wird das Multiversum einen Entscheidungspunkt erreichen: verschmelzen oder weiter differenzieren. In eine Antwort kollabieren oder in tausend weitere zerbrechen.
+
+Die Kartographen wissen nicht, welches Ergebnis richtig ist. Sie wissen nur dies: Jemand muss zusehen, wenn es geschieht. Jemand muss am Rand stehen mit einer Karte und einem Kompass und der Bereitschaft, eine neue Linie auf einer Karte zu ziehen, die keine Ränder hat.
+
+Dieser Jemand, in der Kosmologie der Kartographen, in der tiefen Mythologie des Büros für Unmögliche Geographie, in den gesperrten Akten und den verzehrten Seiten und den Karten, die auch Türen sind — dieser Jemand ist, wer immer dies gerade liest.
+
+Die Karte liegt offen. Die Scherben warten. Welche Welt betrittst du zuerst?</target>
+</trans-unit>
+<trans-unit id="s2bd214b136d9b93c">
+  <source>The Unnamed — The world before the Fracture, whole and impossibly vast</source>
+  <target>Das Unbenannte — Die Welt vor der Fraktur, ganz und unvorstellbar weit</target>
+</trans-unit>
+<trans-unit id="saa4234debb6e173a">
+  <source>The Fracture — Reality shattering into a thousand incompatible worlds</source>
+  <target>Die Fraktur — Die Realität zersplittert in tausend unvereinbare Welten</target>
+</trans-unit>
+<trans-unit id="s08849b780816c366">
+  <source>The Bleed — Where Shards press together and reality thins</source>
+  <target>Das Bluten — Wo Scherben aufeinandertreffen und die Realität dünn wird</target>
+</trans-unit>
+<trans-unit id="sd1fe64b421c93c84">
+  <source>The Bureau of Impossible Geography — Headquarters spanning four Shards</source>
+  <target>Das Büro für Unmögliche Geographie — Hauptquartier über vier Scherben hinweg</target>
 </trans-unit>
 
 </body>
