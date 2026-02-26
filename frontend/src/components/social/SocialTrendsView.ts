@@ -453,12 +453,12 @@ export class VelgSocialTrendsView extends LitElement {
             ? html`<img
                 class="selected__image"
                 src=${image}
-                alt=${article.title ?? article.name}
+                alt=${article.name}
                 loading="lazy"
                 @click=${(e: Event) => {
                   e.stopPropagation();
                   this._lightboxSrc = image;
-                  this._lightboxAlt = article.title ?? article.name;
+                  this._lightboxAlt = article.name;
                 }}
               />`
             : nothing
