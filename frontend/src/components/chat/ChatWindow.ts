@@ -9,6 +9,7 @@ import type {
   ChatEventReference,
   ChatMessage,
 } from '../../types/index.js';
+import { agentAltText } from '../../utils/text.js';
 import { VelgToast } from '../shared/Toast.js';
 
 import '../shared/Lightbox.js';
@@ -319,6 +320,7 @@ export class VelgChatWindow extends LitElement {
   @state() private _aiTyping = false;
   @state() private _showEventsBar = false;
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
 
   @query('.window__messages') private _messagesContainer!: HTMLElement;
 
@@ -517,6 +519,7 @@ export class VelgChatWindow extends LitElement {
                 clickable
                 @avatar-click=${(e: CustomEvent) => {
                   this._lightboxSrc = (e.detail as { src: string }).src;
+                  this._lightboxAlt = agentAltText(agent);
                 }}
                 style="margin-left: ${i > 0 ? '-8px' : '0'}"
               ></velg-avatar>`
@@ -683,6 +686,7 @@ export class VelgChatWindow extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

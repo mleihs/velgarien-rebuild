@@ -254,6 +254,7 @@ export class VelgSocialTrendsView extends LitElement {
   @state() private _selectedArticle: BrowseArticle | null = null;
   @state() private _showTransformModal = false;
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -452,11 +453,12 @@ export class VelgSocialTrendsView extends LitElement {
             ? html`<img
                 class="selected__image"
                 src=${image}
-                alt=""
+                alt=${article.title ?? article.name}
                 loading="lazy"
                 @click=${(e: Event) => {
                   e.stopPropagation();
                   this._lightboxSrc = image;
+                  this._lightboxAlt = article.title ?? article.name;
                 }}
               />`
             : nothing
@@ -575,6 +577,7 @@ export class VelgSocialTrendsView extends LitElement {
 
         <velg-lightbox
           .src=${this._lightboxSrc}
+          .alt=${this._lightboxAlt}
           @lightbox-close=${() => {
             this._lightboxSrc = null;
           }}

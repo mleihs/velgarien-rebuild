@@ -39,6 +39,8 @@ export class VelgPlatformHeader extends LitElement {
       text-transform: uppercase;
       letter-spacing: var(--tracking-brutalist);
       cursor: pointer;
+      text-decoration: none;
+      color: inherit;
     }
 
     .header__title:hover {
@@ -120,7 +122,8 @@ export class VelgPlatformHeader extends LitElement {
     this._simulations = appState.simulations.value;
   }
 
-  private _handleTitleClick(): void {
+  private _handleTitleClick(e: Event): void {
+    e.preventDefault();
     this.dispatchEvent(
       new CustomEvent('navigate', { detail: '/dashboard', bubbles: true, composed: true }),
     );
@@ -157,7 +160,7 @@ export class VelgPlatformHeader extends LitElement {
     return html`
       <div class="header">
         <div class="header__left">
-          <span class="header__title" @click=${this._handleTitleClick}>${msg('metaverse.center')}</span>
+          <a href="/dashboard" class="header__title" @click=${this._handleTitleClick}>${msg('metaverse.center')}</a>
 
           ${
             this._simulations.length > 0

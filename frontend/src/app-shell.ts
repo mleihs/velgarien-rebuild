@@ -3,10 +3,13 @@ import { Router } from '@lit-labs/router';
 import type { TemplateResult } from 'lit';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { analyticsService } from './services/AnalyticsService.js';
 import { appState } from './services/AppStateManager.js';
-import { membersApi, settingsApi, taxonomiesApi } from './services/api/index.js';
+import { membersApi, settingsApi, simulationsApi, taxonomiesApi } from './services/api/index.js';
 import { localeService } from './services/i18n/locale-service.js';
+import { seoService } from './services/SeoService.js';
 import { authService } from './services/supabase/SupabaseAuthService.js';
+import type { Simulation } from './types/index.js';
 
 import './components/auth/LoginView.js';
 import './components/auth/LoginPanel.js';
@@ -26,6 +29,7 @@ import './components/locations/LocationsView.js';
 import './components/platform/InvitationAcceptView.js';
 import './components/platform/CreateSimulationWizard.js';
 import './components/platform/UserProfileView.js';
+import './components/shared/CookieConsent.js';
 
 @localized()
 @customElement('velg-app')
@@ -86,18 +90,28 @@ export class VelgApp extends LitElement {
       {
         path: '/login',
         render: () => html`<velg-login-view></velg-login-view>`,
-        enter: async () => this._guardGuest(),
+        enter: async () => {
+          const ok = await this._guardGuest();
+          if (ok) seoService.setTitle(['Sign In']);
+          return ok;
+        },
       },
       {
         path: '/register',
         render: () => html`<velg-register-view></velg-register-view>`,
-        enter: async () => this._guardGuest(),
+        enter: async () => {
+          const ok = await this._guardGuest();
+          if (ok) seoService.setTitle(['Register']);
+          return ok;
+        },
       },
       {
         path: '/dashboard',
         render: () => html`<velg-simulations-dashboard></velg-simulations-dashboard>`,
         enter: async () => {
           await this._authReady;
+          seoService.reset();
+          analyticsService.trackPageView('/dashboard', document.title);
           return true;
         },
       },
@@ -109,7 +123,11 @@ export class VelgApp extends LitElement {
       {
         path: '/profile',
         render: () => html`<velg-user-profile-view></velg-user-profile-view>`,
-        enter: async () => this._guardAuth(),
+        enter: async () => {
+          const ok = await this._guardAuth();
+          if (ok) seoService.setTitle(['Profile']);
+          return ok;
+        },
       },
       {
         path: '/new-simulation',
@@ -205,6 +223,7 @@ export class VelgApp extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     await localeService.initLocale();
+    analyticsService.init();
     this.addEventListener('navigate', this._handleNavigate as EventListener);
     this.addEventListener('login-panel-open', this._handleLoginPanelOpen as EventListener);
     this.addEventListener('login-panel-close', this._handleLoginPanelClose as EventListener);
@@ -219,7 +238,11 @@ export class VelgApp extends LitElement {
   }
 
   private _handleNavigate = (e: CustomEvent<string>): void => {
-    this._router.goto(e.detail);
+    const path = e.detail;
+    if (path !== window.location.pathname) {
+      window.history.pushState({}, '', path);
+    }
+    this._router.goto(path);
   };
 
   private _handleLoginPanelOpen = (): void => {
@@ -266,6 +289,14 @@ export class VelgApp extends LitElement {
     if (this._lastLoadedSimulationId === simulationId) return;
     this._lastLoadedSimulationId = simulationId;
 
+    // Deep link fix: if currentSimulation is missing or stale, fetch it
+    if (appState.currentSimulation.value?.id !== simulationId) {
+      const simResponse = await simulationsApi.getById(simulationId);
+      if (simResponse.success && simResponse.data) {
+        appState.setCurrentSimulation(simResponse.data as Simulation);
+      }
+    }
+
     if (appState.isAuthenticated.value) {
       // Authenticated: load taxonomies, member role, and design settings in parallel
       const [taxResponse, membersResponse, settingsResponse] = await Promise.all([
@@ -309,7 +340,16 @@ export class VelgApp extends LitElement {
   }
 
   private _renderSimulationView(simulationId: string, view: string) {
-    this._loadSimulationContext(simulationId);
+    this._loadSimulationContext(simulationId).then(() => {
+      const simName = appState.currentSimulation.value?.name ?? '';
+      const viewLabel = view.charAt(0).toUpperCase() + view.slice(1);
+      seoService.setTitle(simName ? [viewLabel, simName] : [viewLabel]);
+      seoService.setCanonical(`/simulations/${simulationId}/${view}`);
+      if (appState.currentSimulation.value?.description) {
+        seoService.setDescription(appState.currentSimulation.value.description);
+      }
+      analyticsService.trackPageView(`/simulations/${simulationId}/${view}`, document.title);
+    });
     let content: TemplateResult;
     switch (view) {
       case 'agents':
@@ -362,6 +402,7 @@ export class VelgApp extends LitElement {
         ${this._router.outlet()}
       </main>
       ${this._showLoginPanel ? html`<velg-login-panel></velg-login-panel>` : nothing}
+      <velg-cookie-consent></velg-cookie-consent>
     `;
   }
 }

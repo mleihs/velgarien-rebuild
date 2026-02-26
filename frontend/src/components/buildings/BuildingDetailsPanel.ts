@@ -5,6 +5,7 @@ import { appState } from '../../services/AppStateManager.js';
 import { buildingsApi } from '../../services/api/index.js';
 import type { Building, BuildingAgentRelation } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
+import { buildingAltText } from '../../utils/text.js';
 import '../shared/Lightbox.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
 import '../shared/VelgBadge.js';
@@ -148,6 +149,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
   @state() private _agents: BuildingAgentRelation[] = [];
   @state() private _loadingAgents = false;
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
 
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('building') || changedProperties.has('open')) {
@@ -255,9 +257,10 @@ export class VelgBuildingDetailsPanel extends LitElement {
                     b.image_url
                       ? html`<img
                           src=${b.image_url}
-                          alt=${b.name}
+                          alt=${buildingAltText(b)}
                           @click=${() => {
                             this._lightboxSrc = b.image_url ?? null;
+                            this._lightboxAlt = buildingAltText(b);
                           }}
                         />`
                       : html`<div class="panel__placeholder">${icons.building(64)}</div>`
@@ -383,6 +386,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

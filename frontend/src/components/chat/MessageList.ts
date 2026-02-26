@@ -2,6 +2,7 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import type { AgentBrief, ChatEventReference, ChatMessage } from '../../types/index.js';
+import { agentAltText } from '../../utils/text.js';
 import '../shared/Lightbox.js';
 import '../shared/VelgAvatar.js';
 
@@ -205,6 +206,7 @@ export class VelgMessageList extends LitElement {
   @property({ type: String }) agentName = 'Agent';
   @property({ type: String }) agentPortraitUrl = '';
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
   /** All agents in the conversation — used for multi-agent attribution */
   @property({ type: Array }) agents: AgentBrief[] = [];
   /** Event references to show as in-chat separators */
@@ -332,6 +334,7 @@ export class VelgMessageList extends LitElement {
             clickable
             @avatar-click=${(e: CustomEvent) => {
               this._lightboxSrc = (e.detail as { src: string }).src;
+              this._lightboxAlt = agentAltText({ name });
             }}
           ></velg-avatar>
         </div>
@@ -449,6 +452,7 @@ export class VelgMessageList extends LitElement {
       <div class="messages">${items}</div>
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

@@ -33,6 +33,8 @@ export class VelgSimulationCard extends LitElement {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
+      text-decoration: none;
+      color: inherit;
     }
 
     .shard:hover {
@@ -201,7 +203,8 @@ export class VelgSimulationCard extends LitElement {
 
   @property({ type: Object }) simulation!: Simulation;
 
-  private _handleClick(): void {
+  private _handleClick(e: Event): void {
+    e.preventDefault();
     this.dispatchEvent(
       new CustomEvent('simulation-click', {
         detail: this.simulation,
@@ -231,14 +234,15 @@ export class VelgSimulationCard extends LitElement {
     const colorAlpha = `${color}33`;
 
     return html`
-      <div
+      <a
+        href="/simulations/${sim.id}/agents"
         class="shard"
         style="--shard-color: ${color}; --shard-color-alpha: ${colorAlpha}"
         @click=${this._handleClick}
       >
         ${
           sim.banner_url
-            ? html`<div class="shard__image" style="background-image: url(${sim.banner_url})"></div>`
+            ? html`<div class="shard__image" style="background-image: url(${sim.banner_url})" role="img" aria-label="${sim.name} — ${sim.description ?? sim.theme}"></div>`
             : html`<div class="shard__placeholder"></div>`
         }
         <div class="shard__overlay"></div>
@@ -272,7 +276,7 @@ export class VelgSimulationCard extends LitElement {
         </div>
 
         <div class="shard__bleed"></div>
-      </div>
+      </a>
     `;
   }
 }

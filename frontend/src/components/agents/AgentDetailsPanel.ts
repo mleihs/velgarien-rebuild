@@ -5,6 +5,7 @@ import { appState } from '../../services/AppStateManager.js';
 import { agentsApi } from '../../services/api/index.js';
 import type { Agent, EventReaction } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
+import { agentAltText } from '../../utils/text.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import '../shared/Lightbox.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
@@ -209,6 +210,7 @@ export class VelgAgentDetailsPanel extends LitElement {
   @state() private _reactionsLoading = false;
   @state() private _expandedReactions: Set<string> = new Set();
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
 
   protected updated(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('agent') || changedProperties.has('open')) {
@@ -390,6 +392,7 @@ export class VelgAgentDetailsPanel extends LitElement {
                 ?clickable=${!!agent.portrait_image_url}
                 @avatar-click=${(e: CustomEvent) => {
                   this._lightboxSrc = (e.detail as { src: string }).src;
+                  this._lightboxAlt = agentAltText(agent);
                 }}
               ></velg-avatar>
 
@@ -454,6 +457,7 @@ export class VelgAgentDetailsPanel extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

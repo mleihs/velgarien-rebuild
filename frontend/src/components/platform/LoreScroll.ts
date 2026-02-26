@@ -576,6 +576,7 @@ export class VelgLoreScroll extends LitElement {
 
   /** Lightbox state */
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
   @state() private _lightboxCaption = '';
 
   /** Number of sections to show before "Descend Deeper" */
@@ -595,8 +596,9 @@ export class VelgLoreScroll extends LitElement {
     this._revealedAll = true;
   }
 
-  private _openLightbox(url: string, caption: string): void {
+  private _openLightbox(url: string, alt: string, caption: string): void {
     this._lightboxSrc = url;
+    this._lightboxAlt = alt;
     this._lightboxCaption = caption;
   }
 
@@ -677,7 +679,7 @@ export class VelgLoreScroll extends LitElement {
                         src=${imageUrl}
                         alt=${section.title}
                         loading="lazy"
-                        @click=${() => this._openLightbox(imageUrl, caption)}
+                        @click=${() => this._openLightbox(imageUrl, section.title, caption)}
                       />
                       ${
                         caption
@@ -712,6 +714,7 @@ export class VelgLoreScroll extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
         .caption=${this._lightboxCaption}
         @lightbox-close=${this._closeLightbox}
       ></velg-lightbox>

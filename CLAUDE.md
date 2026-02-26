@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added. 139 tasks. 899 localized UI strings (EN/DE). Production deployed on Railway + hosted Supabase. 3 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror).
+**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + SEO/GA4/deep-linking implemented. 139 tasks. 902 localized UI strings (EN/DE). Production deployed on Railway + hosted Supabase. 3 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror).
 
 ## Tech Stack
 
@@ -26,7 +26,7 @@ Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT
 | Database | Supabase (PostgreSQL + RLS) |
 | Auth | Supabase Auth (JWT) |
 | Linting | Biome 2.4 (frontend), ruff (backend) |
-| Testing | pytest (backend), vitest (frontend), Playwright (E2E) |
+| Testing | pytest (backend), vitest + happy-dom (frontend), Playwright (E2E) |
 
 ## Architecture
 
@@ -49,9 +49,9 @@ backend/              FastAPI application
   routers/            API endpoints — 20 routers, 136 endpoints (/api/v1/... + /api/v1/public/...)
   models/             Pydantic request/response models (19 files)
   services/           Business logic (BaseService + 15 entity + audit + simulation + external)
-  middleware/         Rate limiting, security headers
+  middleware/         Rate limiting, security headers (CSP), SEO crawler detection + HTML enrichment
   utils/              Encryption (AES-256 for settings), search helpers
-  tests/              pytest tests (275 tests: unit + integration + security + performance)
+  tests/              pytest tests (321 tests: unit + integration + security + performance)
 frontend/             Lit + Vite application
   src/
     app-shell.ts      Main app with @lit-labs/router (auth + simulation-scoped routes)
@@ -59,7 +59,7 @@ frontend/             Lit + Vite application
       auth/           Login, Register views, LoginPanel (slide-in)
       platform/       PlatformHeader, UserMenu, SimulationsDashboard, LoreScroll, CreateSimulationWizard, UserProfileView, InvitationAcceptView, NotificationCenter
       layout/         SimulationShell, SimulationHeader, SimulationNav
-      shared/         17 reusable components + 3 shared CSS modules (see Code Reusability)
+      shared/         18 reusable components + 3 shared CSS modules (see Code Reusability)
       agents/         AgentsView, AgentCard, AgentEditModal, AgentDetailsPanel
       buildings/      BuildingsView, BuildingCard, BuildingEditModal, BuildingDetailsPanel
       events/         EventsView, EventCard, EventEditModal, EventDetailsPanel
@@ -67,7 +67,7 @@ frontend/             Lit + Vite application
       social/         SocialTrendsView, SocialMediaView, CampaignDashboard, CampaignDetailView, TrendCard, PostCard, TransformationModal, PostTransformModal, CampaignCard
       locations/      LocationsView, CityList, ZoneList, StreetList, LocationEditModal
       settings/       SettingsView + 7 panels (General, World, AI, Integration, Design, Access, View)
-    services/         Supabase client, 16 API services, AppStateManager, NotificationService, RealtimeService, PresenceService, ThemeService, theme-presets
+    services/         Supabase client, 16 API services, AppStateManager, NotificationService, RealtimeService, PresenceService, ThemeService, theme-presets, SeoService, AnalyticsService
       i18n/           LocaleService + FormatService
     locales/          i18n files
       generated/      Auto-generated: de.ts, locale-codes.ts (DO NOT EDIT)
@@ -75,7 +75,7 @@ frontend/             Lit + Vite application
     styles/           CSS design tokens (tokens/: 8 files — colors, typography, spacing, borders, shadows, animation, layout, z-index) + base styles (base/)
     utils/            Shared utilities (text.ts, formatters.ts, error-handler.ts, icons.ts)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
-  tests/              vitest tests (197 tests: validation + API + notification + theme contrast)
+  tests/              vitest tests (222 tests: validation + API + notification + theme contrast + SEO/analytics)
 e2e/                  Playwright E2E tests (56 specs across 9 files)
   playwright.config.ts
   helpers/            auth.ts, fixtures.ts
@@ -221,7 +221,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 }
 ```
 
-136 endpoints across 20 routers. Platform-level: `/api/v1/health`, `/api/v1/users/me`, `/api/v1/simulations`, `/api/v1/invitations`. Simulation-scoped: `/api/v1/simulations/{simulation_id}/agents`, `buildings`, `events`, `agent_professions`, `locations`, `taxonomies`, `settings`, `chat`, `members`, `campaigns`, `social-trends`, `social-media`, `generation`, `prompt-templates`. Public (no auth, rate-limited 100/min): `/api/v1/public/simulations`, `/api/v1/public/simulations/{id}/*` (GET-only, 20 endpoints mirroring authenticated reads, delegates to service layer).
+138 endpoints across 21 routers. Platform-level: `/api/v1/health`, `/api/v1/users/me`, `/api/v1/simulations`, `/api/v1/invitations`. SEO: `/robots.txt`, `/sitemap.xml` (dynamic from DB). Simulation-scoped: `/api/v1/simulations/{simulation_id}/agents`, `buildings`, `events`, `agent_professions`, `locations`, `taxonomies`, `settings`, `chat`, `members`, `campaigns`, `social-trends`, `social-media`, `generation`, `prompt-templates`. Public (no auth, rate-limited 100/min): `/api/v1/public/simulations`, `/api/v1/public/simulations/{id}/*` (GET-only, 20 endpoints mirroring authenticated reads, delegates to service layer).
 
 ## Backend Patterns
 
@@ -292,7 +292,7 @@ Alternatively, add `<target>` elements directly to `frontend/src/locales/xliff/d
 | `frontend/lit-localize.json` | Config: sourceLocale=en, targetLocale=de, runtime mode |
 | `frontend/src/services/i18n/locale-service.ts` | LocaleService: initLocale, setLocale, getInitialLocale |
 | `frontend/src/services/i18n/format-service.ts` | FormatService: formatDate, formatDateTime, formatNumber, formatRelativeTime |
-| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (899 trans-units) — edit this for translations |
+| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (902 trans-units) — edit this for translations |
 | `frontend/src/locales/generated/de.ts` | Auto-generated — NEVER edit manually |
 | `frontend/src/locales/generated/locale-codes.ts` | Source/target locale constants |
 
@@ -300,13 +300,14 @@ Alternatively, add `<target>` elements directly to `frontend/src/locales/xliff/d
 
 **Before writing new code, ALWAYS search for existing reusable patterns:**
 
-1. **Check `components/shared/`** — 17 shared components + 3 CSS modules exist. Use them instead of creating one-off solutions:
+1. **Check `components/shared/`** — 18 shared components + 3 CSS modules exist. Use them instead of creating one-off solutions:
    - **Layout:** `VelgSidePanel` (slide-from-right detail panel shell with backdrop, Escape, 3 slots: media/content/footer), `BaseModal` (centered dialog)
    - **UI Primitives:** `VelgBadge` (6 color variants), `VelgAvatar` (portrait + initials fallback, 3 sizes), `VelgIconButton` (30px icon action button), `VelgSectionHeader` (section titles, 2 variants)
    - **Data Display:** `DataTable`, `Pagination`, `SharedFilterBar`
    - **Feedback:** `Toast`, `ConfirmDialog`, `LoadingState`, `EmptyState`, `ErrorState`, `GenerationProgress`
    - **Forms:** `FormBuilder`
-   - **Media:** `Lightbox` (fullscreen image overlay with Escape/click-to-close, optional `caption` property)
+   - **Media:** `Lightbox` (fullscreen image overlay with Escape/click-to-close, optional `caption` + `alt` properties)
+   - **GDPR:** `CookieConsent` (fixed bottom banner, accept/decline analytics, stores in localStorage)
    - **Shared CSS:**
      - `panel-button-styles.ts` — `panelButtonStyles` for detail panel footer buttons (`.panel__btn` base + `--edit`, `--danger`, `--generate` variants)
      - `form-styles.ts` — `formStyles` for modal forms (`.form`, `.form__group`, `.form__row`, `.form__label`, `.form__input/.form__textarea/.form__select`, `.footer`, `.footer__btn--cancel/--save`, `.gen-btn`)

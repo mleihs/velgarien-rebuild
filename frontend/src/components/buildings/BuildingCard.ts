@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import type { Building } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
+import { buildingAltText } from '../../utils/text.js';
 import '../shared/Lightbox.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
@@ -108,6 +109,7 @@ export class VelgBuildingCard extends LitElement {
 
   @property({ attribute: false }) building!: Building;
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
 
   private _getConditionVariant(condition: string | undefined): string {
     if (!condition) return 'default';
@@ -166,11 +168,12 @@ export class VelgBuildingCard extends LitElement {
             b.image_url
               ? html`<img
                   src=${b.image_url}
-                  alt=${b.name}
+                  alt=${buildingAltText(b)}
                   loading="lazy"
                   @click=${(e: Event) => {
                     e.stopPropagation();
                     this._lightboxSrc = b.image_url ?? null;
+                    this._lightboxAlt = buildingAltText(b);
                   }}
                 />`
               : html`<div class="card__placeholder">${icons.building()}</div>`
@@ -219,6 +222,7 @@ export class VelgBuildingCard extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

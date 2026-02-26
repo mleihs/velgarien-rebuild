@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import type { Agent } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
+import { agentAltText } from '../../utils/text.js';
 import '../shared/Lightbox.js';
 import '../shared/VelgAvatar.js';
 import '../shared/VelgBadge.js';
@@ -83,6 +84,7 @@ export class VelgAgentCard extends LitElement {
 
   @property({ type: Object }) agent!: Agent;
   @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
 
   private _handleClick(): void {
     this.dispatchEvent(
@@ -130,6 +132,7 @@ export class VelgAgentCard extends LitElement {
           @avatar-click=${(e: CustomEvent) => {
             e.stopPropagation();
             this._lightboxSrc = (e.detail as { src: string }).src;
+            this._lightboxAlt = agentAltText(agent);
           }}
         ></velg-avatar>
 
@@ -165,6 +168,7 @@ export class VelgAgentCard extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

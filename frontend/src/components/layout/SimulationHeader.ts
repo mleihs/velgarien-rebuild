@@ -1,7 +1,6 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import type { Simulation } from '../../types/index.js';
 
 @customElement('velg-simulation-header')
 export class VelgSimulationHeader extends LitElement {
@@ -59,12 +58,6 @@ export class VelgSimulationHeader extends LitElement {
   `;
 
   @property({ type: String }) simulationId = '';
-  @state() private _simulation: Simulation | null = null;
-
-  connectedCallback(): void {
-    super.connectedCallback();
-    this._simulation = appState.currentSimulation.value;
-  }
 
   private _getBadgeClass(status: string): string {
     if (status === 'active') return 'badge--active';
@@ -73,7 +66,7 @@ export class VelgSimulationHeader extends LitElement {
   }
 
   protected render() {
-    const sim = this._simulation;
+    const sim = appState.currentSimulation.value;
     if (!sim) return html``;
 
     return html`

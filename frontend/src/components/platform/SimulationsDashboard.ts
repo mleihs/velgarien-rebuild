@@ -355,6 +355,8 @@ export class VelgSimulationsDashboard extends LitElement {
         <div
           class="hero__bg ${heroUrl ? 'hero__bg--has-image' : 'hero__bg--fallback'}"
           style=${heroUrl ? `background-image: url(${heroUrl})` : ''}
+          role=${heroUrl ? 'img' : 'presentation'}
+          aria-label=${heroUrl ? 'metaverse.center — interconnected shards of simulated reality' : ''}
         ></div>
         <div class="hero__noise"></div>
         <div class="hero__overlay">

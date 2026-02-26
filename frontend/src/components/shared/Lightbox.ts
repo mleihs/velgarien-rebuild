@@ -85,6 +85,7 @@ export class VelgLightbox extends LitElement {
   `;
 
   @property({ type: String }) src: string | null = null;
+  @property({ type: String }) alt = '';
   @property({ type: String }) caption = '';
 
   connectedCallback(): void {
@@ -125,7 +126,7 @@ export class VelgLightbox extends LitElement {
         <img
           class="lightbox__img"
           src=${this.src}
-          alt=""
+          alt=${this.alt}
           @click=${(e: Event) => e.stopPropagation()}
         />
         <button class="lightbox__close" aria-label="Close">&times;</button>

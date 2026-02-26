@@ -3963,6 +3963,18 @@ Dieser Jemand ist, in der Kosmologie der Kartographen, in der tiefen Mythologie 
 
 Die Karte liegt offen. Die Scherben warten. Welche Welt betrittst du zuerst?</target>
 </trans-unit>
+<trans-unit id="s1a783603a679af5e">
+  <source>We use analytics to improve this site.</source>
+  <target>Wir verwenden Analysen zur Verbesserung dieser Seite.</target>
+</trans-unit>
+<trans-unit id="s9d8761242ed23159">
+  <source>Accept Analytics</source>
+  <target>Analyse akzeptieren</target>
+</trans-unit>
+<trans-unit id="s32322dc45e502559">
+  <source>Decline</source>
+  <target>Ablehnen</target>
+</trans-unit>
 
 </body>
 </file>

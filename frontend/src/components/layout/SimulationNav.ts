@@ -55,6 +55,7 @@ export class VelgSimulationNav extends LitElement {
       cursor: pointer;
       transition: all var(--transition-fast);
       white-space: nowrap;
+      text-decoration: none;
     }
 
     .nav__tab:hover {
@@ -84,7 +85,8 @@ export class VelgSimulationNav extends LitElement {
     }
   }
 
-  private _handleTabClick(tab: NavTab): void {
+  private _handleTabClick(e: Event, tab: NavTab): void {
+    e.preventDefault();
     this._activeTab = tab.path;
     this.dispatchEvent(
       new CustomEvent('navigate', {
@@ -107,12 +109,13 @@ export class VelgSimulationNav extends LitElement {
       <nav class="nav">
         ${this._visibleTabs.map(
           (tab) => html`
-            <button
+            <a
+              href="/simulations/${this.simulationId}/${tab.path}"
               class="nav__tab ${this._activeTab === tab.path ? 'nav__tab--active' : ''}"
-              @click=${() => this._handleTabClick(tab)}
+              @click=${(e: Event) => this._handleTabClick(e, tab)}
             >
               ${tab.label}
-            </button>
+            </a>
           `,
         )}
       </nav>
