@@ -92,7 +92,10 @@ export class VelgApp extends LitElement {
         render: () => html`<velg-login-view></velg-login-view>`,
         enter: async () => {
           const ok = await this._guardGuest();
-          if (ok) seoService.setTitle(['Sign In']);
+          if (ok) {
+            seoService.setTitle(['Sign In']);
+            analyticsService.trackPageView('/login', document.title);
+          }
           return ok;
         },
       },
@@ -101,7 +104,10 @@ export class VelgApp extends LitElement {
         render: () => html`<velg-register-view></velg-register-view>`,
         enter: async () => {
           const ok = await this._guardGuest();
-          if (ok) seoService.setTitle(['Register']);
+          if (ok) {
+            seoService.setTitle(['Register']);
+            analyticsService.trackPageView('/register', document.title);
+          }
           return ok;
         },
       },
@@ -119,20 +125,36 @@ export class VelgApp extends LitElement {
         path: '/invitations/:token',
         render: ({ token }) =>
           html`<velg-invitation-accept-view .token=${token ?? ''}></velg-invitation-accept-view>`,
+        enter: async () => {
+          await this._authReady;
+          seoService.setTitle(['Invitation']);
+          analyticsService.trackPageView('/invitations', document.title);
+          return true;
+        },
       },
       {
         path: '/profile',
         render: () => html`<velg-user-profile-view></velg-user-profile-view>`,
         enter: async () => {
           const ok = await this._guardAuth();
-          if (ok) seoService.setTitle(['Profile']);
+          if (ok) {
+            seoService.setTitle(['Profile']);
+            analyticsService.trackPageView('/profile', document.title);
+          }
           return ok;
         },
       },
       {
         path: '/new-simulation',
         render: () => html`<velg-create-simulation-wizard open></velg-create-simulation-wizard>`,
-        enter: async () => this._guardAuth(),
+        enter: async () => {
+          const ok = await this._guardAuth();
+          if (ok) {
+            seoService.setTitle(['New Simulation']);
+            analyticsService.trackPageView('/new-simulation', document.title);
+          }
+          return ok;
+        },
       },
       // --- Simulation-scoped routes (public read, auth for mutations) ---
       {

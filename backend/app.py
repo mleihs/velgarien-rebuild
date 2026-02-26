@@ -106,7 +106,7 @@ _static_dir = Path(__file__).resolve().parent.parent / "static" / "dist"
 if _static_dir.is_dir():
     app.mount("/assets", StaticFiles(directory=_static_dir / "assets"), name="static-assets")
 
-    @app.get("/{full_path:path}")
+    @app.get("/{full_path:path}", response_model=None)
     async def serve_spa(request: Request, full_path: str) -> FileResponse | HTMLResponse:
         """Serve SPA index.html for all non-API, non-asset routes."""
         file_path = _static_dir / full_path
