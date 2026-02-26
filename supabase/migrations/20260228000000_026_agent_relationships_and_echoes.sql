@@ -226,48 +226,56 @@ CROSS JOIN (VALUES
 ON CONFLICT DO NOTHING;
 
 -- ============================================================================
--- 6. DEMO DATA: Agent Relationships
+-- 6. DEMO DATA: Agent Relationships (name-based lookups for portability)
 -- ============================================================================
 
 -- Velgarien relationships
 INSERT INTO agent_relationships (simulation_id, source_agent_id, target_agent_id, relationship_type, is_bidirectional, intensity, description)
-VALUES
-  -- Elena Voss → General Aldric Wolf: rival
-  ('10000000-0000-0000-0000-000000000001', '1fb567b9-11fa-4ca5-9803-1f4d30941156', '6f879585-1227-4810-830f-73adc9e40a6e', 'rival', false, 6, 'A quiet bureaucratic war over Bureau 9 jurisdiction — Voss probes where Wolf conceals.'),
-  -- Doktor Fenn → Lena Kray: informant
-  ('10000000-0000-0000-0000-000000000001', 'd4e5887b-a406-4857-a50e-736d7978fe47', '32d05acb-70d8-4774-b093-16f0a47e3002', 'informant', false, 7, 'Fenn reports architectural anomalies to Kray, who files them as "compliance variance."'),
-  -- Viktor Harken → Mira Steinfeld: supervisor
-  ('10000000-0000-0000-0000-000000000001', 'de0932f7-1598-431f-9255-d4961095d160', 'a92627ff-7010-40c7-b23d-078f7f792a4d', 'supervisor', false, 8, 'Harken oversees Steinfeld''s intelligence operations — trust is fragile.');
+SELECT '10000000-0000-0000-0000-000000000001', src.id, tgt.id, rel.rtype, rel.bidir, rel.intensity, rel.descr
+FROM (VALUES
+  ('Elena Voss', 'General Aldric Wolf', 'rival', false, 6, 'A quiet bureaucratic war over Bureau 9 jurisdiction — Voss probes where Wolf conceals.'),
+  ('Doktor Fenn', 'Lena Kray', 'informant', false, 7, 'Fenn reports architectural anomalies to Kray, who files them as "compliance variance."'),
+  ('Viktor Harken', 'Mira Steinfeld', 'supervisor', false, 8, 'Harken oversees Steinfeld''s intelligence operations — trust is fragile.')
+) AS rel(src_name, tgt_name, rtype, bidir, intensity, descr)
+JOIN agents src ON src.name = rel.src_name AND src.simulation_id = '10000000-0000-0000-0000-000000000001'
+JOIN agents tgt ON tgt.name = rel.tgt_name AND tgt.simulation_id = '10000000-0000-0000-0000-000000000001'
+ON CONFLICT DO NOTHING;
 
 -- Capybara Kingdom relationships
 INSERT INTO agent_relationships (simulation_id, source_agent_id, target_agent_id, relationship_type, is_bidirectional, intensity, description)
-VALUES
-  -- The Archivist → Barnaby Gnaw: mentor
-  ('20000000-0000-0000-0000-000000000001', '583e985e-0829-4308-abc5-e06a64828324', 'de153d7a-bcbe-4e89-bb61-dacd81d9d614', 'mentor', false, 9, 'The elder Archivist guides young Barnaby through the deep cavern records.'),
-  -- Lady Caplin → Commodore Whiskers: trading_partner
-  ('20000000-0000-0000-0000-000000000001', '0a375608-99ed-4964-b4da-17d435d97ab0', '05552161-b8b5-4a9f-9ade-6913a4abc7ce', 'trading_partner', true, 7, 'Bioluminescent goods flow between Mudhollow and the Commodore''s fleet.'),
-  -- Sister Ember → The Archivist: scholarly_colleague
-  ('20000000-0000-0000-0000-000000000001', 'e0804211-5cda-4bf8-a356-c09b4407bb36', '583e985e-0829-4308-abc5-e06a64828324', 'scholarly_colleague', true, 6, 'They share research on the Unterzee tides and their theological implications.');
+SELECT '20000000-0000-0000-0000-000000000001', src.id, tgt.id, rel.rtype, rel.bidir, rel.intensity, rel.descr
+FROM (VALUES
+  ('The Archivist', 'Barnaby Gnaw', 'mentor', false, 9, 'The elder Archivist guides young Barnaby through the deep cavern records.'),
+  ('Lady Caplin of Mudhollow', 'Commodore Whiskers', 'trading_partner', true, 7, 'Bioluminescent goods flow between Mudhollow and the Commodore''s fleet.'),
+  ('Sister Ember', 'The Archivist', 'scholarly_colleague', true, 6, 'They share research on the Unterzee tides and their theological implications.')
+) AS rel(src_name, tgt_name, rtype, bidir, intensity, descr)
+JOIN agents src ON src.name = rel.src_name AND src.simulation_id = '20000000-0000-0000-0000-000000000001'
+JOIN agents tgt ON tgt.name = rel.tgt_name AND tgt.simulation_id = '20000000-0000-0000-0000-000000000001'
+ON CONFLICT DO NOTHING;
 
 -- Station Null relationships
 INSERT INTO agent_relationships (simulation_id, source_agent_id, target_agent_id, relationship_type, is_bidirectional, intensity, description)
-VALUES
-  -- Commander Vasquez → Dr. Osei: commanding_officer
-  ('30000000-0000-0000-0000-000000000001', '0ff98b8f-b455-45a7-bac9-f2f2b56129ef', '175cd6a1-529c-48d1-811e-614123fab9a4', 'commanding_officer', false, 8, 'Vasquez maintains authority over research protocols — Osei resents the constraints.'),
-  -- Dr. Osei → HAVEN: subject_of_study
-  ('30000000-0000-0000-0000-000000000001', '175cd6a1-529c-48d1-811e-614123fab9a4', 'b699f51d-7d05-49ed-8ab2-d46c2a3f0234', 'subject_of_study', false, 9, 'Osei''s primary research subject — though HAVEN may be studying him in return.'),
-  -- Engineer Kowalski → Commander Vasquez: antagonist
-  ('30000000-0000-0000-0000-000000000001', 'c48069e7-a711-4fe0-81ca-20d9f385b42d', '0ff98b8f-b455-45a7-bac9-f2f2b56129ef', 'antagonist', false, 5, 'Growing distrust over navigation decisions that led them deeper into the void.');
+SELECT '30000000-0000-0000-0000-000000000001', src.id, tgt.id, rel.rtype, rel.bidir, rel.intensity, rel.descr
+FROM (VALUES
+  ('Commander Elena Vasquez', 'Dr. Kwame Osei', 'commanding_officer', false, 8, 'Vasquez maintains authority over research protocols — Osei resents the constraints.'),
+  ('Dr. Kwame Osei', 'HAVEN', 'subject_of_study', false, 9, 'Osei''s primary research subject — though HAVEN may be studying him in return.'),
+  ('Engineer Jan Kowalski', 'Commander Elena Vasquez', 'antagonist', false, 5, 'Growing distrust over navigation decisions that led them deeper into the void.')
+) AS rel(src_name, tgt_name, rtype, bidir, intensity, descr)
+JOIN agents src ON src.name = rel.src_name AND src.simulation_id = '30000000-0000-0000-0000-000000000001'
+JOIN agents tgt ON tgt.name = rel.tgt_name AND tgt.simulation_id = '30000000-0000-0000-0000-000000000001'
+ON CONFLICT DO NOTHING;
 
 -- Speranza relationships
 INSERT INTO agent_relationships (simulation_id, source_agent_id, target_agent_id, relationship_type, is_bidirectional, intensity, description)
-VALUES
-  -- Capitana Ferretti → Enzo Moretti: raid_partner
-  ('40000000-0000-0000-0000-000000000001', '2b4d2af2-6fca-48ea-a6c2-e743ed0953ef', 'e800eb83-5fca-4c48-9d53-c51072b2afaf', 'raid_partner', true, 9, 'They''ve survived 147 raids together — trust forged in the ruins above.'),
-  -- Lina Russo → Dottor Ferrara: apprentice
-  ('40000000-0000-0000-0000-000000000001', 'd71607d0-1419-4447-aaf1-2b58f3ddddec', '992d75ce-f14a-4e04-aef2-769513ac790b', 'apprentice', false, 7, 'Lina learns field medicine under Ferrara''s impatient but precise guidance.'),
-  -- Celeste Amara → Tomas Vidal: contrada_kin
-  ('40000000-0000-0000-0000-000000000001', 'a2262cbe-64c4-4253-98bd-381efc4b6439', '63cb2cf5-fabe-4a72-8f19-c6823fe20ea8', 'contrada_kin', true, 8, 'Bound by the Contrada Leoni compact — loyalty deeper than blood.');
+SELECT '40000000-0000-0000-0000-000000000001', src.id, tgt.id, rel.rtype, rel.bidir, rel.intensity, rel.descr
+FROM (VALUES
+  ('Capitana Rosa Ferretti', 'Enzo Moretti', 'raid_partner', true, 9, 'They''ve survived 147 raids together — trust forged in the ruins above.'),
+  ('Lina Russo', 'Dottor Marco Ferrara', 'apprentice', false, 7, 'Lina learns field medicine under Ferrara''s impatient but precise guidance.'),
+  ('Celeste Amara', 'Tomas Vidal', 'contrada_kin', true, 8, 'Bound by the Contrada Leoni compact — loyalty deeper than blood.')
+) AS rel(src_name, tgt_name, rtype, bidir, intensity, descr)
+JOIN agents src ON src.name = rel.src_name AND src.simulation_id = '40000000-0000-0000-0000-000000000001'
+JOIN agents tgt ON tgt.name = rel.tgt_name AND tgt.simulation_id = '40000000-0000-0000-0000-000000000001'
+ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- 7. DEMO DATA: Simulation Connections (complete graph, 6 edges)
