@@ -3,6 +3,7 @@ import type {
   GenerationStep,
   VelgGenerationProgress,
 } from '../components/shared/GenerationProgress.js';
+import { analyticsService } from './AnalyticsService.js';
 
 export interface ProgressConfig {
   title: string;
@@ -109,10 +110,13 @@ class GenerationProgressService {
     };
 
     try {
+      analyticsService.trackEvent('generation_start', { title: config.title });
       const result = await callback(handle);
+      analyticsService.trackEvent('generation_complete', { title: config.title });
       return result;
     } catch (err) {
       const message = err instanceof Error ? err.message : msg('An unexpected error occurred.');
+      analyticsService.trackEvent('generation_error', { title: config.title, error: message });
       el.setError(message);
       throw err;
     }

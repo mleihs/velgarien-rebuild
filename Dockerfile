@@ -3,6 +3,7 @@ FROM node:22-slim AS frontend-build
 
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_ANON_KEY
+ARG VITE_GA4_MEASUREMENT_ID
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./

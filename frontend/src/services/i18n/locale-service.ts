@@ -1,5 +1,6 @@
 import { configureLocalization } from '@lit/localize';
 import { sourceLocale, targetLocales } from '../../locales/generated/locale-codes.js';
+import { analyticsService } from '../AnalyticsService.js';
 
 // Load locale modules via static imports so Vite can resolve .js → .ts
 function loadLocale(locale: string) {
@@ -32,6 +33,7 @@ class LocaleService {
     if (locale === getLocale()) return;
     await litSetLocale(locale);
     localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+    analyticsService.trackEvent('change_locale', { locale });
   }
 
   getInitialLocale(): string {

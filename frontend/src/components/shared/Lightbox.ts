@@ -97,6 +97,13 @@ export class VelgLightbox extends LitElement {
     if (changed.has('src')) {
       if (this.src) {
         document.addEventListener('keydown', this._onKeyDown);
+        this.dispatchEvent(
+          new CustomEvent('lightbox-open', {
+            bubbles: true,
+            composed: true,
+            detail: { src: this.src, alt: this.alt, caption: this.caption },
+          }),
+        );
       } else {
         document.removeEventListener('keydown', this._onKeyDown);
       }

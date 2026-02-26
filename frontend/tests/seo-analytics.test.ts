@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { EventMapping } from '../src/services/AnalyticsService.js';
 import { agentAltText, buildingAltText } from '../src/utils/text.js';
 
 // ── Alt Text Utilities ───────────────────────────────────────────────
@@ -273,5 +274,98 @@ describe('AnalyticsService', () => {
     const { analyticsService } = await import('../src/services/AnalyticsService.js');
     analyticsService.revokeConsent();
     expect(analyticsService.hasConsentChoice()).toBe(true);
+  });
+});
+
+// ── AnalyticsService — Event Hub ─────────────────────────────────────
+
+describe('AnalyticsService — Event Hub', () => {
+  let analyticsService: typeof import('../src/services/AnalyticsService.js')['analyticsService'];
+  let EVENT_MAP: EventMapping[];
+  let gtagCalls: unknown[][];
+
+  beforeEach(async () => {
+    localStorage.clear();
+    delete (window as Record<string, unknown>).dataLayer;
+    delete (window as Record<string, unknown>).gtag;
+
+    vi.resetModules();
+
+    // Set up gtag capture before importing
+    gtagCalls = [];
+    window.gtag = (...args: unknown[]) => {
+      gtagCalls.push(args);
+    };
+
+    const mod = await import('../src/services/AnalyticsService.js');
+    analyticsService = mod.analyticsService;
+    EVENT_MAP = mod.EVENT_MAP;
+  });
+
+  /** Bypass PROD guard — directly set _initialized and register listeners. */
+  function initForTest() {
+    (analyticsService as any)._initialized = true;
+    (analyticsService as any)._registerEventListeners();
+  }
+
+  afterEach(() => {
+    analyticsService.dispose();
+    localStorage.clear();
+    vi.restoreAllMocks();
+  });
+
+  it('trackEvent is a no-op when not initialized', () => {
+    analyticsService.trackEvent('test_event', { foo: 'bar' });
+    const testCalls = gtagCalls.filter((c) => c[0] === 'event' && c[1] === 'test_event');
+    expect(testCalls).toHaveLength(0);
+  });
+
+  it('trackEvent sends gtag event with params when initialized', () => {
+    initForTest();
+    analyticsService.trackEvent('test_event', { key: 'value' });
+    const testCalls = gtagCalls.filter((c) => c[0] === 'event' && c[1] === 'test_event');
+    expect(testCalls).toHaveLength(1);
+    expect(testCalls[0][2]).toEqual({ key: 'value' });
+  });
+
+  it('registers document listeners on init', () => {
+    const addSpy = vi.spyOn(document, 'addEventListener');
+    initForTest();
+    const registeredEvents = addSpy.mock.calls.map((c) => c[0]);
+    for (const mapping of EVENT_MAP) {
+      expect(registeredEvents).toContain(mapping.domEvent);
+    }
+  });
+
+  it('tracks custom events via EVENT_MAP', () => {
+    initForTest();
+    document.dispatchEvent(new CustomEvent('send-message', { detail: {} }));
+    const msgCalls = gtagCalls.filter((c) => c[0] === 'event' && c[1] === 'send_chat_message');
+    expect(msgCalls).toHaveLength(1);
+  });
+
+  it('extracts params from event detail', () => {
+    initForTest();
+    document.dispatchEvent(
+      new CustomEvent('agent-click', { detail: { name: 'Viktor' } }),
+    );
+    const agentCalls = gtagCalls.filter((c) => c[0] === 'event' && c[1] === 'view_agent');
+    expect(agentCalls).toHaveLength(1);
+    expect(agentCalls[0][2]).toEqual({ agent_name: 'Viktor' });
+  });
+
+  it('dispose removes all listeners', () => {
+    const removeSpy = vi.spyOn(document, 'removeEventListener');
+    initForTest();
+    analyticsService.dispose();
+    const removedEvents = removeSpy.mock.calls.map((c) => c[0]);
+    for (const mapping of EVENT_MAP) {
+      expect(removedEvents).toContain(mapping.domEvent);
+    }
+    // After dispose, dispatching should not trigger tracking
+    gtagCalls = [];
+    document.dispatchEvent(new CustomEvent('agent-click', { detail: { name: 'Test' } }));
+    const agentCalls = gtagCalls.filter((c) => c[0] === 'event' && c[1] === 'view_agent');
+    expect(agentCalls).toHaveLength(0);
   });
 });

@@ -1,9 +1,11 @@
 import type { AuthError, Session, User } from '@supabase/supabase-js';
+import { analyticsService } from '../AnalyticsService.js';
 import { appState } from '../AppStateManager.js';
 import { supabase } from './client.js';
 
 export class SupabaseAuthService {
   private _initialized = false;
+  private _previouslyAuthenticated = false;
 
   /**
    * Initialize auth: restore session from storage and set up the
@@ -51,9 +53,17 @@ export class SupabaseAuthService {
 
   private _syncAppState(session: Session | null): void {
     if (session) {
+      if (!this._previouslyAuthenticated) {
+        analyticsService.trackEvent('login', { method: 'email' });
+      }
+      this._previouslyAuthenticated = true;
       appState.setUser(session.user);
       appState.setAccessToken(session.access_token);
     } else {
+      if (this._previouslyAuthenticated) {
+        analyticsService.trackEvent('logout');
+      }
+      this._previouslyAuthenticated = false;
       appState.setUser(null);
       appState.setAccessToken(null);
     }

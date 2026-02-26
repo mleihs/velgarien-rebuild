@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + SEO/GA4/deep-linking implemented. 139 tasks. 902 localized UI strings (EN/DE). Production deployed on Railway + hosted Supabase. 3 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror).
+**Current Status:** All 5 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events). 139 tasks. 902 localized UI strings (EN/DE). Production deployed on Railway + hosted Supabase. 3 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror).
 
 ## Tech Stack
 
@@ -75,7 +75,7 @@ frontend/             Lit + Vite application
     styles/           CSS design tokens (tokens/: 8 files — colors, typography, spacing, borders, shadows, animation, layout, z-index) + base styles (base/)
     utils/            Shared utilities (text.ts, formatters.ts, error-handler.ts, icons.ts)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
-  tests/              vitest tests (222 tests: validation + API + notification + theme contrast + SEO/analytics)
+  tests/              vitest tests (228 tests: validation + API + notification + theme contrast + SEO/analytics)
 e2e/                  Playwright E2E tests (56 specs across 9 files)
   playwright.config.ts
   helpers/            auth.ts, fixtures.ts
