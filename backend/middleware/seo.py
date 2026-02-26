@@ -13,13 +13,16 @@ _CRAWLER_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Regex to extract simulation ID and view from URL path
-_SIM_PATH_RE = re.compile(r"^/simulations/([a-f0-9-]{36})/(\w+)$")
+# Regex to extract simulation ID (UUID) and view from URL path
+_SIM_UUID_RE = re.compile(r"^/simulations/([a-f0-9-]{36})/(\w+)$")
+# Regex to extract simulation slug and view from URL path
+_SIM_SLUG_RE = re.compile(r"^/simulations/([a-z0-9][a-z0-9-]*)/(\w+)$")
 
 # Cache the raw index.html contents (read once per process)
 _index_html_cache: str | None = None
 
 VIEW_LABELS: dict[str, str] = {
+    "lore": "Lore",
     "agents": "Agents",
     "buildings": "Buildings",
     "events": "Events",
@@ -34,18 +37,51 @@ def is_crawler(user_agent: str) -> bool:
     return bool(_CRAWLER_RE.search(user_agent))
 
 
-async def enrich_html_for_crawler(index_path: Path, url_path: str) -> str | None:
-    """Return enriched HTML with dynamic meta tags for crawlers, or None to fall through."""
-    global _index_html_cache  # noqa: PLW0603
+def get_crawler_redirect(url_path: str) -> str | None:
+    """If a crawler hits a UUID-based simulation URL, return the slug-based redirect URL.
 
-    # Only enrich simulation-scoped routes
-    match = _SIM_PATH_RE.match(url_path)
+    Returns the 301 redirect target, or None if no redirect is needed.
+    """
+    match = _SIM_UUID_RE.match(url_path)
     if not match:
         return None
 
     simulation_id = match.group(1)
     view = match.group(2)
+
+    try:
+        client: Client = create_client(settings.supabase_url, settings.supabase_anon_key)
+        response = (
+            client.table("simulations")
+            .select("slug")
+            .eq("id", simulation_id)
+            .limit(1)
+            .execute()
+        )
+        if response.data and response.data[0].get("slug"):
+            slug = response.data[0]["slug"]
+            return f"/simulations/{slug}/{view}"
+    except Exception:
+        logger.warning("Failed to resolve slug for crawler redirect: %s", simulation_id)
+
+    return None
+
+
+async def enrich_html_for_crawler(index_path: Path, url_path: str) -> str | None:
+    """Return enriched HTML with dynamic meta tags for crawlers, or None to fall through."""
+    global _index_html_cache  # noqa: PLW0603
+
+    # Try UUID path first, then slug path
+    uuid_match = _SIM_UUID_RE.match(url_path)
+    slug_match = _SIM_SLUG_RE.match(url_path) if not uuid_match else None
+
+    if not uuid_match and not slug_match:
+        return None
+
+    id_or_slug = (uuid_match or slug_match).group(1)  # type: ignore[union-attr]
+    view = (uuid_match or slug_match).group(2)  # type: ignore[union-attr]
     view_label = VIEW_LABELS.get(view, view.capitalize())
+    is_uuid = uuid_match is not None
 
     # Read and cache index.html
     if _index_html_cache is None:
@@ -57,27 +93,27 @@ async def enrich_html_for_crawler(index_path: Path, url_path: str) -> str | None
     # Fetch simulation data
     try:
         client: Client = create_client(settings.supabase_url, settings.supabase_anon_key)
-        response = (
-            client.table("simulations")
-            .select("name,description,banner_url")
-            .eq("id", simulation_id)
-            .limit(1)
-            .execute()
-        )
+        query = client.table("simulations").select("slug,name,description,banner_url")
+        if is_uuid:
+            query = query.eq("id", id_or_slug)
+        else:
+            query = query.eq("slug", id_or_slug)
+        response = query.limit(1).execute()
         if not response.data:
             return None
         sim = response.data[0]
     except Exception:
-        logger.warning("Failed to fetch simulation %s for crawler enrichment", simulation_id)
+        logger.warning("Failed to fetch simulation %s for crawler enrichment", id_or_slug)
         return None
 
+    slug = sim.get("slug", id_or_slug)
     sim_name = sim.get("name", "")
     sim_desc = sim.get("description", "")
     banner_url = sim.get("banner_url", "")
 
     title = f"{view_label} — {sim_name} | metaverse.center" if sim_name else f"{view_label} | metaverse.center"
     description = sim_desc or "Build and explore simulated worlds on metaverse.center."
-    canonical = f"https://metaverse.center/simulations/{simulation_id}/{view}"
+    canonical = f"https://metaverse.center/simulations/{slug}/{view}"
 
     html = _index_html_cache
 

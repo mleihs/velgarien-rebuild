@@ -141,9 +141,8 @@ export class VelgLoginView extends LitElement {
     }
   `;
 
-  // DEV ONLY: prefilled for faster testing
-  @state() private _email = 'admin@velgarien.dev';
-  @state() private _password = 'velgarien-dev-2026';
+  @state() private _email = import.meta.env.DEV ? (import.meta.env.VITE_DEV_EMAIL ?? '') : '';
+  @state() private _password = import.meta.env.DEV ? (import.meta.env.VITE_DEV_PASSWORD ?? '') : '';
   @state() private _error: string | null = null;
   @state() private _loading = false;
 

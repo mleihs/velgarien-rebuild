@@ -449,7 +449,7 @@ export class VelgCreateSimulationWizard extends LitElement {
         VelgToast.success(msg(str`Simulation "${response.data.name}" created.`));
         this.dispatchEvent(
           new CustomEvent('navigate', {
-            detail: `/simulations/${response.data.id}/agents`,
+            detail: `/simulations/${response.data.slug}/agents`,
             bubbles: true,
             composed: true,
           }),

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -11,7 +11,7 @@ from slowapi.errors import RateLimitExceeded
 from backend.config import settings as app_settings
 from backend.middleware.rate_limit import limiter
 from backend.middleware.security import SecurityHeadersMiddleware
-from backend.middleware.seo import enrich_html_for_crawler, is_crawler
+from backend.middleware.seo import enrich_html_for_crawler, get_crawler_redirect, is_crawler
 from backend.routers import (
     agent_professions,
     agents,
@@ -113,13 +113,19 @@ if _static_dir.is_dir():
     app.mount("/assets", StaticFiles(directory=_static_dir / "assets"), name="static-assets")
 
     @app.get("/{full_path:path}", response_model=None)
-    async def serve_spa(request: Request, full_path: str) -> FileResponse | HTMLResponse:
+    async def serve_spa(
+        request: Request, full_path: str
+    ) -> FileResponse | HTMLResponse | RedirectResponse:
         """Serve SPA index.html for all non-API, non-asset routes."""
         file_path = _static_dir / full_path
         if file_path.is_file() and ".." not in full_path:
             return FileResponse(file_path)
-        # Enrich meta tags for crawlers on simulation pages
+        # For crawlers: 301-redirect UUID simulation URLs to slug URLs
         if is_crawler(request.headers.get("user-agent", "")):
+            redirect_path = get_crawler_redirect(request.url.path)
+            if redirect_path:
+                return RedirectResponse(url=redirect_path, status_code=301)
+            # Enrich meta tags for crawlers on simulation pages
             enriched = await enrich_html_for_crawler(_static_dir / "index.html", request.url.path)
             if enriched:
                 return HTMLResponse(content=enriched)

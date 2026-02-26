@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
 <file target-language="de" source-language="en" original="lit-localize-inputs" datatype="plaintext">
 <body>
@@ -1530,10 +1530,6 @@
   <source>Default Max Tokens</source>
   <target>Standard Max. Tokens</target>
 </trans-unit>
-<trans-unit id="sbb6f00af9be251f0">
-  <source>Failed to load AI settings</source>
-  <target>Fehler beim Laden der KI-Einstellungen</target>
-</trans-unit>
 <trans-unit id="sb23bd14e2159a58a">
   <source>AI settings saved successfully.</source>
   <target>KI-Einstellungen erfolgreich gespeichert.</target>
@@ -1695,7 +1691,7 @@
   <target>Fehler beim Laden der Einstellungen</target>
 </trans-unit>
 <trans-unit id="sabca4cadd0e18910">
-  <source>Failed to save <x id="0" equiv-text="${field.key}" /></source>
+  <source>Failed to save <x id="0" equiv-text="${key}" /></source>
   <target>Fehler beim Speichern von <x id="0" equiv-text="${field.key}" /></target>
 </trans-unit>
 <trans-unit id="sa97c26fbad888226">
@@ -6018,6 +6014,15 @@ Die Karte ist offen. Die Scherben warten. Welche Welt betritt man zuerst?</targe
 <trans-unit id="s1e187919b52639f1">
   <source>Map</source>
 <target>Karte</target></trans-unit>
+<trans-unit id="se5f8257f3b52247b">
+  <source>Failed to save settings</source>
+<target>Einstellungen konnten nicht gespeichert werden</target></trans-unit>
+<trans-unit id="sdc2508aba9b9ef42">
+  <source>Settings saved successfully.</source>
+<target>Einstellungen erfolgreich gespeichert.</target></trans-unit>
+<trans-unit id="scac48aec63cfdb2d">
+  <source>Sign in to browse and transform news articles</source>
+<target>Anmelden, um Nachrichtenartikel zu durchsuchen und umzuwandeln</target></trans-unit>
 </body>
 </file>
 </xliff>

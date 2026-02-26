@@ -7,6 +7,18 @@ declare global {
 
 const CONSENT_KEY = 'analytics-consent';
 
+/** Safely extract a string/number property from a CustomEvent detail object. */
+function _s(d: unknown, key: string): string {
+  if (d && typeof d === 'object' && key in d)
+    return String((d as Record<string, unknown>)[key] ?? '');
+  return '';
+}
+function _n(d: unknown, key: string): number {
+  if (d && typeof d === 'object' && key in d)
+    return Number((d as Record<string, unknown>)[key]) || 0;
+  return 0;
+}
+
 interface EventMapping {
   domEvent: string;
   gaEvent: string;
@@ -15,34 +27,42 @@ interface EventMapping {
 
 const EVENT_MAP: EventMapping[] = [
   // Entity detail views
-  { domEvent: 'agent-click', gaEvent: 'view_agent', params: (d: any) => ({ agent_name: d.name }) },
+  {
+    domEvent: 'agent-click',
+    gaEvent: 'view_agent',
+    params: (d) => ({ agent_name: _s(d, 'name') }),
+  },
   {
     domEvent: 'building-click',
     gaEvent: 'view_building',
-    params: (d: any) => ({ building_name: d.name }),
+    params: (d) => ({ building_name: _s(d, 'name') }),
   },
   {
     domEvent: 'event-click',
     gaEvent: 'view_event',
-    params: (d: any) => ({ event_title: d.title }),
+    params: (d) => ({ event_title: _s(d, 'title') }),
   },
   {
     domEvent: 'campaign-click',
     gaEvent: 'view_campaign',
-    params: (d: any) => ({ campaign_name: d.name }),
+    params: (d) => ({ campaign_name: _s(d, 'name') }),
   },
   {
     domEvent: 'simulation-click',
     gaEvent: 'select_simulation',
-    params: (d: any) => ({ simulation_name: d.name }),
+    params: (d) => ({ simulation_name: _s(d, 'name') }),
   },
 
   // Entity CRUD
-  { domEvent: 'agent-saved', gaEvent: 'save_agent', params: (d: any) => ({ agent_name: d.name }) },
+  {
+    domEvent: 'agent-saved',
+    gaEvent: 'save_agent',
+    params: (d) => ({ agent_name: _s(d, 'name') }),
+  },
   {
     domEvent: 'building-saved',
     gaEvent: 'save_building',
-    params: (d: any) => ({ building_name: d.name }),
+    params: (d) => ({ building_name: _s(d, 'name') }),
   },
   { domEvent: 'event-saved', gaEvent: 'save_event' },
   { domEvent: 'location-saved', gaEvent: 'save_location' },
@@ -52,12 +72,12 @@ const EVENT_MAP: EventMapping[] = [
   {
     domEvent: 'agent-delete',
     gaEvent: 'delete_agent',
-    params: (d: any) => ({ agent_name: d.name }),
+    params: (d) => ({ agent_name: _s(d, 'name') }),
   },
   {
     domEvent: 'building-delete',
     gaEvent: 'delete_building',
-    params: (d: any) => ({ building_name: d.name }),
+    params: (d) => ({ building_name: _s(d, 'name') }),
   },
   { domEvent: 'event-delete', gaEvent: 'delete_event' },
 
@@ -65,17 +85,17 @@ const EVENT_MAP: EventMapping[] = [
   {
     domEvent: 'agent-edit',
     gaEvent: 'open_edit_modal',
-    params: (d: any) => ({ entity_type: 'agent', entity_name: d.name }),
+    params: (d) => ({ entity_type: 'agent', entity_name: _s(d, 'name') }),
   },
   {
     domEvent: 'building-edit',
     gaEvent: 'open_edit_modal',
-    params: (d: any) => ({ entity_type: 'building', entity_name: d.name }),
+    params: (d) => ({ entity_type: 'building', entity_name: _s(d, 'name') }),
   },
   {
     domEvent: 'event-edit',
     gaEvent: 'open_edit_modal',
-    params: (d: any) => ({ entity_type: 'event', entity_name: d.title }),
+    params: (d) => ({ entity_type: 'event', entity_name: _s(d, 'title') }),
   },
 
   // Chat
@@ -83,7 +103,7 @@ const EVENT_MAP: EventMapping[] = [
   {
     domEvent: 'agents-selected',
     gaEvent: 'select_chat_agents',
-    params: (d: any) => ({ count: d.length }),
+    params: (d) => ({ count: Array.isArray(d) ? d.length : 0 }),
   },
   { domEvent: 'conversation-select', gaEvent: 'select_conversation' },
 
@@ -91,28 +111,36 @@ const EVENT_MAP: EventMapping[] = [
   {
     domEvent: 'trend-transform',
     gaEvent: 'transform_trend',
-    params: (d: any) => ({ trend_title: d.title }),
+    params: (d) => ({ trend_title: _s(d, 'title') }),
   },
   {
     domEvent: 'trend-integrate',
     gaEvent: 'integrate_trend',
-    params: (d: any) => ({ trend_title: d.title }),
+    params: (d) => ({ trend_title: _s(d, 'title') }),
   },
   { domEvent: 'post-transform', gaEvent: 'transform_post' },
   { domEvent: 'post-analyze', gaEvent: 'analyze_post' },
   { domEvent: 'transform-complete', gaEvent: 'transform_complete' },
 
   // Location drill-down
-  { domEvent: 'city-select', gaEvent: 'select_city', params: (d: any) => ({ city_name: d.name }) },
-  { domEvent: 'zone-select', gaEvent: 'select_zone', params: (d: any) => ({ zone_name: d.name }) },
+  {
+    domEvent: 'city-select',
+    gaEvent: 'select_city',
+    params: (d) => ({ city_name: _s(d, 'name') }),
+  },
+  {
+    domEvent: 'zone-select',
+    gaEvent: 'select_zone',
+    params: (d) => ({ zone_name: _s(d, 'name') }),
+  },
 
   // Search / Filter
   {
     domEvent: 'filter-change',
     gaEvent: 'apply_filter',
-    params: (d: any) => ({
-      search: d.search || '',
-      filter_count: Object.keys(d.filters || {}).length,
+    params: (d) => ({
+      search: _s(d, 'search'),
+      filter_count: _n(d, 'filter_count'),
     }),
   },
 
@@ -120,7 +148,7 @@ const EVENT_MAP: EventMapping[] = [
   {
     domEvent: 'lightbox-open',
     gaEvent: 'view_lightbox_image',
-    params: (d: any) => ({ alt: d.alt || '', caption: d.caption || '' }),
+    params: (d) => ({ alt: _s(d, 'alt'), caption: _s(d, 'caption') }),
   },
 
   // Auth UI

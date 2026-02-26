@@ -1,6 +1,6 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { invitationsApi, membersApi, settingsApi } from '../../services/api/index.js';
 import type {
@@ -9,9 +9,11 @@ import type {
   SimulationRole,
   SimulationSetting,
 } from '../../types/index.js';
+import { BaseSettingsPanel } from '../shared/BaseSettingsPanel.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import { VelgToast } from '../shared/Toast.js';
 import '../shared/VelgSectionHeader.js';
+import { settingsStyles } from '../shared/settings-styles.js';
 
 interface AccessFormData {
   visibility: 'public' | 'private';
@@ -31,512 +33,347 @@ const DEFAULT_FORM: AccessFormData = {
 
 @localized()
 @customElement('velg-access-settings-panel')
-export class VelgAccessSettingsPanel extends LitElement {
-  static styles = css`
-    :host {
-      display: block;
-    }
-
-    .panel {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-5);
-    }
-
-    .panel__owner-notice {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-3);
-      background: var(--color-info-bg, rgba(59, 130, 246, 0.1));
-      border: var(--border-width-default) solid var(--color-info, #3b82f6);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-sm);
-      color: var(--color-info, #3b82f6);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-    }
-
-    .panel__denied {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-3);
-      padding: var(--space-8);
-      text-align: center;
-    }
-
-    .panel__denied-title {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-xl);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      color: var(--color-text-primary);
-      margin: 0;
-    }
-
-    .panel__denied-text {
-      font-size: var(--text-sm);
-      color: var(--color-text-muted);
-    }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-5);
-    }
-
-    .form__group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1-5);
-    }
-
-    .form__group--row {
-      flex-direction: row;
-      align-items: center;
-      gap: var(--space-3);
-    }
-
-    .form__label {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-primary);
-    }
-
-    .form__hint {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      font-family: var(--font-sans);
-      text-transform: none;
-      letter-spacing: normal;
-    }
-
-    .form__input,
-    .form__select {
-      font-family: var(--font-sans);
-      font-size: var(--text-base);
-      padding: var(--space-2-5) var(--space-3);
-      border: var(--border-medium);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      width: 100%;
-      max-width: 300px;
-      box-sizing: border-box;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    }
-
-    .form__input:focus,
-    .form__select:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-      box-shadow: var(--ring-focus);
-    }
-
-    .form__select {
-      cursor: pointer;
-    }
-
-    .radio-group {
-      display: flex;
-      gap: var(--space-4);
-    }
-
-    .radio {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      cursor: pointer;
-    }
-
-    .radio__input {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      border: var(--border-medium);
-      background: var(--color-surface);
-      cursor: pointer;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .radio__input:checked {
-      border-color: var(--color-primary);
-      background: var(--color-primary);
-    }
-
-    .radio__input:checked::after {
-      content: '';
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: var(--color-text-inverse);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .radio__input:focus {
-      box-shadow: var(--ring-focus);
-    }
-
-    .radio__label {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-primary);
-    }
-
-    .toggle {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-
-    .toggle__input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
-    }
-
-    .toggle__slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background: var(--color-surface-sunken);
-      border: var(--border-width-default) solid var(--color-border);
-      transition: all var(--transition-fast);
-    }
-
-    .toggle__slider::before {
-      content: '';
-      position: absolute;
-      height: 16px;
-      width: 16px;
-      left: 3px;
-      bottom: 3px;
-      background: var(--color-text-muted);
-      transition: all var(--transition-fast);
-    }
-
-    .toggle__input:checked + .toggle__slider {
-      background: var(--color-primary);
-      border-color: var(--color-primary);
-    }
-
-    .toggle__input:checked + .toggle__slider::before {
-      transform: translateX(20px);
-      background: var(--color-text-inverse);
-    }
-
-    .toggle__input:focus + .toggle__slider {
-      box-shadow: var(--ring-focus);
-    }
-
-    .panel__footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-      padding-top: var(--space-4);
-      border-top: var(--border-default);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .btn--primary {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-    }
-
-    .panel__error {
-      padding: var(--space-3);
-      background: var(--color-danger-bg);
-      border: var(--border-width-default) solid var(--color-danger);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-sm);
-      color: var(--color-danger);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-    }
-
-    .members {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .members__list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      border: var(--border-default);
-    }
-
-    .members__row {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-3) var(--space-4);
-      border-bottom: var(--border-default);
-    }
-
-    .members__row:last-child {
-      border-bottom: none;
-    }
-
-    .members__name {
-      flex: 1;
-      font-family: var(--font-sans);
-      font-size: var(--text-sm);
-      color: var(--color-text-primary);
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .members__role-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: var(--space-0-5) var(--space-2);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      border: var(--border-width-default) solid var(--color-border);
-      background: var(--color-surface-header);
-    }
-
-    .members__role-badge--owner {
-      background: var(--color-primary-bg);
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-
-    .members__role-badge--admin {
-      background: var(--color-info-bg, rgba(59, 130, 246, 0.1));
-      border-color: var(--color-info, #3b82f6);
-      color: var(--color-info, #3b82f6);
-    }
-
-    .members__role-select {
-      font-family: var(--font-sans);
-      font-size: var(--text-sm);
-      padding: var(--space-1) var(--space-2);
-      border: var(--border-default);
-      background: var(--color-surface);
-      cursor: pointer;
-    }
-
-    .members__remove-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-1) var(--space-2);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      background: transparent;
-      color: var(--color-danger);
-      border: var(--border-width-thin) solid var(--color-danger);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .members__remove-btn:hover {
-      background: var(--color-danger);
-      color: var(--color-text-inverse);
-    }
-
-    .members__empty {
-      padding: var(--space-4);
-      text-align: center;
-      font-size: var(--text-sm);
-      color: var(--color-text-muted);
-    }
-
-    .invite-form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-      padding: var(--space-4);
-      border: var(--border-default);
-      background: var(--color-surface-sunken);
-    }
-
-    .invite-form__row {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-    }
-
-    .invite-form__input {
-      flex: 1;
-      font-family: var(--font-sans);
-      font-size: var(--text-sm);
-      padding: var(--space-2) var(--space-3);
-      border: var(--border-default);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-    }
-
-    .invite-form__input:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-      box-shadow: var(--ring-focus);
-    }
-
-    .invite-form__select {
-      font-family: var(--font-sans);
-      font-size: var(--text-sm);
-      padding: var(--space-2) var(--space-3);
-      border: var(--border-default);
-      background: var(--color-surface);
-      cursor: pointer;
-    }
-
-    .invite-form__actions {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .invite-link {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-3);
-      background: var(--color-success-bg);
-      border: var(--border-width-default) solid var(--color-success);
-      word-break: break-all;
-    }
-
-    .invite-link__url {
-      flex: 1;
-      font-family: var(--font-mono);
-      font-size: var(--text-xs);
-      color: var(--color-text-primary);
-    }
-
-    .invite-link__copy-btn {
-      flex-shrink: 0;
-      padding: var(--space-1) var(--space-2);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      background: var(--color-surface);
-      border: var(--border-default);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .invite-link__copy-btn:hover {
-      background: var(--color-surface-sunken);
-    }
-
-    .invitations__list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      border: var(--border-default);
-    }
-
-    .invitations__row {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-2-5) var(--space-4);
-      border-bottom: var(--border-default);
-      font-size: var(--text-sm);
-    }
-
-    .invitations__row:last-child {
-      border-bottom: none;
-    }
-
-    .invitations__email {
-      flex: 1;
-      font-family: var(--font-sans);
-      color: var(--color-text-primary);
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .invitations__status {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-warning);
-    }
-
-    .invitations__status--expired {
-      color: var(--color-text-muted);
-    }
-
-    .invitations__status--accepted {
-      color: var(--color-success);
-    }
-  `;
-
-  @property({ type: String }) simulationId = '';
+export class VelgAccessSettingsPanel extends BaseSettingsPanel {
+  static styles = [
+    settingsStyles,
+    css`
+      .panel__owner-notice {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3);
+        background: var(--color-info-bg, rgba(59, 130, 246, 0.1));
+        border: var(--border-width-default) solid var(--color-info, #3b82f6);
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: var(--text-sm);
+        color: var(--color-info, #3b82f6);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+      }
+
+      .panel__denied {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        padding: var(--space-8);
+        text-align: center;
+      }
+
+      .panel__denied-title {
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-black);
+        font-size: var(--text-xl);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-brutalist);
+        color: var(--color-text-primary);
+        margin: 0;
+      }
+
+      .panel__denied-text {
+        font-size: var(--text-sm);
+        color: var(--color-text-muted);
+      }
+
+      .radio-group {
+        display: flex;
+        gap: var(--space-4);
+      }
+
+      .radio {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        cursor: pointer;
+      }
+
+      .radio__input {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: var(--border-medium);
+        background: var(--color-surface);
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .radio__input:checked {
+        border-color: var(--color-primary);
+        background: var(--color-primary);
+      }
+
+      .radio__input:checked::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: var(--color-text-inverse);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .radio__input:focus {
+        box-shadow: var(--ring-focus);
+      }
+
+      .radio__label {
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        color: var(--color-text-primary);
+      }
+
+      /* --- Members Section --- */
+
+      .members {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .members__list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border: var(--border-default);
+      }
+
+      .members__row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        border-bottom: var(--border-default);
+      }
+
+      .members__row:last-child {
+        border-bottom: none;
+      }
+
+      .members__name {
+        flex: 1;
+        font-family: var(--font-sans);
+        font-size: var(--text-sm);
+        color: var(--color-text-primary);
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .members__role-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: var(--space-0-5) var(--space-2);
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        border: var(--border-width-default) solid var(--color-border);
+        background: var(--color-surface-header);
+      }
+
+      .members__role-badge--owner {
+        background: var(--color-primary-bg);
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+      }
+
+      .members__role-badge--admin {
+        background: var(--color-info-bg, rgba(59, 130, 246, 0.1));
+        border-color: var(--color-info, #3b82f6);
+        color: var(--color-info, #3b82f6);
+      }
+
+      .members__role-select {
+        font-family: var(--font-sans);
+        font-size: var(--text-sm);
+        padding: var(--space-1) var(--space-2);
+        border: var(--border-default);
+        background: var(--color-surface);
+        cursor: pointer;
+      }
+
+      .members__remove-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-1) var(--space-2);
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        background: transparent;
+        color: var(--color-danger);
+        border: var(--border-width-thin) solid var(--color-danger);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+
+      .members__remove-btn:hover {
+        background: var(--color-danger);
+        color: var(--color-text-inverse);
+      }
+
+      .members__empty {
+        padding: var(--space-4);
+        text-align: center;
+        font-size: var(--text-sm);
+        color: var(--color-text-muted);
+      }
+
+      /* --- Invite Form --- */
+
+      .invite-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        padding: var(--space-4);
+        border: var(--border-default);
+        background: var(--color-surface-sunken);
+      }
+
+      .invite-form__row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .invite-form__input {
+        flex: 1;
+        font-family: var(--font-sans);
+        font-size: var(--text-sm);
+        padding: var(--space-2) var(--space-3);
+        border: var(--border-default);
+        background: var(--color-surface);
+        color: var(--color-text-primary);
+      }
+
+      .invite-form__input:focus {
+        outline: none;
+        border-color: var(--color-border-focus);
+        box-shadow: var(--ring-focus);
+      }
+
+      .invite-form__select {
+        font-family: var(--font-sans);
+        font-size: var(--text-sm);
+        padding: var(--space-2) var(--space-3);
+        border: var(--border-default);
+        background: var(--color-surface);
+        cursor: pointer;
+      }
+
+      .invite-form__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .invite-link {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3);
+        background: var(--color-success-bg);
+        border: var(--border-width-default) solid var(--color-success);
+        word-break: break-all;
+      }
+
+      .invite-link__url {
+        flex: 1;
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--color-text-primary);
+      }
+
+      .invite-link__copy-btn {
+        flex-shrink: 0;
+        padding: var(--space-1) var(--space-2);
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        background: var(--color-surface);
+        border: var(--border-default);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+
+      .invite-link__copy-btn:hover {
+        background: var(--color-surface-sunken);
+      }
+
+      /* --- Invitations --- */
+
+      .invitations__list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border: var(--border-default);
+      }
+
+      .invitations__row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-2-5) var(--space-4);
+        border-bottom: var(--border-default);
+        font-size: var(--text-sm);
+      }
+
+      .invitations__row:last-child {
+        border-bottom: none;
+      }
+
+      .invitations__email {
+        flex: 1;
+        font-family: var(--font-sans);
+        color: var(--color-text-primary);
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .invitations__status {
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        color: var(--color-warning);
+      }
+
+      .invitations__status--expired {
+        color: var(--color-text-muted);
+      }
+
+      .invitations__status--accepted {
+        color: var(--color-success);
+      }
+    `,
+  ];
+
+  protected get category(): string {
+    return 'access';
+  }
+
+  protected get successMessage(): string {
+    return msg('Access settings saved successfully.');
+  }
 
   @state() private _formData: AccessFormData = { ...DEFAULT_FORM };
-  @state() private _originalData: AccessFormData = { ...DEFAULT_FORM };
-  @state() private _loading = true;
-  @state() private _saving = false;
-  @state() private _error: string | null = null;
+  @state() private _originalFormData: AccessFormData = { ...DEFAULT_FORM };
 
   @state() private _members: SimulationMember[] = [];
   @state() private _invitations: Invitation[] = [];
@@ -550,28 +387,28 @@ export class VelgAccessSettingsPanel extends LitElement {
     return appState.isOwner.value;
   }
 
-  private get _hasChanges(): boolean {
+  protected override get _hasChanges(): boolean {
     return (
-      this._formData.visibility !== this._originalData.visibility ||
-      this._formData.allow_registration !== this._originalData.allow_registration ||
-      this._formData.default_role !== this._originalData.default_role ||
-      this._formData.invitation_expiry_hours !== this._originalData.invitation_expiry_hours ||
-      this._formData.max_members !== this._originalData.max_members
+      this._formData.visibility !== this._originalFormData.visibility ||
+      this._formData.allow_registration !== this._originalFormData.allow_registration ||
+      this._formData.default_role !== this._originalFormData.default_role ||
+      this._formData.invitation_expiry_hours !== this._originalFormData.invitation_expiry_hours ||
+      this._formData.max_members !== this._originalFormData.max_members
     );
   }
 
-  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+  protected override willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId && this._isOwner) {
-      this._loadSettings();
+      this._loadAccessSettings();
       this._loadMembers();
       this._loadInvitations();
     }
   }
 
-  protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+  protected override updated(changedProperties: Map<PropertyKey, unknown>): void {
     super.updated(changedProperties);
     const prevForm = changedProperties.get('_formData') as AccessFormData | undefined;
-    const prevOriginal = changedProperties.get('_originalData') as AccessFormData | undefined;
+    const prevOriginal = changedProperties.get('_originalFormData') as AccessFormData | undefined;
     if (prevForm !== undefined || prevOriginal !== undefined) {
       this.dispatchEvent(
         new CustomEvent('unsaved-change', {
@@ -583,7 +420,7 @@ export class VelgAccessSettingsPanel extends LitElement {
     }
   }
 
-  private async _loadSettings(): Promise<void> {
+  private async _loadAccessSettings(): Promise<void> {
     if (!this.simulationId) return;
 
     this._loading = true;
@@ -618,7 +455,7 @@ export class VelgAccessSettingsPanel extends LitElement {
         }
 
         this._formData = { ...formData };
-        this._originalData = { ...formData };
+        this._originalFormData = { ...formData };
       } else {
         this._error = response.error?.message ?? msg('Failed to load access settings');
       }
@@ -670,22 +507,24 @@ export class VelgAccessSettingsPanel extends LitElement {
     try {
       const fieldsToSave: Array<{ key: string; value: unknown }> = [];
 
-      if (this._formData.visibility !== this._originalData.visibility) {
+      if (this._formData.visibility !== this._originalFormData.visibility) {
         fieldsToSave.push({ key: 'visibility', value: this._formData.visibility });
       }
-      if (this._formData.allow_registration !== this._originalData.allow_registration) {
+      if (this._formData.allow_registration !== this._originalFormData.allow_registration) {
         fieldsToSave.push({ key: 'allow_registration', value: this._formData.allow_registration });
       }
-      if (this._formData.default_role !== this._originalData.default_role) {
+      if (this._formData.default_role !== this._originalFormData.default_role) {
         fieldsToSave.push({ key: 'default_role', value: this._formData.default_role });
       }
-      if (this._formData.invitation_expiry_hours !== this._originalData.invitation_expiry_hours) {
+      if (
+        this._formData.invitation_expiry_hours !== this._originalFormData.invitation_expiry_hours
+      ) {
         fieldsToSave.push({
           key: 'invitation_expiry_hours',
           value: this._formData.invitation_expiry_hours,
         });
       }
-      if (this._formData.max_members !== this._originalData.max_members) {
+      if (this._formData.max_members !== this._originalFormData.max_members) {
         fieldsToSave.push({ key: 'max_members', value: this._formData.max_members });
       }
 
@@ -703,7 +542,7 @@ export class VelgAccessSettingsPanel extends LitElement {
         }
       }
 
-      this._originalData = { ...this._formData };
+      this._originalFormData = { ...this._formData };
       VelgToast.success(msg('Access settings saved successfully.'));
       this.dispatchEvent(new CustomEvent('settings-saved', { bubbles: true, composed: true }));
     } catch (err) {
@@ -854,7 +693,7 @@ export class VelgAccessSettingsPanel extends LitElement {
 
               <div>
                 <button
-                  class="btn btn--primary"
+                  class="settings-btn settings-btn--primary"
                   @click=${this._handleToggleInviteForm}
                 >
                   ${this._showInviteForm ? msg('Cancel') : msg('Create Invitation')}
@@ -943,7 +782,7 @@ export class VelgAccessSettingsPanel extends LitElement {
         </div>
 
         <div class="invite-form__actions">
-          <button class="btn btn--primary" @click=${this._handleCreateInvitation}>
+          <button class="settings-btn settings-btn--primary" @click=${this._handleCreateInvitation}>
             ${msg('Create')}
           </button>
         </div>
@@ -970,7 +809,7 @@ export class VelgAccessSettingsPanel extends LitElement {
 
     return html`
       <div>
-        <h3 class="form__label" style="margin-bottom: var(--space-2)">${msg('Pending Invitations')}</h3>
+        <h3 class="settings-form__label" style="margin-bottom: var(--space-2)">${msg('Pending Invitations')}</h3>
         <div class="invitations__list">
           ${pending.map((inv) => {
             const status = this._getInvitationStatus(inv);
@@ -1004,18 +843,18 @@ export class VelgAccessSettingsPanel extends LitElement {
     }
 
     return html`
-      <div class="panel">
+      <div class="settings-panel">
         <velg-section-header variant="large">${msg('Access Control')}</velg-section-header>
 
         <div class="panel__owner-notice">
           ${msg('Only the simulation owner can modify these settings.')}
         </div>
 
-        ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
+        ${this._error ? html`<div class="settings-panel__error">${this._error}</div>` : nothing}
 
-        <div class="form">
-          <div class="form__group">
-            <span class="form__label">${msg('Visibility')}</span>
+        <div class="settings-form">
+          <div class="settings-form__group">
+            <span class="settings-form__label">${msg('Visibility')}</span>
             <div class="radio-group">
               <label class="radio">
                 <input
@@ -1040,32 +879,33 @@ export class VelgAccessSettingsPanel extends LitElement {
                 <span class="radio__label">${msg('Private')}</span>
               </label>
             </div>
-            <span class="form__hint">
+            <span class="settings-form__hint">
               ${msg('Public simulations are discoverable by all users. Private simulations require an invitation.')}
             </span>
           </div>
 
-          <div class="form__group form__group--row">
-            <label class="toggle">
+          <div class="settings-form__group settings-form__group--row">
+            <label class="settings-toggle">
               <input
-                class="toggle__input"
+                class="settings-toggle__input"
                 type="checkbox"
                 ?checked=${this._formData.allow_registration}
                 @change=${this._handleRegistrationToggle}
               />
-              <span class="toggle__slider"></span>
+              <span class="settings-toggle__slider"></span>
             </label>
             <div>
-              <span class="form__label">${msg('Allow Registration')}</span>
-              <span class="form__hint"> -- ${msg('Users can request to join without an invitation')}</span>
+              <span class="settings-form__label">${msg('Allow Registration')}</span>
+              <span class="settings-form__hint"> -- ${msg('Users can request to join without an invitation')}</span>
             </div>
           </div>
 
-          <div class="form__group">
-            <label class="form__label" for="access-default-role">${msg('Default Role for New Members')}</label>
+          <div class="settings-form__group">
+            <label class="settings-form__label" for="access-default-role">${msg('Default Role for New Members')}</label>
             <select
-              class="form__select"
+              class="settings-form__select"
               id="access-default-role"
+              style="max-width: 300px"
               .value=${this._formData.default_role}
               @change=${this._handleDefaultRoleChange}
             >
@@ -1076,49 +916,51 @@ export class VelgAccessSettingsPanel extends LitElement {
                 ${msg('Editor')}
               </option>
             </select>
-            <span class="form__hint">
+            <span class="settings-form__hint">
               ${msg('Role assigned to new members when they join.')}
             </span>
           </div>
 
-          <div class="form__group">
-            <label class="form__label" for="access-invitation-expiry">
+          <div class="settings-form__group">
+            <label class="settings-form__label" for="access-invitation-expiry">
               ${msg('Invitation Expiry (hours)')}
             </label>
             <input
-              class="form__input"
+              class="settings-form__input"
               id="access-invitation-expiry"
+              style="max-width: 300px"
               type="number"
               min="1"
               max="8760"
               .value=${String(this._formData.invitation_expiry_hours)}
               @input=${(e: Event) => this._handleNumberInput('invitation_expiry_hours', e)}
             />
-            <span class="form__hint">
+            <span class="settings-form__hint">
               ${msg('How long invitation links remain valid. Max 8760 (1 year).')}
             </span>
           </div>
 
-          <div class="form__group">
-            <label class="form__label" for="access-max-members">${msg('Max Members')}</label>
+          <div class="settings-form__group">
+            <label class="settings-form__label" for="access-max-members">${msg('Max Members')}</label>
             <input
-              class="form__input"
+              class="settings-form__input"
               id="access-max-members"
+              style="max-width: 300px"
               type="number"
               min="1"
               max="10000"
               .value=${String(this._formData.max_members)}
               @input=${(e: Event) => this._handleNumberInput('max_members', e)}
             />
-            <span class="form__hint">
+            <span class="settings-form__hint">
               ${msg('Maximum number of members allowed in this simulation.')}
             </span>
           </div>
         </div>
 
-        <div class="panel__footer">
+        <div class="settings-panel__footer">
           <button
-            class="btn btn--primary"
+            class="settings-btn settings-btn--primary"
             @click=${this._handleSave}
             ?disabled=${!this._hasChanges || this._saving}
           >

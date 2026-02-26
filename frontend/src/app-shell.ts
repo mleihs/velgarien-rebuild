@@ -326,18 +326,60 @@ export class VelgApp extends LitElement {
 
   private _lastLoadedSimulationId = '';
 
-  private async _loadSimulationContext(simulationId: string): Promise<void> {
+  /** UUID regex — used to distinguish slug vs UUID in route params */
+  private static _UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  /**
+   * Resolve an ID-or-slug to a simulation UUID.
+   * If a slug is provided, fetches the simulation by slug and returns its UUID.
+   * If a UUID is provided and the simulation is loaded, swaps the URL to use the slug.
+   */
+  private async _resolveSimulation(idOrSlug: string): Promise<string | null> {
+    const isUuid = VelgApp._UUID_RE.test(idOrSlug);
+
+    if (isUuid) {
+      // Fetch if we don't already have this simulation
+      if (appState.currentSimulation.value?.id !== idOrSlug) {
+        const simResponse = await simulationsApi.getById(idOrSlug);
+        if (simResponse.success && simResponse.data) {
+          appState.setCurrentSimulation(simResponse.data as Simulation);
+        } else {
+          return null;
+        }
+      }
+      // Replace UUID in URL with slug for cleaner URLs
+      const sim = appState.currentSimulation.value;
+      if (sim?.slug) {
+        const currentPath = window.location.pathname;
+        const slugPath = currentPath.replace(idOrSlug, sim.slug);
+        if (slugPath !== currentPath) {
+          window.history.replaceState({}, '', slugPath);
+        }
+      }
+      return idOrSlug;
+    }
+
+    // It's a slug — resolve to UUID
+    const sim = appState.currentSimulation.value;
+    if (sim?.slug === idOrSlug) {
+      return sim.id;
+    }
+
+    const simResponse = await simulationsApi.getBySlug(idOrSlug);
+    if (simResponse.success && simResponse.data) {
+      appState.setCurrentSimulation(simResponse.data as Simulation);
+      return (simResponse.data as Simulation).id;
+    }
+    return null;
+  }
+
+  private async _loadSimulationContext(idOrSlug: string): Promise<void> {
+    const simulationId = await this._resolveSimulation(idOrSlug);
+    if (!simulationId) return;
+
     // Allow re-load on re-entry (theme needs to reapply after switching sims)
     if (this._lastLoadedSimulationId === simulationId) return;
     this._lastLoadedSimulationId = simulationId;
-
-    // Deep link fix: if currentSimulation is missing or stale, fetch it
-    if (appState.currentSimulation.value?.id !== simulationId) {
-      const simResponse = await simulationsApi.getById(simulationId);
-      if (simResponse.success && simResponse.data) {
-        appState.setCurrentSimulation(simResponse.data as Simulation);
-      }
-    }
 
     if (appState.isAuthenticated.value) {
       // Authenticated: load taxonomies, member role, and design settings in parallel
@@ -381,42 +423,48 @@ export class VelgApp extends LitElement {
     }
   }
 
-  private _renderSimulationView(simulationId: string, view: string) {
-    this._loadSimulationContext(simulationId).then(() => {
-      const simName = appState.currentSimulation.value?.name ?? '';
+  private _renderSimulationView(idOrSlug: string, view: string) {
+    this._loadSimulationContext(idOrSlug).then(() => {
+      const sim = appState.currentSimulation.value;
+      const simName = sim?.name ?? '';
+      const slug = sim?.slug ?? idOrSlug;
       const viewLabel = view.charAt(0).toUpperCase() + view.slice(1);
       seoService.setTitle(simName ? [viewLabel, simName] : [viewLabel]);
-      seoService.setCanonical(`/simulations/${simulationId}/${view}`);
-      if (appState.currentSimulation.value?.description) {
-        seoService.setDescription(appState.currentSimulation.value.description);
+      seoService.setCanonical(`/simulations/${slug}/${view}`);
+      if (sim?.description) {
+        seoService.setDescription(sim.description);
       }
-      analyticsService.trackPageView(`/simulations/${simulationId}/${view}`, document.title);
+      analyticsService.trackPageView(`/simulations/${slug}/${view}`, document.title);
     });
+
+    // Use resolved UUID for child components (API calls need UUIDs)
+    const resolvedId = appState.currentSimulation.value?.id ?? idOrSlug;
+
     let content: TemplateResult;
     switch (view) {
       case 'lore':
-        content = html`<velg-simulation-lore-view .simulationId=${simulationId}></velg-simulation-lore-view>`;
+        content = html`<velg-simulation-lore-view .simulationId=${resolvedId}></velg-simulation-lore-view>`;
         break;
       case 'agents':
-        content = html`<velg-agents-view .simulationId=${simulationId}></velg-agents-view>`;
+        content = html`<velg-agents-view .simulationId=${resolvedId}></velg-agents-view>`;
         break;
       case 'buildings':
-        content = html`<velg-buildings-view .simulationId=${simulationId}></velg-buildings-view>`;
+        content = html`<velg-buildings-view .simulationId=${resolvedId}></velg-buildings-view>`;
         break;
       case 'events':
-        content = html`<velg-events-view .simulationId=${simulationId}></velg-events-view>`;
+        content = html`<velg-events-view .simulationId=${resolvedId}></velg-events-view>`;
         break;
       case 'chat':
-        content = html`<velg-chat-view .simulationId=${simulationId}></velg-chat-view>`;
+        content = html`<velg-chat-view .simulationId=${resolvedId}></velg-chat-view>`;
         break;
       case 'settings':
-        content = html`<velg-settings-view .simulationId=${simulationId}></velg-settings-view>`;
+        content = html`<velg-settings-view .simulationId=${resolvedId}></velg-settings-view>`;
         break;
       case 'social':
-        content = html`<velg-social-trends-view .simulationId=${simulationId}></velg-social-trends-view>`;
+        content = html`<velg-social-trends-view .simulationId=${resolvedId}></velg-social-trends-view>`;
         break;
       case 'locations':
-        content = html`<velg-locations-view .simulationId=${simulationId}></velg-locations-view>`;
+        content = html`<velg-locations-view .simulationId=${resolvedId}></velg-locations-view>`;
         break;
       default:
         content = html`
@@ -430,7 +478,7 @@ export class VelgApp extends LitElement {
     }
 
     return html`
-      <velg-simulation-shell .simulationId=${simulationId}>
+      <velg-simulation-shell .simulationId=${resolvedId}>
         ${content}
       </velg-simulation-shell>
     `;

@@ -1,12 +1,12 @@
 import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { settingsApi } from '../../services/api/index.js';
+import { css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { themeService } from '../../services/ThemeService.js';
 import { PRESET_NAMES, THEME_PRESETS, type ThemePresetName } from '../../services/theme-presets.js';
-import type { SimulationSetting } from '../../types/index.js';
+import { BaseSettingsPanel } from '../shared/BaseSettingsPanel.js';
 import { VelgToast } from '../shared/Toast.js';
 import '../shared/VelgSectionHeader.js';
+import { settingsStyles } from '../shared/settings-styles.js';
 
 // ---------------------------------------------------------------------------
 // Field definitions — functions so msg() evaluates at render time
@@ -356,18 +356,10 @@ const MAX_CUSTOM_CSS_LENGTH = 10240;
 
 @localized()
 @customElement('velg-design-settings-panel')
-export class VelgDesignSettingsPanel extends LitElement {
-  static styles = css`
-    :host {
-      display: block;
-    }
-
-    .panel {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-6);
-    }
-
+export class VelgDesignSettingsPanel extends BaseSettingsPanel {
+  static styles = [
+    settingsStyles,
+    css`
     /* --- Preset Selector --- */
 
     .preset-bar {
@@ -748,124 +740,35 @@ export class VelgDesignSettingsPanel extends LitElement {
       box-sizing: border-box;
     }
 
-    /* --- Footer --- */
+  `,
+  ];
 
-    .panel__footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-      padding-top: var(--space-4);
-      border-top: var(--border-default);
-    }
+  protected get category(): string {
+    return 'design';
+  }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
+  protected get successMessage(): string {
+    return msg('Design settings saved successfully.');
+  }
 
-    .btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .btn--primary {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-    }
-
-    .panel__error {
-      padding: var(--space-3);
-      background: var(--color-danger-bg);
-      border: var(--border-width-default) solid var(--color-danger);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-sm);
-      color: var(--color-danger);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-    }
-  `;
-
-  @property({ type: String }) simulationId = '';
-
-  @state() private _values: Record<string, string> = {};
-  @state() private _originalValues: Record<string, string> = {};
-  @state() private _loading = true;
-  @state() private _saving = false;
-  @state() private _error: string | null = null;
   @state() private _selectedPreset: ThemePresetName | 'custom' = 'custom';
 
-  private get _hasChanges(): boolean {
-    const keys = new Set([...Object.keys(this._values), ...Object.keys(this._originalValues)]);
-    for (const key of keys) {
-      if ((this._values[key] ?? '') !== (this._originalValues[key] ?? '')) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
-    if (changedProperties.has('simulationId') && this.simulationId) {
-      this._loadSettings();
-    }
-  }
-
-  protected updated(changedProperties: Map<PropertyKey, unknown>): void {
-    super.updated(changedProperties);
-    const prevValues = changedProperties.get('_values') as Record<string, string> | undefined;
-    const prevOriginal = changedProperties.get('_originalValues') as
-      | Record<string, string>
-      | undefined;
-    if (prevValues !== undefined || prevOriginal !== undefined) {
-      this.dispatchEvent(
-        new CustomEvent('unsaved-change', {
-          detail: this._hasChanges,
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
-  }
-
   // ---------------------------------------------------------------------------
-  // Data loading
+  // Data loading (override to also detect preset)
   // ---------------------------------------------------------------------------
 
-  private async _loadSettings(): Promise<void> {
+  protected override async _loadSettings(): Promise<void> {
     if (!this.simulationId) return;
 
     this._loading = true;
     this._error = null;
 
     try {
+      const { settingsApi } = await import('../../services/api/index.js');
       const response = await settingsApi.list(this.simulationId, 'design');
 
       if (response.success && response.data) {
-        const settings = response.data as SimulationSetting[];
+        const settings = response.data as import('../../types/index.js').SimulationSetting[];
         const vals: Record<string, string> = {};
 
         for (const setting of settings) {
@@ -926,7 +829,7 @@ export class VelgDesignSettingsPanel extends LitElement {
   // Input handlers
   // ---------------------------------------------------------------------------
 
-  private _handleInput(key: string, e: Event): void {
+  protected override _handleInput(key: string, e: Event): void {
     const target = e.target as HTMLInputElement | HTMLTextAreaElement;
     this._values = { ...this._values, [key]: target.value };
     this._selectedPreset = 'custom';
@@ -949,49 +852,15 @@ export class VelgDesignSettingsPanel extends LitElement {
       return;
     }
 
-    this._saving = true;
-    this._error = null;
+    // Use the base class save which handles the upsert loop
+    await this._saveSettings();
 
-    try {
-      const changedKeys: string[] = [];
-      const allKeys = new Set([...Object.keys(this._values), ...Object.keys(this._originalValues)]);
-
-      for (const key of allKeys) {
-        if ((this._values[key] ?? '') !== (this._originalValues[key] ?? '')) {
-          changedKeys.push(key);
-        }
-      }
-
-      for (const key of changedKeys) {
-        const value = this._values[key] ?? '';
-
-        const response = await settingsApi.upsert(this.simulationId, {
-          category: 'design',
-          setting_key: key,
-          setting_value: value,
-        });
-
-        if (!response.success) {
-          this._error = response.error?.message ?? msg(str`Failed to save ${key}`);
-          VelgToast.error(msg(str`Failed to save ${key}`));
-          return;
-        }
-      }
-
-      this._originalValues = { ...this._values };
-      VelgToast.success(msg('Design settings saved successfully.'));
-      this.dispatchEvent(new CustomEvent('settings-saved', { bubbles: true, composed: true }));
-
-      // Re-apply theme to the shell so changes take effect immediately
+    // Re-apply theme to the shell so changes take effect immediately
+    if (!this._error) {
       const shell = this.closest('velg-simulation-shell');
       if (shell) {
         await themeService.applySimulationTheme(this.simulationId, shell as HTMLElement);
       }
-    } catch (err) {
-      this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
-      VelgToast.error(this._error);
-    } finally {
-      this._saving = false;
     }
   }
 
@@ -1007,8 +876,8 @@ export class VelgDesignSettingsPanel extends LitElement {
     }
 
     return html`
-      <div class="panel">
-        ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
+      <div class="settings-panel settings-panel--wide">
+        ${this._error ? html`<div class="settings-panel__error">${this._error}</div>` : nothing}
 
         ${this._renderPresetSelector()}
         ${this._renderColorSection()}
@@ -1018,9 +887,9 @@ export class VelgDesignSettingsPanel extends LitElement {
         ${this._renderCustomCSSSection()}
         ${this._renderPreviewSection()}
 
-        <div class="panel__footer">
+        <div class="settings-panel__footer">
           <button
-            class="btn btn--primary"
+            class="settings-btn settings-btn--primary"
             data-testid="design-save-btn"
             @click=${this._handleSave}
             ?disabled=${!this._hasChanges || this._saving}

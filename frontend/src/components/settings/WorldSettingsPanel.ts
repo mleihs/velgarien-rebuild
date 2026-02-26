@@ -8,24 +8,26 @@ import '../shared/VelgSectionHeader.js';
 import type { SimulationTaxonomy, TaxonomyType } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 
-const TAXONOMY_TYPES: Array<{ value: TaxonomyType; label: string }> = [
-  { value: 'gender', label: msg('Gender') },
-  { value: 'profession', label: msg('Profession') },
-  { value: 'system', label: msg('System') },
-  { value: 'building_type', label: msg('Building Type') },
-  { value: 'building_style', label: msg('Building Style') },
-  { value: 'building_special_type', label: msg('Building Special Type') },
-  { value: 'campaign_type', label: msg('Campaign Type') },
-  { value: 'target_demographic', label: msg('Target Demographic') },
-  { value: 'urgency_level', label: msg('Urgency Level') },
-  { value: 'zone_type', label: msg('Zone Type') },
-  { value: 'security_level', label: msg('Security Level') },
-  { value: 'event_type', label: msg('Event Type') },
-  { value: 'sentiment', label: msg('Sentiment') },
-  { value: 'interaction_type', label: msg('Interaction Type') },
-  { value: 'campaign_tone', label: msg('Campaign Tone') },
-  { value: 'complexity_level', label: msg('Complexity Level') },
-];
+function getTaxonomyTypes(): Array<{ value: TaxonomyType; label: string }> {
+  return [
+    { value: 'gender', label: msg('Gender') },
+    { value: 'profession', label: msg('Profession') },
+    { value: 'system', label: msg('System') },
+    { value: 'building_type', label: msg('Building Type') },
+    { value: 'building_style', label: msg('Building Style') },
+    { value: 'building_special_type', label: msg('Building Special Type') },
+    { value: 'campaign_type', label: msg('Campaign Type') },
+    { value: 'target_demographic', label: msg('Target Demographic') },
+    { value: 'urgency_level', label: msg('Urgency Level') },
+    { value: 'zone_type', label: msg('Zone Type') },
+    { value: 'security_level', label: msg('Security Level') },
+    { value: 'event_type', label: msg('Event Type') },
+    { value: 'sentiment', label: msg('Sentiment') },
+    { value: 'interaction_type', label: msg('Interaction Type') },
+    { value: 'campaign_tone', label: msg('Campaign Tone') },
+    { value: 'complexity_level', label: msg('Complexity Level') },
+  ];
+}
 
 interface NewTaxonomyForm {
   value: string;
@@ -418,7 +420,7 @@ export class VelgWorldSettingsPanel extends LitElement {
             .value=${this._selectedType}
             @change=${this._handleTypeChange}
           >
-            ${TAXONOMY_TYPES.map(
+            ${getTaxonomyTypes().map(
               (opt) => html`
                 <option value=${opt.value} ?selected=${this._selectedType === opt.value}>
                   ${opt.label}

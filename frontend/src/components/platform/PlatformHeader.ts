@@ -180,7 +180,7 @@ export class VelgPlatformHeader extends LitElement {
     if (sim) {
       this.dispatchEvent(
         new CustomEvent('navigate', {
-          detail: `/simulations/${sim.id}/agents`,
+          detail: `/simulations/${sim.slug}/agents`,
           bubbles: true,
           composed: true,
         }),

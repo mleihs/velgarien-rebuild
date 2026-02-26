@@ -37,7 +37,7 @@ class MemberService:
         """Get all simulation memberships for a user, including simulation names."""
         response = (
             supabase.table(cls.table_name)
-            .select("simulation_id, member_role, simulations(name)")
+            .select("simulation_id, member_role, simulations(name, slug)")
             .eq("user_id", str(user_id))
             .execute()
         )

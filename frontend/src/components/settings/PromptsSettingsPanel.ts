@@ -11,38 +11,42 @@ import '../shared/LoadingState.js';
 import '../shared/EmptyState.js';
 import '../shared/ErrorState.js';
 
-const TEMPLATE_TYPE_LABELS: Record<string, string> = {
-  agent_generation: msg('Agent Generation'),
-  agent_description: msg('Agent Description'),
-  agent_reactions: msg('Agent Reactions'),
-  agent_portrait_description: msg('Agent Portrait Desc.'),
-  user_agent_description: msg('User Agent Desc.'),
-  user_agent_portrait_description: msg('User Agent Portrait'),
-  building_generation: msg('Building Generation'),
-  building_description: msg('Building Description'),
-  building_image_prompt: msg('Building Image Prompt'),
-  building_image_generation: msg('Building Image Gen.'),
-  social_trends_title: msg('Social Trends Title'),
-  social_trends_description: msg('Social Trends Desc.'),
-  event_reaction: msg('Event Reaction'),
-  news_integration: msg('News Integration'),
-  portrait_generation: msg('Portrait Generation'),
-  chat_system_prompt: msg('Chat System Prompt'),
-  chat_with_memory: msg('Chat with Memory'),
-  news_transformation: msg('News Transformation'),
-  social_media_transformation: msg('Social Media Transform'),
-  social_media_sentiment: msg('Social Media Sentiment'),
-  social_media_agent_reaction: msg('Social Media Reaction'),
-};
+function getTemplateTypeLabels(): Record<string, string> {
+  return {
+    agent_generation: msg('Agent Generation'),
+    agent_description: msg('Agent Description'),
+    agent_reactions: msg('Agent Reactions'),
+    agent_portrait_description: msg('Agent Portrait Desc.'),
+    user_agent_description: msg('User Agent Desc.'),
+    user_agent_portrait_description: msg('User Agent Portrait'),
+    building_generation: msg('Building Generation'),
+    building_description: msg('Building Description'),
+    building_image_prompt: msg('Building Image Prompt'),
+    building_image_generation: msg('Building Image Gen.'),
+    social_trends_title: msg('Social Trends Title'),
+    social_trends_description: msg('Social Trends Desc.'),
+    event_reaction: msg('Event Reaction'),
+    news_integration: msg('News Integration'),
+    portrait_generation: msg('Portrait Generation'),
+    chat_system_prompt: msg('Chat System Prompt'),
+    chat_with_memory: msg('Chat with Memory'),
+    news_transformation: msg('News Transformation'),
+    social_media_transformation: msg('Social Media Transform'),
+    social_media_sentiment: msg('Social Media Sentiment'),
+    social_media_agent_reaction: msg('Social Media Reaction'),
+  };
+}
 
-const CATEGORY_LABELS: Record<string, string> = {
-  text_generation: msg('Text Generation'),
-  image_generation: msg('Image Generation'),
-  description_generation: msg('Description'),
-  reaction_generation: msg('Reaction'),
-  transformation: msg('Transformation'),
-  analysis: msg('Analysis'),
-};
+function getCategoryLabels(): Record<string, string> {
+  return {
+    text_generation: msg('Text Generation'),
+    image_generation: msg('Image Generation'),
+    description_generation: msg('Description'),
+    reaction_generation: msg('Reaction'),
+    transformation: msg('Transformation'),
+    analysis: msg('Analysis'),
+  };
+}
 
 @localized()
 @customElement('velg-prompts-settings-panel')
@@ -360,10 +364,10 @@ export class VelgPromptsSettingsPanel extends LitElement {
                 <div class="template__name">${t.template_name}</div>
                 <div class="template__meta">
                   <span class="template__badge template__badge--type">
-                    ${TEMPLATE_TYPE_LABELS[t.template_type] ?? t.template_type}
+                    ${getTemplateTypeLabels()[t.template_type] ?? t.template_type}
                   </span>
                   <span class="template__badge template__badge--category">
-                    ${CATEGORY_LABELS[t.prompt_category] ?? t.prompt_category}
+                    ${getCategoryLabels()[t.prompt_category] ?? t.prompt_category}
                   </span>
                   ${t.is_system_default ? html`<span class="template__badge template__badge--default">${msg('Default')}</span>` : nothing}
                   ${!t.is_active ? html`<span class="template__badge template__badge--inactive">${msg('Inactive')}</span>` : nothing}
@@ -396,8 +400,10 @@ export class VelgPromptsSettingsPanel extends LitElement {
 
   private _renderEditModal() {
     const isEdit = this._editingTemplate !== null;
-    const templateTypes = Object.keys(TEMPLATE_TYPE_LABELS) as PromptTemplateType[];
-    const categories = Object.keys(CATEGORY_LABELS) as PromptCategory[];
+    const typeLabels = getTemplateTypeLabels();
+    const catLabels = getCategoryLabels();
+    const templateTypes = Object.keys(typeLabels) as PromptTemplateType[];
+    const categories = Object.keys(catLabels) as PromptCategory[];
 
     return html`
       <velg-base-modal
@@ -438,7 +444,7 @@ export class VelgPromptsSettingsPanel extends LitElement {
                 @change=${(e: Event) => {
                   this._templateType = (e.target as HTMLSelectElement).value as PromptTemplateType;
                 }}>
-                ${templateTypes.map((t) => html`<option value=${t}>${TEMPLATE_TYPE_LABELS[t]}</option>`)}
+                ${templateTypes.map((t) => html`<option value=${t}>${typeLabels[t]}</option>`)}
               </select>
             </div>
             <div class="form__group">
@@ -447,7 +453,7 @@ export class VelgPromptsSettingsPanel extends LitElement {
                 @change=${(e: Event) => {
                   this._promptCategory = (e.target as HTMLSelectElement).value as PromptCategory;
                 }}>
-                ${categories.map((c) => html`<option value=${c}>${CATEGORY_LABELS[c]}</option>`)}
+                ${categories.map((c) => html`<option value=${c}>${catLabels[c]}</option>`)}
               </select>
             </div>
           </div>

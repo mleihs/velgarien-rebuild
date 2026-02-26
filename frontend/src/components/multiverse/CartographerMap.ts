@@ -210,7 +210,7 @@ export class VelgCartographerMap extends LitElement {
 
   private _handleNodeClick(e: CustomEvent<MapNodeData>): void {
     const node = e.detail;
-    const path = `/simulations/${node.id}/lore`;
+    const path = `/simulations/${node.slug}/lore`;
     window.history.pushState({}, '', path);
     this.dispatchEvent(
       new CustomEvent('navigate', { detail: path, bubbles: true, composed: true }),
@@ -228,7 +228,7 @@ export class VelgCartographerMap extends LitElement {
   }
 
   private _handleMobileCardClick(node: MapNodeData): void {
-    const path = `/simulations/${node.id}/lore`;
+    const path = `/simulations/${node.slug}/lore`;
     window.history.pushState({}, '', path);
     this.dispatchEvent(
       new CustomEvent('navigate', { detail: path, bubbles: true, composed: true }),

@@ -18,15 +18,17 @@ interface TabDef {
   ownerOnly?: boolean;
 }
 
-const TABS: TabDef[] = [
-  { key: 'general', label: msg('General') },
-  { key: 'world', label: msg('World') },
-  { key: 'ai', label: msg('AI') },
-  { key: 'prompts', label: msg('Prompts') },
-  { key: 'integration', label: msg('Integration') },
-  { key: 'design', label: msg('Design') },
-  { key: 'access', label: msg('Access'), ownerOnly: true },
-];
+function getTabs(): TabDef[] {
+  return [
+    { key: 'general', label: msg('General') },
+    { key: 'world', label: msg('World') },
+    { key: 'ai', label: msg('AI') },
+    { key: 'prompts', label: msg('Prompts') },
+    { key: 'integration', label: msg('Integration') },
+    { key: 'design', label: msg('Design') },
+    { key: 'access', label: msg('Access'), ownerOnly: true },
+  ];
+}
 
 @localized()
 @customElement('velg-settings-view')
@@ -146,7 +148,7 @@ export class VelgSettingsView extends LitElement {
 
   private get _visibleTabs(): TabDef[] {
     const isOwner = appState.isOwner.value;
-    return TABS.filter((tab) => !tab.ownerOnly || isOwner);
+    return getTabs().filter((tab) => !tab.ownerOnly || isOwner);
   }
 
   private _handleTabClick(tab: SettingCategory): void {

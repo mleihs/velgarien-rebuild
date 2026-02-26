@@ -1,6 +1,7 @@
 import { localized, msg } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { appState } from '../../services/AppStateManager.js';
 import { socialTrendsApi } from '../../services/api/index.js';
 import type { BrowseArticle } from '../../services/api/SocialTrendsApiService.js';
 
@@ -241,6 +242,18 @@ export class VelgSocialTrendsView extends LitElement {
       font-size: var(--text-xs); color: var(--color-text-muted);
       margin-top: auto;
     }
+
+    .trends__auth-notice {
+      display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+      padding: var(--space-8) var(--space-4); text-align: center;
+      border: var(--border-default); background: var(--color-surface-raised);
+    }
+
+    .trends__auth-notice-text {
+      font-family: var(--font-brutalist); font-weight: var(--font-bold);
+      font-size: var(--text-md); text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist); color: var(--color-text-secondary);
+    }
   `;
 
   @property({ type: String }) simulationId = '';
@@ -258,13 +271,17 @@ export class VelgSocialTrendsView extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    if (this.simulationId) {
+    if (this.simulationId && appState.isAuthenticated.value) {
       this._loadArticles();
     }
   }
 
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
-    if (changedProperties.has('simulationId') && this.simulationId) {
+    if (
+      changedProperties.has('simulationId') &&
+      this.simulationId &&
+      appState.isAuthenticated.value
+    ) {
       this._loadArticles();
     }
   }
@@ -527,6 +544,19 @@ export class VelgSocialTrendsView extends LitElement {
   }
 
   protected render() {
+    if (!appState.isAuthenticated.value) {
+      return html`
+        <div class="trends">
+          <div class="trends__header">
+            <h1 class="trends__title">${msg('Browse News')}</h1>
+          </div>
+          <div class="trends__auth-notice">
+            <span class="trends__auth-notice-text">${msg('Sign in to browse and transform news articles')}</span>
+          </div>
+        </div>
+      `;
+    }
+
     return html`
       <div class="trends">
         <div class="trends__header">

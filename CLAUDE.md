@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph). 157 tasks. 1088 localized UI strings (EN/DE, translated via DeepL). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
+**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph) + Settings architecture cleanup (shared CSS + BaseSettingsPanel base class) + Slug-based URLs (`/simulations/speranza/lore` instead of UUIDs) + Building description prompt fix (short functional output). 157 tasks. 1090 localized UI strings (EN/DE, translated via DeepL). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
 
 ## Tech Stack
 
@@ -46,12 +46,12 @@ backend/              FastAPI application
   app.py              Entry point (registers 23 routers)
   config.py           Settings (pydantic-settings, extra="ignore")
   dependencies.py     JWT auth, Supabase client (user/anon/admin), role checking
-  routers/            API endpoints — 23 routers, 157 endpoints (/api/v1/... + /api/v1/public/...)
+  routers/            API endpoints — 23 routers, 158 endpoints (/api/v1/... + /api/v1/public/...)
   models/             Pydantic request/response models (19 files)
   services/           Business logic (BaseService + 15 entity + audit + simulation + external)
   middleware/         Rate limiting, security headers (CSP), SEO crawler detection + HTML enrichment
   utils/              Encryption (AES-256 for settings), search helpers
-  tests/              pytest tests (321 tests: unit + integration + security + performance)
+  tests/              pytest tests (412 tests: unit + integration + security + performance)
 frontend/             Lit + Vite application
   src/
     app-shell.ts      Main app with @lit-labs/router (auth + simulation-scoped routes)
@@ -59,7 +59,7 @@ frontend/             Lit + Vite application
       auth/           Login, Register views, LoginPanel (slide-in)
       platform/       PlatformHeader, UserMenu, SimulationsDashboard, LoreScroll, CreateSimulationWizard, UserProfileView, InvitationAcceptView, NotificationCenter
       layout/         SimulationShell, SimulationHeader, SimulationNav
-      shared/         18 reusable components + 3 shared CSS modules (see Code Reusability)
+      shared/         18 reusable components + 5 shared CSS modules + BaseSettingsPanel base class (see Code Reusability)
       agents/         AgentsView, AgentCard, AgentEditModal, AgentDetailsPanel
       buildings/      BuildingsView, BuildingCard, BuildingEditModal, BuildingDetailsPanel
       events/         EventsView, EventCard, EventEditModal, EventDetailsPanel
@@ -77,13 +77,13 @@ frontend/             Lit + Vite application
     styles/           CSS design tokens (tokens/: 8 files — colors, typography, spacing, borders, shadows, animation, layout, z-index) + base styles (base/)
     utils/            Shared utilities (text.ts, formatters.ts, error-handler.ts, icons.ts)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
-  tests/              vitest tests (228 tests: validation + API + notification + theme contrast + SEO/analytics)
-e2e/                  Playwright E2E tests (56 specs across 9 files)
+  tests/              vitest tests (337 tests: validation + API + notification + theme contrast + SEO/analytics + settings)
+e2e/                  Playwright E2E tests (73 specs across 12 files)
   playwright.config.ts
   helpers/            auth.ts, fixtures.ts
   tests/              auth, agents, buildings, events, chat, settings, multi-user, social
 supabase/
-  migrations/         28 SQL migration files (001-025 + ensure_dev_user)
+  migrations/         30 SQL migration files (001-027 + ensure_dev_user)
   seed/               14 SQL seed files (5 active: 001, 006-008, 010; 9 archived with _ prefix: 002-005, 009, 011-014)
   config.toml         Local Supabase config
 scripts/              Image generation scripts (5: velgarien, capybara, station_null, speranza, dashboard) + lore images
@@ -178,7 +178,7 @@ Two MCP servers configured in `.mcp.json`:
 
 **Auth:** Production uses ES256 (ECC P-256) tokens verified via JWKS. Local uses HS256 with shared secret.
 
-**Schema changes:** `supabase db push` (requires `SUPABASE_ACCESS_TOKEN` env var, format `sbp_...`, from Dashboard → Avatar → Access Tokens). Migration `ensure_dev_user` creates test user + Velgarien sim (idempotent, safe for production). Migrations 016-017 are data-only (Velgarien image config + Capybara Kingdom). Migration 018 adds 21 anon RLS policies for public read access. Migration 019 adds `idx_buildings_street` index. Migration 020 restricts `settings_anon_select` policy to `category = 'design'` only. Migration 021 adds Station Null simulation (6 agents, 7 buildings, 4 zones, 16 streets, 36 design settings). Migration 022 improves prompt diversity (max_tokens=300, template rewrites removing aesthetic redundancy). Migration 023 fixes horror aesthetic (Alien 1979 style prompts, guidance_scale 3.5→5.0, Flux-aware prompting). Migration 024 adds Speranza simulation (6 agents, 7 buildings, 4 zones, 16 streets, 37 design settings). Migration 025 adds 3 underground buildings to Speranza.
+**Schema changes:** `supabase db push` (requires `SUPABASE_ACCESS_TOKEN` env var, format `sbp_...`, from Dashboard → Avatar → Access Tokens). Migration `ensure_dev_user` creates test user + Velgarien sim (idempotent, safe for production). Migrations 016-017 are data-only (Velgarien image config + Capybara Kingdom). Migration 018 adds 21 anon RLS policies for public read access. Migration 019 adds `idx_buildings_street` index. Migration 020 restricts `settings_anon_select` policy to `category = 'design'` only. Migration 021 adds Station Null simulation (6 agents, 7 buildings, 4 zones, 16 streets, 36 design settings). Migration 022 improves prompt diversity (max_tokens=300, template rewrites removing aesthetic redundancy). Migration 023 fixes horror aesthetic (Alien 1979 style prompts, guidance_scale 3.5→5.0, Flux-aware prompting). Migration 024 adds Speranza simulation (6 agents, 7 buildings, 4 zones, 16 streets, 37 design settings). Migration 025 adds 3 underground buildings to Speranza. Migration 026 adds agent_relationships, event_echoes, simulation_connections tables + demo data. Migration 027 fixes building description prompts (short functional output instead of 150-250 word narratives).
 
 **CRITICAL — Local DB Reset Safety:** `supabase stop --no-backup` and `supabase db reset` destroy Docker volumes, wiping all storage files (images). Always ensure images are backed up or can be recovered from production before resetting. See `memory/local-db-reset-guide.md` for recovery procedures. Local Supabase uses `sb_secret_`/`sb_publishable_` keys (NOT JWT service_role keys) — get from `supabase status`.
 
@@ -224,7 +224,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 }
 ```
 
-157 endpoints across 23 routers. Platform-level: `/api/v1/health`, `/api/v1/users/me`, `/api/v1/simulations`, `/api/v1/invitations`. SEO: `/robots.txt`, `/sitemap.xml` (dynamic from DB). Simulation-scoped: `/api/v1/simulations/{simulation_id}/agents`, `buildings`, `events`, `agent_professions`, `locations`, `taxonomies`, `settings`, `chat`, `members`, `campaigns`, `social-trends`, `social-media`, `generation`, `prompt-templates`, `relationships`, `echoes`. Public (no auth, rate-limited 100/min): `/api/v1/public/simulations`, `/api/v1/public/simulations/{id}/*` (GET-only, 26 endpoints mirroring authenticated reads, delegates to service layer). Platform-level public: `/api/v1/public/connections`, `/api/v1/public/map-data`.
+158 endpoints across 23 routers. Platform-level: `/api/v1/health`, `/api/v1/users/me`, `/api/v1/simulations`, `/api/v1/invitations`. SEO: `/robots.txt`, `/sitemap.xml` (dynamic from DB, uses slugs). Simulation-scoped: `/api/v1/simulations/{simulation_id}/agents`, `buildings`, `events`, `agent_professions`, `locations`, `taxonomies`, `settings`, `chat`, `members`, `campaigns`, `social-trends`, `social-media`, `generation`, `prompt-templates`, `relationships`, `echoes`. Public (no auth, rate-limited 100/min): `/api/v1/public/simulations`, `/api/v1/public/simulations/{id}/*`, `/api/v1/public/simulations/by-slug/{slug}` (GET-only, 27 endpoints mirroring authenticated reads, delegates to service layer). Platform-level public: `/api/v1/public/connections`, `/api/v1/public/map-data`.
 
 ## Backend Patterns
 
@@ -236,7 +236,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - **Models:** `PaginatedResponse[T]`, `SuccessResponse[T]`, `ErrorResponse` in `models/common.py`
 - **BaseService:** Generic CRUD in `services/base_service.py` — uses `active_*` views for soft-delete filtering, optional `include_deleted=True` for admin queries. Set `view_name = None` for tables without soft-delete (e.g., campaigns, agent_professions, locations). Public `serialize_for_json()` utility for datetime/UUID/date conversion.
 - **Entity services:** All CRUD routers use dedicated services — `AgentService` (with `list_for_reaction()` for lightweight AI queries), `BuildingService`, `EventService` (with `generate_reactions()` for AI reaction generation), `CampaignService` (extends BaseService), `LocationService` (facade delegating to `CityService`/`ZoneService`/`StreetService`, all extending BaseService), `AgentProfessionService` (extends BaseService), `PromptTemplateService` (custom, uses `is_active` for soft-delete), `MemberService` (with `LastOwnerError` exception + `get_user_memberships()`), `SocialMediaService`, `SocialTrendsService`, `RelationshipService` (extends BaseService for agent_relationships), `EchoService` (cross-simulation writes via admin client, cascade prevention), `ConnectionService` (platform-level simulation connections)
-- **Public router:** `routers/public.py` — 20 GET-only endpoints under `/api/v1/public`, rate-limited (100/min), uses `get_anon_supabase()` (no auth required). Delegates to service layer (`AgentService`, `BuildingService`, `EventService`, `LocationService`, `SettingsService`, `SocialTrendsService`, `SocialMediaService`, `CampaignService`) for query consistency. Covers simulations, agents, buildings, events, locations (cities/zones/streets with detail views), chat, taxonomies, settings (design category only), social-media, social-trends, campaigns.
+- **Public router:** `routers/public.py` — 27 GET-only endpoints under `/api/v1/public`, rate-limited (100/min), uses `get_anon_supabase()` (no auth required). Includes `/simulations/by-slug/{slug}` for slug-based URL resolution. Delegates to service layer (`AgentService`, `BuildingService`, `EventService`, `LocationService`, `SettingsService`, `SocialTrendsService`, `SocialMediaService`, `CampaignService`, `RelationshipService`, `EchoService`, `ConnectionService`) for query consistency. Covers simulations, agents, buildings, events, locations (cities/zones/streets with detail views), chat, taxonomies, settings (design category only), social-media, social-trends, campaigns, relationships, echoes, connections, map-data.
 - **Router discipline:** Routers handle HTTP only — no direct DB queries, no business logic helpers, no late-binding imports. All service imports at module level. External service imports (Guardian, NewsAPI, Facebook, GenerationService) at module level.
 - **AuditService:** `services/audit_service.py` — logs CRUD operations to `audit_log` table with entity diffs. Applied to all data-changing endpoints across all routers.
 - **Search utility:** `utils/search.py` — `apply_search_filter(query, search, vector_field, fallback_fields)` for full-text search with ilike fallback
@@ -253,7 +253,8 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - Routing via `@lit-labs/router` (Reactive Controller in app-shell)
 - All types in `frontend/src/types/index.ts`
 - Design tokens as CSS Custom Properties in `styles/tokens/`
-- **Shared components:** 17 reusable components + 3 shared CSS modules in `components/shared/` — see Code Reusability section for full list
+- **Shared components:** 18 reusable components + 5 shared CSS modules + `BaseSettingsPanel` base class in `components/shared/` — see Code Reusability section for full list
+- **Slug-based URLs:** Simulation routes use slugs (`/simulations/speranza/lore`) instead of UUIDs. `app-shell._resolveSimulation()` detects UUID vs slug, resolves slug→UUID via `simulationsApi.getBySlug()`, and rewrites UUID URLs to slugs via `history.replaceState`. All navigation links use `simulation.slug`. SEO middleware returns 301 redirects from UUID→slug for crawlers.
 - **Shared icons:** All SVG icons centralized in `utils/icons.ts` — import `{ icons }` and use `icons.edit()`, `icons.trash()`, etc. Never define inline SVG icon methods in components.
 - **Entity views:** Each entity has 4 files: ListView, Card, EditModal, DetailsPanel (except Chat which has 6)
 - **Event naming:** `import type { Event as SimEvent }` to avoid DOM `Event` conflict
@@ -311,7 +312,7 @@ DeepL tips:
 | `frontend/lit-localize.json` | Config: sourceLocale=en, targetLocale=de, runtime mode |
 | `frontend/src/services/i18n/locale-service.ts` | LocaleService: initLocale, setLocale, getInitialLocale |
 | `frontend/src/services/i18n/format-service.ts` | FormatService: formatDate, formatDateTime, formatNumber, formatRelativeTime |
-| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (1029 trans-units) — edit this for translations |
+| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (1090 trans-units) — edit this for translations |
 | `frontend/src/locales/generated/de.ts` | Auto-generated — NEVER edit manually |
 | `frontend/src/locales/generated/locale-codes.ts` | Source/target locale constants |
 
@@ -319,7 +320,7 @@ DeepL tips:
 
 **Before writing new code, ALWAYS search for existing reusable patterns:**
 
-1. **Check `components/shared/`** — 18 shared components + 3 CSS modules exist. Use them instead of creating one-off solutions:
+1. **Check `components/shared/`** — 18 reusable components + 5 CSS modules + 1 base class exist. Use them instead of creating one-off solutions:
    - **Layout:** `VelgSidePanel` (slide-from-right detail panel shell with backdrop, Escape, 3 slots: media/content/footer), `BaseModal` (centered dialog)
    - **UI Primitives:** `VelgBadge` (6 color variants), `VelgAvatar` (portrait + initials fallback, 3 sizes), `VelgIconButton` (30px icon action button), `VelgSectionHeader` (section titles, 2 variants)
    - **Data Display:** `DataTable`, `Pagination`, `SharedFilterBar`
@@ -327,10 +328,13 @@ DeepL tips:
    - **Forms:** `FormBuilder`
    - **Media:** `Lightbox` (fullscreen image overlay with Escape/click-to-close, optional `caption` + `alt` properties)
    - **GDPR:** `CookieConsent` (fixed bottom banner, accept/decline analytics, stores in localStorage)
+   - **Settings:** `BaseSettingsPanel` (abstract base class for simulation_settings-backed panels — provides load/save/dirty-tracking via `settingsApi`. Subclasses define `category` getter + `render()`. Used by AI, Integration, Design, Access panels. GeneralSettingsPanel does NOT extend this — it reads from the `simulations` table directly.)
    - **Shared CSS:**
      - `panel-button-styles.ts` — `panelButtonStyles` for detail panel footer buttons (`.panel__btn` base + `--edit`, `--danger`, `--generate` variants)
      - `form-styles.ts` — `formStyles` for modal forms (`.form`, `.form__group`, `.form__row`, `.form__label`, `.form__input/.form__textarea/.form__select`, `.footer`, `.footer__btn--cancel/--save`, `.gen-btn`)
      - `view-header-styles.ts` — `viewHeaderStyles` for entity list views (`.view`, `.view__header`, `.view__title`, `.view__create-btn`, `.view__count`)
+     - `settings-styles.ts` — `settingsStyles` for settings panels (`.settings-panel`, `.settings-form`, `.settings-form__group`, `.settings-form__input`, `.settings-btn`, `.settings-toggle`)
+     - `card-styles.ts` — `cardStyles` for entity cards (`.card`, `.card__header`, `.card__body`, `.card__footer`)
    - **Usage:** `static styles = [formStyles, css\`...\`]` — local styles win by cascade for per-component overrides
 2. **Check `services/`** — BaseApiService provides CRUD patterns. Extend it for new API services. BaseService (backend) provides generic CRUD with soft-delete, audit logging, and optimistic locking.
 3. **Check existing components** for similar patterns — entity views follow a consistent 4-file pattern (ListView, Card, EditModal, DetailsPanel). Copy the pattern, don't reinvent it.

@@ -579,6 +579,7 @@ export interface UserProfile {
 export interface MembershipInfo {
   simulation_id: UUID;
   simulation_name: string;
+  simulation_slug: string;
   member_role: SimulationRole;
   joined_at: string;
 }

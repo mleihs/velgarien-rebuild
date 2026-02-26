@@ -1569,7 +1569,6 @@ Feuern Sie, wenn Sie bereit sind.`,
 'sba68342e5c1fb5f6': `Keine Werte für diesen Taxonomie-Typ.`,
 'sba76034e2f6cea8e': `Die Karte des Kartographen`,
 'sbb0782797c50663a': `Negativ`,
-'sbb6f00af9be251f0': `Fehler beim Laden der KI-Einstellungen`,
 'sbb757b88f1a4a1a2': `Zugangs-Einstellungen werden geladen...`,
 'sbb81b873f4798952': `Verfügbare Vektoren:`,
 'sbb8cd962bb8d64bf': `Beiträge erfolgreich synchronisiert`,
@@ -1675,6 +1674,7 @@ Der Raum zwischen uns wird einfach kleiner.`,
 'sc9d9798d6939227d': `Flux Dev + LoRA (benutzerdefinierter Stil)`,
 'sc9e36319670bfb2c': `Noch keine Nachrichten`,
 'scab632ef90c76c45': `Fehler beim Deaktivieren der Vorlage`,
+'scac48aec63cfdb2d': `Anmelden, um Nachrichtenartikel zu durchsuchen und umzuwandeln`,
 'scad07cc65ad2fb30': `Noch kein Konto?`,
 'scadea4de00d91108': `Unter den Kartographen gibt es drei Denkschulen:
 
@@ -1774,6 +1774,7 @@ Axiom 4: Die Kartographen existieren außerhalb der Axiome. Dies ist kein Privil
 'sdb26de56d7d43d18': `Ungültige E-Mail oder Passwort.`,
 'sdbc215b41c0cb950': `Reaktionen werden verarbeitet...`,
 'sdbda38e8f04a8c4e': `Das Multiversum ist kein Problem, das gelöst werden muss. Es ist eine Frage, die bewohnt werden will.`,
+'sdc2508aba9b9ef42': `Einstellungen erfolgreich gespeichert.`,
 'sdc63ec20b1ccc2db': `KI transformiert Artikel...`,
 'sdc667cd77dc6ca2b': `Das Büro arbeitet nach drei Grundsätzen:
 
@@ -1819,6 +1820,7 @@ Das Büro beschäftigt etwa 200 Kartographen auf allen bekannten Scherben. Die g
 'se5be05dac1218eba': str`Modell: ${0}`,
 'se5ecd6c894ee69dc': `Vorlage aktualisiert`,
 'se5f5b1776f87db11': `Beschreibe die Hintergrundgeschichte des Agenten...`,
+'se5f8257f3b52247b': `Einstellungen konnten nicht gespeichert werden`,
 'se61e4aa458d44f18': `Gebäudebild-Gen.`,
 'se6533ca5b77ffca9': `The Fall - Wie die Welt zerbrach`,
 'se6ce9f50ddd15633': `Fehler beim Laden der Agenten.`,

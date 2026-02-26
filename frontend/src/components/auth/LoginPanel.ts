@@ -121,8 +121,8 @@ export class VelgLoginPanel extends LitElement {
     }
   `;
 
-  @state() private _email = '';
-  @state() private _password = '';
+  @state() private _email = import.meta.env.DEV ? (import.meta.env.VITE_DEV_EMAIL ?? '') : '';
+  @state() private _password = import.meta.env.DEV ? (import.meta.env.VITE_DEV_PASSWORD ?? '') : '';
   @state() private _error: string | null = null;
   @state() private _loading = false;
 

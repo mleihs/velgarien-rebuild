@@ -19,14 +19,12 @@ async def get_me(
 
     memberships = []
     for row in rows:
-        sim_name = ""
-        if row.get("simulations"):
-            sim_name = row["simulations"].get("name", "")
-
+        sim_data = row.get("simulations") or {}
         memberships.append(
             MembershipInfo(
                 simulation_id=row["simulation_id"],
-                simulation_name=sim_name,
+                simulation_name=sim_data.get("name", ""),
+                simulation_slug=sim_data.get("slug", ""),
                 member_role=row["member_role"],
             )
         )

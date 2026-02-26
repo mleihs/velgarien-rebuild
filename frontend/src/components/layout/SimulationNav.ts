@@ -86,12 +86,16 @@ export class VelgSimulationNav extends LitElement {
     }
   }
 
+  private get _slug(): string {
+    return appState.currentSimulation.value?.slug ?? this.simulationId;
+  }
+
   private _handleTabClick(e: Event, tab: NavTab): void {
     e.preventDefault();
     this._activeTab = tab.path;
     this.dispatchEvent(
       new CustomEvent('navigate', {
-        detail: `/simulations/${this.simulationId}/${tab.path}`,
+        detail: `/simulations/${this._slug}/${tab.path}`,
         bubbles: true,
         composed: true,
       }),
@@ -111,7 +115,7 @@ export class VelgSimulationNav extends LitElement {
         ${this._visibleTabs.map(
           (tab) => html`
             <a
-              href="/simulations/${this.simulationId}/${tab.path}"
+              href="/simulations/${this._slug}/${tab.path}"
               class="nav__tab ${this._activeTab === tab.path ? 'nav__tab--active' : ''}"
               @click=${(e: Event) => this._handleTabClick(e, tab)}
             >

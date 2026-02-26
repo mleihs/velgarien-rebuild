@@ -1,19 +1,23 @@
-import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing } from 'lit';
+import { localized, msg } from '@lit/localize';
+import { html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { settingsApi } from '../../services/api/index.js';
-import type { SimulationSetting, SimulationTheme } from '../../types/index.js';
+import { appState } from '../../services/AppStateManager.js';
+import { simulationsApi } from '../../services/api/index.js';
+import type { Simulation, SimulationTheme } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 import '../shared/VelgSectionHeader.js';
+import { settingsStyles } from '../shared/settings-styles.js';
 
-const THEME_OPTIONS: Array<{ value: SimulationTheme; label: string }> = [
-  { value: 'dystopian', label: msg('Dystopian') },
-  { value: 'utopian', label: msg('Utopian') },
-  { value: 'fantasy', label: msg('Fantasy') },
-  { value: 'scifi', label: msg('Sci-Fi') },
-  { value: 'historical', label: msg('Historical') },
-  { value: 'custom', label: msg('Custom') },
-];
+function getThemeOptions(): Array<{ value: SimulationTheme; label: string }> {
+  return [
+    { value: 'dystopian', label: msg('Dystopian') },
+    { value: 'utopian', label: msg('Utopian') },
+    { value: 'fantasy', label: msg('Fantasy') },
+    { value: 'scifi', label: msg('Sci-Fi') },
+    { value: 'historical', label: msg('Historical') },
+    { value: 'custom', label: msg('Custom') },
+  ];
+}
 
 interface GeneralFormData {
   name: string;
@@ -25,146 +29,7 @@ interface GeneralFormData {
 @localized()
 @customElement('velg-general-settings-panel')
 export class VelgGeneralSettingsPanel extends LitElement {
-  static styles = css`
-    :host {
-      display: block;
-    }
-
-    .panel {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-5);
-    }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .form__group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1-5);
-    }
-
-    .form__label {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-primary);
-    }
-
-    .form__hint {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      font-family: var(--font-sans);
-      text-transform: none;
-      letter-spacing: normal;
-    }
-
-    .form__input,
-    .form__textarea,
-    .form__select {
-      font-family: var(--font-sans);
-      font-size: var(--text-base);
-      padding: var(--space-2-5) var(--space-3);
-      border: var(--border-medium);
-      background: var(--color-surface);
-      color: var(--color-text-primary);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .form__input:focus,
-    .form__textarea:focus,
-    .form__select:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-      box-shadow: var(--ring-focus);
-    }
-
-    .form__input::placeholder,
-    .form__textarea::placeholder {
-      color: var(--color-text-muted);
-    }
-
-    .form__input--readonly {
-      background: var(--color-surface-sunken);
-      color: var(--color-text-muted);
-      cursor: not-allowed;
-    }
-
-    .form__textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .form__select {
-      cursor: pointer;
-    }
-
-    .panel__footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-3);
-      padding-top: var(--space-4);
-      border-top: var(--border-default);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-2) var(--space-4);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .btn:active {
-      transform: translate(0);
-      box-shadow: var(--shadow-pressed);
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    .btn--primary {
-      background: var(--color-primary);
-      color: var(--color-text-inverse);
-    }
-
-    .panel__error {
-      padding: var(--space-3);
-      background: var(--color-danger-bg);
-      border: var(--border-width-default) solid var(--color-danger);
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-sm);
-      color: var(--color-danger);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-    }
-  `;
+  static styles = [settingsStyles];
 
   @property({ type: String }) simulationId = '';
 
@@ -202,7 +67,6 @@ export class VelgGeneralSettingsPanel extends LitElement {
 
   protected updated(changedProperties: Map<PropertyKey, unknown>): void {
     super.updated(changedProperties);
-    // Notify parent about unsaved state changes
     const prevForm = changedProperties.get('_formData') as GeneralFormData | undefined;
     const prevOriginal = changedProperties.get('_originalData') as GeneralFormData | undefined;
     if (prevForm !== undefined || prevOriginal !== undefined) {
@@ -223,45 +87,36 @@ export class VelgGeneralSettingsPanel extends LitElement {
     this._error = null;
 
     try {
-      const response = await settingsApi.list(this.simulationId, 'general');
+      // Read from the simulations table (via appState or API)
+      const sim = appState.currentSimulation.value;
 
-      if (response.success && response.data) {
-        const settings = response.data as SimulationSetting[];
-        const formData: GeneralFormData = {
-          name: '',
-          slug: '',
-          description: '',
-          theme: 'dystopian',
-        };
-
-        for (const setting of settings) {
-          const val = setting.setting_value as string;
-          switch (setting.setting_key) {
-            case 'name':
-              formData.name = val ?? '';
-              break;
-            case 'slug':
-              formData.slug = val ?? '';
-              break;
-            case 'description':
-              formData.description = val ?? '';
-              break;
-            case 'theme':
-              formData.theme = (val as SimulationTheme) ?? 'dystopian';
-              break;
-          }
-        }
-
-        this._formData = { ...formData };
-        this._originalData = { ...formData };
+      if (sim && sim.id === this.simulationId) {
+        this._populateFromSimulation(sim);
       } else {
-        this._error = response.error?.message ?? msg('Failed to load settings');
+        // Fallback: fetch directly
+        const response = await simulationsApi.getById(this.simulationId);
+        if (response.success && response.data) {
+          this._populateFromSimulation(response.data as Simulation);
+        } else {
+          this._error = response.error?.message ?? msg('Failed to load settings');
+        }
       }
     } catch (err) {
       this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
     }
+  }
+
+  private _populateFromSimulation(sim: Simulation): void {
+    const formData: GeneralFormData = {
+      name: sim.name ?? '',
+      slug: sim.slug ?? '',
+      description: sim.description ?? '',
+      theme: sim.theme ?? 'dystopian',
+    };
+    this._formData = { ...formData };
+    this._originalData = { ...formData };
   }
 
   private _handleInput(field: keyof GeneralFormData, e: Event): void {
@@ -276,30 +131,29 @@ export class VelgGeneralSettingsPanel extends LitElement {
     this._error = null;
 
     try {
-      const fieldsToSave: Array<{ key: string; value: string }> = [];
+      const updateData: Partial<Simulation> = {};
 
       if (this._formData.name !== this._originalData.name) {
-        fieldsToSave.push({ key: 'name', value: this._formData.name });
+        updateData.name = this._formData.name;
       }
       if (this._formData.description !== this._originalData.description) {
-        fieldsToSave.push({ key: 'description', value: this._formData.description });
+        updateData.description = this._formData.description;
       }
       if (this._formData.theme !== this._originalData.theme) {
-        fieldsToSave.push({ key: 'theme', value: this._formData.theme });
+        updateData.theme = this._formData.theme;
       }
 
-      for (const field of fieldsToSave) {
-        const response = await settingsApi.upsert(this.simulationId, {
-          category: 'general',
-          setting_key: field.key,
-          setting_value: field.value,
-        });
+      const response = await simulationsApi.update(this.simulationId, updateData);
 
-        if (!response.success) {
-          this._error = response.error?.message ?? msg(str`Failed to save ${field.key}`);
-          VelgToast.error(msg(str`Failed to save ${field.key}`));
-          return;
-        }
+      if (!response.success) {
+        this._error = response.error?.message ?? msg('Failed to save settings');
+        VelgToast.error(this._error);
+        return;
+      }
+
+      // Update appState so header reflects changes immediately
+      if (response.data) {
+        appState.setCurrentSimulation(response.data as Simulation);
       }
 
       this._originalData = { ...this._formData };
@@ -319,16 +173,16 @@ export class VelgGeneralSettingsPanel extends LitElement {
     }
 
     return html`
-      <div class="panel">
+      <div class="settings-panel">
         <velg-section-header variant="large">${msg('General Settings')}</velg-section-header>
 
-        ${this._error ? html`<div class="panel__error">${this._error}</div>` : nothing}
+        ${this._error ? html`<div class="settings-panel__error">${this._error}</div>` : nothing}
 
-        <div class="form">
-          <div class="form__group">
-            <label class="form__label" for="general-name">${msg('Simulation Name')}</label>
+        <div class="settings-form">
+          <div class="settings-form__group">
+            <label class="settings-form__label" for="general-name">${msg('Simulation Name')}</label>
             <input
-              class="form__input"
+              class="settings-form__input"
               id="general-name"
               type="text"
               placeholder=${msg('Enter simulation name...')}
@@ -337,13 +191,13 @@ export class VelgGeneralSettingsPanel extends LitElement {
             />
           </div>
 
-          <div class="form__group">
-            <label class="form__label" for="general-slug">
+          <div class="settings-form__group">
+            <label class="settings-form__label" for="general-slug">
               ${msg('Slug')}
-              <span class="form__hint">${msg('(read-only, set at creation)')}</span>
+              <span class="settings-form__hint">${msg('(read-only, set at creation)')}</span>
             </label>
             <input
-              class="form__input form__input--readonly"
+              class="settings-form__input settings-form__input--readonly"
               id="general-slug"
               type="text"
               .value=${this._formData.slug}
@@ -351,10 +205,10 @@ export class VelgGeneralSettingsPanel extends LitElement {
             />
           </div>
 
-          <div class="form__group">
-            <label class="form__label" for="general-description">${msg('Description')}</label>
+          <div class="settings-form__group">
+            <label class="settings-form__label" for="general-description">${msg('Description')}</label>
             <textarea
-              class="form__textarea"
+              class="settings-form__textarea"
               id="general-description"
               placeholder=${msg('Describe your simulation world...')}
               .value=${this._formData.description}
@@ -362,15 +216,15 @@ export class VelgGeneralSettingsPanel extends LitElement {
             ></textarea>
           </div>
 
-          <div class="form__group">
-            <label class="form__label" for="general-theme">${msg('Theme')}</label>
+          <div class="settings-form__group">
+            <label class="settings-form__label" for="general-theme">${msg('Theme')}</label>
             <select
-              class="form__select"
+              class="settings-form__select"
               id="general-theme"
               .value=${this._formData.theme}
               @change=${(e: Event) => this._handleInput('theme', e)}
             >
-              ${THEME_OPTIONS.map(
+              ${getThemeOptions().map(
                 (opt) => html`
                   <option value=${opt.value} ?selected=${this._formData.theme === opt.value}>
                     ${opt.label}
@@ -381,9 +235,9 @@ export class VelgGeneralSettingsPanel extends LitElement {
           </div>
         </div>
 
-        <div class="panel__footer">
+        <div class="settings-panel__footer">
           <button
-            class="btn btn--primary"
+            class="settings-btn settings-btn--primary"
             @click=${this._handleSave}
             ?disabled=${!this._hasChanges || this._saving}
           >

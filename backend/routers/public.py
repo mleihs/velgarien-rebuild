@@ -87,6 +87,29 @@ async def list_simulations(
     return _paginated(data, total, limit, offset)
 
 
+@router.get("/simulations/by-slug/{slug}", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_simulation_by_slug(
+    request: Request,
+    slug: str,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get a single active simulation by its slug (public)."""
+    response = (
+        supabase.table("simulations")
+        .select("*")
+        .eq("slug", slug)
+        .eq("status", "active")
+        .limit(1)
+        .execute()
+    )
+    if not response.data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Simulation not found.")
+    data = response.data
+    _enrich_with_counts(supabase, data)
+    return {"success": True, "data": data[0]}
+
+
 @router.get("/simulations/{simulation_id}", response_model=SuccessResponse)
 @limiter.limit(RATE_LIMIT_PUBLIC)
 async def get_simulation(

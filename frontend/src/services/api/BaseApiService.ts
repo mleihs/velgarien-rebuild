@@ -62,7 +62,15 @@ export class BaseApiService {
         try {
           const json = await response.json();
           errorCode = json.code || errorCode;
-          errorMessage = json.message || json.detail || errorMessage;
+          if (Array.isArray(json.detail)) {
+            errorMessage =
+              json.detail
+                .map((d: { msg?: string }) => d.msg ?? '')
+                .filter(Boolean)
+                .join('; ') || errorMessage;
+          } else {
+            errorMessage = json.message || json.detail || errorMessage;
+          }
         } catch {
           // Response body is not JSON — use statusText
         }
@@ -122,7 +130,15 @@ export class BaseApiService {
         try {
           const json = await response.json();
           errorCode = json.code || errorCode;
-          errorMessage = json.message || json.detail || errorMessage;
+          if (Array.isArray(json.detail)) {
+            errorMessage =
+              json.detail
+                .map((d: { msg?: string }) => d.msg ?? '')
+                .filter(Boolean)
+                .join('; ') || errorMessage;
+          } else {
+            errorMessage = json.message || json.detail || errorMessage;
+          }
         } catch {
           // Response body is not JSON
         }

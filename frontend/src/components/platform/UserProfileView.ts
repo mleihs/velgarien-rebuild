@@ -307,7 +307,7 @@ export class VelgUserProfileView extends LitElement {
   private _handleMembershipClick(membership: MembershipInfo): void {
     this.dispatchEvent(
       new CustomEvent('navigate', {
-        detail: `/simulations/${membership.simulation_id}/agents`,
+        detail: `/simulations/${membership.simulation_slug || membership.simulation_id}/agents`,
         bubbles: true,
         composed: true,
       }),

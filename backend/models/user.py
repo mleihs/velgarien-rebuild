@@ -15,6 +15,7 @@ class MembershipInfo(BaseModel):
 
     simulation_id: UUID
     simulation_name: str
+    simulation_slug: str = ""
     member_role: str
 
 

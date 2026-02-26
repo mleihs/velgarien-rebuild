@@ -22,7 +22,7 @@ Disallow: /api/
 Sitemap: https://metaverse.center/sitemap.xml
 """
 
-SIMULATION_VIEWS = ["agents", "buildings", "events", "locations", "social", "chat"]
+SIMULATION_VIEWS = ["lore", "agents", "buildings", "events", "locations", "social", "chat"]
 
 
 @router.get("/robots.txt", response_class=PlainTextResponse)
@@ -32,7 +32,7 @@ async def robots_txt() -> PlainTextResponse:
 
 @router.get("/sitemap.xml")
 async def sitemap_xml(supabase: Client = Depends(get_anon_supabase)) -> Response:
-    response = supabase.table("simulations").select("id,updated_at").eq("status", "active").execute()
+    response = supabase.table("simulations").select("slug,updated_at").eq("status", "active").execute()
     simulations = response.data or []
 
     urlset = Element("urlset")
@@ -46,6 +46,9 @@ async def sitemap_xml(supabase: Client = Depends(get_anon_supabase)) -> Response
     # Dashboard
     _add_url(urlset, "https://metaverse.center/dashboard", now, "0.9", "daily")
 
+    # Multiverse map
+    _add_url(urlset, "https://metaverse.center/multiverse", now, "0.8", "weekly")
+
     # Per-simulation views
     for sim in simulations:
         sim_updated = sim.get("updated_at", now)
@@ -54,7 +57,7 @@ async def sitemap_xml(supabase: Client = Depends(get_anon_supabase)) -> Response
         for view in SIMULATION_VIEWS:
             _add_url(
                 urlset,
-                f"https://metaverse.center/simulations/{sim['id']}/{view}",
+                f"https://metaverse.center/simulations/{sim['slug']}/{view}",
                 sim_updated,
                 "0.7",
                 "weekly",
