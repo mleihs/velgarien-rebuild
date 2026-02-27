@@ -48,6 +48,7 @@ class AgentResponse(BaseModel):
     portrait_description: str | None = None
     data_source: str | None = None
     created_by_id: UUID | None = None
+    is_ambassador: bool = False
     created_at: datetime
     updated_at: datetime
     deleted_at: datetime | None = None

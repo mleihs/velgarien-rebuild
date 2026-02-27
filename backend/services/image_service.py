@@ -40,17 +40,37 @@ class ImageService:
         agent_id: UUID,
         agent_name: str,
         agent_data: dict | None = None,
+        description_override: str | None = None,
     ) -> str:
         """Generate a portrait for an agent and upload to storage.
 
         Returns the public URL of the uploaded portrait.
+
+        If description_override is provided, skip LLM generation and use it
+        directly as the image prompt (still appends style prompt).
+        If agent_data contains is_ambassador=True and no override, auto-detect
+        embassy data and use ambassador-specific prompt generation.
         """
-        # 1. Generate portrait description (always English for image models)
-        description = await self._generation.generate_portrait_description(
-            agent_name=agent_name,
-            agent_data=agent_data,
-            locale="en",
-        )
+        data = agent_data or {}
+
+        if description_override:
+            description = description_override
+            logger.info(
+                "Using description override for '%s': %s",
+                agent_name,
+                description[:100],
+            )
+        elif data.get("is_ambassador"):
+            description = await self._generate_ambassador_description(
+                agent_name, data,
+            )
+        else:
+            description = await self._generation.generate_portrait_description(
+                agent_name=agent_name,
+                agent_data=agent_data,
+                locale="en",
+            )
+
         logger.info(
             "Portrait description for '%s': %s",
             agent_name,
@@ -97,19 +117,39 @@ class ImageService:
         building_name: str,
         building_type: str,
         building_data: dict | None = None,
+        description_override: str | None = None,
     ) -> str:
         """Generate an image for a building and upload to storage.
 
         Uses a dedicated building_image_description template (same pattern as
         portrait generation) to produce a proper image-generation prompt that
         reflects the building's game-state properties.
+
+        If description_override is provided, skip LLM generation and use it
+        directly as the image prompt (still appends style prompt).
+        If building_data contains special_type='embassy' and no override,
+        auto-detect embassy data and use embassy-specific prompt generation.
         """
-        # 1. Generate building image description via LLM template
-        description = await self._generation.generate_building_image_description(
-            building_name=building_name,
-            building_type=building_type,
-            building_data=building_data,
-        )
+        data = building_data or {}
+
+        if description_override:
+            description = description_override
+            logger.info(
+                "Using description override for '%s': %s",
+                building_name,
+                description[:100],
+            )
+        elif data.get("special_type") == "embassy":
+            description = await self._generate_embassy_description(
+                building_name, data,
+            )
+        else:
+            description = await self._generation.generate_building_image_description(
+                building_name=building_name,
+                building_type=building_type,
+                building_data=building_data,
+            )
+
         logger.info(
             "Building image description for '%s': %s",
             building_name,
@@ -149,6 +189,196 @@ class ImageService:
 
         logger.info("Image uploaded for building %s: %s", building_id, url)
         return url
+
+    async def _generate_embassy_description(
+        self,
+        building_name: str,
+        building_data: dict,
+    ) -> str:
+        """Fetch embassy context and generate an embassy building image description."""
+        embassy_id = building_data.get("embassy_id")
+        if not embassy_id:
+            # Try to find embassy via special_attributes
+            attrs = building_data.get("special_attributes") or {}
+            embassy_id = attrs.get("embassy_id")
+
+        if not embassy_id:
+            logger.warning(
+                "Embassy building '%s' has no embassy_id — falling back to standard",
+                building_name,
+            )
+            return await self._generation.generate_building_image_description(
+                building_name=building_name,
+                building_type=building_data.get("building_type", ""),
+                building_data=building_data,
+            )
+
+        # Fetch embassy record
+        embassy_resp = (
+            self._supabase.table("embassies")
+            .select("*")
+            .eq("id", str(embassy_id))
+            .limit(1)
+            .execute()
+        )
+        if not embassy_resp.data:
+            logger.warning("Embassy %s not found — falling back to standard", embassy_id)
+            return await self._generation.generate_building_image_description(
+                building_name=building_name,
+                building_type=building_data.get("building_type", ""),
+                building_data=building_data,
+            )
+
+        embassy = embassy_resp.data[0]
+
+        # Determine partner simulation ID
+        partner_sim_id = building_data.get("partner_simulation_id")
+        if not partner_sim_id:
+            attrs = building_data.get("special_attributes") or {}
+            partner_sim_id = attrs.get("partner_simulation_id")
+        if not partner_sim_id:
+            # Derive from embassy: the partner is whichever sim is not ours
+            if str(embassy["simulation_a_id"]) == str(self._simulation_id):
+                partner_sim_id = embassy["simulation_b_id"]
+            else:
+                partner_sim_id = embassy["simulation_a_id"]
+
+        # Fetch partner simulation name
+        partner_resp = (
+            self._supabase.table("simulations")
+            .select("name")
+            .eq("id", str(partner_sim_id))
+            .limit(1)
+            .execute()
+        )
+        partner_name = (
+            partner_resp.data[0]["name"] if partner_resp.data else "Unknown"
+        )
+
+        # Fetch partner style prompt
+        partner_style_resp = (
+            self._supabase.table("simulation_settings")
+            .select("setting_value")
+            .eq("simulation_id", str(partner_sim_id))
+            .eq("setting_key", "ai.image_style_prompt_building")
+            .limit(1)
+            .execute()
+        )
+        partner_theme = (
+            partner_style_resp.data[0]["setting_value"]
+            if partner_style_resp.data else ""
+        )
+
+        # Fetch our own style prompt for the template
+        own_style_resp = (
+            self._supabase.table("simulation_settings")
+            .select("setting_value")
+            .eq("simulation_id", str(self._simulation_id))
+            .eq("setting_key", "ai.image_style_prompt_building")
+            .limit(1)
+            .execute()
+        )
+        own_theme = (
+            own_style_resp.data[0]["setting_value"]
+            if own_style_resp.data else ""
+        )
+
+        building_data_with_theme = {**building_data, "simulation_theme": own_theme}
+
+        return await self._generation.generate_embassy_building_image_description(
+            building_name=building_name,
+            building_data=building_data_with_theme,
+            partner_simulation={"name": partner_name, "theme": partner_theme},
+            embassy_data=embassy,
+        )
+
+    async def _generate_ambassador_description(
+        self,
+        agent_name: str,
+        agent_data: dict,
+    ) -> str:
+        """Fetch embassy context and generate an ambassador portrait description."""
+        # Find the first embassy this agent is associated with via embassy_metadata
+        # Ambassadors are named in embassy_metadata.ambassador_a/b.name
+        embassy_resp = (
+            self._supabase.table("embassies")
+            .select("*")
+            .or_(
+                f"simulation_a_id.eq.{self._simulation_id},"
+                f"simulation_b_id.eq.{self._simulation_id}",
+            )
+            .eq("status", "active")
+            .limit(1)
+            .execute()
+        )
+
+        if not embassy_resp.data:
+            logger.warning(
+                "No embassy found for ambassador '%s' — falling back to standard",
+                agent_name,
+            )
+            return await self._generation.generate_portrait_description(
+                agent_name=agent_name,
+                agent_data=agent_data,
+                locale="en",
+            )
+
+        embassy = embassy_resp.data[0]
+
+        # Determine partner simulation
+        if str(embassy["simulation_a_id"]) == str(self._simulation_id):
+            partner_sim_id = embassy["simulation_b_id"]
+        else:
+            partner_sim_id = embassy["simulation_a_id"]
+
+        # Fetch partner simulation name
+        partner_resp = (
+            self._supabase.table("simulations")
+            .select("name")
+            .eq("id", str(partner_sim_id))
+            .limit(1)
+            .execute()
+        )
+        partner_name = (
+            partner_resp.data[0]["name"] if partner_resp.data else "Unknown"
+        )
+
+        # Fetch partner style prompt (portrait)
+        partner_style_resp = (
+            self._supabase.table("simulation_settings")
+            .select("setting_value")
+            .eq("simulation_id", str(partner_sim_id))
+            .eq("setting_key", "ai.image_style_prompt_portrait")
+            .limit(1)
+            .execute()
+        )
+        partner_theme = (
+            partner_style_resp.data[0]["setting_value"]
+            if partner_style_resp.data else ""
+        )
+
+        # Fetch our own style prompt
+        own_style_resp = (
+            self._supabase.table("simulation_settings")
+            .select("setting_value")
+            .eq("simulation_id", str(self._simulation_id))
+            .eq("setting_key", "ai.image_style_prompt_portrait")
+            .limit(1)
+            .execute()
+        )
+        own_theme = (
+            own_style_resp.data[0]["setting_value"]
+            if own_style_resp.data else ""
+        )
+
+        agent_data_with_theme = {**agent_data, "simulation_theme": own_theme}
+
+        return await self._generation.generate_ambassador_portrait_description(
+            agent_name=agent_name,
+            agent_data=agent_data_with_theme,
+            partner_simulation={"name": partner_name, "theme": partner_theme},
+            embassy_data=embassy,
+        )
 
     async def _upload_to_storage(
         self,

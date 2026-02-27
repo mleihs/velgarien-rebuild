@@ -1,11 +1,9 @@
 import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import type { Agent } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
-import { agentAltText } from '../../utils/text.js';
-import '../shared/Lightbox.js';
 import '../shared/VelgAvatar.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
@@ -93,8 +91,6 @@ export class VelgAgentCard extends LitElement {
 
   @property({ type: Object }) agent!: Agent;
   @property({ type: Number }) relationshipCount = 0;
-  @state() private _lightboxSrc: string | null = null;
-  @state() private _lightboxAlt = '';
 
   private _handleClick(): void {
     this.dispatchEvent(
@@ -133,17 +129,11 @@ export class VelgAgentCard extends LitElement {
     if (!agent) return html``;
 
     return html`
-      <div class="card" @click=${this._handleClick}>
+      <div class="card ${agent.is_ambassador ? 'card--embassy' : ''}" @click=${this._handleClick}>
         <velg-avatar
           .src=${agent.portrait_image_url ?? ''}
           .name=${agent.name}
           size="full"
-          ?clickable=${!!agent.portrait_image_url}
-          @avatar-click=${(e: CustomEvent) => {
-            e.stopPropagation();
-            this._lightboxSrc = (e.detail as { src: string }).src;
-            this._lightboxAlt = agentAltText(agent);
-          }}
         ></velg-avatar>
 
         <div class="card__body">
@@ -151,6 +141,7 @@ export class VelgAgentCard extends LitElement {
 
           <div class="card__badges">
             ${agent.system ? html`<velg-badge variant="primary">${agent.system}</velg-badge>` : null}
+            ${agent.is_ambassador ? html`<velg-badge variant="warning">${msg('Ambassador')}</velg-badge>` : null}
             ${agent.data_source === 'ai' ? html`<velg-badge variant="info">${msg('AI Generated')}</velg-badge>` : null}
           </div>
 
@@ -176,14 +167,6 @@ export class VelgAgentCard extends LitElement {
             : nothing
         }
       </div>
-
-      <velg-lightbox
-        .src=${this._lightboxSrc}
-        .alt=${this._lightboxAlt}
-        @lightbox-close=${() => {
-          this._lightboxSrc = null;
-        }}
-      ></velg-lightbox>
     `;
   }
 }

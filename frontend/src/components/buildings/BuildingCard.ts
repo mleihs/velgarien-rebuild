@@ -1,11 +1,10 @@
 import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import type { Building } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import { buildingAltText } from '../../utils/text.js';
-import '../shared/Lightbox.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
 import { cardStyles } from '../shared/card-styles.js';
@@ -43,7 +42,6 @@ export class VelgBuildingCard extends LitElement {
       height: 100%;
       object-fit: cover;
       display: block;
-      cursor: pointer;
     }
 
     .card__placeholder {
@@ -108,8 +106,6 @@ export class VelgBuildingCard extends LitElement {
   ];
 
   @property({ attribute: false }) building!: Building;
-  @state() private _lightboxSrc: string | null = null;
-  @state() private _lightboxAlt = '';
 
   private _getConditionVariant(condition: string | undefined): string {
     if (!condition) return 'default';
@@ -162,7 +158,7 @@ export class VelgBuildingCard extends LitElement {
     const locationText = locationParts.join(', ');
 
     return html`
-      <div class="card" @click=${this._handleClick}>
+      <div class="card ${b.special_type === 'embassy' ? 'card--embassy' : ''}" @click=${this._handleClick}>
         <div class="card__image">
           ${
             b.image_url
@@ -170,11 +166,6 @@ export class VelgBuildingCard extends LitElement {
                   src=${b.image_url}
                   alt=${buildingAltText(b)}
                   loading="lazy"
-                  @click=${(e: Event) => {
-                    e.stopPropagation();
-                    this._lightboxSrc = b.image_url ?? null;
-                    this._lightboxAlt = buildingAltText(b);
-                  }}
                 />`
               : html`<div class="card__placeholder">${icons.building()}</div>`
           }
@@ -192,6 +183,7 @@ export class VelgBuildingCard extends LitElement {
                   </velg-badge>`
                 : nothing
             }
+            ${b.special_type === 'embassy' ? html`<velg-badge variant="info">${msg('Embassy')}</velg-badge>` : nothing}
           </div>
 
           <div class="card__meta">
@@ -219,14 +211,6 @@ export class VelgBuildingCard extends LitElement {
             : nothing
         }
       </div>
-
-      <velg-lightbox
-        .src=${this._lightboxSrc}
-        .alt=${this._lightboxAlt}
-        @lightbox-close=${() => {
-          this._lightboxSrc = null;
-        }}
-      ></velg-lightbox>
     `;
   }
 }

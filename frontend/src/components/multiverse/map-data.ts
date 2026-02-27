@@ -35,6 +35,9 @@ export const VECTOR_LABELS: Record<string, string> = {
   desire: 'Desire',
 };
 
+/** Embassy edge color — warm orange, distinct from bleed purple */
+export const EMBASSY_EDGE_COLOR = '#f97316';
+
 /** Vector emoji for compact display */
 export const VECTOR_ICONS: Record<string, string> = {
   commerce: '\u{1F4B0}',

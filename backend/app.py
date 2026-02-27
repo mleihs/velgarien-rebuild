@@ -20,6 +20,7 @@ from backend.routers import (
     chat,
     connections,
     echoes,
+    embassies,
     events,
     generation,
     health,
@@ -101,6 +102,7 @@ app.include_router(social_trends.router)
 app.include_router(social_media.router)
 app.include_router(relationships.router)
 app.include_router(echoes.router)
+app.include_router(embassies.router)
 app.include_router(connections.router)
 app.include_router(public.router)
 app.include_router(seo.router)

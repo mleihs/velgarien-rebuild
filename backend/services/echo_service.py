@@ -357,10 +357,15 @@ class ConnectionService:
             sid = row["target_simulation_id"]
             echo_counts[sid] = echo_counts.get(sid, 0) + 1
 
+        # Embassies (active only, with building names)
+        from backend.services.embassy_service import EmbassyService
+        embassies = await EmbassyService.list_all_active(supabase)
+
         return {
             "simulations": simulations,
             "connections": connections,
             "echo_counts": echo_counts,
+            "embassies": embassies,
         }
 
     @classmethod

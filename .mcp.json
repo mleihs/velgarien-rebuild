@@ -7,6 +7,10 @@
     "supabase-prod": {
       "type": "http",
       "url": "https://mcp.supabase.com/mcp?project_ref=bffjoupddfjaljqrwqck"
+    },
+    "mcp-webmcp": {
+      "command": "npx",
+      "args": ["-y", "@tech-sumit/mcp-webmcp", "--launch", "--channel=chrome-beta"]
     }
   }
 }

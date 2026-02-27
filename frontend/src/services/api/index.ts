@@ -5,6 +5,7 @@ export { CampaignsApiService, campaignsApi } from './CampaignsApiService.js';
 export { ChatApiService, chatApi } from './ChatApiService.js';
 export { ConnectionsApiService, connectionsApi } from './ConnectionsApiService.js';
 export { EchoesApiService, echoesApi } from './EchoesApiService.js';
+export { EmbassiesApiService, embassiesApi } from './EmbassiesApiService.js';
 export { EventsApiService, eventsApi } from './EventsApiService.js';
 export { GenerationApiService, generationApi } from './GenerationApiService.js';
 export { InvitationsApiService, invitationsApi } from './InvitationsApiService.js';

@@ -535,6 +535,8 @@ export class VelgLoreScroll extends LitElement {
       align-items: center;
       gap: var(--space-4);
       margin: var(--space-10) 0 var(--space-6);
+      opacity: 0;
+      animation: lore-fade-in 0.6s ease forwards;
     }
 
     .chapter-divider:first-of-type {
@@ -544,7 +546,16 @@ export class VelgLoreScroll extends LitElement {
     .chapter-divider__line {
       flex: 1;
       height: 1px;
-      background: var(--lore-divider);
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--lore-divider) 20%,
+        var(--lore-accent) 50%,
+        var(--lore-divider) 80%,
+        transparent
+      );
+      background-size: 200% 100%;
+      animation: lore-line-flow 4s linear infinite;
     }
 
     .chapter-divider__text {
@@ -555,15 +566,25 @@ export class VelgLoreScroll extends LitElement {
       letter-spacing: var(--tracking-brutalist);
       color: var(--lore-faint);
       white-space: nowrap;
+      transition: color 0.3s ease, letter-spacing 0.3s ease;
+    }
+
+    .chapter-divider:hover .chapter-divider__text {
+      color: var(--lore-accent);
+      letter-spacing: calc(var(--tracking-brutalist) + 0.03em);
     }
 
     /* ── Section ── */
 
     .section {
       margin-bottom: var(--space-4);
+      opacity: 0;
+      transform: translateY(8px);
+      animation: lore-section-enter 0.5s ease forwards;
     }
 
     .section__header {
+      position: relative;
       display: flex;
       align-items: center;
       gap: var(--space-3);
@@ -572,20 +593,57 @@ export class VelgLoreScroll extends LitElement {
       background: var(--lore-surface);
       border-left: 3px solid color-mix(in srgb, var(--lore-accent) 60%, transparent);
       border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      overflow: hidden;
       transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast);
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.2s ease,
+        box-shadow 0.3s ease;
       user-select: none;
+    }
+
+    /* Sweep beam on hover */
+    .section__header::after {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -60%;
+      width: 35%;
+      height: 160%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--lore-accent) 15%, transparent) 35%,
+        color-mix(in srgb, var(--lore-accent) 35%, transparent) 50%,
+        color-mix(in srgb, var(--lore-accent) 15%, transparent) 65%,
+        transparent 100%
+      );
+      transform: skewX(-20deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .section__header:hover::after {
+      opacity: 1;
+      animation: lore-sweep 0.7s ease forwards;
     }
 
     .section__header:hover {
       background: var(--lore-surface-hover);
       border-left-color: var(--lore-accent);
+      transform: translateX(4px);
+      box-shadow: -4px 0 12px color-mix(in srgb, var(--lore-accent) 15%, transparent);
     }
 
     .section__header--expanded {
       border-left-color: var(--lore-accent-strong);
       background: color-mix(in srgb, var(--lore-surface) 80%, var(--lore-surface-hover));
+      border-left-width: 4px;
+    }
+
+    .section__header--expanded:hover {
+      border-left-color: var(--lore-accent-strong);
     }
 
     .section__arcanum {
@@ -595,6 +653,12 @@ export class VelgLoreScroll extends LitElement {
       color: var(--lore-accent);
       min-width: 36px;
       text-align: center;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), text-shadow 0.3s ease;
+    }
+
+    .section__header:hover .section__arcanum {
+      transform: scale(1.15);
+      text-shadow: 0 0 8px color-mix(in srgb, var(--lore-accent) 50%, transparent);
     }
 
     .section__title {
@@ -606,17 +670,26 @@ export class VelgLoreScroll extends LitElement {
       color: var(--lore-heading);
       margin: 0;
       flex: 1;
+      transition: letter-spacing 0.3s ease;
+    }
+
+    .section__header:hover .section__title {
+      letter-spacing: calc(var(--tracking-wide) + 0.02em);
     }
 
     .section__toggle {
       flex-shrink: 0;
       color: var(--lore-muted);
-      transition: transform var(--transition-fast);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.25s ease;
     }
 
     .section__toggle svg {
       width: 20px;
       height: 20px;
+    }
+
+    .section__header:hover .section__toggle {
+      color: var(--lore-accent);
     }
 
     .section__toggle--open {
@@ -631,6 +704,13 @@ export class VelgLoreScroll extends LitElement {
       line-height: var(--leading-relaxed);
       margin: var(--space-2) 0 0 calc(var(--space-4) + 3px);
       padding-left: var(--space-3);
+      border-left: 1px solid color-mix(in srgb, var(--lore-accent) 20%, transparent);
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .section:hover .section__epigraph {
+      border-left-color: color-mix(in srgb, var(--lore-accent) 50%, transparent);
+      color: var(--lore-text);
     }
 
     .section__body {
@@ -673,11 +753,18 @@ export class VelgLoreScroll extends LitElement {
       border: 1px solid var(--lore-image-border);
       border-radius: var(--border-radius);
       cursor: pointer;
-      transition: border-color var(--transition-fast);
+      transition:
+        border-color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        filter 0.3s ease;
     }
 
     .section__image:hover {
       border-color: color-mix(in srgb, var(--lore-accent) 60%, transparent);
+      transform: scale(1.01);
+      box-shadow: 0 4px 20px color-mix(in srgb, var(--lore-accent) 20%, transparent);
+      filter: brightness(1.05);
     }
 
     .section__caption {
@@ -687,6 +774,11 @@ export class VelgLoreScroll extends LitElement {
       color: var(--lore-muted);
       margin-top: var(--space-2);
       text-align: center;
+      transition: color 0.3s ease;
+    }
+
+    .section__figure:hover .section__caption {
+      color: var(--lore-text);
     }
 
     /* ── Descend Button ── */
@@ -695,9 +787,12 @@ export class VelgLoreScroll extends LitElement {
       display: flex;
       justify-content: center;
       margin: var(--space-8) 0 var(--space-4);
+      opacity: 0;
+      animation: lore-fade-in 0.8s ease 0.3s forwards;
     }
 
     .descend__btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       gap: var(--space-2);
@@ -712,13 +807,85 @@ export class VelgLoreScroll extends LitElement {
       border: 1px solid var(--lore-btn-border);
       border-radius: var(--border-radius);
       cursor: pointer;
-      transition: all var(--transition-fast);
+      overflow: hidden;
+      transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        transform 0.2s ease,
+        box-shadow 0.3s ease,
+        letter-spacing 0.3s ease;
+    }
+
+    .descend__btn::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -60%;
+      width: 40%;
+      height: 160%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--lore-accent) 25%, transparent),
+        transparent
+      );
+      transform: skewX(-20deg);
+      opacity: 0;
+      pointer-events: none;
     }
 
     .descend__btn:hover {
-      color: var(--lore-heading);
-      border-color: var(--lore-muted);
+      color: var(--lore-accent-strong);
+      border-color: var(--lore-accent);
       background: var(--lore-surface);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px color-mix(in srgb, var(--lore-accent) 15%, transparent);
+      letter-spacing: calc(var(--tracking-brutalist) + 0.03em);
+    }
+
+    .descend__btn:hover::before {
+      opacity: 1;
+      animation: lore-sweep 0.6s ease forwards;
+    }
+
+    .descend__btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Arrow bounce */
+    .descend__arrow {
+      display: inline-block;
+      animation: lore-arrow-bounce 2s ease-in-out infinite;
+    }
+
+    /* ── Keyframes ── */
+
+    @keyframes lore-fade-in {
+      to { opacity: 1; }
+    }
+
+    @keyframes lore-section-enter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes lore-line-flow {
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    @keyframes lore-sweep {
+      0% { left: -60%; opacity: 0.5; }
+      100% { left: 120%; opacity: 0; }
+    }
+
+    @keyframes lore-arrow-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
     }
 
     /* ── Responsive ── */
@@ -811,6 +978,8 @@ export class VelgLoreScroll extends LitElement {
 
     let currentChapter = '';
 
+    let sectionIndex = 0;
+
     return html`
       ${visibleSections.map((section) => {
         const showChapter = section.chapter !== currentChapter;
@@ -818,12 +987,14 @@ export class VelgLoreScroll extends LitElement {
         const isExpanded = this._expanded.has(section.id);
         const imageUrl = section.imageSlug ? this._getImageUrl(section.imageSlug) : null;
         const caption = section.imageCaption ?? '';
+        const delay = sectionIndex * 0.06;
+        sectionIndex++;
 
         return html`
           ${
             showChapter
               ? html`
-                <div class="chapter-divider">
+                <div class="chapter-divider" style="animation-delay: ${delay}s">
                   <div class="chapter-divider__line"></div>
                   <span class="chapter-divider__text"
                     >${section.chapter}</span
@@ -834,7 +1005,7 @@ export class VelgLoreScroll extends LitElement {
               : nothing
           }
 
-          <div class="section">
+          <div class="section" style="animation-delay: ${delay + 0.05}s">
             <div
               class="section__header ${isExpanded ? 'section__header--expanded' : ''}"
               @click=${() => this._toggleSection(section.id)}
@@ -896,7 +1067,7 @@ export class VelgLoreScroll extends LitElement {
                 class="descend__btn"
                 @click=${this._handleDescend}
               >
-                ${msg('Descend Deeper')} ↓
+                ${msg('Descend Deeper')} <span class="descend__arrow">↓</span>
               </button>
             </div>
           `

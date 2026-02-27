@@ -2,11 +2,16 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
+_GA_DOMAINS = (
+    "https://*.google-analytics.com "
+    "https://*.analytics.google.com "
+    "https://*.googletagmanager.com"
+)
 _CSP = "; ".join([
     "default-src 'self'",
     "script-src 'self' https://*.googletagmanager.com",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
-    "img-src 'self' https://*.supabase.co https://*.google-analytics.com https://*.googletagmanager.com data:",
+    f"connect-src 'self' https://*.supabase.co wss://*.supabase.co {_GA_DOMAINS}",
+    f"img-src 'self' https://*.supabase.co {_GA_DOMAINS} data:",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self'",
     "frame-ancestors 'none'",

@@ -156,6 +156,7 @@ export interface Agent {
   created_at: string;
   updated_at: string;
   deleted_at?: string;
+  is_ambassador?: boolean;
   professions?: AgentProfession[];
   reactions?: EventReaction[];
   building_relations?: BuildingAgentRelation[];
@@ -650,12 +651,53 @@ export interface SimulationConnection {
   simulation_b?: Simulation;
 }
 
+// --- Embassies ---
+
+export type EmbassyStatus = 'proposed' | 'active' | 'suspended' | 'dissolved';
+
+export interface EmbassyAmbassador {
+  name: string;
+  role?: string;
+  quirk?: string;
+}
+
+export interface EmbassyMetadata {
+  ambassador_a?: EmbassyAmbassador;
+  ambassador_b?: EmbassyAmbassador;
+  protocol?: string;
+  ache_point?: string;
+  [key: string]: unknown;
+}
+
+export interface Embassy {
+  id: UUID;
+  building_a_id: UUID;
+  simulation_a_id: UUID;
+  building_b_id: UUID;
+  simulation_b_id: UUID;
+  status: EmbassyStatus;
+  connection_type: string;
+  description?: string;
+  established_by?: string;
+  bleed_vector?: EchoVector;
+  event_propagation: boolean;
+  embassy_metadata?: EmbassyMetadata;
+  created_by_id?: UUID;
+  created_at: string;
+  updated_at: string;
+  building_a?: Building;
+  building_b?: Building;
+  simulation_a?: Simulation;
+  simulation_b?: Simulation;
+}
+
 // --- Map Data ---
 
 export interface MapData {
   simulations: Simulation[];
   connections: SimulationConnection[];
   echo_counts: Record<string, number>;
+  embassies?: Embassy[];
 }
 
 // --- API Response Types ---

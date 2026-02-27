@@ -115,8 +115,16 @@ Shared (wiederverwendbar über alle Views)
 ├── AdvancedLightbox                 ← Beibehalten
 ├── ConfirmDialog                    ← NEU
 ├── Toast/Notification               ← NEU
-└── Pagination                       ← NEU: Einheitliche Pagination
+├── Pagination                       ← NEU: Einheitliche Pagination
+└── card-styles.ts                   ← Shared CSS: .card, .card--embassy (pulsing ring + gradient hover)
 ```
+
+**card-styles.ts — Embassy-Variante:**
+Das Shared CSS Modul `cardStyles` enthaelt neben den Standard-Card-Styles (`hover`, `active`) eine `.card--embassy` Variante fuer Embassy-Gebaeude und Ambassador-Agenten:
+- **Non-Hover:** Pulsierender Ring via `box-shadow: 0 0 0 1px→5px` mit Theme-Farben (`--color-primary` → `--color-text-secondary`). Funktioniert mit `border-radius`.
+- **Hover:** Gradient-Border (padding-box/border-box Trick) + Gradient-Fill-Overlay (`::after` Pseudo-Element) + Lift + Glow.
+- Verwendet per-Simulation Theme-Farben fuer einzigartige visuelle Identitaet je Welt.
+- Angewandt in: `VelgAgentCard` (`agent.is_ambassador`), `VelgBuildingCard` (`building.special_type === 'embassy'`).
 
 ---
 

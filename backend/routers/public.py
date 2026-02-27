@@ -16,6 +16,7 @@ from backend.services.agent_service import AgentService
 from backend.services.building_service import BuildingService
 from backend.services.campaign_service import CampaignService
 from backend.services.echo_service import ConnectionService, EchoService
+from backend.services.embassy_service import EmbassyService
 from backend.services.event_service import EventService
 from backend.services.location_service import LocationService
 from backend.services.relationship_service import RelationshipService
@@ -538,4 +539,60 @@ async def get_map_data(
 ) -> dict:
     """Aggregated endpoint for Cartographer's Map — simulations + connections + echo counts."""
     data = await ConnectionService.get_map_data(supabase)
+    return {"success": True, "data": data}
+
+
+# ── Embassies ──────────────────────────────────────────────────────────
+
+@router.get("/simulations/{simulation_id}/embassies", response_model=PaginatedResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_embassies(
+    request: Request,
+    simulation_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+    limit: int = Query(default=25, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    """List active embassies for a simulation (public)."""
+    data, total = await EmbassyService.list_for_simulation(
+        supabase, simulation_id, status_filter="active",
+        limit=limit, offset=offset,
+    )
+    return _paginated(data, total, limit, offset)
+
+
+@router.get("/simulations/{simulation_id}/embassies/{embassy_id}", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_embassy(
+    request: Request,
+    simulation_id: UUID,
+    embassy_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get a single embassy (public)."""
+    data = await EmbassyService.get(supabase, embassy_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/simulations/{simulation_id}/buildings/{building_id}/embassy", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_building_embassy(
+    request: Request,
+    simulation_id: UUID,
+    building_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get the embassy linked to a building (public)."""
+    data = await EmbassyService.get_for_building(supabase, building_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/embassies", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_all_embassies(
+    request: Request,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """List all active embassies across all simulations (public, for map)."""
+    data = await EmbassyService.list_all_active(supabase)
     return {"success": True, "data": data}

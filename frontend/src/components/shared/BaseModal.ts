@@ -35,6 +35,7 @@ export class VelgBaseModal extends LitElement {
       max-height: 85vh;
       display: flex;
       flex-direction: column;
+      color: var(--color-text-primary);
       background: var(--color-surface-raised);
       border: var(--border-default);
       box-shadow: var(--shadow-xl);
@@ -76,6 +77,7 @@ export class VelgBaseModal extends LitElement {
       font-weight: var(--font-black);
       font-size: var(--text-lg);
       line-height: 1;
+      color: var(--color-text-primary);
       background: transparent;
       border: var(--border-medium);
       cursor: pointer;
@@ -84,7 +86,11 @@ export class VelgBaseModal extends LitElement {
     }
 
     .modal__close:hover {
-      background: var(--color-surface-sunken);
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      border-color: var(--color-primary);
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-md);
     }
 
     .modal__body {

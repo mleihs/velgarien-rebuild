@@ -7,6 +7,10 @@ import logging
 import re
 from uuid import UUID
 
+from backend.services.embassy_prompts import (
+    VECTOR_PERSON_EFFECTS,
+    VECTOR_VISUAL_LANGUAGE,
+)
 from backend.services.external.openrouter import (
     ModelUnavailableError,
     OpenRouterService,
@@ -202,6 +206,75 @@ class GenerationService:
         result = await self._generate(
             template_type="building_image_description",
             model_purpose="building_description",
+            variables=variables,
+            locale="en",
+        )
+        return result.get("content", "")
+
+    async def generate_embassy_building_image_description(
+        self,
+        building_name: str,
+        building_data: dict,
+        partner_simulation: dict,
+        embassy_data: dict,
+    ) -> str:
+        """Generate an image description for an embassy building.
+
+        Uses the embassy_building_image_description template with cross-reality
+        contamination vocabulary. Always returns English (image models expect
+        English prompts).
+        """
+        bleed_vector = embassy_data.get("bleed_vector", "memory")
+        variables: dict[str, str] = {
+            "building_name": building_name,
+            "simulation_name": await self._get_simulation_name(),
+            "simulation_theme": building_data.get("simulation_theme", ""),
+            "building_description": building_data.get("description", ""),
+            "building_style": building_data.get("style", ""),
+            "building_condition": building_data.get("building_condition", ""),
+            "partner_simulation_name": partner_simulation.get("name", ""),
+            "partner_theme": partner_simulation.get("theme", ""),
+            "bleed_vector": bleed_vector,
+            "vector_description": VECTOR_VISUAL_LANGUAGE.get(bleed_vector, ""),
+            "embassy_question": embassy_data.get("description", ""),
+        }
+
+        result = await self._generate(
+            template_type="embassy_building_image_description",
+            model_purpose="building_description",
+            variables=variables,
+            locale="en",
+        )
+        return result.get("content", "")
+
+    async def generate_ambassador_portrait_description(
+        self,
+        agent_name: str,
+        agent_data: dict,
+        partner_simulation: dict,
+        embassy_data: dict,
+    ) -> str:
+        """Generate a portrait description for an ambassador agent.
+
+        Uses the ambassador_portrait_description template with vector-specific
+        person effects. Always returns English (image models expect English).
+        """
+        bleed_vector = embassy_data.get("bleed_vector", "memory")
+        variables: dict[str, str] = {
+            "agent_name": agent_name,
+            "simulation_name": await self._get_simulation_name(),
+            "simulation_theme": agent_data.get("simulation_theme", ""),
+            "agent_character": agent_data.get("character", ""),
+            "agent_background": agent_data.get("background", ""),
+            "partner_simulation_name": partner_simulation.get("name", ""),
+            "partner_theme": partner_simulation.get("theme", ""),
+            "bleed_vector": bleed_vector,
+            "vector_person_effect": VECTOR_PERSON_EFFECTS.get(bleed_vector, ""),
+        }
+
+        result = await self._generate(
+            template_type="ambassador_portrait_description",
+            model_purpose="agent_description",
             variables=variables,
             locale="en",
         )

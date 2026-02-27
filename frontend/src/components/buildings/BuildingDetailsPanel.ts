@@ -2,8 +2,8 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import { buildingsApi } from '../../services/api/index.js';
-import type { Building, BuildingAgentRelation } from '../../types/index.js';
+import { buildingsApi, embassiesApi } from '../../services/api/index.js';
+import type { Building, BuildingAgentRelation, Embassy } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import { buildingAltText } from '../../utils/text.js';
 import '../shared/Lightbox.js';
@@ -11,6 +11,7 @@ import { panelButtonStyles } from '../shared/panel-button-styles.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgSectionHeader.js';
 import '../shared/VelgSidePanel.js';
+import './EmbassyLink.js';
 
 @localized()
 @customElement('velg-building-details-panel')
@@ -139,6 +140,43 @@ export class VelgBuildingDetailsPanel extends LitElement {
       color: var(--color-text-muted);
       font-style: italic;
     }
+
+    .panel__ambassador {
+      padding: var(--space-3);
+      background: var(--color-surface-sunken);
+      border: var(--border-width-thin) solid var(--color-border-light);
+      margin-bottom: var(--space-2);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+
+    .panel__ambassador:hover {
+      background: var(--color-surface-header);
+    }
+
+    .panel__ambassador:hover .panel__ambassador-name {
+      color: var(--color-primary);
+    }
+
+    .panel__ambassador-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .panel__ambassador-name {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-sm);
+    }
+
+    .panel__ambassador-role {
+      display: block;
+      margin-top: var(--space-1);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
   `,
   ];
 
@@ -148,6 +186,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
 
   @state() private _agents: BuildingAgentRelation[] = [];
   @state() private _loadingAgents = false;
+  @state() private _embassy: Embassy | null = null;
   @state() private _lightboxSrc: string | null = null;
   @state() private _lightboxAlt = '';
 
@@ -155,8 +194,10 @@ export class VelgBuildingDetailsPanel extends LitElement {
     if (changedProperties.has('building') || changedProperties.has('open')) {
       if (this.open && this.building) {
         this._loadAgents();
+        this._loadEmbassy();
       } else {
         this._agents = [];
+        this._embassy = null;
       }
     }
   }
@@ -182,6 +223,31 @@ export class VelgBuildingDetailsPanel extends LitElement {
     } finally {
       this._loadingAgents = false;
     }
+  }
+
+  private async _loadEmbassy(): Promise<void> {
+    if (!this.building || !this.simulationId) return;
+    if (this.building.special_type !== 'embassy') {
+      this._embassy = null;
+      return;
+    }
+    try {
+      const response = await embassiesApi.getForBuilding(this.simulationId, this.building.id);
+      if (response.success && response.data) {
+        this._embassy = response.data;
+      }
+    } catch {
+      // Embassy data not critical — fail silently
+    }
+  }
+
+  private _handleNavigateEmbassy(e: CustomEvent): void {
+    const { simulationSlug, buildingId } = e.detail;
+    // Navigate to partner building in partner simulation
+    window.history.pushState({}, '', `/simulations/${simulationSlug}/buildings`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    // Store building ID to open after navigation
+    sessionStorage.setItem('openBuildingId', buildingId);
   }
 
   private _getConditionVariant(condition: string | undefined): string {
@@ -213,6 +279,55 @@ export class VelgBuildingDetailsPanel extends LitElement {
         composed: true,
       }),
     );
+  }
+
+  private _handleEstablishEmbassy(): void {
+    if (!this.building) return;
+    this.dispatchEvent(
+      new CustomEvent('embassy-establish', {
+        detail: this.building,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private _getLocalAmbassador(): { name: string; role: string } | null {
+    if (!this._embassy || !this.building) return null;
+    const meta = this._embassy.embassy_metadata;
+    if (!meta) return null;
+
+    // simulation_a_id/building_a_id are correctly paired, use simulation to pick ambassador
+    const key =
+      this.simulationId === this._embassy.simulation_a_id ? 'ambassador_a' : 'ambassador_b';
+    const amb = meta[key];
+    if (!amb?.name) return null;
+    return { name: amb.name, role: amb.role ?? '' };
+  }
+
+  private _handleAmbassadorClick(): void {
+    const amb = this._getLocalAmbassador();
+    if (!amb) return;
+    const sim = appState.currentSimulation.value;
+    const slug = sim?.slug ?? sim?.id ?? this.simulationId;
+    sessionStorage.setItem('openAgentName', amb.name);
+    window.history.pushState({}, '', `/simulations/${slug}/agents`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
+
+  private _renderAmbassador() {
+    const amb = this._getLocalAmbassador();
+    if (!amb) return nothing;
+
+    return html`
+      <div class="panel__ambassador" @click=${this._handleAmbassadorClick}>
+        <div class="panel__ambassador-info">
+          <span class="panel__ambassador-name">${amb.name}</span>
+          <velg-badge variant="warning">${msg('Ambassador')}</velg-badge>
+        </div>
+        ${amb.role ? html`<span class="panel__ambassador-role">${amb.role}</span>` : nothing}
+      </div>
+    `;
   }
 
   private _renderAgents() {
@@ -286,6 +401,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
                           : nothing
                       }
                       ${b.style ? html`<velg-badge>${b.style}</velg-badge>` : nothing}
+                      ${b.special_type === 'embassy' ? html`<velg-badge variant="info">${msg('Embassy')}</velg-badge>` : nothing}
                     </div>
                   </div>
 
@@ -360,6 +476,22 @@ export class VelgBuildingDetailsPanel extends LitElement {
                     </div>
                   </div>
 
+                  ${
+                    this._embassy
+                      ? html`
+                        <div class="panel__section">
+                          <velg-section-header>${msg('Embassy Link')}</velg-section-header>
+                          ${this._renderAmbassador()}
+                          <velg-embassy-link
+                            .embassy=${this._embassy}
+                            .currentBuildingId=${b.id}
+                            @navigate-embassy=${this._handleNavigateEmbassy}
+                          ></velg-embassy-link>
+                        </div>
+                      `
+                      : nothing
+                  }
+
                   <div class="panel__section">
                     <velg-section-header>${msg('Assigned Agents')}</velg-section-header>
                     ${this._renderAgents()}
@@ -379,6 +511,15 @@ export class VelgBuildingDetailsPanel extends LitElement {
               `
                   : nothing
               }
+              ${
+                appState.canAdmin.value && b.special_type !== 'embassy'
+                  ? html`
+                <button slot="footer" class="panel__btn panel__btn--generate" @click=${this._handleEstablishEmbassy}>
+                  ${msg('Establish Embassy')}
+                </button>
+              `
+                  : nothing
+              }
             `
             : nothing
         }
@@ -387,6 +528,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
       <velg-lightbox
         .src=${this._lightboxSrc}
         .alt=${this._lightboxAlt}
+        .caption=${this.building?.name ?? ''}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

@@ -172,63 +172,46 @@ export class VelgApp extends LitElement {
       {
         path: '/simulations/:id/lore',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'lore'),
-        enter: async () => {
-          await this._authReady;
-          return true;
-        },
+        enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
         path: '/simulations/:id/agents',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'agents'),
-        enter: async () => {
-          await this._authReady;
-          return true;
-        },
+        enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
         path: '/simulations/:id/buildings',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'buildings'),
-        enter: async () => {
-          await this._authReady;
-          return true;
-        },
+        enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
         path: '/simulations/:id/events',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'events'),
-        enter: async () => {
-          await this._authReady;
-          return true;
-        },
+        enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
         path: '/simulations/:id/chat',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'chat'),
-        enter: async () => {
-          await this._authReady;
-          return true;
-        },
+        enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
         path: '/simulations/:id/social',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'social'),
-        enter: async () => {
-          await this._authReady;
-          return true;
-        },
+        enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
         path: '/simulations/:id/locations',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'locations'),
-        enter: async () => {
-          await this._authReady;
-          return true;
-        },
+        enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
         path: '/simulations/:id/settings',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'settings'),
-        enter: async () => this._guardAuth(),
+        enter: async ({ id }) => {
+          const ok = await this._guardAuth();
+          if (!ok) return false;
+          return this._enterSimulationRoute(id);
+        },
       },
       {
         path: '/',
@@ -301,6 +284,20 @@ export class VelgApp extends LitElement {
     if (!appState.isAuthenticated.value) {
       this._router.goto('/login');
       return false;
+    }
+    return true;
+  }
+
+  /**
+   * Shared enter guard for simulation routes.
+   * Awaits auth, then resolves the slug/UUID to a simulation BEFORE render runs.
+   * This eliminates the race condition where render fires with an unresolved slug.
+   */
+  private async _enterSimulationRoute(id: string | undefined): Promise<boolean> {
+    await this._authReady;
+    if (id) {
+      const resolved = await this._resolveSimulation(id);
+      if (!resolved) return false;
     }
     return true;
   }
@@ -424,21 +421,31 @@ export class VelgApp extends LitElement {
   }
 
   private _renderSimulationView(idOrSlug: string, view: string) {
-    this._loadSimulationContext(idOrSlug).then(() => {
-      const sim = appState.currentSimulation.value;
-      const simName = sim?.name ?? '';
-      const slug = sim?.slug ?? idOrSlug;
-      const viewLabel = view.charAt(0).toUpperCase() + view.slice(1);
-      seoService.setTitle(simName ? [viewLabel, simName] : [viewLabel]);
-      seoService.setCanonical(`/simulations/${slug}/${view}`);
-      if (sim?.description) {
-        seoService.setDescription(sim.description);
-      }
-      analyticsService.trackPageView(`/simulations/${slug}/${view}`, document.title);
-    });
+    // Slug resolution already completed in enter() callback.
+    // Fire context loading (taxonomies, role, settings) as background task.
+    // No requestUpdate() needed — child components read signals directly.
+    this._loadSimulationContext(idOrSlug);
 
     // Use resolved UUID for child components (API calls need UUIDs)
     const resolvedId = appState.currentSimulation.value?.id ?? idOrSlug;
+
+    // SEO + analytics (safe even if resolvedId is still a slug)
+    const sim = appState.currentSimulation.value;
+    const simName = sim?.name ?? '';
+    const slug = sim?.slug ?? idOrSlug;
+    const viewLabel = view.charAt(0).toUpperCase() + view.slice(1);
+    seoService.setTitle(simName ? [viewLabel, simName] : [viewLabel]);
+    seoService.setCanonical(`/simulations/${slug}/${view}`);
+    if (sim?.description) {
+      seoService.setDescription(sim.description);
+    }
+    analyticsService.trackPageView(`/simulations/${slug}/${view}`, document.title);
+
+    // Safety fallback: if slug resolution somehow failed, show bare loading spinner
+    // (without SimulationShell, to prevent ThemeService 422s on non-UUID)
+    if (!VelgApp._UUID_RE.test(resolvedId)) {
+      return html`<div class="loading-container">${msg('Loading...')}</div>`;
+    }
 
     let content: TemplateResult;
     switch (view) {

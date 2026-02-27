@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph) + Settings architecture cleanup (shared CSS + BaseSettingsPanel base class) + Slug-based URLs (`/simulations/speranza/lore` instead of UUIDs) + Building description prompt fix (short functional output). 157 tasks. 1090 localized UI strings (EN/DE, translated via DeepL). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
+**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph with starfield, energy pulses, node glow drift) + Settings architecture cleanup (shared CSS + BaseSettingsPanel base class) + Slug-based URLs (`/simulations/speranza/lore` instead of UUIDs) + Building description prompt fix (short functional output) + Embassies & Ambassadors (cross-sim diplomatic buildings, `is_ambassador` computed flag, `.card--embassy` pulsing ring + gradient hover effects with per-theme colors, 4-step creation wizard with ambassador assignment) + UI polish (SimulationNav diagonal gradient dwell effects, PlatformHeader marching ants map button, LoreScroll microanimations, close button hover effects) + English default locale. 160 tasks. ~1120 localized UI strings (EN/DE, translated via DeepL). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
 
 ## Tech Stack
 
@@ -43,10 +43,10 @@ Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT
 
 ```
 backend/              FastAPI application
-  app.py              Entry point (registers 23 routers)
+  app.py              Entry point (registers 24 routers)
   config.py           Settings (pydantic-settings, extra="ignore")
   dependencies.py     JWT auth, Supabase client (user/anon/admin), role checking
-  routers/            API endpoints — 23 routers, 158 endpoints (/api/v1/... + /api/v1/public/...)
+  routers/            API endpoints — 24 routers, 165+ endpoints (/api/v1/... + /api/v1/public/...)
   models/             Pydantic request/response models (19 files)
   services/           Business logic (BaseService + 15 entity + audit + simulation + external)
   middleware/         Rate limiting, security headers (CSP), SEO crawler detection + HTML enrichment
@@ -61,7 +61,7 @@ frontend/             Lit + Vite application
       layout/         SimulationShell, SimulationHeader, SimulationNav
       shared/         18 reusable components + 5 shared CSS modules + BaseSettingsPanel base class (see Code Reusability)
       agents/         AgentsView, AgentCard, AgentEditModal, AgentDetailsPanel
-      buildings/      BuildingsView, BuildingCard, BuildingEditModal, BuildingDetailsPanel
+      buildings/      BuildingsView, BuildingCard, BuildingEditModal, BuildingDetailsPanel, EmbassyCreateModal, EmbassyLink
       events/         EventsView, EventCard, EventEditModal, EventDetailsPanel
       chat/           ChatView, ChatWindow, ConversationList, MessageList, MessageInput, AgentSelector
       social/         SocialTrendsView, SocialMediaView, CampaignDashboard, CampaignDetailView, TrendCard, PostCard, TransformationModal, PostTransformModal, CampaignCard
@@ -83,7 +83,7 @@ e2e/                  Playwright E2E tests (73 specs across 12 files)
   helpers/            auth.ts, fixtures.ts
   tests/              auth, agents, buildings, events, chat, settings, multi-user, social
 supabase/
-  migrations/         30 SQL migration files (001-027 + ensure_dev_user)
+  migrations/         33 SQL migration files (001-030 + ensure_dev_user)
   seed/               14 SQL seed files (5 active: 001, 006-008, 010; 9 archived with _ prefix: 002-005, 009, 011-014)
   config.toml         Local Supabase config
 scripts/              Image generation scripts (5: velgarien, capybara, station_null, speranza, dashboard) + lore images
@@ -178,7 +178,7 @@ Two MCP servers configured in `.mcp.json`:
 
 **Auth:** Production uses ES256 (ECC P-256) tokens verified via JWKS. Local uses HS256 with shared secret.
 
-**Schema changes:** `supabase db push` (requires `SUPABASE_ACCESS_TOKEN` env var, format `sbp_...`, from Dashboard → Avatar → Access Tokens). Migration `ensure_dev_user` creates test user + Velgarien sim (idempotent, safe for production). Migrations 016-017 are data-only (Velgarien image config + Capybara Kingdom). Migration 018 adds 21 anon RLS policies for public read access. Migration 019 adds `idx_buildings_street` index. Migration 020 restricts `settings_anon_select` policy to `category = 'design'` only. Migration 021 adds Station Null simulation (6 agents, 7 buildings, 4 zones, 16 streets, 36 design settings). Migration 022 improves prompt diversity (max_tokens=300, template rewrites removing aesthetic redundancy). Migration 023 fixes horror aesthetic (Alien 1979 style prompts, guidance_scale 3.5→5.0, Flux-aware prompting). Migration 024 adds Speranza simulation (6 agents, 7 buildings, 4 zones, 16 streets, 37 design settings). Migration 025 adds 3 underground buildings to Speranza. Migration 026 adds agent_relationships, event_echoes, simulation_connections tables + demo data. Migration 027 fixes building description prompts (short functional output instead of 150-250 word narratives).
+**Schema changes:** `supabase db push` (requires `SUPABASE_ACCESS_TOKEN` env var, format `sbp_...`, from Dashboard → Avatar → Access Tokens). Migration `ensure_dev_user` creates test user + Velgarien sim (idempotent, safe for production). Migrations 016-017 are data-only (Velgarien image config + Capybara Kingdom). Migration 018 adds 21 anon RLS policies for public read access. Migration 019 adds `idx_buildings_street` index. Migration 020 restricts `settings_anon_select` policy to `category = 'design'` only. Migration 021 adds Station Null simulation (6 agents, 7 buildings, 4 zones, 16 streets, 36 design settings). Migration 022 improves prompt diversity (max_tokens=300, template rewrites removing aesthetic redundancy). Migration 023 fixes horror aesthetic (Alien 1979 style prompts, guidance_scale 3.5→5.0, Flux-aware prompting). Migration 024 adds Speranza simulation (6 agents, 7 buildings, 4 zones, 16 streets, 37 design settings). Migration 025 adds 3 underground buildings to Speranza. Migration 026 adds agent_relationships, event_echoes, simulation_connections tables + demo data. Migration 027 fixes building description prompts (short functional output instead of 150-250 word narratives). Migration 028 adds embassies table + embassy_prompt_templates + RLS policies + triggers + 12 embassy buildings (3 per sim) + 6 cross-sim embassy connections with ambassador metadata. Migration 029 adds embassy prompt templates (EN/DE). Migration 030 fixes ambassador metadata swap on building reorder.
 
 **CRITICAL — Local DB Reset Safety:** `supabase stop --no-backup` and `supabase db reset` destroy Docker volumes, wiping all storage files (images). Always ensure images are backed up or can be recovered from production before resetting. See `memory/local-db-reset-guide.md` for recovery procedures. Local Supabase uses `sb_secret_`/`sb_publishable_` keys (NOT JWT service_role keys) — get from `supabase status`.
 
@@ -201,9 +201,9 @@ These renames were applied in the v2.0 schema to avoid SQL reserved words. **Alw
 | `portrait_url` | `portrait_image_url` | Explicit |
 | `created_time` | `source_created_at` | Consistency |
 
-## Database (30 Tables)
+## Database (31 Tables)
 
-- **130 RLS policies** — CRUD per table, role-based via helper functions + 21 anon SELECT policies for public read access
+- **136 RLS policies** — CRUD per table, role-based via helper functions + 21 anon SELECT policies for public read access + embassy policies
 - **25 triggers** — 16 updated_at + 6 business logic (slug immutability, status transitions, primary profession, last owner protection, conversation stats) + 3 new table triggers
 - **6 views** — 4 active_* (soft-delete filter) + simulation_dashboard + conversation_summaries
 - **2 materialized views** — campaign_performance + agent_statistics
@@ -254,7 +254,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - All types in `frontend/src/types/index.ts`
 - Design tokens as CSS Custom Properties in `styles/tokens/`
 - **Shared components:** 18 reusable components + 5 shared CSS modules + `BaseSettingsPanel` base class in `components/shared/` — see Code Reusability section for full list
-- **Slug-based URLs:** Simulation routes use slugs (`/simulations/speranza/lore`) instead of UUIDs. `app-shell._resolveSimulation()` detects UUID vs slug, resolves slug→UUID via `simulationsApi.getBySlug()`, and rewrites UUID URLs to slugs via `history.replaceState`. All navigation links use `simulation.slug`. SEO middleware returns 301 redirects from UUID→slug for crawlers.
+- **Slug-based URLs:** Simulation routes use slugs (`/simulations/speranza/lore`) instead of UUIDs. `app-shell._enterSimulationRoute()` (router `enter()` callback) resolves slug→UUID via `_resolveSimulation()` before render, eliminating the race condition where `render()` fired before resolution completed. All navigation links use `simulation.slug`. SEO middleware returns 301 redirects from UUID→slug for crawlers.
 - **Shared icons:** All SVG icons centralized in `utils/icons.ts` — import `{ icons }` and use `icons.edit()`, `icons.trash()`, etc. Never define inline SVG icon methods in components.
 - **Entity views:** Each entity has 4 files: ListView, Card, EditModal, DetailsPanel (except Chat which has 6)
 - **Event naming:** `import type { Event as SimEvent }` to avoid DOM `Event` conflict
@@ -334,7 +334,7 @@ DeepL tips:
      - `form-styles.ts` — `formStyles` for modal forms (`.form`, `.form__group`, `.form__row`, `.form__label`, `.form__input/.form__textarea/.form__select`, `.footer`, `.footer__btn--cancel/--save`, `.gen-btn`)
      - `view-header-styles.ts` — `viewHeaderStyles` for entity list views (`.view`, `.view__header`, `.view__title`, `.view__create-btn`, `.view__count`)
      - `settings-styles.ts` — `settingsStyles` for settings panels (`.settings-panel`, `.settings-form`, `.settings-form__group`, `.settings-form__input`, `.settings-btn`, `.settings-toggle`)
-     - `card-styles.ts` — `cardStyles` for entity cards (`.card`, `.card__header`, `.card__body`, `.card__footer`)
+     - `card-styles.ts` — `cardStyles` for entity cards (`.card` hover/active + `.card--embassy` pulsing ring + gradient hover with per-theme colors)
    - **Usage:** `static styles = [formStyles, css\`...\`]` — local styles win by cascade for per-component overrides
 2. **Check `services/`** — BaseApiService provides CRUD patterns. Extend it for new API services. BaseService (backend) provides generic CRUD with soft-delete, audit logging, and optimistic locking.
 3. **Check existing components** for similar patterns — entity views follow a consistent 4-file pattern (ListView, Card, EditModal, DetailsPanel). Copy the pattern, don't reinvent it.
@@ -368,7 +368,7 @@ See `18_THEMING_SYSTEM.md` for full contrast documentation.
 
 ## Spec Documents
 
-21 specification documents (00-20) in project root. **Always consult the relevant spec before implementing:**
+22 specification documents (00-21) in project root. **Always consult the relevant spec before implementing:**
 
 | Doc | Content | Version |
 |-----|---------|---------|
@@ -384,6 +384,7 @@ See `18_THEMING_SYSTEM.md` for full contrast documentation.
 | `18_THEMING_SYSTEM.md` | Per-simulation theming: token taxonomy, presets, ThemeService, contrast rules | v1.1 |
 | `19_DEPLOYMENT_INFRASTRUCTURE.md` | Production deployment, dev→prod sync, data migration playbook | v1.0 |
 | `20_RELATIONSHIPS_ECHOES_MAP.md` | Agent relationships, event echoes, cartographer's map — feature docs + user manual | v1.0 |
+| `21_EMBASSIES.md` | Embassies & ambassadors: cross-sim diplomatic feature, visual effects, user manual | v1.0 |
 
 ## Python Version
 

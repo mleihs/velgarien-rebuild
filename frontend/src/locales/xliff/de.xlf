@@ -6023,6 +6023,90 @@ Die Karte ist offen. Die Scherben warten. Welche Welt betritt man zuerst?</targe
 <trans-unit id="scac48aec63cfdb2d">
   <source>Sign in to browse and transform news articles</source>
 <target>Anmelden, um Nachrichtenartikel zu durchsuchen und umzuwandeln</target></trans-unit>
+<trans-unit id="sa7a2675b308a9053">
+  <source>Embassy</source>
+<target>Botschaft</target></trans-unit>
+<trans-unit id="s0367cb4e3034f15d">
+  <source>Embassy Link</source>
+<target>Botschaftsverbindung</target></trans-unit>
+<trans-unit id="s43ae2a0c813e05d8">
+  <source>Failed to establish embassy.</source>
+<target>Botschaft konnte nicht eingerichtet werden.</target></trans-unit>
+<trans-unit id="sa426df7e5d0f43ca">
+  <source>Select simulation...</source>
+<target>Simulation auswählen...</target></trans-unit>
+<trans-unit id="sde9ea63b53c89a80">
+  <source>Target Building</source>
+<target>Zielgebäude</target></trans-unit>
+<trans-unit id="s4285b49ebc8c146f">
+  <source>Select building...</source>
+<target>Gebäude auswählen...</target></trans-unit>
+<trans-unit id="sf786692d7f689ffe">
+  <source>Bleed Vector</source>
+<target>Bleed-Vektor</target></trans-unit>
+<trans-unit id="sd0e4b5ef3c0be1af">
+  <source>What fundamental question does this embassy ask?</source>
+<target>Welche grundlegende Frage stellt diese Botschaft?</target></trans-unit>
+<trans-unit id="sd3593c2d6b8b6b78">
+  <source>Establish Embassy</source>
+<target>Botschaft einrichten</target></trans-unit>
+<trans-unit id="s7b5a2b0634cd6862">
+  <source>Vector</source>
+<target>Vektor</target></trans-unit>
+<trans-unit id="s2de620168f378438">
+  <source>Ambassador</source>
+<target>Botschafter</target></trans-unit>
+<trans-unit id="s76acc545e1d3aed4">
+  <source>Embassy Assignment</source>
+<target>Botschaftszuordnung</target></trans-unit>
+<trans-unit id="s5776ca35d7a3cd67">
+  <source>Posted at</source>
+<target>Stationiert bei</target></trans-unit>
+<trans-unit id="s9cf8b12dc95fbb0f">
+  <source>Embassy established and activated.</source>
+<target>Botschaft eingerichtet und aktiviert.</target></trans-unit>
+<trans-unit id="sbec97227ea7f6459">
+  <source>Partner</source>
+<target>Partner</target></trans-unit>
+<trans-unit id="s61e136c0658e27d5">
+  <source>Protocol</source>
+<target>Protokoll</target></trans-unit>
+<trans-unit id="s358cd1555b55cb71">
+  <source>Ambassadors</source>
+<target>Botschafter</target></trans-unit>
+<trans-unit id="s0ea81dd3c5bc073a">
+  <source>The partner simulation to establish diplomatic relations with.</source>
+<target>Die Partnersimulation, mit der diplomatische Beziehungen aufgenommen werden sollen.</target></trans-unit>
+<trans-unit id="s05031b0ad0a40f99">
+  <source>The building in the partner simulation that will house the embassy.</source>
+<target>Das Gebäude in der Partnersimulation, in dem die Botschaft untergebracht wird.</target></trans-unit>
+<trans-unit id="s31a2ac1c239d7e9b">
+  <source>The channel through which reality bleeds between connected simulations.</source>
+<target>Der Kanal, durch den die Realität zwischen verbundenen Simulationen fließt.</target></trans-unit>
+<trans-unit id="s549ca1490a8ead2a">
+  <source>The fundamental existential question this embassy explores between worlds.</source>
+<target>Die grundlegende existenzielle Frage, die diese Botschaft zwischen den Welten erforscht.</target></trans-unit>
+<trans-unit id="se9b1fec72ffd8f48">
+  <source>Local</source>
+<target>Lokale</target></trans-unit>
+<trans-unit id="sd1472b55f2b751ec">
+  <source>Ambassadors are agents who represent their simulation at this embassy. Assignment is optional.</source>
+<target>Botschafter sind Agenten, die ihre Simulation in dieser Botschaft vertreten. Die Zuweisung ist optional.</target></trans-unit>
+<trans-unit id="s8bd8a8465b8f4d6b">
+  <source>No ambassador</source>
+<target>Kein Botschafter</target></trans-unit>
+<trans-unit id="s283b66838fd4dcbc">
+  <source>Role (e.g., Cultural Attaché)</source>
+<target>Rolle (z. B. Kulturattaché)</target></trans-unit>
+<trans-unit id="sf434a6ee542f5ad0">
+  <source>Quirk (optional)</source>
+<target>Eigenart (optional)</target></trans-unit>
+<trans-unit id="scea9ccf4643bae72">
+  <source>Establishing...</source>
+<target>Das Einrichten...</target></trans-unit>
+<trans-unit id="scceb21a1981bafb3">
+  <source>Establish &amp; Activate</source>
+<target>Einrichten &amp; Aktivieren</target></trans-unit>
 </body>
 </file>
 </xliff>

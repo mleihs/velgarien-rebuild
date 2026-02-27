@@ -28,6 +28,14 @@ export interface MapEdgeData {
   description?: string;
 }
 
+export interface MapEmbassyEdge {
+  id: string;
+  sourceSimId: string;
+  targetSimId: string;
+  buildingAName: string;
+  buildingBName: string;
+}
+
 export interface ForceConfig {
   repulsion: number;
   attraction: number;

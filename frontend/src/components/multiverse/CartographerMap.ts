@@ -6,7 +6,7 @@ import { connectionsApi } from '../../services/api/index.js';
 import { seoService } from '../../services/SeoService.js';
 import type { MapData } from '../../types/index.js';
 import { getThemeColor } from './map-data.js';
-import type { MapEdgeData, MapNodeData } from './map-types.js';
+import type { MapEdgeData, MapEmbassyEdge, MapNodeData } from './map-types.js';
 
 import './MapGraph.js';
 import './MapConnectionPanel.js';
@@ -44,7 +44,7 @@ export class VelgCartographerMap extends LitElement {
     .map {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: calc(100vh - var(--header-height, 56px));
     }
 
     .map__header {
@@ -152,6 +152,7 @@ export class VelgCartographerMap extends LitElement {
   @state() private _error: string | null = null;
   @state() private _nodes: MapNodeData[] = [];
   @state() private _edges: MapEdgeData[] = [];
+  @state() private _embassyEdges: MapEmbassyEdge[] = [];
   @state() private _selectedEdge: MapEdgeData | null = null;
   @state() private _panelOpen = false;
 
@@ -203,6 +204,15 @@ export class VelgCartographerMap extends LitElement {
       bleedVectors: conn.bleed_vectors,
       strength: conn.strength,
       description: conn.description,
+    }));
+
+    // Transform embassy data to embassy edges
+    this._embassyEdges = (mapData.embassies ?? []).map((emb) => ({
+      id: emb.id,
+      sourceSimId: emb.simulation_a_id,
+      targetSimId: emb.simulation_b_id,
+      buildingAName: emb.building_a?.name ?? '???',
+      buildingBName: emb.building_b?.name ?? '???',
     }));
 
     this._loading = false;
@@ -288,6 +298,7 @@ export class VelgCartographerMap extends LitElement {
           <velg-map-graph
             .nodes=${this._nodes}
             .edges=${this._edges}
+            .embassyEdges=${this._embassyEdges}
             @node-click=${this._handleNodeClick}
             @edge-click=${this._handleEdgeClick}
           ></velg-map-graph>

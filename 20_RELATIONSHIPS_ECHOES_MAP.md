@@ -712,5 +712,16 @@ curl -s https://metaverse.center/api/v1/public/simulations/{sim_id}/relationship
 | `frontend/src/components/events/EventDetailsPanel.ts` | Echoes section |
 | `frontend/src/components/events/EventCard.ts` | Bleed badge |
 | `frontend/src/components/events/EventsView.ts` | Bleed filter toggle |
-| `frontend/src/locales/xliff/de.xlf` | 59 new trans-units |
+| `frontend/src/components/shared/card-styles.ts` | `.card--embassy` variant (pulsing ring + gradient hover) |
+| `frontend/src/components/agents/AgentCard.ts` | `card--embassy` class + Ambassador badge |
+| `frontend/src/components/buildings/BuildingCard.ts` | `card--embassy` class for embassy buildings |
+| `frontend/src/components/buildings/BuildingDetailsPanel.ts` | Embassy badge in detail view |
+| `frontend/src/components/buildings/EmbassyCreateModal.ts` | Embassy creation UI |
+| `frontend/src/components/buildings/EmbassyLink.ts` | Embassy link component |
+| `frontend/src/services/api/EmbassiesApiService.ts` | Embassy API service |
+| `backend/models/embassy.py` | Embassy Pydantic models |
+| `backend/routers/embassies.py` | Embassy router |
+| `backend/services/embassy_service.py` | Embassy business logic |
+| `backend/services/embassy_prompts.py` | Embassy prompt templates |
+| `frontend/src/locales/xliff/de.xlf` | 59 new trans-units (relationships/echoes) + embassy i18n |
 | `frontend/src/locales/generated/de.ts` | Auto-generated |

@@ -963,6 +963,54 @@ Aggregierter Endpoint fuer die Cartographer's Map — liefert alle Daten fuer di
 
 ---
 
+## 22. Embassies (Simulation-Scoped)
+
+Cross-simulation diplomatic buildings. An embassy is a building with `special_type = 'embassy'` linked to a target simulation. Agents assigned to embassies become ambassadors (`is_ambassador` computed flag in API response).
+
+### `GET /api/v1/simulations/:simId/embassies`
+
+Liste aller Embassies in der Simulation.
+
+**Query:** `?target_simulation_id=uuid&limit=25&offset=0`
+
+### `POST /api/v1/simulations/:simId/embassies`
+
+Erstellt eine neue Embassy (Admin/Owner). Setzt `special_type = 'embassy'` auf dem Building.
+
+### `GET /api/v1/simulations/:simId/embassies/:id`
+
+Embassy-Details inkl. Building-Daten und Ambassador-Agent.
+
+### `PUT /api/v1/simulations/:simId/embassies/:id`
+
+Aktualisiert Embassy (Admin/Owner).
+
+### `DELETE /api/v1/simulations/:simId/embassies/:id`
+
+Soft-Delete einer Embassy.
+
+### `POST /api/v1/simulations/:simId/embassies/:id/assign-ambassador`
+
+Weist einen Agent als Ambassador zu (Admin/Owner).
+
+**Query:** `?agent_id=uuid`
+
+### `DELETE /api/v1/simulations/:simId/embassies/:id/unassign-ambassador`
+
+Entfernt Ambassador-Zuweisung.
+
+### Public Embassies
+
+#### `GET /api/v1/public/simulations/:id/embassies`
+
+Liste aller Embassies (anonym, read-only).
+
+#### `GET /api/v1/public/simulations/:id/embassies/:embassyId`
+
+Embassy-Details (anonym, read-only).
+
+---
+
 ## Endpoint-Zusammenfassung
 
 | Bereich | Endpoints | Methoden |
@@ -987,6 +1035,7 @@ Aggregierter Endpoint fuer die Cartographer's Map — liefert alle Daten fuer di
 | Relationships | 5 | List (Agent/Sim) + Create + Patch + Delete |
 | Echoes | 5 | List (Sim/Event) + Trigger + Approve + Reject |
 | Connections | 4 | List + Create + Patch + Delete |
-| Public (neu) | 6 | Relationships + Echoes + Connections + Map-Data |
+| Embassies | 7 | CRUD + Assign/Unassign Ambassador |
+| Public (neu) | 8 | Relationships + Echoes + Connections + Map-Data + Embassies |
 | Public (bestehend) | 20 | Anonymer Lesezugriff |
-| **Gesamt** | **~157** | |
+| **Gesamt** | **~166** | |

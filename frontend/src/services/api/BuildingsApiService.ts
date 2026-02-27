@@ -91,6 +91,13 @@ export class BuildingsApiService extends BaseApiService {
       `/simulations/${simulationId}/buildings/${buildingId}/profession-requirements?${params}`,
     );
   }
+
+  listPublic(
+    simulationId: string,
+    params?: Record<string, string>,
+  ): Promise<ApiResponse<PaginatedResponse<Building>>> {
+    return this.getPublic(`/simulations/${simulationId}/buildings`, params);
+  }
 }
 
 export const buildingsApi = new BuildingsApiService();

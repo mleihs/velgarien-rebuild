@@ -37,15 +37,11 @@ class LocaleService {
   }
 
   getInitialLocale(): string {
-    // 1. User preference (localStorage)
+    // Only switch away from English if user explicitly chose another locale
     const saved = localStorage.getItem(LOCALE_STORAGE_KEY);
     if (saved && this.availableLocales.includes(saved)) return saved;
 
-    // 2. Browser language
-    const browserLang = navigator.language.split('-')[0];
-    if (this.availableLocales.includes(browserLang)) return browserLang;
-
-    // 3. Default
+    // Default to English (source locale)
     return sourceLocale;
   }
 

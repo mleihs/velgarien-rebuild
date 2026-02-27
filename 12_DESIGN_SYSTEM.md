@@ -669,7 +669,59 @@ hostElement.style.setProperty('--font-brutalist', "'Arial Narrow', sans-serif");
   gap: var(--space-3);
   justify-content: flex-end;
 }
+
+/* Embassy/Ambassador variant — per-simulation theme colors */
+.card--embassy {
+  position: relative;
+  border-color: transparent;
+  box-shadow:
+    0 0 0 1px var(--color-primary),
+    0 0 8px color-mix(in srgb, var(--color-primary) 40%, transparent);
+  animation: embassy-pulse 3s ease-in-out infinite;
+}
+.card--embassy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--color-primary) 18%, transparent),
+    transparent 45%,
+    color-mix(in srgb, var(--color-text-secondary) 14%, transparent) 70%,
+    color-mix(in srgb, var(--color-primary) 18%, transparent));
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+.card--embassy:hover {
+  animation: none;
+  border-color: transparent;
+  background:
+    linear-gradient(var(--color-surface-raised), var(--color-surface-raised)) padding-box,
+    linear-gradient(135deg, var(--color-primary), var(--color-text-secondary), var(--color-primary)) border-box;
+  border-width: 3px;
+  box-shadow: var(--shadow-lg),
+    0 0 18px color-mix(in srgb, var(--color-primary) 70%, transparent);
+}
+.card--embassy:hover::after { opacity: 1; }
+@keyframes embassy-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 1px var(--color-primary),
+      0 0 6px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px var(--color-text-secondary),
+      0 0 20px color-mix(in srgb, var(--color-primary) 70%, transparent);
+  }
+}
 ```
+
+**Embassy-Variante:**
+- Verwendet per-Simulation Theme-Farben (`--color-primary`, `--color-text-secondary`)
+- **Non-hover:** Pulsierender Ring via `box-shadow: 0 0 0 Npx` (1px→5px), wechselt zwischen `--color-primary` und `--color-text-secondary`. Funktioniert mit `border-radius` (im Gegensatz zu `border-image`).
+- **Hover:** Gradient-Border via `background: padding-box/border-box` Trick + Gradient-Fill-Overlay via `::after` Pseudo-Element + Lift + Glow.
+- Angewandt auf: `AgentCard` (Ambassador-Agenten), `BuildingCard` (Embassy-Gebaeude)
 
 ### 3.3 Form-System
 

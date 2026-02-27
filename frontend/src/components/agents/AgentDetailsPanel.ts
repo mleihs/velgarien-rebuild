@@ -2,10 +2,11 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import { agentsApi, relationshipsApi } from '../../services/api/index.js';
-import type { Agent, AgentRelationship, EventReaction } from '../../types/index.js';
+import { agentsApi, embassiesApi, relationshipsApi } from '../../services/api/index.js';
+import type { Agent, AgentRelationship, Embassy, EventReaction } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import { agentAltText } from '../../utils/text.js';
+import '../buildings/EmbassyLink.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import '../shared/Lightbox.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
@@ -241,6 +242,60 @@ export class VelgAgentDetailsPanel extends LitElement {
     .panel__rel-btn--generate:hover {
       background: var(--color-info-bg);
     }
+
+    .panel__embassy-item + .panel__embassy-item {
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: var(--border-width-thin) solid var(--color-border-light);
+    }
+
+    .panel__embassy-local {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+      padding: var(--space-3);
+      background: var(--color-surface-sunken);
+      border: var(--border-width-thin) solid var(--color-border-light);
+      cursor: pointer;
+      margin-bottom: var(--space-2);
+      transition: background var(--transition-fast);
+    }
+
+    .panel__embassy-local:hover {
+      background: var(--color-surface-header);
+    }
+
+    .panel__embassy-thumb {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border: var(--border-width-default) solid var(--color-border);
+      flex-shrink: 0;
+    }
+
+    .panel__embassy-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .panel__embassy-name {
+      font-family: var(--font-brutalist);
+      font-size: var(--text-sm);
+      font-weight: var(--font-bold);
+      color: var(--color-text-primary);
+      transition: color var(--transition-fast);
+    }
+
+    .panel__embassy-local:hover .panel__embassy-name {
+      color: var(--color-primary);
+    }
+
+    .panel__embassy-label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+    }
   `,
   ];
 
@@ -257,14 +312,19 @@ export class VelgAgentDetailsPanel extends LitElement {
   @state() private _allAgents: Agent[] = [];
   @state() private _relEditOpen = false;
   @state() private _relEditTarget: AgentRelationship | null = null;
+  @state() private _embassyAssignments: { embassy: Embassy; localBuildingId: string }[] = [];
 
   protected updated(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('agent') || changedProperties.has('open')) {
       if (this.open && this.agent && this.simulationId) {
         this._expandedReactions = new Set();
+        this._embassyAssignments = [];
         this._loadReactions();
         this._loadRelationships();
         this._loadAllAgents();
+        if (this.agent.is_ambassador) {
+          this._loadEmbassy();
+        }
       }
     }
   }
@@ -308,14 +368,64 @@ export class VelgAgentDetailsPanel extends LitElement {
     try {
       const response = await agentsApi.list(this.simulationId, { limit: '100' });
       if (response.success && response.data) {
-        const data = response.data as unknown as { data: Agent[] };
-        this._allAgents = data.data ?? [];
+        // BaseApiService extracts json.data, so response.data is already Agent[]
+        this._allAgents = response.data as unknown as Agent[];
       } else {
         this._allAgents = [];
       }
     } catch {
       this._allAgents = [];
     }
+  }
+
+  private async _loadEmbassy(): Promise<void> {
+    if (!this.agent || !this.simulationId) return;
+
+    try {
+      const response = await embassiesApi.listForSimulation(this.simulationId, { limit: '50' });
+      if (!response.success || !response.data) return;
+
+      // BaseApiService extracts json.data, so response.data is already Embassy[]
+      const embassies = response.data as unknown as Embassy[];
+      const agentName = this.agent.name;
+      const simId = this.simulationId;
+      const assignments: { embassy: Embassy; localBuildingId: string }[] = [];
+
+      for (const embassy of embassies) {
+        const meta = embassy.embassy_metadata;
+        if (!meta?.ambassador_a || !meta?.ambassador_b) continue;
+
+        // Check both ambassador entries — metadata ordering may not match simulation ordering
+        const isAmbassador =
+          meta.ambassador_a?.name === agentName || meta.ambassador_b?.name === agentName;
+        if (isAmbassador) {
+          // simulation_a/building_a ARE correctly paired by LEAST/GREATEST
+          const localBuildingId =
+            embassy.simulation_a_id === simId ? embassy.building_a_id : embassy.building_b_id;
+          assignments.push({ embassy, localBuildingId });
+        }
+      }
+
+      this._embassyAssignments = assignments;
+    } catch {
+      // Embassy data not critical
+    }
+  }
+
+  private _handleNavigateEmbassy(e: CustomEvent): void {
+    const { simulationSlug, buildingId } = e.detail;
+    window.history.pushState({}, '', `/simulations/${simulationSlug}/buildings`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    sessionStorage.setItem('openBuildingId', buildingId);
+  }
+
+  private _handleNavigateLocalBuilding(buildingId: string): void {
+    if (!buildingId) return;
+    const sim = appState.currentSimulation.value;
+    const slug = sim?.slug ?? sim?.id ?? this.simulationId;
+    window.history.pushState({}, '', `/simulations/${slug}/buildings`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    sessionStorage.setItem('openBuildingId', buildingId);
   }
 
   private _handleRelationshipClick(e: CustomEvent<{ agentId: string }>): void {
@@ -485,6 +595,55 @@ export class VelgAgentDetailsPanel extends LitElement {
     }
   }
 
+  private _renderEmbassy() {
+    if (this._embassyAssignments.length === 0) return nothing;
+
+    return html`
+      <div class="panel__section">
+        <velg-section-header>
+          ${msg('Embassy Assignment')}
+          ${this._embassyAssignments.length > 1 ? html`<velg-badge>${this._embassyAssignments.length}</velg-badge>` : nothing}
+        </velg-section-header>
+        ${this._embassyAssignments.map(({ embassy, localBuildingId }) => {
+          const localBuilding =
+            localBuildingId === embassy.building_a_id ? embassy.building_a : embassy.building_b;
+
+          return html`
+            <div class="panel__embassy-item">
+              ${
+                localBuilding
+                  ? html`
+                    <div class="panel__embassy-local" @click=${() => this._handleNavigateLocalBuilding(localBuildingId)}>
+                      ${
+                        localBuilding.image_url
+                          ? html`<img
+                              class="panel__embassy-thumb"
+                              src=${localBuilding.image_url}
+                              alt=${localBuilding.name}
+                              loading="lazy"
+                            />`
+                          : nothing
+                      }
+                      <div class="panel__embassy-info">
+                        <div class="panel__embassy-name">${localBuilding.name}</div>
+                        <div class="panel__embassy-label">${msg('Posted at')}</div>
+                      </div>
+                    </div>
+                  `
+                  : nothing
+              }
+              <velg-embassy-link
+                .embassy=${embassy}
+                .currentBuildingId=${localBuildingId}
+                @navigate-embassy=${this._handleNavigateEmbassy}
+              ></velg-embassy-link>
+            </div>
+          `;
+        })}
+      </div>
+    `;
+  }
+
   private _renderProfessions() {
     const professions = this.agent?.professions;
     if (!professions || professions.length === 0) {
@@ -591,8 +750,11 @@ export class VelgAgentDetailsPanel extends LitElement {
                   <div class="panel__badges">
                     ${agent.system ? html`<velg-badge variant="primary">${agent.system}</velg-badge>` : nothing}
                     ${agent.gender ? html`<velg-badge>${agent.gender}</velg-badge>` : nothing}
+                    ${agent.is_ambassador ? html`<velg-badge variant="warning">${msg('Ambassador')}</velg-badge>` : nothing}
                     ${agent.data_source === 'ai' ? html`<velg-badge variant="info">${msg('AI Generated')}</velg-badge>` : nothing}
                   </div>
+
+                  ${this._renderEmbassy()}
 
                   ${
                     agent.character
@@ -660,6 +822,7 @@ export class VelgAgentDetailsPanel extends LitElement {
       <velg-lightbox
         .src=${this._lightboxSrc}
         .alt=${this._lightboxAlt}
+        .caption=${this.agent?.name ?? ''}
         @lightbox-close=${() => {
           this._lightboxSrc = null;
         }}

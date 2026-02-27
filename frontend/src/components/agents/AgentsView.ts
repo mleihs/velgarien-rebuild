@@ -134,6 +134,7 @@ export class VelgAgentsView extends LitElement {
       if (response.success && response.data) {
         this._agents = Array.isArray(response.data) ? response.data : [];
         this._total = response.meta?.total ?? this._agents.length;
+        this._checkDeepLink();
       } else {
         this._error = response.error?.message ?? msg('Failed to load agents');
       }
@@ -141,6 +142,18 @@ export class VelgAgentsView extends LitElement {
       this._error = err instanceof Error ? err.message : msg('An unknown error occurred');
     } finally {
       this._loading = false;
+    }
+  }
+
+  private _checkDeepLink(): void {
+    const agentName = sessionStorage.getItem('openAgentName');
+    if (!agentName) return;
+    sessionStorage.removeItem('openAgentName');
+
+    const agent = this._agents.find((a) => a.name === agentName);
+    if (agent) {
+      this._selectedAgent = agent;
+      this._showDetails = true;
     }
   }
 

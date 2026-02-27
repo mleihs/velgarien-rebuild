@@ -185,6 +185,34 @@ When creating a new preset, ensure:
 4. **`color_text_muted` must pass 3:1 on `color_surface`.** Muted text is subtle by design, but below 3:1 it becomes invisible.
 5. **Run the contrast test** after any preset change: `npx vitest run tests/theme-contrast.test.ts`
 
+## Embassy Visual Effects
+
+Embassy buildings and ambassador agents use theme-aware visual effects via `.card--embassy` in `card-styles.ts`. The effects use standard theme tokens for automatic per-simulation identity.
+
+### Technique
+
+- **Pulsing Ring (non-hover):** `box-shadow: 0 0 0 Npx` animates 1px→5px over 3s, shifting between `--color-primary` and `--color-text-secondary`. Uses `box-shadow` instead of `border-image` because `border-image` does not work with `border-radius`.
+- **Gradient Border (hover):** `background: padding-box/border-box` trick creates a 3px gradient border that works with rounded corners.
+- **Gradient Fill (hover):** `::after` pseudo-element with semi-transparent `color-mix()` gradient overlay, `pointer-events: none`, `z-index: 1`.
+
+### Theme Compatibility
+
+| Preset | `--color-primary` | `--color-text-secondary` | Visual |
+|--------|-------------------|--------------------------|--------|
+| Brutalist | `#000000` | `#525252` | Black→grey, stark |
+| Sunless-Sea | `#0d7377` | `#90aa9c` | Teal→sage, underwater |
+| Deep-Space-Horror | `#8b0000` | `#ff6b35` | Blood→orange, alarm |
+| Arc-Raiders | `#d4a574` | `#8b7355` | Gold→bronze, warm |
+| Cyberpunk | `#ff00ff` | `#00ffff` | Magenta→cyan, neon |
+| Solarpunk | `#2d6a4f` | `#52796f` | Green→sage, organic |
+| Nordic-Noir | `#4a6741` | `#7d8471` | Forest→grey, subtle |
+
+No theme-specific overrides needed — effects derive from standard tokens.
+
+See `21_EMBASSIES.md` for full feature documentation.
+
+---
+
 ## Storage
 
 Theme settings are stored in the `simulation_settings` table:

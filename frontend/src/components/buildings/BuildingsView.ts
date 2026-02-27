@@ -16,6 +16,7 @@ import { VelgToast } from '../shared/Toast.js';
 import './BuildingCard.js';
 import './BuildingEditModal.js';
 import './BuildingDetailsPanel.js';
+import './EmbassyCreateModal.js';
 
 @localized()
 @customElement('velg-buildings-view')
@@ -49,6 +50,8 @@ export class VelgBuildingsView extends LitElement {
   @state() private _editBuilding: Building | null = null;
   @state() private _showEditModal = false;
   @state() private _showDetails = false;
+  @state() private _embassySourceBuilding: Building | null = null;
+  @state() private _showEmbassyModal = false;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -119,6 +122,7 @@ export class VelgBuildingsView extends LitElement {
       if (response.success && response.data) {
         this._buildings = Array.isArray(response.data) ? response.data : [];
         this._total = response.meta?.total ?? this._buildings.length;
+        this._checkDeepLink();
       } else {
         this._error = response.error?.message ?? msg('Failed to load buildings');
       }
@@ -126,6 +130,18 @@ export class VelgBuildingsView extends LitElement {
       this._error = msg('An unexpected error occurred while loading buildings');
     } finally {
       this._loading = false;
+    }
+  }
+
+  private _checkDeepLink(): void {
+    const buildingId = sessionStorage.getItem('openBuildingId');
+    if (!buildingId) return;
+    sessionStorage.removeItem('openBuildingId');
+
+    const building = this._buildings.find((b) => b.id === buildingId);
+    if (building) {
+      this._selectedBuilding = building;
+      this._showDetails = true;
     }
   }
 
@@ -204,6 +220,23 @@ export class VelgBuildingsView extends LitElement {
     this._selectedBuilding = null;
   }
 
+  private _handleEmbassyEstablish(e: CustomEvent<Building>): void {
+    this._embassySourceBuilding = e.detail;
+    this._showEmbassyModal = true;
+    this._showDetails = false;
+  }
+
+  private _handleEmbassyCreated(): void {
+    this._showEmbassyModal = false;
+    this._embassySourceBuilding = null;
+    this._loadBuildings();
+  }
+
+  private _handleEmbassyModalClose(): void {
+    this._showEmbassyModal = false;
+    this._embassySourceBuilding = null;
+  }
+
   private _handleRetry(): void {
     this._loadBuildings();
   }
@@ -247,7 +280,15 @@ export class VelgBuildingsView extends LitElement {
           @panel-close=${this._handleDetailsClose}
           @building-edit=${this._handleBuildingEdit}
           @building-delete=${this._handleBuildingDelete}
+          @embassy-establish=${this._handleEmbassyEstablish}
         ></velg-building-details-panel>
+
+        <velg-embassy-create-modal
+          ?open=${this._showEmbassyModal}
+          .sourceBuilding=${this._embassySourceBuilding}
+          @embassy-created=${this._handleEmbassyCreated}
+          @modal-close=${this._handleEmbassyModalClose}
+        ></velg-embassy-create-modal>
       </div>
     `;
   }

@@ -2,7 +2,7 @@
 
 **Version:** 1.4
 **Datum:** 2026-02-25
-**Status:** Alle 5 Phasen + i18n + per-Simulation-Theming komplett. 3 Simulationen live: Velgarien, Capybara Kingdom, Station Null. Anonymous View Audit abgeschlossen (Rate Limiting, RLS-Härtung, 21 anon-RLS-Policies, Service-Layer-Refactoring, 36 Integration-Tests + 10 E2E-Specs). 24 Migrationen (001-021 + ensure_dev_user). 6 Theme-Presets (default, brutalist, fantasy-kingdom, cyberpunk, steampunk, deep-space-horror). 893 lokalisierte UI-Strings (EN/DE). 19 Agenten-Portraits + 18 Gebäude-Bilder + 3 Banner via Replicate AI generiert. Production deployed auf Railway + hosted Supabase. (Siehe [19_DEPLOYMENT_INFRASTRUCTURE.md](./19_DEPLOYMENT_INFRASTRUCTURE.md))
+**Status:** Alle 6 Phasen + i18n + per-Simulation-Theming komplett. 4 Simulationen live: Velgarien, Capybara Kingdom, Station Null, Speranza. Agent Relationships + Event Echoes + Cartographer's Map (Phase 6). Embassies & Ambassadors (cross-sim diplomatische Gebaeude, `.card--embassy` Pulsring + Gradient-Hover mit per-Theme-Farben). Slug-basierte URLs. 30 Migrationen (001-029 + ensure_dev_user). 7 Theme-Presets. 1090 lokalisierte UI-Strings (EN/DE). Alle Bilder via Replicate AI generiert (AVIF). Production deployed auf Railway + hosted Supabase. (Siehe [19_DEPLOYMENT_INFRASTRUCTURE.md](./19_DEPLOYMENT_INFRASTRUCTURE.md))
 
 ---
 

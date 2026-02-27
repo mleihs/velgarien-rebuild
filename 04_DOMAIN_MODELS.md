@@ -145,6 +145,8 @@ interface Agent {
 
   // Generated (read-only, not in create/update DTOs)
   search_vector?: string;           // tsvector, not exposed in API
+  is_ambassador?: boolean;          // Computed by AgentService._enrich_ambassador_flag()
+                                    // true if agent assigned to any embassy building (not stored in DB)
 
   // Relations (loaded on demand)
   professions?: AgentProfession[];
@@ -673,7 +675,7 @@ Die folgenden Taxonomy-Typen ersetzen alle hartcodierten ENUMs und CHECK Constra
 | `system` | Hardcoded in validation | politics, military, civil, economy, underworld, clergy, science |
 | `building_type` | Hardcoded in validation | residential, office, factory, clinic, education, culture, government, trade, infrastructure, other |
 | `building_style` | Hardcoded in validation | brutalist, modern, classic, futuristic, industrial |
-| `building_special_type` | `building_special_type` ENUM | academy, military_academy, medical_center, research_lab, propaganda_center |
+| `building_special_type` | `building_special_type` ENUM | academy, military_academy, medical_center, research_lab, propaganda_center, embassy |
 | `campaign_type` | `propaganda_type` CHECK | surveillance, control, distraction, loyalty, productivity, conformity |
 | `target_demographic` | `target_demographic` CHECK | education_sector, working_population, health_conscious, general_population |
 | `urgency_level` | `urgency_level` CHECK | low, medium, high, critical |

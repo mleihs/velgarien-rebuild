@@ -50,6 +50,13 @@ export class AgentsApiService extends BaseApiService {
   ): Promise<ApiResponse<{ image_url: string }>> {
     return this.post(`/simulations/${simulationId}/agents/${agentId}/generate-portrait`);
   }
+
+  listPublic(
+    simulationId: string,
+    params?: Record<string, string>,
+  ): Promise<ApiResponse<PaginatedResponse<Agent>>> {
+    return this.getPublic(`/simulations/${simulationId}/agents`, params);
+  }
 }
 
 export const agentsApi = new AgentsApiService();

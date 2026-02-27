@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from uuid import UUID
 
 from backend.services.base_service import BaseService
 from backend.utils.search import apply_search_filter
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 
 class AgentService(BaseService):
@@ -51,7 +54,9 @@ class AgentService(BaseService):
         response = query.execute()
 
         total = response.count if response.count is not None else len(response.data or [])
-        return response.data or [], total
+        agents = response.data or []
+        cls._enrich_ambassador_flag(supabase, simulation_id, agents)
+        return agents, total
 
     @classmethod
     async def list_for_reaction(
@@ -140,4 +145,47 @@ class AgentService(BaseService):
         agent["professions"] = await cls.get_professions(supabase, simulation_id, agent_id)
         agent["reactions"] = await cls.get_reactions(supabase, simulation_id, agent_id)
         agent["building_relations"] = await cls.get_building_relations(supabase, simulation_id, agent_id)
+        cls._enrich_ambassador_flag(supabase, simulation_id, [agent])
         return agent
+
+    @classmethod
+    def _enrich_ambassador_flag(
+        cls,
+        supabase: Client,
+        simulation_id: UUID,
+        agents: list[dict],
+    ) -> None:
+        """Set is_ambassador=True on agents who serve as embassy ambassadors.
+
+        Queries active embassies involving this simulation and extracts
+        ambassador names from embassy_metadata JSON.
+        """
+        if not agents:
+            return
+
+        sim_str = str(simulation_id)
+        try:
+            response = (
+                supabase.table("embassies")
+                .select("simulation_a_id, simulation_b_id, embassy_metadata")
+                .eq("status", "active")
+                .or_(f"simulation_a_id.eq.{sim_str},simulation_b_id.eq.{sim_str}")
+                .execute()
+            )
+        except Exception:
+            logger.warning("Failed to query embassies for ambassador enrichment", exc_info=True)
+            return
+
+        ambassador_names: set[str] = set()
+        for embassy in response.data or []:
+            meta = embassy.get("embassy_metadata") or {}
+            # ambassador_a belongs to simulation_a, ambassador_b to simulation_b
+            if embassy.get("simulation_a_id") == sim_str:
+                name = (meta.get("ambassador_a") or {}).get("name")
+            else:
+                name = (meta.get("ambassador_b") or {}).get("name")
+            if name:
+                ambassador_names.add(name)
+
+        for agent in agents:
+            agent["is_ambassador"] = agent.get("name") in ambassador_names

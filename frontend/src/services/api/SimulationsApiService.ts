@@ -32,6 +32,10 @@ export class SimulationsApiService extends BaseApiService {
   remove(id: string): Promise<ApiResponse<Simulation>> {
     return this.delete(`/simulations/${id}`);
   }
+
+  listPublic(params?: Record<string, string>): Promise<ApiResponse<PaginatedResponse<Simulation>>> {
+    return this.getPublic('/simulations', params);
+  }
 }
 
 export const simulationsApi = new SimulationsApiService();

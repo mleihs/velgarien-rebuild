@@ -13,9 +13,31 @@ export class VelgPlatformHeader extends LitElement {
   static styles = css`
     :host {
       display: block;
+      position: relative;
       height: var(--header-height);
       background: var(--color-surface-header);
-      border-bottom: var(--border-default);
+    }
+
+    /* Animated gradient bottom border */
+    :host::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--color-primary) 15%,
+        var(--color-text-secondary) 35%,
+        var(--color-primary) 50%,
+        var(--color-text-secondary) 65%,
+        var(--color-primary) 85%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: header-border-flow 4s linear infinite;
     }
 
     .header {
@@ -29,7 +51,7 @@ export class VelgPlatformHeader extends LitElement {
     .header__left {
       display: flex;
       align-items: center;
-      gap: var(--space-4);
+      gap: var(--space-8);
     }
 
     .header__title {
@@ -38,40 +60,124 @@ export class VelgPlatformHeader extends LitElement {
       font-size: var(--text-lg);
       text-transform: uppercase;
       letter-spacing: var(--tracking-brutalist);
+      color: var(--color-text-primary);
       cursor: pointer;
       text-decoration: none;
-      color: inherit;
     }
 
-    .header__title:hover {
-      opacity: 0.8;
-    }
+    /* --- Map button — marching ants border + beacon dot --- */
 
     .header__nav-link {
+      position: relative;
       font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
+      font-weight: var(--font-black);
+      font-size: var(--text-sm);
       text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-secondary);
+      letter-spacing: var(--tracking-brutalist);
       text-decoration: none;
       cursor: pointer;
-      padding: var(--space-1) var(--space-2);
-      border: var(--border-default);
-      background: var(--color-surface);
-      transition: background 0.1s, color 0.1s;
+      padding: var(--space-2) var(--space-5) var(--space-2) var(--space-7);
+      color: var(--color-primary);
+      border: none;
+
+      /* Marching-ants border — 4 dashed gradients, one per edge */
+      background:
+        repeating-linear-gradient(90deg, var(--color-primary) 0 6px, transparent 6px 12px) 0 0 / 100% 2px no-repeat,
+        repeating-linear-gradient(90deg, var(--color-primary) 0 6px, transparent 6px 12px) 0 100% / 100% 2px no-repeat,
+        repeating-linear-gradient(0deg, var(--color-primary) 0 6px, transparent 6px 12px) 0 0 / 2px 100% no-repeat,
+        repeating-linear-gradient(0deg, var(--color-primary) 0 6px, transparent 6px 12px) 100% 0 / 2px 100% no-repeat;
+      background-color: var(--color-surface);
+      animation: march 0.6s linear infinite;
+
+      transition:
+        color 0.25s ease,
+        background-color 0.25s ease,
+        letter-spacing 0.3s ease,
+        transform 0.2s ease,
+        box-shadow 0.3s ease,
+        filter 0.3s ease;
     }
 
-    .header__nav-link:hover {
-      background: var(--color-surface-hover);
-      color: var(--color-text);
+    /* Beacon dot — pulsing "you are here" marker */
+    .header__nav-link::before {
+      content: '';
+      position: absolute;
+      left: var(--space-3);
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      transform: translateY(-50%);
+      box-shadow: 0 0 4px var(--color-primary);
+      animation: beacon-pulse 2s ease-in-out infinite;
     }
+
+    /* Hover: fill + faster ants + beacon expands */
+    .header__nav-link:hover {
+      color: var(--color-text-inverse);
+      background-color: var(--color-primary);
+      letter-spacing: calc(var(--tracking-brutalist) + 0.04em);
+      transform: translate(-2px, -2px);
+      box-shadow:
+        var(--shadow-lg),
+        0 0 15px color-mix(in srgb, var(--color-primary) 40%, transparent);
+      animation: march 0.25s linear infinite;
+
+      /* Override border gradients to white/inverse for contrast */
+      background-image:
+        repeating-linear-gradient(90deg, var(--color-text-inverse) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(90deg, var(--color-text-inverse) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, var(--color-text-inverse) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, var(--color-text-inverse) 0 6px, transparent 6px 12px);
+    }
+
+    .header__nav-link:hover::before {
+      background: var(--color-text-inverse);
+      box-shadow:
+        0 0 6px var(--color-text-inverse),
+        0 0 12px color-mix(in srgb, var(--color-text-inverse) 60%, transparent);
+      animation: beacon-pulse-fast 0.8s ease-in-out infinite;
+    }
+
+    .header__nav-link:active {
+      transform: translate(0);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    /* --- Active state (map is open) --- */
 
     .header__nav-link--active {
-      background: var(--color-primary);
       color: var(--color-text-inverse);
-      border-color: var(--color-primary);
+      background-color: var(--color-primary);
+      animation: march 0.35s linear infinite;
+
+      /* Inverse ants */
+      background-image:
+        repeating-linear-gradient(90deg, var(--color-text-inverse) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(90deg, var(--color-text-inverse) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, var(--color-text-inverse) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(0deg, var(--color-text-inverse) 0 6px, transparent 6px 12px);
+
+      box-shadow:
+        0 0 10px color-mix(in srgb, var(--color-primary) 40%, transparent),
+        0 0 25px color-mix(in srgb, var(--color-primary) 15%, transparent);
     }
+
+    .header__nav-link--active::before {
+      background: var(--color-text-inverse);
+      box-shadow: 0 0 6px var(--color-text-inverse);
+    }
+
+    .header__nav-link--active:hover {
+      background-color: var(--color-primary-hover);
+      box-shadow:
+        var(--shadow-lg),
+        0 0 20px color-mix(in srgb, var(--color-primary) 60%, transparent),
+        0 0 40px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    /* --- Simulation selector --- */
 
     .sim-selector {
       display: flex;
@@ -94,8 +200,22 @@ export class VelgPlatformHeader extends LitElement {
       padding: var(--space-1) var(--space-3);
       border: var(--border-default);
       background: var(--color-surface);
+      color: var(--color-text-primary);
       cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
+
+    .sim-selector__select:hover {
+      border-color: var(--color-primary);
+    }
+
+    .sim-selector__select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary) 30%, transparent);
+    }
+
+    /* --- Right side --- */
 
     .header__right {
       display: flex;
@@ -112,15 +232,28 @@ export class VelgPlatformHeader extends LitElement {
       padding: var(--space-1) var(--space-2);
       border: var(--border-default);
       background: var(--color-surface);
+      color: var(--color-text-primary);
       cursor: pointer;
-      transition: background 0.1s;
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     .locale-toggle:hover {
-      background: var(--color-surface-hover);
+      color: var(--color-primary);
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .locale-toggle:active {
+      transform: translate(0);
+      box-shadow: var(--shadow-pressed);
     }
 
     .btn-sign-in {
+      position: relative;
       font-family: var(--font-brutalist);
       font-weight: var(--font-black);
       font-size: var(--text-sm);
@@ -130,14 +263,90 @@ export class VelgPlatformHeader extends LitElement {
       background: var(--color-primary);
       color: var(--color-text-inverse);
       border: var(--border-default);
+      border-color: var(--color-primary);
       border-radius: var(--border-radius);
       cursor: pointer;
-      transition: all var(--transition-fast);
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .btn-sign-in::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -80%;
+      width: 40%;
+      height: 160%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--color-text-inverse) 30%, transparent),
+        transparent
+      );
+      transform: skewX(-20deg);
+      opacity: 0;
+      pointer-events: none;
     }
 
     .btn-sign-in:hover {
-      transform: translate(-1px, -1px);
-      box-shadow: var(--shadow-md);
+      transform: translate(-2px, -2px);
+      box-shadow:
+        var(--shadow-lg),
+        0 0 15px color-mix(in srgb, var(--color-primary) 40%, transparent);
+    }
+
+    .btn-sign-in:hover::before {
+      opacity: 1;
+      animation: nav-link-sweep 0.6s ease forwards;
+    }
+
+    .btn-sign-in:active {
+      transform: translate(0);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    /* --- Keyframes --- */
+
+    /* Marching ants: dashes march clockwise around the border */
+    @keyframes march {
+      to {
+        background-position:
+          12px 0, -12px 100%,
+          0 -12px, 100% 12px;
+      }
+    }
+
+    /* Beacon dot: gentle pulse */
+    @keyframes beacon-pulse {
+      0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 4px var(--color-primary);
+      }
+      50% {
+        opacity: 0.4;
+        box-shadow: 0 0 8px var(--color-primary), 0 0 16px color-mix(in srgb, var(--color-primary) 40%, transparent);
+      }
+    }
+
+    /* Beacon dot: fast pulse on hover */
+    @keyframes beacon-pulse-fast {
+      0%, 100% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+        box-shadow: 0 0 6px var(--color-text-inverse);
+      }
+      50% {
+        opacity: 0.6;
+        transform: translateY(-50%) scale(1.5);
+        box-shadow: 0 0 10px var(--color-text-inverse), 0 0 20px color-mix(in srgb, var(--color-text-inverse) 50%, transparent);
+      }
+    }
+
+    @keyframes header-border-flow {
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
     }
   `;
 
@@ -155,12 +364,23 @@ export class VelgPlatformHeader extends LitElement {
     );
   }
 
+  private _preMapPath: string | null = null;
+
   private _handleMapClick(e: Event): void {
     e.preventDefault();
-    const target = window.location.pathname === '/multiverse' ? '/dashboard' : '/multiverse';
-    this.dispatchEvent(
-      new CustomEvent('navigate', { detail: target, bubbles: true, composed: true }),
-    );
+    if (window.location.pathname === '/multiverse') {
+      // Go back to where the user was before opening the map
+      const target = this._preMapPath ?? '/dashboard';
+      this._preMapPath = null;
+      this.dispatchEvent(
+        new CustomEvent('navigate', { detail: target, bubbles: true, composed: true }),
+      );
+    } else {
+      this._preMapPath = window.location.pathname;
+      this.dispatchEvent(
+        new CustomEvent('navigate', { detail: '/multiverse', bubbles: true, composed: true }),
+      );
+    }
   }
 
   private _handleSignInClick(): void {

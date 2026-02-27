@@ -6,6 +6,7 @@ import type {
   CampaignMetric,
   ChatConversation,
   ChatMessage,
+  Embassy,
   Event,
   EventReaction,
   Simulation,
@@ -212,6 +213,70 @@ export function createSocialMediaPost(
     last_synced_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
+// --- Embassy ---
+
+export function createEmbassy(overrides: Partial<Embassy> = {}): Embassy {
+  return {
+    id: crypto.randomUUID(),
+    building_a_id: '00000000-0000-0000-0000-000000000030',
+    simulation_a_id: '00000000-0000-0000-0000-000000000001',
+    building_b_id: '00000000-0000-0000-0000-000000000031',
+    simulation_b_id: '00000000-0000-0000-0000-000000000003',
+    status: 'active',
+    connection_type: 'embassy',
+    description: 'What if bureaucracy and magic are the same thing?',
+    bleed_vector: 'memory',
+    event_propagation: true,
+    building_a: {
+      id: '00000000-0000-0000-0000-000000000030',
+      simulation_id: '00000000-0000-0000-0000-000000000001',
+      name: 'Embassy of Velgarien',
+      building_type: 'government',
+      population_capacity: 50,
+      created_at: '2026-01-01T00:00:00Z',
+      updated_at: '2026-01-01T00:00:00Z',
+    },
+    building_b: {
+      id: '00000000-0000-0000-0000-000000000031',
+      simulation_id: '00000000-0000-0000-0000-000000000003',
+      name: 'Station Null Liaison Office',
+      building_type: 'government',
+      population_capacity: 30,
+      created_at: '2026-01-01T00:00:00Z',
+      updated_at: '2026-01-01T00:00:00Z',
+    },
+    simulation_a: {
+      id: '00000000-0000-0000-0000-000000000001',
+      name: 'Velgarien',
+      slug: 'velgarien',
+      description: 'A dark dystopian world',
+      theme: 'dystopian',
+      status: 'active',
+      content_locale: 'de',
+      additional_locales: ['en'],
+      owner_id: '00000000-0000-0000-0000-000000000002',
+      created_at: '2026-01-01T00:00:00Z',
+      updated_at: '2026-01-01T00:00:00Z',
+    },
+    simulation_b: {
+      id: '00000000-0000-0000-0000-000000000003',
+      name: 'Station Null',
+      slug: 'station-null',
+      description: 'A deep space horror station',
+      theme: 'scifi',
+      status: 'active',
+      content_locale: 'de',
+      additional_locales: ['en'],
+      owner_id: '00000000-0000-0000-0000-000000000002',
+      created_at: '2026-01-01T00:00:00Z',
+      updated_at: '2026-01-01T00:00:00Z',
+    },
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
     ...overrides,
   };
 }

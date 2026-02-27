@@ -6,7 +6,7 @@
 import type { ForceConfig, MapEdgeData, MapNodeData } from './map-types.js';
 
 const DEFAULT_CONFIG: ForceConfig = {
-  repulsion: 50000,
+  repulsion: 80000,
   attraction: 0.001,
   centerForce: 0.005,
   damping: 0.85,
@@ -20,7 +20,7 @@ const DEFAULT_CONFIG: ForceConfig = {
 export function initializePositions(nodes: MapNodeData[], width: number, height: number): void {
   const cx = width / 2;
   const cy = height / 2;
-  const radius = Math.min(width, height) * 0.28;
+  const radius = Math.min(width, height) * 0.38;
 
   for (let i = 0; i < nodes.length; i++) {
     const angle = (2 * Math.PI * i) / nodes.length - Math.PI / 2;
@@ -110,7 +110,7 @@ export function simulateTick(
 
   // Apply forces with damping
   let energy = 0;
-  const padding = config.nodeRadius + 10;
+  const padding = config.nodeRadius + 30;
 
   for (let i = 0; i < nodes.length; i++) {
     nodes[i].vx = (nodes[i].vx + fx[i]) * config.damping;

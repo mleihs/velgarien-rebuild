@@ -33,6 +33,7 @@ export class VelgSidePanel extends LitElement {
       height: 100%;
       display: flex;
       flex-direction: column;
+      color: var(--color-text-primary);
       background: var(--color-surface-raised);
       border-left: var(--border-default);
       box-shadow: var(--shadow-xl);
@@ -81,6 +82,7 @@ export class VelgSidePanel extends LitElement {
       font-weight: var(--font-black);
       font-size: var(--text-lg);
       line-height: 1;
+      color: var(--color-text-primary);
       background: transparent;
       border: var(--border-medium);
       cursor: pointer;
@@ -89,7 +91,11 @@ export class VelgSidePanel extends LitElement {
     }
 
     .panel__close:hover {
-      background: var(--color-surface-sunken);
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      border-color: var(--color-primary);
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-md);
     }
 
     .panel__body {
