@@ -700,6 +700,258 @@ export interface MapData {
   embassies?: Embassy[];
 }
 
+// --- Game Mechanics ---
+
+export interface BuildingReadiness {
+  building_id: UUID;
+  simulation_id: UUID;
+  zone_id?: UUID;
+  building_name: string;
+  building_type?: string;
+  building_condition?: string;
+  population_capacity: number;
+  special_type?: string;
+  assigned_agents: number;
+  staffing_ratio: number;
+  staffing_status: string;
+  qualification_match: number;
+  condition_factor: number;
+  criticality_weight: number;
+  readiness: number;
+}
+
+export interface ZoneStability {
+  zone_id: UUID;
+  simulation_id: UUID;
+  city_id?: UUID;
+  zone_name: string;
+  zone_type?: string;
+  security_level?: string;
+  infrastructure_score: number;
+  security_factor: number;
+  event_pressure: number;
+  building_count: number;
+  total_agents: number;
+  total_capacity: number;
+  critical_understaffed_count: number;
+  avg_readiness: number;
+  stability: number;
+  stability_label: string;
+}
+
+export interface EmbassyEffectiveness {
+  embassy_id: UUID;
+  simulation_a_id: UUID;
+  simulation_b_id: UUID;
+  building_a_id: UUID;
+  building_b_id: UUID;
+  status: string;
+  bleed_vector?: string;
+  building_health: number;
+  ambassador_quality: number;
+  vector_alignment: number;
+  effectiveness: number;
+  effectiveness_label: string;
+}
+
+export interface SimulationHealth {
+  simulation_id: UUID;
+  simulation_name: string;
+  slug?: string;
+  avg_zone_stability: number;
+  zone_count: number;
+  critical_zone_count: number;
+  unstable_zone_count: number;
+  building_count: number;
+  avg_readiness: number;
+  critically_understaffed_buildings: number;
+  overcrowded_buildings: number;
+  total_agents_assigned: number;
+  total_capacity: number;
+  diplomatic_reach: number;
+  active_embassy_count: number;
+  avg_embassy_effectiveness: number;
+  outbound_echoes: number;
+  inbound_echoes: number;
+  avg_outbound_strength: number;
+  bleed_permeability: number;
+  overall_health: number;
+  health_label: string;
+}
+
+export interface SimulationHealthDashboard {
+  health: SimulationHealth;
+  zones: ZoneStability[];
+  buildings: BuildingReadiness[];
+  embassies: EmbassyEffectiveness[];
+  recent_high_impact_events: Record<string, unknown>[];
+}
+
+// --- Epochs (Competitive Layer) ---
+
+export type EpochStatus =
+  | 'lobby'
+  | 'foundation'
+  | 'competition'
+  | 'reckoning'
+  | 'completed'
+  | 'cancelled';
+
+export type OperativeType =
+  | 'spy'
+  | 'saboteur'
+  | 'propagandist'
+  | 'assassin'
+  | 'guardian'
+  | 'infiltrator';
+
+export type BattleLogEventType =
+  | 'operative_deployed'
+  | 'mission_success'
+  | 'mission_failed'
+  | 'detected'
+  | 'captured'
+  | 'sabotage'
+  | 'propaganda'
+  | 'assassination'
+  | 'infiltration'
+  | 'alliance_formed'
+  | 'alliance_dissolved'
+  | 'betrayal'
+  | 'phase_change'
+  | 'epoch_start'
+  | 'epoch_end'
+  | 'rp_allocated'
+  | 'building_damaged'
+  | 'agent_wounded'
+  | 'counter_intel';
+
+export interface EpochScoreWeights {
+  stability: number;
+  influence: number;
+  sovereignty: number;
+  diplomatic: number;
+  military: number;
+}
+
+export interface EpochConfig {
+  duration_days: number;
+  cycle_hours: number;
+  rp_per_cycle: number;
+  rp_cap: number;
+  foundation_pct: number;
+  reckoning_pct: number;
+  max_team_size: number;
+  allow_betrayal: boolean;
+  score_weights: EpochScoreWeights;
+  referee_mode: boolean;
+}
+
+export interface Epoch {
+  id: UUID;
+  name: string;
+  description?: string;
+  created_by_id: UUID;
+  starts_at?: string;
+  ends_at?: string;
+  current_cycle: number;
+  status: EpochStatus;
+  config: EpochConfig;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EpochParticipant {
+  id: UUID;
+  epoch_id: UUID;
+  simulation_id: UUID;
+  team_id?: UUID;
+  joined_at: string;
+  current_rp: number;
+  last_rp_grant_at?: string;
+  final_scores?: Record<string, number>;
+  simulations?: { name: string; slug: string };
+}
+
+export interface EpochTeam {
+  id: UUID;
+  epoch_id: UUID;
+  name: string;
+  created_by_simulation_id: UUID;
+  created_at: string;
+  dissolved_at?: string;
+  dissolved_reason?: string;
+}
+
+export interface OperativeMission {
+  id: UUID;
+  epoch_id: UUID;
+  agent_id: UUID;
+  operative_type: OperativeType;
+  source_simulation_id: UUID;
+  target_simulation_id?: UUID;
+  embassy_id?: UUID;
+  target_entity_id?: UUID;
+  target_entity_type?: string;
+  target_zone_id?: UUID;
+  status: string;
+  cost_rp: number;
+  success_probability?: number;
+  deployed_at: string;
+  resolves_at: string;
+  resolved_at?: string;
+  mission_result?: Record<string, unknown>;
+  created_at: string;
+  agents?: { name: string; portrait_image_url?: string };
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  simulation_id: UUID;
+  simulation_name: string;
+  simulation_slug?: string;
+  team_name?: string;
+  stability: number;
+  influence: number;
+  sovereignty: number;
+  diplomatic: number;
+  military: number;
+  composite: number;
+  stability_title?: string;
+  influence_title?: string;
+  sovereignty_title?: string;
+  diplomatic_title?: string;
+  military_title?: string;
+}
+
+export interface EpochScore {
+  id: UUID;
+  epoch_id: UUID;
+  simulation_id: UUID;
+  cycle_number: number;
+  stability_score: number;
+  influence_score: number;
+  sovereignty_score: number;
+  diplomatic_score: number;
+  military_score: number;
+  composite_score: number;
+  computed_at: string;
+}
+
+export interface BattleLogEntry {
+  id: UUID;
+  epoch_id: UUID;
+  cycle_number: number;
+  event_type: BattleLogEventType;
+  source_simulation_id?: UUID;
+  target_simulation_id?: UUID;
+  mission_id?: UUID;
+  narrative: string;
+  is_public: boolean;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
 // --- API Response Types ---
 
 export interface ApiError {

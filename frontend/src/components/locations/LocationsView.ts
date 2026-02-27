@@ -2,8 +2,8 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import { locationsApi } from '../../services/api/index.js';
-import type { City, CityStreet, Zone } from '../../types/index.js';
+import { healthApi, locationsApi } from '../../services/api/index.js';
+import type { City, CityStreet, Zone, ZoneStability } from '../../types/index.js';
 import { viewHeaderStyles } from '../shared/view-header-styles.js';
 import '../shared/LoadingState.js';
 import '../shared/ErrorState.js';
@@ -71,6 +71,7 @@ export class VelgLocationsView extends LitElement {
   @state() private _selectedZone: Zone | null = null;
   @state() private _loading = false;
   @state() private _error: string | null = null;
+  @state() private _stabilityMap: Map<string, ZoneStability> = new Map();
   @state() private _showEditModal = false;
   @state() private _editType: 'city' | 'zone' | 'street' = 'city';
   @state() private _editItem: City | Zone | CityStreet | null = null;
@@ -123,6 +124,7 @@ export class VelgLocationsView extends LitElement {
 
       if (response.success && response.data) {
         this._zones = response.data ?? [];
+        this._loadZoneStability();
       } else {
         this._error = response.error?.message ?? msg('Failed to load zones');
       }
@@ -149,6 +151,24 @@ export class VelgLocationsView extends LitElement {
       this._error = msg('An unexpected error occurred while loading streets');
     } finally {
       this._loading = false;
+    }
+  }
+
+  private async _loadZoneStability(): Promise<void> {
+    try {
+      const response = await healthApi.listZoneStability(this.simulationId);
+      if (response.success && response.data) {
+        const zones = Array.isArray(response.data)
+          ? response.data
+          : ((response.data as { data?: ZoneStability[] }).data ?? []);
+        const map = new Map<string, ZoneStability>();
+        for (const z of zones) {
+          map.set(z.zone_id, z);
+        }
+        this._stabilityMap = map;
+      }
+    } catch {
+      // Stability data not critical
     }
   }
 
@@ -300,6 +320,7 @@ export class VelgLocationsView extends LitElement {
       return html`
         <velg-zone-list
           .zones=${this._zones}
+          .stabilityMap=${this._stabilityMap}
           @zone-select=${this._handleZoneSelect}
         ></velg-zone-list>
       `;

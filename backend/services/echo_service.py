@@ -6,15 +6,29 @@ Cross-simulation, uses admin client for writes — does NOT extend BaseService.
 from __future__ import annotations
 
 import logging
+import random
 from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import HTTPException, status
 
 from backend.services.base_service import serialize_for_json
+from backend.services.game_mechanics_service import GameMechanicsService
 from supabase import Client
 
 logger = logging.getLogger(__name__)
+
+# Bleed vector → resonant tag keywords. Events with tags matching a vector
+# increase echo strength for that channel by +20% per matching tag (capped at 3).
+VECTOR_TAG_MAP: dict[str, set[str]] = {
+    "commerce": {"commerce", "trade", "economy", "market", "merchant", "gold"},
+    "language": {"language", "linguistic", "communication", "translation", "dialect"},
+    "memory": {"memory", "trauma", "history", "echo", "past", "loss"},
+    "resonance": {"resonance", "relationship", "parallel", "mirror", "bond"},
+    "architecture": {"architecture", "building", "construction", "structure", "ruin"},
+    "dream": {"dream", "vision", "prophecy", "mystical", "spiritual", "sleep"},
+    "desire": {"desire", "yearning", "longing", "need", "hunger", "want"},
+}
 
 
 class EchoService:
@@ -89,6 +103,46 @@ class EchoService:
             )
         return response.data
 
+    # --- Echo strength computation ---
+
+    @staticmethod
+    def compute_echo_strength(
+        *,
+        connection_strength: float,
+        embassy_effectiveness: float = 0.0,
+        tag_resonance_count: int = 0,
+        echo_depth: int = 1,
+        strength_decay: float = 0.6,
+        source_instability: float = 0.0,
+    ) -> float:
+        """Compute echo strength from game metrics.
+
+        Formula:
+          base = connection_strength
+            × (1 + embassy_eff × 0.3)        — embassy boost (up to +30%)
+            × (1 + tag_resonance × 0.2)      — vector alignment (+20%/tag, max 3)
+            × decay^depth                     — cascade weakening
+            × (1 + instability × 0.2)         — unstable zones bleed louder
+
+        Returns a float clamped to [0.0, 1.0].
+        """
+        base = connection_strength
+        base *= 1 + embassy_effectiveness * 0.3
+        base *= 1 + min(tag_resonance_count, 3) * 0.2
+        base *= strength_decay ** echo_depth
+        base *= 1 + source_instability * 0.2
+        return max(0.0, min(1.0, base))
+
+    @staticmethod
+    def count_tag_resonance(event_tags: list[str], echo_vector: str) -> int:
+        """Count how many event tags resonate with a bleed vector."""
+        resonant_tags = VECTOR_TAG_MAP.get(echo_vector, set())
+        if not resonant_tags or not event_tags:
+            return 0
+        return sum(1 for tag in event_tags if tag.lower() in resonant_tags)
+
+    # --- Echo candidate evaluation ---
+
     @classmethod
     async def evaluate_echo_candidates(
         cls,
@@ -98,17 +152,18 @@ class EchoService:
     ) -> list[dict]:
         """Determine which simulations this event should echo to.
 
-        Checks:
-        1. Event impact >= bleed_min_impact setting
-        2. Source sim has bleed_enabled
-        3. Active connections exist to target sims
-        4. Target sims have bleed_enabled
-        5. No existing echo for this event+target pair
-        6. Cascade depth check: if event is already a bleed, check depth
+        Enhanced with game mechanics:
+        - Threshold modified by zone stability + embassy effectiveness
+        - Probabilistic bleed for events 1-2 below modified threshold
+        - Echo strength computed per candidate from connection, embassy, tags
+        - Strength decay applied per cascade depth
+
+        Returns list of dicts with: target_simulation_id, connection, depth,
+        echo_vector, echo_strength.
         """
         sim_str = str(simulation_id)
 
-        # Check if event qualifies (impact threshold)
+        # Check if event qualifies (basic impact check)
         impact = event.get("impact_level") or 0
         if impact < 1:
             return []
@@ -130,14 +185,12 @@ class EchoService:
         if not settings.get("bleed_enabled", True):
             return []
 
-        min_impact = int(settings.get("bleed_min_impact", 8))
+        base_min_impact = int(settings.get("bleed_min_impact", 8))
+        strength_decay = float(settings.get("bleed_strength_decay", 0.6))
 
         # Campaign events have a slightly higher bar
         if event.get("campaign_id"):
-            min_impact += 1
-
-        if impact < min_impact:
-            return []
+            base_min_impact += 1
 
         # Check cascade depth for bleed events
         current_depth = 0
@@ -147,6 +200,10 @@ class EchoService:
             max_depth = int(settings.get("bleed_max_depth", 2))
             if current_depth >= max_depth:
                 return []
+
+        # Early exit: event far below any possible threshold
+        if impact < max(5, base_min_impact - 2):
+            return []
 
         # Get active connections from this simulation
         conn_resp = (
@@ -158,11 +215,37 @@ class EchoService:
             )
             .execute()
         )
-
         if not conn_resp.data:
             return []
 
-        # Build candidate list
+        # Fetch game metrics for threshold modification + strength calculation
+        source_health = await GameMechanicsService.get_simulation_health(
+            supabase, simulation_id,
+        )
+        source_instability = 0.0
+        if source_health:
+            source_instability = max(0.0, 1.0 - source_health.get("overall_health", 0.5))
+
+        # Embassy effectiveness per target simulation (best per target)
+        embassy_data = await GameMechanicsService.list_embassy_effectiveness(
+            supabase, simulation_id,
+        )
+        embassy_map: dict[str, float] = {}
+        for emb in embassy_data:
+            other_sim = (
+                emb.get("simulation_b_id")
+                if emb.get("simulation_a_id") == sim_str
+                else emb.get("simulation_a_id")
+            )
+            if other_sim:
+                embassy_map[other_sim] = max(
+                    embassy_map.get(other_sim, 0.0),
+                    float(emb.get("effectiveness", 0.0)),
+                )
+
+        event_tags = event.get("tags") or []
+
+        # Build candidate list with per-target threshold + strength
         candidates = []
         for conn in conn_resp.data:
             target_sim = (
@@ -170,11 +253,61 @@ class EchoService:
                 if conn["simulation_a_id"] == sim_str
                 else conn["simulation_a_id"]
             )
-            candidates.append({
-                "target_simulation_id": target_sim,
-                "connection": conn,
-                "depth": current_depth + 1,
-            })
+            connection_strength = float(conn.get("strength", 0.5))
+            emb_eff = embassy_map.get(target_sim, 0.0)
+            conn_vectors = conn.get("bleed_vectors") or []
+
+            # Per-target threshold modification
+            modified_threshold = base_min_impact
+            if source_instability > 0.7:  # zone stability < 0.3
+                modified_threshold -= 1
+            if emb_eff > 0.8:
+                modified_threshold -= 1
+            modified_threshold = max(5, modified_threshold)  # Floor of 5
+
+            # Pick the best-matching vector for this connection
+            best_vector = conn_vectors[0] if conn_vectors else "resonance"
+            best_resonance = 0
+            for vector in conn_vectors:
+                r = cls.count_tag_resonance(event_tags, vector)
+                if r > best_resonance:
+                    best_resonance = r
+                    best_vector = vector
+
+            echo_strength = cls.compute_echo_strength(
+                connection_strength=connection_strength,
+                embassy_effectiveness=emb_eff,
+                tag_resonance_count=best_resonance,
+                echo_depth=current_depth + 1,
+                strength_decay=strength_decay,
+                source_instability=source_instability,
+            )
+
+            # Deterministic: impact meets modified threshold
+            if impact >= modified_threshold:
+                candidates.append({
+                    "target_simulation_id": target_sim,
+                    "connection": conn,
+                    "depth": current_depth + 1,
+                    "echo_vector": best_vector,
+                    "echo_strength": echo_strength,
+                })
+            # Probabilistic: events 1-2 below threshold may still bleed
+            elif impact >= modified_threshold - 2:
+                bleed_prob = (
+                    0.15
+                    * connection_strength
+                    * (1 + emb_eff * 0.5)
+                    * (1 + source_instability * 0.3)
+                )
+                if random.random() < bleed_prob:  # noqa: S311
+                    candidates.append({
+                        "target_simulation_id": target_sim,
+                        "connection": conn,
+                        "depth": current_depth + 1,
+                        "echo_vector": best_vector,
+                        "echo_strength": echo_strength * 0.7,  # weaker
+                    })
 
         return candidates
 
@@ -283,6 +416,220 @@ class EchoService:
                 detail=f"Cannot reject echo with status '{echo['status']}'.",
             )
         return await cls.update_echo_status(admin_supabase, echo_id, "rejected")
+
+    # --- Echo transformation (AI-powered) ---
+
+    @classmethod
+    async def transform_and_complete_echo(
+        cls,
+        admin_supabase: Client,
+        supabase: Client,
+        echo: dict,
+        gen_service: object,
+        *,
+        game_context: dict | None = None,
+    ) -> dict:
+        """Transform a pending/generating echo into a target event using AI.
+
+        Orchestrates the full echo lifecycle:
+        1. Mark echo as 'generating'
+        2. Fetch source event + target simulation info
+        3. AI-transform the source event through the bleed vector lens
+        4. Create the target event in the target simulation
+        5. Mark echo as 'completed' with target_event_id
+
+        Args:
+            admin_supabase: Admin client for cross-simulation writes.
+            supabase: User client for reads.
+            echo: Echo dict (must include source_event_id, target_simulation_id,
+                echo_vector, echo_strength, echo_depth, bleed_metadata).
+            gen_service: A ``GenerationService`` instance (typed as ``object``
+                to avoid circular import).
+            game_context: Optional game metrics for narrative shaping.
+
+        Returns:
+            Updated echo dict with status 'completed' and target_event_id set.
+        """
+        echo_id = UUID(echo["id"])
+        target_sim_id = echo["target_simulation_id"]
+        source_event_id = echo["source_event_id"]
+
+        # 1. Mark as generating (idempotent if already generating)
+        if echo["status"] == "pending":
+            await cls.update_echo_status(admin_supabase, echo_id, "generating")
+
+        try:
+            # 2. Fetch source event
+            source_event_resp = (
+                supabase.table("events")
+                .select("*")
+                .eq("id", source_event_id)
+                .single()
+                .execute()
+            )
+            if not source_event_resp.data:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Source event no longer exists.",
+                )
+            source_event = source_event_resp.data
+
+            # Fetch target simulation info
+            target_sim_resp = (
+                supabase.table("simulations")
+                .select("name, description")
+                .eq("id", target_sim_id)
+                .single()
+                .execute()
+            )
+            target_sim = target_sim_resp.data or {}
+
+            # 3. AI transformation through bleed vector
+            transformed = await gen_service.generate_echo_transformation(
+                source_event=source_event,
+                target_simulation_name=target_sim.get("name", ""),
+                target_description=target_sim.get("description", ""),
+                echo_vector=echo["echo_vector"],
+                game_context=game_context,
+            )
+
+            # 4. Create target event in target simulation
+            source_tags = list(source_event.get("tags") or [])
+            echo_vector = echo["echo_vector"]
+            if echo_vector not in source_tags:
+                source_tags.append(echo_vector)
+
+            # Impact scales with echo strength — weaker echoes are less impactful
+            target_impact = max(1, round(
+                (source_event.get("impact_level") or 5) * float(echo["echo_strength"])
+            ))
+
+            target_event_data = serialize_for_json({
+                "simulation_id": target_sim_id,
+                "title": transformed.get("title", source_event.get("title", "")),
+                "description": transformed.get("description", ""),
+                "event_type": source_event.get("event_type", "echo"),
+                "data_source": "bleed",
+                "impact_level": min(10, target_impact),
+                "occurred_at": datetime.now(UTC).isoformat(),
+                "tags": source_tags,
+                "external_refs": {
+                    "echo_id": str(echo_id),
+                    "source_event_id": source_event_id,
+                    "source_simulation_id": echo["source_simulation_id"],
+                    "echo_depth": echo["echo_depth"],
+                    "echo_vector": echo_vector,
+                    "model_used": transformed.get("model_used"),
+                },
+            })
+
+            event_resp = (
+                admin_supabase.table("events")
+                .insert(target_event_data)
+                .execute()
+            )
+            if not event_resp.data:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to create target event from echo.",
+                )
+            target_event = event_resp.data[0]
+
+            # 5. Mark echo as completed
+            metadata = dict(echo.get("bleed_metadata") or {})
+            metadata.update({
+                "transformed_title": transformed.get("title"),
+                "model_used": transformed.get("model_used"),
+                "target_impact": target_impact,
+            })
+
+            return await cls.update_echo_status(
+                admin_supabase, echo_id, "completed",
+                target_event_id=UUID(target_event["id"]),
+                metadata_update=metadata,
+            )
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.exception("Echo transformation failed for echo %s", echo_id)
+            await cls.update_echo_status(
+                admin_supabase, echo_id, "failed",
+                metadata_update={
+                    **(echo.get("bleed_metadata") or {}),
+                    "error": str(e),
+                },
+            )
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Echo transformation failed: {e}",
+            ) from e
+
+    @classmethod
+    async def compute_strength_for_manual_trigger(
+        cls,
+        supabase: Client,
+        source_simulation_id: UUID,
+        target_simulation_id: UUID,
+        echo_vector: str,
+        event_tags: list[str],
+        user_strength: float,
+    ) -> float:
+        """Compute echo strength for a manually triggered echo.
+
+        Combines user-provided strength with game metrics (connection
+        strength, embassy effectiveness, tag resonance). The user's
+        override is treated as the connection_strength input, allowing
+        the other factors to modify it.
+        """
+        sim_str = str(source_simulation_id)
+
+        # Get source instability
+        source_health = await GameMechanicsService.get_simulation_health(
+            supabase, source_simulation_id,
+        )
+        source_instability = 0.0
+        if source_health:
+            source_instability = max(0.0, 1.0 - source_health.get("overall_health", 0.5))
+
+        # Get embassy effectiveness for this pair
+        embassy_data = await GameMechanicsService.list_embassy_effectiveness(
+            supabase, source_simulation_id,
+        )
+        target_str = str(target_simulation_id)
+        emb_eff = 0.0
+        for emb in embassy_data:
+            other = (
+                emb.get("simulation_b_id")
+                if emb.get("simulation_a_id") == sim_str
+                else emb.get("simulation_a_id")
+            )
+            if other == target_str:
+                emb_eff = max(emb_eff, float(emb.get("effectiveness", 0.0)))
+
+        # Get strength decay
+        settings_resp = (
+            supabase.table("simulation_settings")
+            .select("setting_value")
+            .eq("simulation_id", sim_str)
+            .eq("category", "world")
+            .eq("setting_key", "bleed_strength_decay")
+            .execute()
+        )
+        strength_decay = 0.6
+        if settings_resp.data:
+            strength_decay = float(settings_resp.data[0].get("setting_value", 0.6))
+
+        tag_resonance = cls.count_tag_resonance(event_tags, echo_vector)
+
+        return cls.compute_echo_strength(
+            connection_strength=user_strength,
+            embassy_effectiveness=emb_eff,
+            tag_resonance_count=tag_resonance,
+            echo_depth=1,
+            strength_decay=strength_decay,
+            source_instability=source_instability,
+        )
 
 
 class ConnectionService:

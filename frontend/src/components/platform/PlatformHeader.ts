@@ -1,5 +1,5 @@
 import { localized, msg } from '@lit/localize';
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { localeService } from '../../services/i18n/locale-service.js';
@@ -355,6 +355,9 @@ export class VelgPlatformHeader extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     this._simulations = appState.simulations.value;
+    if (import.meta.env.DEV) {
+      import('./DevAccountSwitcher.js');
+    }
   }
 
   private _handleTitleClick(e: Event): void {
@@ -381,6 +384,13 @@ export class VelgPlatformHeader extends LitElement {
         new CustomEvent('navigate', { detail: '/multiverse', bubbles: true, composed: true }),
       );
     }
+  }
+
+  private _handleEpochClick(e: Event): void {
+    e.preventDefault();
+    this.dispatchEvent(
+      new CustomEvent('navigate', { detail: '/epoch', bubbles: true, composed: true }),
+    );
   }
 
   private _handleSignInClick(): void {
@@ -418,6 +428,8 @@ export class VelgPlatformHeader extends LitElement {
 
           <a href="/multiverse" class="header__nav-link ${window.location.pathname === '/multiverse' ? 'header__nav-link--active' : ''}" @click=${this._handleMapClick}>${msg('Map')}</a>
 
+          <a href="/epoch" class="header__nav-link ${window.location.pathname === '/epoch' ? 'header__nav-link--active' : ''}" @click=${this._handleEpochClick}>${msg('Epoch')}</a>
+
           ${
             this._simulations.length > 0
               ? html`
@@ -440,6 +452,7 @@ export class VelgPlatformHeader extends LitElement {
         </div>
 
         <div class="header__right">
+          ${import.meta.env.DEV ? html`<velg-dev-account-switcher></velg-dev-account-switcher>` : nothing}
           <button class="locale-toggle" @click=${this._toggleLocale}>
             ${localeService.currentLocale === 'en' ? 'DE' : 'EN'}
           </button>

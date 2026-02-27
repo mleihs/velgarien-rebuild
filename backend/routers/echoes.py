@@ -1,5 +1,6 @@
 """Event echo (bleed) endpoints."""
 
+import logging
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -15,12 +16,37 @@ from backend.models.common import CurrentUser, PaginatedResponse, PaginationMeta
 from backend.models.echo import EchoCreate, EchoResponse
 from backend.services.audit_service import AuditService
 from backend.services.echo_service import EchoService
+from backend.services.external.openrouter import OpenRouterError
+from backend.services.external_service_resolver import ExternalServiceResolver
+from backend.services.game_mechanics_service import GameMechanicsService
+from backend.services.generation_service import GenerationService
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api/v1/simulations/{simulation_id}",
     tags=["echoes"],
 )
+
+
+# --- Helpers ---
+
+
+async def _get_generation_service(
+    simulation_id: UUID,
+    supabase: Client,
+) -> GenerationService:
+    """Create a GenerationService with per-simulation API keys."""
+    resolver = ExternalServiceResolver(supabase, simulation_id)
+    ai_config = await resolver.get_ai_provider_config()
+    return GenerationService(
+        supabase, simulation_id,
+        openrouter_api_key=ai_config.openrouter_api_key,
+    )
+
+
+# --- Endpoints ---
 
 
 @router.get("/echoes", response_model=PaginatedResponse[EchoResponse])
@@ -72,7 +98,12 @@ async def trigger_echo(
     supabase: Client = Depends(get_supabase),
     admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
-    """Manually trigger an echo from an event to a target simulation."""
+    """Manually trigger an echo from an event to a target simulation.
+
+    Computes echo strength from game metrics (connection strength,
+    embassy effectiveness, tag resonance, source instability) rather
+    than using the raw user-provided strength directly.
+    """
     # Fetch the source event
     event_resp = (
         supabase.table("events")
@@ -88,13 +119,24 @@ async def trigger_echo(
             detail="Source event not found in this simulation.",
         )
 
+    # Compute echo strength from game metrics
+    event_tags = event_resp.data.get("tags") or []
+    computed_strength = await EchoService.compute_strength_for_manual_trigger(
+        supabase,
+        source_simulation_id=simulation_id,
+        target_simulation_id=body.target_simulation_id,
+        echo_vector=body.echo_vector,
+        event_tags=event_tags,
+        user_strength=body.echo_strength,
+    )
+
     result = await EchoService.create_echo(
         admin_supabase,
         source_event=event_resp.data,
         source_simulation_id=simulation_id,
         target_simulation_id=body.target_simulation_id,
         echo_vector=body.echo_vector,
-        echo_strength=body.echo_strength,
+        echo_strength=computed_strength,
         echo_depth=1,
     )
     await AuditService.log_action(
@@ -115,12 +157,55 @@ async def approve_echo(
     supabase: Client = Depends(get_supabase),
     admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
-    """Approve a pending echo."""
-    result = await EchoService.approve_echo(admin_supabase, echo_id)
-    await AuditService.log_action(
-        supabase, simulation_id, user.id, "event_echoes", echo_id, "update"
-    )
-    return {"success": True, "data": result}
+    """Approve a pending echo — triggers AI transformation.
+
+    1. Validates the echo is pending
+    2. Creates a GenerationService for the source simulation
+    3. Builds game context (simulation health, zone stability)
+    4. Transforms the source event through the bleed vector lens
+    5. Creates a target event in the target simulation
+    6. Marks the echo as completed with the target_event_id
+    """
+    echo = await EchoService.get(supabase, echo_id)
+    if echo["status"] != "pending":
+        raise HTTPException(
+            status_code=http_status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot approve echo with status '{echo['status']}'.",
+        )
+
+    try:
+        # Source simulation provides the AI API key
+        source_sim_id = UUID(echo["source_simulation_id"])
+        gen_service = await _get_generation_service(source_sim_id, supabase)
+
+        # Build game context for narrative shaping
+        game_context = await GameMechanicsService.build_generation_context(
+            supabase, source_sim_id,
+        )
+
+        result = await EchoService.transform_and_complete_echo(
+            admin_supabase, supabase, echo, gen_service,
+            game_context=game_context,
+        )
+
+        await AuditService.log_action(
+            supabase, simulation_id, user.id, "event_echoes", echo_id, "update"
+        )
+        return {"success": True, "data": result}
+
+    except OpenRouterError as e:
+        raise HTTPException(
+            status_code=http_status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(e),
+        ) from e
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Echo approval/transformation failed for %s", echo_id)
+        raise HTTPException(
+            status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        ) from e
 
 
 @router.patch(

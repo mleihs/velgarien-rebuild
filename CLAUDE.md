@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph with starfield, energy pulses, node glow drift) + Settings architecture cleanup (shared CSS + BaseSettingsPanel base class) + Slug-based URLs (`/simulations/speranza/lore` instead of UUIDs) + Building description prompt fix (short functional output) + Embassies & Ambassadors (cross-sim diplomatic buildings, `is_ambassador` computed flag, `.card--embassy` pulsing ring + gradient hover effects with per-theme colors, 4-step creation wizard with ambassador assignment) + UI polish (SimulationNav diagonal gradient dwell effects, PlatformHeader marching ants map button, LoreScroll microanimations, close button hover effects) + English default locale. 160 tasks. ~1120 localized UI strings (EN/DE, translated via DeepL). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
+**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph with starfield, energy pulses, node glow drift) + Settings architecture cleanup (shared CSS + BaseSettingsPanel base class) + Slug-based URLs (`/simulations/speranza/lore` instead of UUIDs) + Building description prompt fix (short functional output) + Embassies & Ambassadors (cross-sim diplomatic buildings, `is_ambassador` computed flag, `.card--embassy` pulsing ring + gradient hover effects with per-theme colors, 4-step creation wizard with ambassador assignment) + UI polish (SimulationNav diagonal gradient dwell effects, PlatformHeader marching ants map button, LoreScroll microanimations, close button hover effects) + English default locale + Game Systems (materialized views, mechanics service, info bubbles, AI prompt integration, bleed threshold/echo pipeline) + AI Relationship Generation (inline review flow in AgentDetailsPanel). 160 tasks. ~1373 localized UI strings (EN/DE, translated via DeepL). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
 
 ## Tech Stack
 
@@ -77,7 +77,7 @@ frontend/             Lit + Vite application
     styles/           CSS design tokens (tokens/: 8 files — colors, typography, spacing, borders, shadows, animation, layout, z-index) + base styles (base/)
     utils/            Shared utilities (text.ts, formatters.ts, error-handler.ts, icons.ts)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
-  tests/              vitest tests (337 tests: validation + API + notification + theme contrast + SEO/analytics + settings)
+  tests/              vitest tests (365 tests: validation + API + notification + theme contrast + SEO/analytics + settings)
 e2e/                  Playwright E2E tests (73 specs across 12 files)
   playwright.config.ts
   helpers/            auth.ts, fixtures.ts
@@ -312,7 +312,7 @@ DeepL tips:
 | `frontend/lit-localize.json` | Config: sourceLocale=en, targetLocale=de, runtime mode |
 | `frontend/src/services/i18n/locale-service.ts` | LocaleService: initLocale, setLocale, getInitialLocale |
 | `frontend/src/services/i18n/format-service.ts` | FormatService: formatDate, formatDateTime, formatNumber, formatRelativeTime |
-| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (1090 trans-units) — edit this for translations |
+| `frontend/src/locales/xliff/de.xlf` | XLIFF translations (1373 trans-units) — edit this for translations |
 | `frontend/src/locales/generated/de.ts` | Auto-generated — NEVER edit manually |
 | `frontend/src/locales/generated/locale-codes.ts` | Source/target locale constants |
 

@@ -944,7 +944,7 @@ Modal zum Erstellen/Bearbeiten von Agent-Beziehungen, erweitert `BaseModal`.
 - **Agent-Liste:** `_loadAllAgents()` (limit=100) fuer das Edit-Modal Target-Dropdown
 - **Navigation:** `relationship-click` Event laedt den anderen Agent im selben Panel
 - **CRUD:** Erstellen (Button "Add Relationship"), Bearbeiten (Edit-Icon auf Karte), Loeschen (mit ConfirmDialog)
-- **AI-Placeholder:** "Generate Relationships" Button (zeigt `VelgToast.info` — Feature pending)
+- **AI Relationship Generation:** "Generate Relationships" button calls `generationApi.generateRelationships()` → inline suggestion cards appear with checkboxes (all pre-selected). Each card shows: type badge, target agent name, description, intensity bar (1-10). User reviews → "Save Selected" persists checked suggestions via `relationshipsApi.create()`, "Dismiss" clears. Button shows "Generating..." spinner state during AI call. State: `_generating`, `_suggestions: RelationshipSuggestion[]`, `_selectedSuggestions: Set<number>`, `_savingSuggestions`.
 
 ### Integration in AgentCard
 

@@ -2,7 +2,12 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import { agentsApi, embassiesApi, relationshipsApi } from '../../services/api/index.js';
+import {
+  agentsApi,
+  embassiesApi,
+  generationApi,
+  relationshipsApi,
+} from '../../services/api/index.js';
 import type { Agent, AgentRelationship, Embassy, EventReaction } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import { agentAltText } from '../../utils/text.js';
@@ -17,6 +22,14 @@ import '../shared/VelgSectionHeader.js';
 import '../shared/VelgSidePanel.js';
 import './RelationshipCard.js';
 import './RelationshipEditModal.js';
+
+interface RelationshipSuggestion {
+  target_agent_id: string;
+  relationship_type: string;
+  intensity: number;
+  description: string;
+  is_bidirectional: boolean;
+}
 
 @localized()
 @customElement('velg-agent-details-panel')
@@ -296,6 +309,186 @@ export class VelgAgentDetailsPanel extends LitElement {
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
     }
+
+    /* --- Influence indicator --- */
+
+    .panel__influence {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--color-surface-sunken);
+      border: var(--border-width-thin) solid var(--color-border-light);
+    }
+
+    .panel__influence-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel__influence-label {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-muted);
+    }
+
+    .panel__influence-value {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-sm);
+    }
+
+    .panel__influence-track {
+      height: 6px;
+      background: var(--color-surface-header);
+      border: var(--border-width-thin) solid var(--color-border);
+      overflow: hidden;
+    }
+
+    .panel__influence-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .panel__influence-breakdown {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-0-5) var(--space-3);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .panel__influence-metric {
+      text-align: right;
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+    }
+
+    /* --- Relationship suggestions --- */
+
+    .panel__suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding-top: var(--space-3);
+      border-top: var(--border-width-thin) solid var(--color-border-light);
+    }
+
+    .panel__suggestions-title {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-info);
+    }
+
+    .panel__suggestion {
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--color-surface-sunken);
+      border: var(--border-width-thin) solid var(--color-border-light);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+
+    .panel__suggestion:hover {
+      background: var(--color-surface-header);
+    }
+
+    .panel__suggestion--unchecked {
+      opacity: 0.5;
+    }
+
+    .panel__suggestion-check {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      accent-color: var(--color-info);
+    }
+
+    .panel__suggestion-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .panel__suggestion-top {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .panel__suggestion-type {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      padding: var(--space-0-5) var(--space-1-5);
+      background: var(--color-info-bg);
+      color: var(--color-info);
+      border: var(--border-width-thin) solid var(--color-info);
+    }
+
+    .panel__suggestion-name {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-sm);
+      color: var(--color-text-primary);
+    }
+
+    .panel__suggestion-desc {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      line-height: var(--leading-relaxed);
+    }
+
+    .panel__suggestion-bar-track {
+      height: 4px;
+      background: var(--color-surface-header);
+      border: var(--border-width-thin) solid var(--color-border);
+      margin-top: var(--space-1);
+    }
+
+    .panel__suggestion-bar-fill {
+      height: 100%;
+      background: var(--color-info);
+      transition: width 0.3s ease;
+    }
+
+    .panel__suggestion-actions {
+      display: flex;
+      gap: var(--space-2);
+      padding-top: var(--space-2);
+    }
+
+    .panel__suggestion-actions .panel__rel-btn--save {
+      border-color: var(--color-success);
+      color: var(--color-success);
+    }
+
+    .panel__suggestion-actions .panel__rel-btn--save:hover {
+      background: var(--color-success-bg);
+    }
+
+    .panel__suggestion-actions .panel__rel-btn--dismiss {
+      border-color: var(--color-text-muted);
+      color: var(--color-text-muted);
+    }
+
+    .panel__suggestion-actions .panel__rel-btn--dismiss:hover {
+      background: var(--color-surface-header);
+    }
   `,
   ];
 
@@ -313,12 +506,20 @@ export class VelgAgentDetailsPanel extends LitElement {
   @state() private _relEditOpen = false;
   @state() private _relEditTarget: AgentRelationship | null = null;
   @state() private _embassyAssignments: { embassy: Embassy; localBuildingId: string }[] = [];
+  @state() private _generating = false;
+  @state() private _suggestions: RelationshipSuggestion[] = [];
+  @state() private _selectedSuggestions: Set<number> = new Set();
+  @state() private _savingSuggestions = false;
 
   protected updated(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('agent') || changedProperties.has('open')) {
       if (this.open && this.agent && this.simulationId) {
         this._expandedReactions = new Set();
         this._embassyAssignments = [];
+        this._suggestions = [];
+        this._selectedSuggestions = new Set();
+        this._generating = false;
+        this._savingSuggestions = false;
         this._loadReactions();
         this._loadRelationships();
         this._loadAllAgents();
@@ -483,28 +684,231 @@ export class VelgAgentDetailsPanel extends LitElement {
     this._relEditOpen = true;
   }
 
-  private _handleGenerateRelationships(): void {
-    VelgToast.info(msg('Relationship generation coming soon'));
+  private async _handleGenerateRelationships(): Promise<void> {
+    if (!this.agent || !this.simulationId || this._generating) return;
+
+    this._generating = true;
+    this._suggestions = [];
+    this._selectedSuggestions = new Set();
+
+    try {
+      const locale = appState.currentSimulation.value?.content_locale ?? 'en';
+      const response = await generationApi.generateRelationships(this.simulationId, {
+        agent_id: this.agent.id,
+        locale,
+      });
+
+      if (response.success && Array.isArray(response.data) && response.data.length > 0) {
+        this._suggestions = response.data as unknown as RelationshipSuggestion[];
+        this._selectedSuggestions = new Set(this._suggestions.map((_, i) => i));
+        VelgToast.success(msg(str`${this._suggestions.length} suggestions generated`));
+      } else {
+        VelgToast.info(msg('No suggestions generated'));
+      }
+    } catch {
+      VelgToast.error(msg('Generation failed'));
+    } finally {
+      this._generating = false;
+    }
+  }
+
+  private _toggleSuggestion(index: number): void {
+    const next = new Set(this._selectedSuggestions);
+    if (next.has(index)) {
+      next.delete(index);
+    } else {
+      next.add(index);
+    }
+    this._selectedSuggestions = next;
+  }
+
+  private async _saveSuggestions(): Promise<void> {
+    if (!this.agent || !this.simulationId || this._savingSuggestions) return;
+
+    const selected = this._suggestions.filter((_, i) => this._selectedSuggestions.has(i));
+    if (selected.length === 0) {
+      this._dismissSuggestions();
+      return;
+    }
+
+    this._savingSuggestions = true;
+    try {
+      let saved = 0;
+      for (const s of selected) {
+        const response = await relationshipsApi.create(this.simulationId, this.agent.id, {
+          target_agent_id: s.target_agent_id,
+          relationship_type: s.relationship_type,
+          intensity: s.intensity,
+          description: s.description,
+          is_bidirectional: s.is_bidirectional,
+        });
+        if (response.success) saved++;
+      }
+      if (saved > 0) {
+        VelgToast.success(msg(str`${saved} relationships saved`));
+        this._loadRelationships();
+      }
+    } catch {
+      VelgToast.error(msg('Failed to save relationships'));
+    } finally {
+      this._savingSuggestions = false;
+      this._suggestions = [];
+      this._selectedSuggestions = new Set();
+    }
+  }
+
+  private _dismissSuggestions(): void {
+    this._suggestions = [];
+    this._selectedSuggestions = new Set();
+  }
+
+  private _computeInfluence(): {
+    score: number;
+    relationshipWeight: number;
+    professionWeight: number;
+    ambassadorWeight: number;
+  } {
+    const agent = this.agent;
+    if (!agent)
+      return { score: 0, relationshipWeight: 0, professionWeight: 0, ambassadorWeight: 0 };
+
+    // Relationship influence: sum of intensities / max possible (capped at 5 rels)
+    const relCount = Math.min(this._relationships.length, 5);
+    const relIntensitySum = this._relationships
+      .slice(0, 5)
+      .reduce((sum, r) => sum + (r.intensity ?? 5), 0);
+    const relationshipWeight = relCount > 0 ? relIntensitySum / (relCount * 10) : 0;
+
+    // Profession influence: avg qualification / 10
+    const profs = agent.professions ?? [];
+    const professionWeight =
+      profs.length > 0
+        ? profs.reduce((sum, p) => sum + (p.qualification_level ?? 1), 0) / (profs.length * 10)
+        : 0;
+
+    // Ambassador bonus
+    const ambassadorWeight = agent.is_ambassador ? 1.0 : 0;
+
+    const score = relationshipWeight * 0.4 + professionWeight * 0.3 + ambassadorWeight * 0.3;
+    return { score, relationshipWeight, professionWeight, ambassadorWeight };
+  }
+
+  private _influenceColor(value: number): string {
+    if (value < 0.25) return 'var(--color-text-muted)';
+    if (value < 0.5) return 'var(--color-accent)';
+    if (value < 0.75) return 'var(--color-success)';
+    return 'var(--color-primary)';
+  }
+
+  private _renderInfluence() {
+    if (!this.agent) return nothing;
+
+    const { score, relationshipWeight, professionWeight, ambassadorWeight } =
+      this._computeInfluence();
+    const pct = Math.round(score * 100);
+    const color = this._influenceColor(score);
+
+    return html`
+      <div class="panel__influence">
+        <div class="panel__influence-header">
+          <span class="panel__influence-label">${msg('Influence')}</span>
+          <span class="panel__influence-value" style="color: ${color}">${pct}%</span>
+        </div>
+        <div class="panel__influence-track">
+          <div
+            class="panel__influence-fill"
+            style="width: ${pct}%; background: ${color}"
+          ></div>
+        </div>
+        <div class="panel__influence-breakdown">
+          <span>${msg('Relationships')}</span>
+          <span class="panel__influence-metric">${Math.round(relationshipWeight * 100)}%</span>
+          <span>${msg('Professions')}</span>
+          <span class="panel__influence-metric">${Math.round(professionWeight * 100)}%</span>
+          <span>${msg('Diplomatic')}</span>
+          <span class="panel__influence-metric">${ambassadorWeight > 0 ? msg('Active') : '—'}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  private _renderSuggestions() {
+    if (this._suggestions.length === 0) return nothing;
+
+    return html`
+      <div class="panel__suggestions">
+        <span class="panel__suggestions-title">${msg('AI Suggestions')}</span>
+        ${this._suggestions.map((s, i) => {
+          const checked = this._selectedSuggestions.has(i);
+          const target = this._allAgents.find((a) => a.id === s.target_agent_id);
+          const name = target?.name ?? s.target_agent_id.slice(0, 8);
+          return html`
+            <div
+              class="panel__suggestion ${checked ? '' : 'panel__suggestion--unchecked'}"
+              @click=${() => this._toggleSuggestion(i)}
+            >
+              <input
+                type="checkbox"
+                class="panel__suggestion-check"
+                .checked=${checked}
+                @click=${(e: MouseEvent) => e.stopPropagation()}
+                @change=${() => this._toggleSuggestion(i)}
+              />
+              <div class="panel__suggestion-body">
+                <div class="panel__suggestion-top">
+                  <span class="panel__suggestion-type">${s.relationship_type}</span>
+                  <span class="panel__suggestion-name">${name}</span>
+                </div>
+                ${s.description ? html`<span class="panel__suggestion-desc">${s.description}</span>` : nothing}
+                <div class="panel__suggestion-bar-track">
+                  <div class="panel__suggestion-bar-fill" style="width: ${s.intensity * 10}%"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        })}
+        <div class="panel__suggestion-actions">
+          <button
+            class="panel__rel-btn panel__rel-btn--save"
+            ?disabled=${this._savingSuggestions || this._selectedSuggestions.size === 0}
+            @click=${this._saveSuggestions}
+          >
+            ${this._savingSuggestions ? msg('Saving...') : msg('Save Selected')}
+          </button>
+          <button
+            class="panel__rel-btn panel__rel-btn--dismiss"
+            ?disabled=${this._savingSuggestions}
+            @click=${this._dismissSuggestions}
+          >
+            ${msg('Dismiss')}
+          </button>
+        </div>
+      </div>
+    `;
   }
 
   private _renderRelationships() {
-    if (this._relationships.length === 0) {
+    const generateBtn = appState.canEdit.value
+      ? html`
+        <div class="panel__rel-actions">
+          <button class="panel__rel-btn" @click=${this._handleAddRelationship}>
+            ${msg('Add Relationship')}
+          </button>
+          <button
+            class="panel__rel-btn panel__rel-btn--generate"
+            ?disabled=${this._generating}
+            @click=${this._handleGenerateRelationships}
+          >
+            ${this._generating ? msg('Generating...') : html`${icons.sparkle()} ${msg('Generate Relationships')}`}
+          </button>
+        </div>
+      `
+      : nothing;
+
+    if (this._relationships.length === 0 && this._suggestions.length === 0) {
       return html`
         <span class="panel__empty">${msg('No relationships defined.')}</span>
-        ${
-          appState.canEdit.value
-            ? html`
-              <div class="panel__rel-actions">
-                <button class="panel__rel-btn" @click=${this._handleAddRelationship}>
-                  ${msg('Add Relationship')}
-                </button>
-                <button class="panel__rel-btn panel__rel-btn--generate" @click=${this._handleGenerateRelationships}>
-                  ${icons.sparkle()} ${msg('Generate Relationships')}
-                </button>
-              </div>
-            `
-            : nothing
-        }
+        ${generateBtn}
       `;
     }
 
@@ -521,20 +925,8 @@ export class VelgAgentDetailsPanel extends LitElement {
             ></velg-relationship-card>
           `,
         )}
-        ${
-          appState.canEdit.value
-            ? html`
-              <div class="panel__rel-actions">
-                <button class="panel__rel-btn" @click=${this._handleAddRelationship}>
-                  ${msg('Add Relationship')}
-                </button>
-                <button class="panel__rel-btn panel__rel-btn--generate" @click=${this._handleGenerateRelationships}>
-                  ${icons.sparkle()} ${msg('Generate Relationships')}
-                </button>
-              </div>
-            `
-            : nothing
-        }
+        ${generateBtn}
+        ${this._renderSuggestions()}
       </div>
     `;
   }
@@ -753,6 +1145,8 @@ export class VelgAgentDetailsPanel extends LitElement {
                     ${agent.is_ambassador ? html`<velg-badge variant="warning">${msg('Ambassador')}</velg-badge>` : nothing}
                     ${agent.data_source === 'ai' ? html`<velg-badge variant="info">${msg('AI Generated')}</velg-badge>` : nothing}
                   </div>
+
+                  ${this._renderInfluence()}
 
                   ${this._renderEmbassy()}
 

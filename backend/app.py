@@ -21,15 +21,19 @@ from backend.routers import (
     connections,
     echoes,
     embassies,
+    epochs,
     events,
+    game_mechanics,
     generation,
     health,
     invitations,
     locations,
     members,
+    operatives,
     prompt_templates,
     public,
     relationships,
+    scores,
     seo,
     settings,
     simulations,
@@ -104,6 +108,10 @@ app.include_router(relationships.router)
 app.include_router(echoes.router)
 app.include_router(embassies.router)
 app.include_router(connections.router)
+app.include_router(game_mechanics.router)
+app.include_router(epochs.router)
+app.include_router(operatives.router)
+app.include_router(scores.router)
 app.include_router(public.router)
 app.include_router(seo.router)
 

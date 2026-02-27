@@ -13,13 +13,17 @@ from backend.dependencies import get_anon_supabase
 from backend.middleware.rate_limit import RATE_LIMIT_STANDARD, limiter
 from backend.models.common import PaginatedResponse, PaginationMeta, SuccessResponse
 from backend.services.agent_service import AgentService
+from backend.services.battle_log_service import BattleLogService
 from backend.services.building_service import BuildingService
 from backend.services.campaign_service import CampaignService
 from backend.services.echo_service import ConnectionService, EchoService
 from backend.services.embassy_service import EmbassyService
+from backend.services.epoch_service import EpochService
 from backend.services.event_service import EventService
+from backend.services.game_mechanics_service import GameMechanicsService
 from backend.services.location_service import LocationService
 from backend.services.relationship_service import RelationshipService
+from backend.services.scoring_service import ScoringService
 from backend.services.settings_service import SettingsService
 from backend.services.social_media_service import SocialMediaService
 from backend.services.social_trends_service import SocialTrendsService
@@ -596,3 +600,188 @@ async def list_all_embassies(
     """List all active embassies across all simulations (public, for map)."""
     data = await EmbassyService.list_all_active(supabase)
     return {"success": True, "data": data}
+
+
+# ── Game Mechanics (Health Dashboard) ─────────────────────────────────
+
+
+@router.get("/simulations/{simulation_id}/health", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_simulation_health_dashboard(
+    request: Request,
+    simulation_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Full health dashboard for a simulation (public)."""
+    data = await GameMechanicsService.get_health_dashboard(supabase, simulation_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/simulations/{simulation_id}/health/buildings", response_model=PaginatedResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_building_readiness(
+    request: Request,
+    simulation_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+    zone_id: UUID | None = Query(default=None),
+    order_by: str = Query(default="readiness"),
+    order_asc: bool = Query(default=True),
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    """List building readiness for a simulation (public)."""
+    data, total = await GameMechanicsService.list_building_readiness(
+        supabase, simulation_id,
+        zone_id=zone_id, order_by=order_by, order_asc=order_asc,
+        limit=limit, offset=offset,
+    )
+    return _paginated(data, total, limit, offset)
+
+
+@router.get("/simulations/{simulation_id}/health/zones", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_zone_stability(
+    request: Request,
+    simulation_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """List zone stability for a simulation (public)."""
+    data = await GameMechanicsService.list_zone_stability(supabase, simulation_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/simulations/{simulation_id}/health/embassies", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_embassy_effectiveness(
+    request: Request,
+    simulation_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """List embassy effectiveness for a simulation (public)."""
+    data = await GameMechanicsService.list_embassy_effectiveness(supabase, simulation_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/health/all", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_all_simulations_health(
+    request: Request,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Health metrics for all simulations (public, for map/dashboard)."""
+    data = await GameMechanicsService.list_simulation_health(supabase)
+    return {"success": True, "data": data}
+
+
+# ── Epochs (Public) ─────────────────────────────────────────────────────
+
+
+@router.get("/epochs", response_model=PaginatedResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_epochs_public(
+    request: Request,
+    supabase: Client = Depends(get_anon_supabase),
+    status_filter: str | None = Query(default=None, alias="status"),
+    limit: int = Query(default=25, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    """List all epochs (public)."""
+    data, total = await EpochService.list_epochs(
+        supabase, status_filter=status_filter, limit=limit, offset=offset
+    )
+    return _paginated(data, total, limit, offset)
+
+
+@router.get("/epochs/active", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_active_epoch_public(
+    request: Request,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get the currently active epoch (public)."""
+    data = await EpochService.get_active_epoch(supabase)
+    return {"success": True, "data": data}
+
+
+@router.get("/epochs/{epoch_id}", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_epoch_public(
+    request: Request,
+    epoch_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get a single epoch (public)."""
+    data = await EpochService.get(supabase, epoch_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/epochs/{epoch_id}/participants", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_epoch_participants_public(
+    request: Request,
+    epoch_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """List epoch participants (public)."""
+    data = await EpochService.list_participants(supabase, epoch_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/epochs/{epoch_id}/teams", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_epoch_teams_public(
+    request: Request,
+    epoch_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """List epoch teams (public)."""
+    data = await EpochService.list_teams(supabase, epoch_id)
+    return {"success": True, "data": data}
+
+
+# ── Leaderboard (Public) ───────────────────────────────────────────────
+
+
+@router.get("/epochs/{epoch_id}/leaderboard", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_leaderboard_public(
+    request: Request,
+    epoch_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+    cycle: int | None = Query(default=None),
+) -> dict:
+    """Get epoch leaderboard (public spectator view)."""
+    data = await ScoringService.get_leaderboard(supabase, epoch_id, cycle_number=cycle)
+    return {"success": True, "data": data}
+
+
+@router.get("/epochs/{epoch_id}/standings", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_standings_public(
+    request: Request,
+    epoch_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get final standings for a completed epoch (public)."""
+    data = await ScoringService.get_final_standings(supabase, epoch_id)
+    return {"success": True, "data": data}
+
+
+# ── Battle Log (Public) ────────────────────────────────────────────────
+
+
+@router.get("/epochs/{epoch_id}/battle-log", response_model=PaginatedResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_battle_log_public(
+    request: Request,
+    epoch_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+    event_type: str | None = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    """Get public battle log entries (spectator view)."""
+    data, total = await BattleLogService.get_public_feed(
+        supabase, epoch_id, limit=limit, offset=offset
+    )
+    return _paginated(data, total, limit, offset)

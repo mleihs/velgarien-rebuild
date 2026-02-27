@@ -269,23 +269,29 @@ class TestTriggerEcho:
 
 class TestApproveEcho:
     @patch("backend.routers.echoes.AuditService.log_action", new_callable=AsyncMock)
-    @patch("backend.routers.echoes.EchoService.approve_echo", new_callable=AsyncMock)
-    def test_approves_successfully(self, mock_approve, mock_audit, client):
-        approved = {**MOCK_ECHO, "status": "generating"}
-        mock_approve.return_value = approved
+    @patch("backend.routers.echoes.EchoService.transform_and_complete_echo", new_callable=AsyncMock)
+    @patch("backend.routers.echoes.GameMechanicsService.build_generation_context", new_callable=AsyncMock)
+    @patch("backend.routers.echoes._get_generation_service", new_callable=AsyncMock)
+    @patch("backend.routers.echoes.EchoService.get", new_callable=AsyncMock)
+    def test_approves_successfully(
+        self, mock_get, mock_gen_svc, mock_ctx, mock_transform, mock_audit, client
+    ):
+        mock_get.return_value = MOCK_ECHO  # status: "pending"
+        mock_gen_svc.return_value = AsyncMock()
+        mock_ctx.return_value = {"simulation_health": 0.5}
+        completed = {**MOCK_ECHO, "status": "completed", "target_event_id": str(EVENT_ID)}
+        mock_transform.return_value = completed
 
         resp = client.patch(f"{BASE_URL}/echoes/{ECHO_ID}/approve")
         assert resp.status_code == 200
         body = resp.json()
-        assert body["data"]["status"] == "generating"
+        assert body["data"]["status"] == "completed"
+        mock_transform.assert_called_once()
         mock_audit.assert_called_once()
 
-    @patch("backend.routers.echoes.EchoService.approve_echo", new_callable=AsyncMock)
-    def test_approve_non_pending_returns_400(self, mock_approve, client):
-        mock_approve.side_effect = HTTPException(
-            status_code=400,
-            detail="Cannot approve echo with status 'completed'.",
-        )
+    @patch("backend.routers.echoes.EchoService.get", new_callable=AsyncMock)
+    def test_approve_non_pending_returns_400(self, mock_get, client):
+        mock_get.return_value = {**MOCK_ECHO, "status": "completed"}
 
         resp = client.patch(f"{BASE_URL}/echoes/{ECHO_ID}/approve")
         assert resp.status_code == 400

@@ -66,6 +66,10 @@ class TestGenerateReactionsCreatePath:
                 "backend.services.event_service.AgentService.list_for_reaction",
                 new_callable=AsyncMock, return_value=agents,
             ),
+            patch(
+                "backend.services.event_service.GameMechanicsService.build_generation_context",
+                new_callable=AsyncMock, return_value={"simulation_health": 0.5},
+            ),
         ):
             event = {"id": event_id, "title": "Crisis", "description": "A major crisis"}
             result = await EventService.generate_reactions(
@@ -113,6 +117,10 @@ class TestGenerateReactionsUpdatePath:
             patch(
                 "backend.services.event_service.AgentService.list_for_reaction",
                 new_callable=AsyncMock, return_value=agents,
+            ),
+            patch(
+                "backend.services.event_service.GameMechanicsService.build_generation_context",
+                new_callable=AsyncMock, return_value={"simulation_health": 0.5},
             ),
         ):
             event = {"id": event_id, "title": "Crisis", "description": "A major crisis"}
@@ -174,6 +182,10 @@ class TestGenerateReactionsPartialFailure:
             patch(
                 "backend.services.event_service.AgentService.list_for_reaction",
                 new_callable=AsyncMock, return_value=agents,
+            ),
+            patch(
+                "backend.services.event_service.GameMechanicsService.build_generation_context",
+                new_callable=AsyncMock, return_value={"simulation_health": 0.5},
             ),
         ):
             event = {"id": event_id, "title": "Test", "description": ""}

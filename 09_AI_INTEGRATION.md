@@ -217,7 +217,7 @@ class SimulationChatMemory(BaseMemory):
 
 ---
 
-## Alle 22 Prompts → Templates
+## Alle 26 Prompts → Templates
 
 ### Prompt-Inventar
 
@@ -245,6 +245,10 @@ class SimulationChatMemory(BaseMemory):
 | 20 | `social_media_image_caption_dystopian` | de | Bild-Caption dystopisch |
 | 21 | `social_media_image_caption_surveillance` | de | Bild-Caption Surveillance |
 | 22 | `user_agent_description` | en/de | User-Agent Beschreibung |
+| 23 | `relationship_generation` | en/de | Beziehungsvorschläge zwischen Agents generieren |
+| 24 | `building_description_named` | en/de | Gebäude-Beschreibung mit Name |
+| 25 | `building_description` | en/de | Gebäude-Beschreibung ohne Name |
+| 26 | `embassy_prompt_template` | en/de | Botschafts-Beschreibung |
 
 ### Mock/Fallback-Templates
 

@@ -1,7 +1,7 @@
 import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import type { Zone } from '../../types/index.js';
+import type { Zone, ZoneStability } from '../../types/index.js';
 
 @localized()
 @customElement('velg-zone-list')
@@ -82,9 +82,57 @@ export class VelgZoneList extends LitElement {
       border-color: var(--color-warning);
       color: var(--color-warning);
     }
+
+    /* --- Stability bar --- */
+
+    .item__stability {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+
+    .item__stability-label {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-muted);
+      flex-shrink: 0;
+    }
+
+    .item__stability-track {
+      flex: 1;
+      height: 6px;
+      background: var(--color-surface-sunken);
+      border: var(--border-width-thin) solid var(--color-border);
+      overflow: hidden;
+    }
+
+    .item__stability-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .item__stability-value {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-xs);
+      min-width: 28px;
+      text-align: right;
+    }
   `;
 
   @property({ attribute: false }) zones: Zone[] = [];
+  @property({ attribute: false }) stabilityMap: Map<string, ZoneStability> = new Map();
+
+  private _stabilityColor(value: number): string {
+    if (value < 0.3) return 'var(--color-danger)';
+    if (value < 0.5) return 'var(--color-accent)';
+    if (value < 0.7) return 'var(--color-success)';
+    return 'var(--color-primary)';
+  }
 
   private _handleSelect(zone: Zone): void {
     this.dispatchEvent(
@@ -94,6 +142,27 @@ export class VelgZoneList extends LitElement {
         composed: true,
       }),
     );
+  }
+
+  private _renderStabilityBar(zoneId: string) {
+    const stability = this.stabilityMap.get(zoneId);
+    if (!stability) return nothing;
+
+    const pct = Math.round(stability.stability * 100);
+    const color = this._stabilityColor(stability.stability);
+
+    return html`
+      <div class="item__stability">
+        <span class="item__stability-label">${msg('Stability')}</span>
+        <div class="item__stability-track">
+          <div
+            class="item__stability-fill"
+            style="width: ${pct}%; background: ${color}"
+          ></div>
+        </div>
+        <span class="item__stability-value" style="color: ${color}">${pct}%</span>
+      </div>
+    `;
   }
 
   protected render() {
@@ -127,6 +196,7 @@ export class VelgZoneList extends LitElement {
                     : nothing
                 }
               </div>
+              ${this._renderStabilityBar(zone.id)}
             </div>
           `,
         )}

@@ -44,13 +44,6 @@ export class AgentsApiService extends BaseApiService {
     return this.delete(`/simulations/${simulationId}/agents/${agentId}/reactions/${reactionId}`);
   }
 
-  generatePortrait(
-    simulationId: string,
-    agentId: string,
-  ): Promise<ApiResponse<{ image_url: string }>> {
-    return this.post(`/simulations/${simulationId}/agents/${agentId}/generate-portrait`);
-  }
-
   listPublic(
     simulationId: string,
     params?: Record<string, string>,

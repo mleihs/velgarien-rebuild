@@ -123,6 +123,7 @@ curl "http://localhost:8000/api/v1/public/simulations/{sim_id}/agents/{agent_id}
 - Shows a list of `RelationshipCard` components for each connected agent
 - Each card displays: agent avatar + name, type badge (`VelgBadge`), intensity bar (1-10), description excerpt
 - "Add Relationship" button visible for editors+
+- "Generate Relationships" button (editors+) → calls `POST /simulations/{sim_id}/generate/relationships` with `{agent_id, locale}` → inline suggestion cards appear with checkboxes (all pre-selected). Each card: type badge, target agent name, description, intensity bar. "Save Selected" persists via `relationshipsApi.create()`, "Dismiss" clears. Button shows "Generating..." during AI call.
 - Click a relationship card to navigate to the related agent
 
 **RelationshipCard:**

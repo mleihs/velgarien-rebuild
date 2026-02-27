@@ -9,6 +9,7 @@ from fastapi import HTTPException, status
 
 from backend.services.agent_service import AgentService
 from backend.services.base_service import BaseService
+from backend.services.game_mechanics_service import GameMechanicsService
 from backend.utils.search import apply_search_filter
 from supabase import Client
 
@@ -202,6 +203,11 @@ class EventService(BaseService):
         if not agents:
             return []
 
+        # Build game context once for all reactions (cheap MV read)
+        game_context = await GameMechanicsService.build_generation_context(
+            supabase, simulation_id,
+        )
+
         event_id = UUID(event["id"])
         existing = await cls.get_reactions(supabase, simulation_id, event_id)
         existing_map: dict[str, dict] = {r["agent_id"]: r for r in existing}
@@ -219,6 +225,7 @@ class EventService(BaseService):
                         "title": event["title"],
                         "description": event.get("description", ""),
                     },
+                    game_context=game_context,
                 )
 
                 prev = existing_map.get(agent["id"])

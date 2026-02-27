@@ -13,6 +13,7 @@ from backend.middleware.rate_limit import RATE_LIMIT_AI_GENERATION
 from backend.models.common import CurrentUser, SuccessResponse
 from backend.services.external.openrouter import OpenRouterError
 from backend.services.external_service_resolver import ExternalServiceResolver
+from backend.services.game_mechanics_service import GameMechanicsService
 from backend.services.generation_service import GenerationService
 from backend.services.image_service import ImageService
 from supabase import Client
@@ -206,9 +207,13 @@ async def generate_event(
     """Generate an event description using AI."""
     try:
         service = await _get_generation_service(simulation_id, supabase)
+        game_context = await GameMechanicsService.build_generation_context(
+            supabase, simulation_id,
+        )
         result = await service.generate_event(
             event_type=body.event_type,
             locale=body.locale,
+            game_context=game_context,
         )
         return {"success": True, "data": result}
     except OpenRouterError as e:

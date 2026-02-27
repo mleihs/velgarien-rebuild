@@ -5849,9 +5849,6 @@ Die Karte ist offen. Die Scherben warten. Welche Welt betritt man zuerst?</targe
 <trans-unit id="s9b62de443da47c7a">
   <source>Failed to delete relationship</source>
 <target>Beziehung konnte nicht gelöscht werden</target></trans-unit>
-<trans-unit id="s0e4baba7ced50335">
-  <source>Relationship generation coming soon</source>
-<target>Erzeugung von Beziehungen in Kürze</target></trans-unit>
 <trans-unit id="sb9f1ab4d0eed35ba">
   <source>No relationships defined.</source>
 <target>Es sind keine Beziehungen definiert.</target></trans-unit>
@@ -6074,18 +6071,6 @@ Die Karte ist offen. Die Scherben warten. Welche Welt betritt man zuerst?</targe
 <trans-unit id="s358cd1555b55cb71">
   <source>Ambassadors</source>
 <target>Botschafter</target></trans-unit>
-<trans-unit id="s0ea81dd3c5bc073a">
-  <source>The partner simulation to establish diplomatic relations with.</source>
-<target>Die Partnersimulation, mit der diplomatische Beziehungen aufgenommen werden sollen.</target></trans-unit>
-<trans-unit id="s05031b0ad0a40f99">
-  <source>The building in the partner simulation that will house the embassy.</source>
-<target>Das Gebäude in der Partnersimulation, in dem die Botschaft untergebracht wird.</target></trans-unit>
-<trans-unit id="s31a2ac1c239d7e9b">
-  <source>The channel through which reality bleeds between connected simulations.</source>
-<target>Der Kanal, durch den die Realität zwischen verbundenen Simulationen fließt.</target></trans-unit>
-<trans-unit id="s549ca1490a8ead2a">
-  <source>The fundamental existential question this embassy explores between worlds.</source>
-<target>Die grundlegende existenzielle Frage, die diese Botschaft zwischen den Welten erforscht.</target></trans-unit>
 <trans-unit id="se9b1fec72ffd8f48">
   <source>Local</source>
 <target>Lokale</target></trans-unit>
@@ -6107,6 +6092,822 @@ Die Karte ist offen. Die Scherben warten. Welche Welt betritt man zuerst?</targe
 <trans-unit id="scceb21a1981bafb3">
   <source>Establish &amp; Activate</source>
 <target>Einrichten &amp; Aktivieren</target></trans-unit>
+<trans-unit id="sfac2f96abd2a74b8">
+  <source>Influence</source>
+<target>Beeinflussung</target></trans-unit>
+<trans-unit id="se5e7ce23f3cf925f">
+  <source>Diplomatic</source>
+<target>Diplomatie</target></trans-unit>
+<trans-unit id="sc550b8eff5699f6d">
+  <source>Used in relationship descriptions, event reactions, and embassy assignments.</source>
+<target>Wird in Beziehungsbeschreibungen, Ereignisreaktionen und Botschaftszuweisungen verwendet.</target></trans-unit>
+<trans-unit id="sb5916a3cd3b40490">
+  <source>The faction or organization. Events tagged with a matching system name attract this agent and increase reaction probability.</source>
+<target>Die Fraktion oder Organisation. Ereignisse, die mit einem passenden Systemnamen gekennzeichnet sind, ziehen diesen Agenten an und erhöhen die Reaktionswahrscheinlichkeit.</target></trans-unit>
+<trans-unit id="s3bb941932801d6d5">
+  <source>Used in AI-generated text for pronouns and portrait generation.</source>
+<target>Wird in KI-generiertem Text für Pronomen und Porträtgenerierung verwendet.</target></trans-unit>
+<trans-unit id="s31e9a334854022bb">
+  <source>Personality traits and behavioral patterns. Longer descriptions produce richer AI reactions. Mystical/spiritual traits resonate with Dream bleed.</source>
+<target>Persönlichkeitsmerkmale und Verhaltensmuster. Längere Beschreibungen erzeugen reichhaltigere KI-Reaktionen. Mystische/spirituelle Eigenschaften gehen in Resonanz mit Dream bleed.</target></trans-unit>
+<trans-unit id="s5a483e7254f0bad8">
+  <source>Origin story and life history. Feeds into AI reactions, relationships, and echo narratives. Detailed backgrounds increase narrative weight in cross-simulation bleed.</source>
+<target>Herkunftsgeschichte und Lebensgeschichte. Fließt in KI-Reaktionen, Beziehungen und Echo-Erzählungen ein. Detaillierte Hintergründe erhöhen das erzählerische Gewicht im simulationsübergreifenden Bleed.</target></trans-unit>
+<trans-unit id="sb862c778ee7f2b0c">
+  <source>Visual description used by the image AI. Does not affect game mechanics — purely aesthetic.</source>
+<target>Visuelle Beschreibung, die von der Bild-KI verwendet wird. Hat keinen Einfluss auf die Spielmechanik - rein ästhetisch.</target></trans-unit>
+<trans-unit id="s54631a72ff79a135">
+  <source>The nature of this bond. Affects how both agents react to events involving the other. Type-specific narrative templates shape AI generation.</source>
+<target>Die Art dieser Bindung. Beeinflusst, wie beide Agenten auf Ereignisse reagieren, die den anderen betreffen. Typspezifische narrative Vorlagen prägen die KI-Generierung.</target></trans-unit>
+<trans-unit id="s158c2aec79f1b5d4">
+  <source>How strong this relationship is (1-10). High intensity (7+): agents react to each other's events regardless of impact level. Medium (4-6): reactions require impact 5+. Low (1-3): reactions only for major events. Intensity 8+ resonates with the Resonance bleed vector.</source>
+<target>Wie stark diese Beziehung ist (1-10). Hohe Intensität (7+): Agenten reagieren auf die Ereignisse der anderen, unabhängig von der Auswirkungsebene. Mittel (4-6): Reaktionen erfordern Auswirkungen 5+. Gering (1-3): Reaktionen nur bei großen Ereignissen. Intensität 8+ steht in Resonanz mit dem Resonanz-Anzapf-Vektor.</target></trans-unit>
+<trans-unit id="s49d98982e2c562f6">
+  <source>When enabled, both agents feel the relationship equally. When disabled, only the source agent is affected — useful for unrequited bonds, secret alliances, or hierarchical roles.</source>
+<target>Wenn aktiviert, spüren beide Agenten die Beziehung gleichermaßen. Wenn deaktiviert, ist nur der Quell-Agent betroffen - nützlich für unerwiderte Bindungen, geheime Allianzen oder hierarchische Rollen.</target></trans-unit>
+<trans-unit id="s6b8dd5263406f40f">
+  <source>Staffing</source>
+<target>Personalausstattung</target></trans-unit>
+<trans-unit id="s254f560d5a20199a">
+  <source>Qualification</source>
+<target>Qualifizierung</target></trans-unit>
+<trans-unit id="s785e2195235ed36d">
+  <source>Condition Factor</source>
+<target>Bedingungsfaktor</target></trans-unit>
+<trans-unit id="sea934a9a5cbca9d4">
+  <source>Criticality</source>
+<target>Kritikalität</target></trans-unit>
+<trans-unit id="s229201ff76f0bd2f">
+  <source>Operations</source>
+<target>Vorgänge</target></trans-unit>
+<trans-unit id="s71b75fb52fe853c1">
+  <source>Building identifier. AI uses this for narrative flavor in events and descriptions.</source>
+<target>Gebäude-Identifikator. Die KI verwendet diesen Begriff für erzählerische Zwecke in Ereignissen und Beschreibungen.</target></trans-unit>
+<trans-unit id="s56a04c2da7d54e72">
+  <source>Determines function and staffing requirements. Critical types (hospital, power plant) have 2x weight in zone stability. Markets resonate with Commerce bleed.</source>
+<target>Bestimmt Funktion und Personalbedarf. Kritische Typen (Krankenhaus, Kraftwerk) haben 2x Gewicht in der Zonenstabilität. Märkte schwingen bei Commerce Bleed mit.</target></trans-unit>
+<trans-unit id="s697a71b66db3a018">
+  <source>Multiplies staffing effectiveness: Good x1.0, Moderate x0.75, Poor x0.5, Ruined x0.2. Destructive events can degrade condition.</source>
+<target>Multipliziert die Effektivität von Staffeln: Gut x1,0, Mäßig x0,75, Schlecht x0,5, Ruiniert x0,2. Zerstörerische Ereignisse können den Zustand verschlechtern.</target></trans-unit>
+<trans-unit id="se7634feb36431e33">
+  <source>Short functional summary (1-2 sentences). Used as context in AI image generation and event narratives.</source>
+<target>Kurze funktionale Zusammenfassung (1-2 Sätze). Wird als Kontext in der KI-Bilderzeugung und in Ereigniserzählungen verwendet.</target></trans-unit>
+<trans-unit id="seecb6541f98c8d83">
+  <source>Maximum population supported. The ratio of assigned agents to capacity determines staffing level. Understaffed critical buildings reduce zone security.</source>
+<target>Maximal unterstützte Bevölkerung. Das Verhältnis von zugewiesenen Agenten zur Kapazität bestimmt die Personalstärke. Unterbesetzte kritische Gebäude verringern die Zonensicherheit.</target></trans-unit>
+<trans-unit id="s89be93540bc46253">
+  <source>Historical period. Feeds into AI image generation and lore. Buildings with explicit construction years resonate with Architecture bleed.</source>
+<target>Historischer Zeitraum. Fließt in die KI-Bilderzeugung und Überlieferung ein. Gebäude mit expliziten Baujahren schwingen bei Architecture Bleed mit.</target></trans-unit>
+<trans-unit id="s12329a3f96fc5cf9">
+  <source>Architectural aesthetic. Affects AI image generation. When Architecture bleed transmits, this style may influence buildings in the target simulation.</source>
+<target>Architektonische Ästhetik. Beeinflusst die KI-Bilderzeugung. Wenn Architecture Bleed übertragen wird, kann dieser Stil Gebäude in der Zielsimulation beeinflussen.</target></trans-unit>
+<trans-unit id="sb1c4c5242ccb2d11">
+  <source>The partner world this embassy connects to. Each simulation pair can have multiple embassies with different bleed vectors.</source>
+<target>Die Partnerwelt, mit der diese Botschaft verbunden ist. Jedes Simulationspaar kann mehrere Botschaften mit unterschiedlichen Bleed-Vektoren haben.</target></trans-unit>
+<trans-unit id="s4174fc709b93c147">
+  <source>The partner building that will house the embassy. Its condition and staffing affect embassy effectiveness.</source>
+<target>Das Partnergebäude, in dem die Botschaft untergebracht wird. Sein Zustand und seine personelle Ausstattung beeinflussen die Effektivität der Botschaft.</target></trans-unit>
+<trans-unit id="s2654f3c51e27be8d">
+  <source>The thematic channel through which reality bleeds. Commerce: trade events. Language: linguistic drift. Memory: traumatic echoes. Resonance: parallel relationships. Architecture: structural influence. Dream: visions. Desire: yearning.</source>
+<target>Der thematische Kanal, durch den die Realität blutet. Handel: Handelsereignisse. Sprache: sprachliche Drift. Erinnerung: traumatische Echos. Resonanz: parallele Beziehungen. Architektur: struktureller Einfluss. Traum: Visionen. Verlangen: Sehnsucht.</target></trans-unit>
+<trans-unit id="s55a0e0f22497f269">
+  <source>The fundamental existential question this embassy explores. Shapes AI narrative when events bleed through this channel. A well-crafted question produces richer echo narratives.</source>
+<target>Die grundlegende existenzielle Frage, die diese Botschaft erforscht. Sie prägt die KI-Erzählung, wenn Ereignisse durch diesen Kanal fließen. Eine gut formulierte Frage erzeugt reichhaltigere Echoerzählungen.</target></trans-unit>
+<trans-unit id="s0dcb37ef15c9e614">
+  <source>Event headline. Preserved through bleed echoes — this is what agents in other simulations hear.</source>
+<target>Ereignis-Überschrift. Erhalten durch Bleed-Echos - das ist, was Agenten in anderen Simulationen hören.</target></trans-unit>
+<trans-unit id="s60fc791e7823b6c3">
+  <source>Narrative category. Affects AI tone and which agents react. Different types trigger different relationship dynamics.</source>
+<target>Narrative Kategorie. Beeinflusst den KI-Ton und die Reaktion der Agenten. Verschiedene Typen lösen unterschiedliche Beziehungsdynamiken aus.</target></trans-unit>
+<trans-unit id="s492338e5b7b759d7">
+  <source>Full event narrative. Transformed by bleed vectors when echoing to other simulations (e.g., Commerce bleed rewrites through economic lens).</source>
+<target>Vollständige Ereigniserzählung. Transformiert durch Bleed-Vektoren bei der Übertragung auf andere Simulationen (z.B. Commerce Bleed Rewrites durch wirtschaftliche Linse).</target></trans-unit>
+<trans-unit id="s8412d97a60a3e9d7">
+  <source>When the event occurred. Timeline ordering determines cause-and-effect chains. Recent high-impact events increase zone event pressure.</source>
+<target>Wann das Ereignis eingetreten ist. Die Reihenfolge auf der Zeitachse bestimmt die Ursache-Wirkungs-Ketten. Kürzlich aufgetretene Ereignisse mit hoher Auswirkung erhöhen den Ereignisdruck in der Zone.</target></trans-unit>
+<trans-unit id="s8824a957955a33fd">
+  <source>Where the event happened. Events are attributed to the matching zone for stability calculations. Zones with many high-impact events become unstable.</source>
+<target>Wo das Ereignis stattgefunden hat. Ereignisse werden für Stabilitätsberechnungen der entsprechenden Zone zugeordnet. Zonen mit vielen Ereignissen mit hoher Auswirkung werden instabil.</target></trans-unit>
+<trans-unit id="s921018974c734a0d">
+  <source>Determines ripple radius: 1-3 local zone, 4-6 adjacent zones, 7-8 entire city, 9-10 all cities. Events above the bleed threshold (default 8) can echo to connected simulations.</source>
+<target>Bestimmt den Ausbreitungsradius: 1-3 lokale Zone, 4-6 angrenzende Zonen, 7-8 gesamte Stadt, 9-10 alle Städte. Ereignisse oberhalb der Bleed-Schwelle (Standardwert 8) können auf verbundene Simulationen ausstrahlen.</target></trans-unit>
+<trans-unit id="s060629eb68fe1fe3">
+  <source>Tags matching a bleed vector (commerce, memory, dream...) boost echo strength by 20%. Tags matching an agent system increase reaction probability.</source>
+<target>Tags, die zu einem Bleed-Vektor (Handel, Erinnerung, Traum...) passen, erhöhen die Echostärke um 20%. Tags, die zu einem Agentensystem passen, erhöhen die Reaktionswahrscheinlichkeit.</target></trans-unit>
+<trans-unit id="s4ce34321560a15a9">
+  <source>Failed to load health data.</source>
+<target>Die Gesundheitsdaten konnten nicht geladen werden.</target></trans-unit>
+<trans-unit id="s02a0892410c48be1">
+  <source>Loading health data...</source>
+<target>Laden von Gesundheitsdaten...</target></trans-unit>
+<trans-unit id="se23c61589051a068">
+  <source>Simulation Health</source>
+<target>Simulation Gesundheit</target></trans-unit>
+<trans-unit id="scbb536767b1bb9fa">
+  <source>Refreshing...</source>
+<target>Erfrischend...</target></trans-unit>
+<trans-unit id="s43e0578ddb9c48b1">
+  <source>Refresh Metrics</source>
+<target>Metriken aktualisieren</target></trans-unit>
+<trans-unit id="sb9b1a0fbb4a7c27c">
+  <source>zones</source>
+<target>Zonen</target></trans-unit>
+<trans-unit id="s272502e74017f632">
+  <source>buildings</source>
+<target>Gebäude</target></trans-unit>
+<trans-unit id="sb64337f6e6e7502f">
+  <source>agents</source>
+<target>Agenten</target></trans-unit>
+<trans-unit id="sc97f56933cfaec33">
+  <source>embassies</source>
+<target>Botschaften</target></trans-unit>
+<trans-unit id="s3622c8b352258188">
+  <source>Zone Stability</source>
+<target>Zonenstabilität</target></trans-unit>
+<trans-unit id="s8ba15d8697b072a9">
+  <source>No zones found.</source>
+<target>Keine Zonen gefunden.</target></trans-unit>
+<trans-unit id="s29ff0d8616762ed2">
+  <source>Staffing Overview</source>
+<target>Staffing-Übersicht</target></trans-unit>
+<trans-unit id="s83beee966268bd33">
+  <source>Avg Readiness</source>
+<target>Avg-Bereitschaft</target></trans-unit>
+<trans-unit id="sa45f3300b97dabe8">
+  <source>Critical</source>
+<target>Kritisch</target></trans-unit>
+<trans-unit id="s96dd211d7232935d">
+  <source>Overcrowded</source>
+<target>Überfüllt</target></trans-unit>
+<trans-unit id="sfacba4fc8d72bc99">
+  <source>Diplomacy</source>
+<target>Diplomatie</target></trans-unit>
+<trans-unit id="s0bd132a84bfde140">
+  <source>Diplomatic Reach</source>
+<target>Diplomatische Reichweite</target></trans-unit>
+<trans-unit id="sb41ab16dbf6818db">
+  <source>Active Embassies</source>
+<target>Aktive Botschaften</target></trans-unit>
+<trans-unit id="s4516f5aa5fc5d575">
+  <source>Avg Effectiveness</source>
+<target>Avg Effektivität</target></trans-unit>
+<trans-unit id="s9e275796a0d9a90b">
+  <source>general</source>
+<target>allgemein</target></trans-unit>
+<trans-unit id="sfcbcfad065744560">
+  <source>Bleed Activity</source>
+<target>Bleed-Aktivität</target></trans-unit>
+<trans-unit id="s9485786311d63320">
+  <source>Permeability</source>
+<target>Durchlässigkeit</target></trans-unit>
+<trans-unit id="s453bbde65c368eb6">
+  <source>Outbound Echoes</source>
+<target>Ausgehende Echos</target></trans-unit>
+<trans-unit id="s69f30c1e3307e543">
+  <source>Inbound Echoes</source>
+<target>Eingehende Echos</target></trans-unit>
+<trans-unit id="s1f6c387796437206">
+  <source>Avg Outbound Strength</source>
+<target>Avg Ausgehende Stärke</target></trans-unit>
+<trans-unit id="s5658a4214f368f8c">
+  <source>Recent High-Impact Events</source>
+<target>Jüngste hochwirksame Ereignisse</target></trans-unit>
+<trans-unit id="s53368164ac62abfd">
+  <source>No recent high-impact events.</source>
+<target>Keine hochwirksamen Ereignisse in letzter Zeit.</target></trans-unit>
+<trans-unit id="sb713432a8bb131e9">
+  <source>Unknown event</source>
+<target>Unbekanntes Ereignis</target></trans-unit>
+<trans-unit id="sbaf0a7c417e388af">
+  <source>Health</source>
+<target>Gesundheit</target></trans-unit>
+<trans-unit id="sc387ff67f2d05968">
+  <source>Stability</source>
+<target>Stabilität</target></trans-unit>
+<trans-unit id="s5b77c59988bc4676">
+  <source>Bleed settings saved successfully.</source>
+<target>Bleed-Einstellungen erfolgreich gespeichert.</target></trans-unit>
+<trans-unit id="s2b060f4d3aec6992">
+  <source>Loading bleed settings...</source>
+<target>Bleed-Einstellungen laden...</target></trans-unit>
+<trans-unit id="seaa5729d8bb7ce40">
+  <source>Bleed Mechanics</source>
+<target>Bleed-Mechanik</target></trans-unit>
+<trans-unit id="sbb349de135f5429b">
+  <source>Control how events propagate between connected simulations through the multiverse.</source>
+<target>Steuern Sie, wie sich Ereignisse zwischen verbundenen Simulationen durch das Multiversum ausbreiten.</target></trans-unit>
+<trans-unit id="sb042c115fa4f8f5a">
+  <source>Enable Bleed</source>
+<target>Bleed aktivieren</target></trans-unit>
+<trans-unit id="s04558266b54b4605">
+  <source>Master switch for cross-simulation event propagation. When disabled, no events from this simulation will echo to other worlds, and no incoming echoes will be accepted.</source>
+<target>Hauptschalter für simulationsübergreifende Ereignisfortpflanzung. Wenn dieser Schalter deaktiviert ist, werden keine Ereignisse aus dieser Simulation an andere Welten weitergegeben, und es werden keine eingehenden Echos akzeptiert.</target></trans-unit>
+<trans-unit id="sfb94f9660d21d017">
+  <source>Bleed is disabled. Events will not propagate to or from connected simulations. Enable bleed to configure echo thresholds, cascade depth, and strength decay.</source>
+<target>Bleed ist deaktiviert. Ereignisse werden nicht an oder von verbundenen Simulationen weitergegeben. Aktivieren Sie Bleed, um Echoschwellen, Kaskadentiefe und Stärkeabfall zu konfigurieren.</target></trans-unit>
+<trans-unit id="s93a6f147df2e019d">
+  <source>Save Bleed Settings</source>
+<target>Bleed-Einstellungen speichern</target></trans-unit>
+<trans-unit id="s5a47ac7fd8afd02f">
+  <source>Echo Threshold</source>
+<target>Echo-Schwelle</target></trans-unit>
+<trans-unit id="s034761b44b799108">
+  <source>Minimum Impact for Bleed</source>
+<target>Minimale Auswirkungen für Bleed</target></trans-unit>
+<trans-unit id="s987de27dde88d3e0">
+  <source>Minimum event impact level (1-10) required to trigger an echo. Can be effectively lowered by: unstable zones (-1), effective embassies (-1). Floor: 5.</source>
+<target>Minimaler Ereignisauswirkungsgrad (1-10), der erforderlich ist, um ein Echo auszulösen. Kann effektiv gesenkt werden durch: instabile Zonen (-1), effektive Botschaften (-1). Stockwerk: 5.</target></trans-unit>
+<trans-unit id="s2779455144e93b4d">
+  <source>Events with impact below this threshold may still bleed probabilistically if zone stability is low or embassy effectiveness is high.</source>
+<target>Ereignisse, deren Auswirkungen unter diesem Schwellenwert liegen, können immer noch wahrscheinliche Auswirkungen haben, wenn die Zonenstabilität niedrig oder die Effektivität der Botschaften hoch ist.</target></trans-unit>
+<trans-unit id="se21db097b85e3ba9">
+  <source>Cascade Behavior</source>
+<target>Kaskaden-Verhalten</target></trans-unit>
+<trans-unit id="sf49e92c68f2f817e">
+  <source>Maximum Cascade Depth</source>
+<target>Maximale Kaskaden-Tiefe</target></trans-unit>
+<trans-unit id="s0b24b72acf62841e">
+  <source>How many times an echo can re-echo (1-3). Depth 1: direct echo only. Depth 2: echoes of echoes. Depth 3: maximum — reality fractures deeply. Each depth level applies strength decay.</source>
+<target>Wie oft ein Echo nachhallen kann (1-3). Tiefe 1: nur direktes Echo. Tiefe 2: Echos von Echos. Tiefe 3: Maximum - die Realität bricht tief ein. Jede Tiefenstufe hat einen Stärkeabfall.</target></trans-unit>
+<trans-unit id="sf1bf5b2bf659c39c">
+  <source>Strength Decay per Depth</source>
+<target>Stärkeabfall pro Tiefe</target></trans-unit>
+<trans-unit id="sbabc7ace3edd1b3f">
+  <source>Multiplier applied per cascade depth (0-1). At 0.6: depth 1 = 60% strength, depth 2 = 36%, depth 3 = 22%. Lower values = echoes fade faster across hops.</source>
+<target>Der Multiplikator wird pro Kaskadentiefe (0-1) angewendet. Bei 0,6: Tiefe 1 = 60% Stärke, Tiefe 2 = 36%, Tiefe 3 = 22%. Niedrigere Werte = Echos verblassen schneller über Hops.</target></trans-unit>
+<trans-unit id="s8d64237bc4ab82a7">
+  <source>Echo Approval</source>
+<target>Echo-Freigabe</target></trans-unit>
+<trans-unit id="s1c03141dad5eb677">
+  <source>Auto-Approve Incoming Echoes</source>
+<target>Eingehende Echos automatisch genehmigen</target></trans-unit>
+<trans-unit id="s65b5ec9209291a4f">
+  <source>When enabled, incoming echoes skip pending status and immediately begin AI generation. When disabled, an admin must approve each echo before it manifests.</source>
+<target>Wenn aktiviert, überspringen eingehende Echos den ausstehenden Status und beginnen sofort mit der KI-Generierung. Wenn deaktiviert, muss ein Admin jedes Echo genehmigen, bevor es sich manifestiert.</target></trans-unit>
+<trans-unit id="sf6471f9ca772aede">
+  <source>Deployment</source>
+<target>Aufmarsch</target></trans-unit>
+<trans-unit id="saec92829742985a6">
+  <source>Mission Success</source>
+<target>Mission Erfolg</target></trans-unit>
+<trans-unit id="s97510d68d5b84bd6">
+  <source>Mission Failed</source>
+<target>Mission gescheitert</target></trans-unit>
+<trans-unit id="s5b9d58c63fca4ee3">
+  <source>Detected</source>
+<target>Entdeckt</target></trans-unit>
+<trans-unit id="s883db07c2d89fbf5">
+  <source>Sabotage</source>
+<target>Sabotage</target></trans-unit>
+<trans-unit id="s3ef56708c4d9f53c">
+  <source>Propaganda</source>
+<target>Propaganda</target></trans-unit>
+<trans-unit id="sd177a8413c487eb1">
+  <source>Assassination</source>
+<target>Meuchelmord</target></trans-unit>
+<trans-unit id="s32d453b208a8bfac">
+  <source>Agent Wounded</source>
+<target>Verwundeter Agent</target></trans-unit>
+<trans-unit id="s188056fe5a29a040">
+  <source>Alliance</source>
+<target>Allianz</target></trans-unit>
+<trans-unit id="sb62cc42f14eabc15">
+  <source>Betrayal</source>
+<target>Verrat</target></trans-unit>
+<trans-unit id="sb142fa61e32c75c0">
+  <source>Phase Change</source>
+<target>Phasenwechsel</target></trans-unit>
+<trans-unit id="se85b266b2012392a">
+  <source>Counter-Intel</source>
+<target>Counter-Intel</target></trans-unit>
+<trans-unit id="s35b8ca6f5fd0ed77">
+  <source>No battle events yet.</source>
+<target>Noch keine Kampfereignisse.</target></trans-unit>
+<trans-unit id="s06a5585fb074fab1">
+  <source>Cycle</source>
+<target>Zyklus</target></trans-unit>
+<trans-unit id="s0d2a949c78d6b357">
+  <source>Loading command center...</source>
+<target>Laden der Kommandozentrale...</target></trans-unit>
+<trans-unit id="s1b10da4706d2d048">
+  <source>Epoch Command Center</source>
+<target>Epochen-Kommandozentrale</target></trans-unit>
+<trans-unit id="sa3c5614afae21527">
+  <source>No active epoch. The multiverse awaits.</source>
+<target>Keine aktive Epoche. Das Multiversum erwartet Sie.</target></trans-unit>
+<trans-unit id="s2a962dc98c969b06">
+  <source>Create New Epoch</source>
+<target>Neue Epoche erstellen</target></trans-unit>
+<trans-unit id="s1b5f152ec2f3774b">
+  <source>Sign in to create or join an epoch.</source>
+<target>Melden Sie sich an, um eine Epoche zu erstellen oder ihr beizutreten.</target></trans-unit>
+<trans-unit id="s444ae4c73a96c01d">
+  <source>Past Epochs</source>
+<target>Vergangene Epochen</target></trans-unit>
+<trans-unit id="s5033dab8c17f05f2">
+  <source>Completed</source>
+<target>Abgeschlossen</target></trans-unit>
+<trans-unit id="sdaed1984ff6ddac6">
+  <source>cycles</source>
+<target>Zyklen</target></trans-unit>
+<trans-unit id="s0f854cb39bd9b089">
+  <source>Players</source>
+<target>Spieler</target></trans-unit>
+<trans-unit id="scb46241d72f5f6de">
+  <source>Resonance Points</source>
+<target>Resonanzpunkte</target></trans-unit>
+<trans-unit id="s3d197283cb019b5a">
+  <source>Overview</source>
+<target>Übersicht</target></trans-unit>
+<trans-unit id="s84cff64095fd31ac">
+  <source>Leaderboard</source>
+<target>Anführertafel</target></trans-unit>
+<trans-unit id="s69c967260c2a20e1">
+  <source>Battle Log</source>
+<target>Kampfprotokoll</target></trans-unit>
+<trans-unit id="scbb4053334bb36a9">
+  <source>Alliances</source>
+<target>Allianzen</target></trans-unit>
+<trans-unit id="s9dfd7770856eb11f">
+  <source>Quick Actions</source>
+<target>Schnell-Aktionen</target></trans-unit>
+<trans-unit id="sceb3bdbb677a2ebf">
+  <source>Deploy Operative</source>
+<target>Operativ einsetzen</target></trans-unit>
+<trans-unit id="s0476654268093c5a">
+  <source>Counter-Intel Sweep</source>
+<target>Counter-Intel Sweep</target></trans-unit>
+<trans-unit id="s62314fd987efcbdd">
+  <source>Spectating</source>
+<target>Zuschauen</target></trans-unit>
+<trans-unit id="secda17ded14476c2">
+  <source>You are not participating in this epoch.</source>
+<target>Du nimmst nicht an dieser Epoche teil.</target></trans-unit>
+<trans-unit id="s889190f2d8428d20">
+  <source>Your Operations</source>
+<target>Deine Operationen</target></trans-unit>
+<trans-unit id="s60bdfcc814539b16">
+  <source>threats</source>
+<target>Bedrohungen</target></trans-unit>
+<trans-unit id="s6cf68b0792d80ac8">
+  <source>No active operations.</source>
+<target>Keine aktiven Operationen.</target></trans-unit>
+<trans-unit id="s38ea20344d490a7f">
+  <source>Recent Events</source>
+<target>Neueste Ereignisse</target></trans-unit>
+<trans-unit id="s8e1b0dbb470586cf">
+  <source>Join the epoch to deploy operatives.</source>
+<target>Treten Sie der Epoche bei, um Agenten einzusetzen.</target></trans-unit>
+<trans-unit id="s04d1710c711f02e6">
+  <source>Active Missions</source>
+<target>Aktive Missionen</target></trans-unit>
+<trans-unit id="se2429d5220c01873">
+  <source>No active missions.</source>
+<target>Keine aktiven Missionen.</target></trans-unit>
+<trans-unit id="sb4400511d5a17fe2">
+  <source>Intelligence</source>
+<target>Geheimdienst</target></trans-unit>
+<trans-unit id="sac713b9ed479da03">
+  <source>detected</source>
+<target>entdeckt</target></trans-unit>
+<trans-unit id="sc6740b4b2cc8638b">
+  <source>No threats detected.</source>
+<target>Keine Bedrohungen entdeckt.</target></trans-unit>
+<trans-unit id="s18a9a7daa92883a5">
+  <source>Mission History</source>
+<target>Missionsgeschichte</target></trans-unit>
+<trans-unit id="sd5754657246f2d26">
+  <source>No completed missions yet.</source>
+<target>Noch keine abgeschlossenen Missionen.</target></trans-unit>
+<trans-unit id="sa264b8e9c4d1ec31">
+  <source>Active Alliances</source>
+<target>Aktive Allianzen</target></trans-unit>
+<trans-unit id="sf17f065acf9e49b7">
+  <source>No alliances formed.</source>
+<target>Keine Allianzen gebildet.</target></trans-unit>
+<trans-unit id="s18d9277a5ac87167">
+  <source>Participants</source>
+<target>Teilnehmer</target></trans-unit>
+<trans-unit id="seb48b8521d3a2f0a">
+  <source>unaligned</source>
+<target>bündnisfrei</target></trans-unit>
+<trans-unit id="s19fe06e3408e53d0">
+  <source>success</source>
+<target>Erfolg</target></trans-unit>
+<trans-unit id="sdbe1dd4c097e6939">
+  <source>No scores recorded yet.</source>
+<target>Noch keine Spielstände aufgezeichnet.</target></trans-unit>
+<trans-unit id="s7ede1c55e35ce9d6">
+  <source>Simulation</source>
+<target>Simulation</target></trans-unit>
+<trans-unit id="s7d684b6257284e55">
+  <source>Score</source>
+<target>Spielstand</target></trans-unit>
+<trans-unit id="sd98b69251f066fa1">
+  <source>Stab</source>
+<target>Stab</target></trans-unit>
+<trans-unit id="s2063a6d17c280acc">
+  <source>Infl</source>
+<target>Infl</target></trans-unit>
+<trans-unit id="s8a6dd824f1e24d33">
+  <source>Sovr</source>
+<target>Sovr</target></trans-unit>
+<trans-unit id="sf4d5c17359026582">
+  <source>Dipl</source>
+<target>Dipl</target></trans-unit>
+<trans-unit id="s04e313aea9056c0b">
+  <source>Milt</source>
+<target>Milt</target></trans-unit>
+<trans-unit id="s12db7f32a3851306">
+  <source>Epoch</source>
+<target>Epoche</target></trans-unit>
+<trans-unit id="s0f4c6540c30bd8b4">
+  <source>Designation</source>
+<target>Bezeichnung</target></trans-unit>
+<trans-unit id="sc7882665167a9ad7">
+  <source>Economy</source>
+<target>Wirtschaft</target></trans-unit>
+<trans-unit id="s0f0cc361433970ff">
+  <source>Doctrine</source>
+<target>Doktrin</target></trans-unit>
+<trans-unit id="see9c53ff8423388e">
+  <source>Epoch created. Awaiting participants.</source>
+<target>Epoche erstellt. Wartet auf Teilnehmer.</target></trans-unit>
+<trans-unit id="s7ca39baff856c2a8">
+  <source>Failed to create epoch.</source>
+<target>Epoche konnte nicht erstellt werden.</target></trans-unit>
+<trans-unit id="s91553f61f0716fba">
+  <source>Initialize Epoch</source>
+<target>Epoche initialisieren</target></trans-unit>
+<trans-unit id="sfab3b359217f1339">
+  <source>Epoch Name</source>
+<target>Epochenname</target></trans-unit>
+<trans-unit id="s6dc67df6c72421ab">
+  <source>The First Convergence</source>
+<target>Die erste Konvergenz</target></trans-unit>
+<trans-unit id="s64ef8ad22af67f74">
+  <source>Optional briefing for participants...</source>
+<target>Optionales Briefing für Teilnehmer...</target></trans-unit>
+<trans-unit id="s92921878e886e36d">
+  <source>Duration</source>
+<target>Dauer</target></trans-unit>
+<trans-unit id="seae40374c70dff85">
+  <source>Foundation <x id="0" equiv-text="${foundationDays}" />d · Competition <x id="1" equiv-text="${competitionDays}" />d · Reckoning <x id="2" equiv-text="${reckoningDays}" />d</source>
+<target>Gründung <x id="0" equiv-text="${foundationDays}" />d · Wettbewerb <x id="1" equiv-text="${competitionDays}" />d · Abrechnung <x id="2" equiv-text="${reckoningDays}" />d</target></trans-unit>
+<trans-unit id="s2130cc649867ca4a">
+  <source>Cycle Interval</source>
+<target>Zyklus-Intervall</target></trans-unit>
+<trans-unit id="s567a3193a6ad8025">
+  <source><x id="0" equiv-text="${cyclesPerDay}" /> cycles per day</source>
+<target><x id="0" equiv-text="${cyclesPerDay}" /> Zyklen pro Tag</target></trans-unit>
+<trans-unit id="s4d2d7498eb8ea64a">
+  <source>RP per Cycle</source>
+<target>RP pro Zyklus</target></trans-unit>
+<trans-unit id="s1482df4de6a9de93">
+  <source>RP Cap</source>
+<target>RP-Limit</target></trans-unit>
+<trans-unit id="se4f6affe9d960837">
+  <source>Max Team Size</source>
+<target>Maximale Teamgröße</target></trans-unit>
+<trans-unit id="s493e4a43bb2fe2ea">
+  <source>Allow Betrayal</source>
+<target>Verrat zulassen</target></trans-unit>
+<trans-unit id="sa18c36f7affee5d4">
+  <source>Sovereignty</source>
+<target>Souveränität</target></trans-unit>
+<trans-unit id="s899828079bf7bcd6">
+  <source>Military</source>
+<target>Militär</target></trans-unit>
+<trans-unit id="sdac0c6c19733d37d">
+  <source>Balanced</source>
+<target>Ausgeglichen</target></trans-unit>
+<trans-unit id="s83442f07f5d4a4c0">
+  <source>Builder</source>
+<target>Erbauer</target></trans-unit>
+<trans-unit id="s23961a25651bff65">
+  <source>Warmonger</source>
+<target>Kriegstreiber</target></trans-unit>
+<trans-unit id="sc2d471d88feb874b">
+  <source>Diplomat</source>
+<target>Diplomat</target></trans-unit>
+<trans-unit id="s418a8774db7d9643">
+  <source>Total Weight</source>
+<target>Gesamtgewichtung</target></trans-unit>
+<trans-unit id="s0a698698334be8c4">
+  <source>Foundation</source>
+<target>Gründung</target></trans-unit>
+<trans-unit id="sb015582eec6e7559">
+  <source>Reckoning</source>
+<target>Abrechnung</target></trans-unit>
+<trans-unit id="s66722bc2ea775e05">
+  <source>Disabled</source>
+<target>Deaktiviert</target></trans-unit>
+<trans-unit id="s34c11c5b8ee22cd8">
+  <source>Launching...</source>
+<target>Starten...</target></trans-unit>
+<trans-unit id="s7d2443e1e491fa73">
+  <source>Launch Epoch</source>
+<target>Epoche starten</target></trans-unit>
+<trans-unit id="sc5d65f8a3f6db7c1">
+  <source>3 cycles</source>
+            <target>3 Zyklen</target>
+</trans-unit>
+<trans-unit id="sb9aaf56f428f5bed">
+  <source>Reveals target health metrics, zone stability, and active operatives.</source>
+            <target>Zeigt den Gesundheitszustand des Ziels, die Zonenstabilität und aktive Agenten an.</target>
+</trans-unit>
+<trans-unit id="s5abe43dbf0c278ad">
+  <source>1 cycle deploy</source>
+            <target>1 Zyklus Einsatz</target>
+</trans-unit>
+<trans-unit id="sab0d3f90d635d14d">
+  <source>Degrades one target building condition by one step.</source>
+            <target>Verschlechtert den Zustand eines Zielgebäudes um eine Stufe.</target>
+</trans-unit>
+<trans-unit id="s6664ec59452d9e64">
+  <source>2 cycles</source>
+            <target>2 Zyklen</target>
+</trans-unit>
+<trans-unit id="s12b6edb719ffe9b9">
+  <source>Generates a destabilizing event (impact 6-8) in target zone.</source>
+            <target>Erzeugt ein destabilisierendes Ereignis (Auswirkung 6-8) in der Zielzone.</target>
+</trans-unit>
+<trans-unit id="sc92e6b2fda31b876">
+  <source>2 cycle deploy</source>
+            <target>2 Zyklus Einsatz</target>
+</trans-unit>
+<trans-unit id="sda8dcb428e0ab5f0">
+  <source>Wounds target agent — reduces relationships by 2, removes ambassador status.</source>
+            <target>Verwundet den Zielagenten - reduziert die Beziehungen um 2, entfernt den Botschafterstatus.</target>
+</trans-unit>
+<trans-unit id="s32b4d84f9efba7dd">
+  <source>Reduces target embassy effectiveness by 50% for 3 cycles.</source>
+            <target>Reduziert die Effektivität der Zielbotschaft für 3 Zyklen um 50%.</target>
+</trans-unit>
+<trans-unit id="s8e4e6dccfe5f64fb">
+  <source>Asset</source>
+            <target>Vermögenswert</target>
+</trans-unit>
+<trans-unit id="sb533442e5a4f67b9">
+  <source>Mission</source>
+            <target>Auftrag</target>
+</trans-unit>
+<trans-unit id="sff5bb7742c2896c8">
+  <source>Target</source>
+            <target>Ziel</target>
+</trans-unit>
+<trans-unit id="s28c479d90d98669f">
+  <source>Operative deployed. Mission <x id="0" equiv-text="${(resp.data as OperativeMission).operative_type}" /> initiated.</source>
+            <target>Agent eingesetzt. Mission <x id="0" equiv-text="${(resp.data as OperativeMission).operative_type}" /> eingeleitet.</target>
+</trans-unit>
+<trans-unit id="s24b066f426d2451f">
+  <source>Deployment failed.</source>
+            <target>Der Einsatz ist fehlgeschlagen.</target>
+</trans-unit>
+<trans-unit id="sfd503599a2f0c8dc">
+  <source>Select Agent</source>
+            <target>Agent auswählen</target>
+</trans-unit>
+<trans-unit id="se5d955efbfc50b09">
+  <source>-- Choose operative --</source>
+            <target>-- Wählen Sie einen Agenten --</target>
+</trans-unit>
+<trans-unit id="sd1e64090c5c5187d">
+  <source>This agent will leave their current post while deployed.</source>
+            <target>Dieser Agent verlässt seinen aktuellen Posten, während er eingesetzt wird.</target>
+</trans-unit>
+<trans-unit id="s5dd26507cbc01743">
+  <source>Mission Type</source>
+            <target>Auftragstyp</target>
+</trans-unit>
+<trans-unit id="s95c4166fcefe3f32">
+  <source>Deploy via Embassy</source>
+            <target>Einsatz über Botschaft</target>
+</trans-unit>
+<trans-unit id="sd10ca21b3711769a">
+  <source>-- Select embassy route --</source>
+            <target>-- Wählen Sie die Botschaftsroute --</target>
+</trans-unit>
+<trans-unit id="sd279e580bb481d71">
+  <source>Guardians deploy to your OWN simulation. No embassy required.</source>
+            <target>Wächter werden in der EIGENEN Simulation eingesetzt. Keine Botschaft erforderlich.</target>
+</trans-unit>
+<trans-unit id="s367d079d1aed1358">
+  <source>Cost</source>
+            <target>Kosten</target>
+</trans-unit>
+<trans-unit id="s564fb9dbc527a9ae">
+  <source>Target Zone</source>
+            <target>Zielzone</target>
+</trans-unit>
+<trans-unit id="s796961c796989fe9">
+  <source>-- Select zone --</source>
+            <target>-- Zone auswählen --</target>
+</trans-unit>
+<trans-unit id="sc208168bf029706b">
+  <source>-- Select building --</source>
+            <target>-- Gebäude auswählen --</target>
+</trans-unit>
+<trans-unit id="s9865894c65b13844">
+  <source>-- Select target --</source>
+            <target>-- Ziel auswählen --</target>
+</trans-unit>
+<trans-unit id="s77e9789a30397866">
+  <source>Operative</source>
+            <target>Agenten</target>
+</trans-unit>
+<trans-unit id="s3e2007ba8b982c50">
+  <source>Your simulation (permanent)</source>
+            <target>Deine Simulation (permanent)</target>
+</trans-unit>
+<trans-unit id="s779d92f40b8f4474">
+  <source>Effect</source>
+            <target>Wirkung</target>
+</trans-unit>
+<trans-unit id="sbb0833d99cf10c2d">
+  <source>+20% enemy detection per guardian in zone</source>
+            <target>+20% Feindentdeckung pro Wächter in der Zone</target>
+</trans-unit>
+<trans-unit id="s24a49557bd9cffb9">
+  <source>Mission Assessment</source>
+            <target>Bewertung der Mission</target>
+</trans-unit>
+<trans-unit id="sf000591eeaa4593f">
+  <source>Base probability</source>
+            <target>Basis-Wahrscheinlichkeit</target>
+</trans-unit>
+<trans-unit id="s077f3823e08ad557">
+  <source>Agent qualification</source>
+            <target>Agentenqualifikation</target>
+</trans-unit>
+<trans-unit id="s1230fc50d04322bb">
+  <source>Zone security</source>
+            <target>Zonensicherheit</target>
+</trans-unit>
+<trans-unit id="s266e5105d3c1cd9d">
+  <source>Embassy effectiveness</source>
+            <target>Effektivität der Botschaften</target>
+</trans-unit>
+<trans-unit id="sfb01832549201380">
+  <source>Deploying...</source>
+            <target>Die Entsendung...</target>
+</trans-unit>
+<trans-unit id="s30f5e1caf42c3a0f">
+  <source>Alliance name...</source>
+<target>Name der Allianz...</target></trans-unit>
+<trans-unit id="sa3b0b9e86097e11a">
+  <source>Create Alliance</source>
+<target>Allianz erstellen</target></trans-unit>
+<trans-unit id="s6c6bf3ea2ad3d219">
+  <source>Join</source>
+<target>Beitreten</target></trans-unit>
+<trans-unit id="s19bee21a859fbea0">
+  <source>Leave</source>
+<target>Verlassen</target></trans-unit>
+<trans-unit id="s99456cbda3e05fb0">
+  <source>Recall</source>
+<target>Zurückrufen</target></trans-unit>
+<trans-unit id="sc7917496fcdac3c1">
+  <source>Join as <x id="0" equiv-text="${sim.name}" /></source>
+<target>Beitreten als <x id="0" equiv-text="${sim.name}" /></target></trans-unit>
+<trans-unit id="s05f002f9b4d51185">
+  <source>Leave Epoch</source>
+<target>Epoche verlassen</target></trans-unit>
+<trans-unit id="s63dae93e26c914be">
+  <source>Start Epoch</source>
+<target>Epoche starten</target></trans-unit>
+<trans-unit id="s06718cb306729576">
+  <source>Admin Controls</source>
+<target>Admin-Kontrollen</target></trans-unit>
+<trans-unit id="s37126756ae8cd2b8">
+  <source>Advance to <x id="0" equiv-text="${nextPhase}" /></source>
+<target>Vorrücken zu <x id="0" equiv-text="${nextPhase}" /></target></trans-unit>
+<trans-unit id="s4a7e72a40252ae9d">
+  <source>Resolve Cycle</source>
+<target>Zyklus auflösen</target></trans-unit>
+<trans-unit id="s328250868f91c44a">
+  <source>Cancel Epoch</source>
+<target>Epoche abbrechen</target></trans-unit>
+<trans-unit id="s3f1c5eba029d4e0b">
+  <source>Sweep complete: <x id="0" equiv-text="${detected.length}" /> threats detected</source>
+<target>Sweep abgeschlossen: <x id="0" equiv-text="${detected.length}" /> Bedrohungen erkannt</target></trans-unit>
+<trans-unit id="s6b0bbc26e964a513">
+  <source>Counter-intel sweep failed.</source>
+<target>Gegenspionage-Sweep fehlgeschlagen.</target></trans-unit>
+<trans-unit id="sac497cc304aeac41">
+  <source>Joined epoch.</source>
+<target>Epoche beigetreten.</target></trans-unit>
+<trans-unit id="s772d352027073f20">
+  <source>Failed to join epoch.</source>
+<target>Beitritt zur Epoche fehlgeschlagen.</target></trans-unit>
+<trans-unit id="sd1426827671916ce">
+  <source>Are you sure you want to leave this epoch? You can rejoin later if the lobby is still open.</source>
+<target>Bist du sicher, dass du diese Epoche verlassen willst? Du kannst später wieder einsteigen, wenn die Lobby noch offen ist.</target></trans-unit>
+<trans-unit id="s50bac75292af7361">
+  <source>Left epoch.</source>
+<target>Epoche verlassen.</target></trans-unit>
+<trans-unit id="s73f73eaa20a5cc8b">
+  <source>Failed to leave epoch.</source>
+<target>Verlassen der Epoche fehlgeschlagen.</target></trans-unit>
+<trans-unit id="s0f9b5c3a49aed88e">
+  <source>Epoch started!</source>
+<target>Epoche gestartet!</target></trans-unit>
+<trans-unit id="sa2fb2b6ae3c07f9e">
+  <source>Failed to start epoch.</source>
+<target>Epoche konnte nicht gestartet werden.</target></trans-unit>
+<trans-unit id="sace123cbd07bbe5c">
+  <source>Phase advanced.</source>
+<target>Phase fortgeschritten.</target></trans-unit>
+<trans-unit id="s810d2dd63a39027a">
+  <source>Failed to advance phase.</source>
+<target>Phase konnte nicht fortgesetzt werden.</target></trans-unit>
+<trans-unit id="s6ec19ee9fff77d5f">
+  <source>Cycle resolved.</source>
+<target>Zyklus aufgelöst.</target></trans-unit>
+<trans-unit id="s88af7b5bc34cafd7">
+  <source>Failed to resolve cycle.</source>
+<target>Zyklus konnte nicht aufgelöst werden.</target></trans-unit>
+<trans-unit id="s675bf5500429cca5">
+  <source>This will permanently end the epoch. All missions and scores will be frozen. This cannot be undone.</source>
+<target>Dadurch wird die Epoche dauerhaft beendet. Alle Missionen und Spielstände werden eingefroren. Dies kann nicht rückgängig gemacht werden.</target></trans-unit>
+<trans-unit id="s1244b230a449bfc1">
+  <source>Epoch cancelled.</source>
+<target>Epoche abgebrochen.</target></trans-unit>
+<trans-unit id="s41c0bc7ea50eaf72">
+  <source>Failed to cancel epoch.</source>
+<target>Epoche konnte nicht abgebrochen werden.</target></trans-unit>
+<trans-unit id="s0b565a971cdf948a">
+  <source>Alliance created.</source>
+<target>Allianz erstellt.</target></trans-unit>
+<trans-unit id="s23dcec13ccf50c5a">
+  <source>Failed to create alliance.</source>
+<target>Allianz konnte nicht erstellt werden.</target></trans-unit>
+<trans-unit id="s8a32471d778ccccd">
+  <source>Joined alliance.</source>
+<target>Allianz beigetreten.</target></trans-unit>
+<trans-unit id="s9c3af239731c4702">
+  <source>Failed to join alliance.</source>
+<target>Allianz konnte nicht beigetreten werden.</target></trans-unit>
+<trans-unit id="sf6a7514b82682801">
+  <source>Leave Alliance</source>
+<target>Allianz verlassen</target></trans-unit>
+<trans-unit id="s92d76e7f25f9f2ed">
+  <source>Are you sure you want to leave your alliance?</source>
+<target>Bist du sicher, dass du deine Allianz verlassen willst?</target></trans-unit>
+<trans-unit id="sf2f592bffa14ce6d">
+  <source>Left alliance.</source>
+<target>Allianz verlassen.</target></trans-unit>
+<trans-unit id="se298fd919f7ad42b">
+  <source>Failed to leave alliance.</source>
+<target>Verlassen der Allianz fehlgeschlagen.</target></trans-unit>
+<trans-unit id="s6e050679bba0a9e0">
+  <source>Operative recalled.</source>
+<target>Agent zurückgerufen.</target></trans-unit>
+<trans-unit id="s0fc65abfdd5ff4c7">
+  <source>Failed to recall operative.</source>
+<target>Rückruf des Agenten fehlgeschlagen.</target></trans-unit>
+<trans-unit id="s63d35a806aa920e5">
+  <source>Permanent</source>
+<target>Dauerhaft</target></trans-unit>
+<trans-unit id="s2b0a70361ba2a2f9">
+  <source>Detects hostile operatives entering your simulation. +15% counter-intel success.</source>
+<target>Erkennt feindliche Agenten, die in deine Simulation eindringen. +15% Erfolg bei Gegenintelligenz.</target></trans-unit>
+<trans-unit id="sb31934166e49840c">
+  <source>Foundation phase: only defensive guardians may be deployed.</source>
+<target>Gründungsphase: Es dürfen nur defensive Wächter eingesetzt werden.</target></trans-unit>
+<trans-unit id="s6a682477e9b4e878">
+  <source>Competition</source>
+<target>Wettbewerb</target></trans-unit>
+<trans-unit id="s75690e93687a3589">
+  <source>Deploy Guardian</source>
+<target>Wächter einsetzen</target></trans-unit>
+<trans-unit id="sbfefec98d6c617a6">
+  <source>Cycles</source>
+<target>Zyklen</target></trans-unit>
+<trans-unit id="s9a8758a0c98cfb49">
+  <source><x id="0" equiv-text="${this._suggestions.length}" /> suggestions generated</source>
+<target><x id="0" equiv-text="${this._suggestions.length}" /> Vorschläge generiert</target></trans-unit>
+<trans-unit id="sea8f4c8095b57166">
+  <source>No suggestions generated</source>
+<target>Keine Vorschläge generiert</target></trans-unit>
+<trans-unit id="s7c620a7615c1e2e4">
+  <source>Generation failed</source>
+<target>Generierung fehlgeschlagen</target></trans-unit>
+<trans-unit id="sc2a2ef3edfd49261">
+  <source><x id="0" equiv-text="${saved}" /> relationships saved</source>
+<target><x id="0" equiv-text="${saved}" /> Beziehungen gespeichert</target></trans-unit>
+<trans-unit id="s2dc335265b16339d">
+  <source>Failed to save relationships</source>
+<target>Beziehungen konnten nicht gespeichert werden</target></trans-unit>
+<trans-unit id="sa66932df497cb1c2">
+  <source>AI Suggestions</source>
+<target>KI-Vorschläge</target></trans-unit>
+<trans-unit id="sfabffb81d914ebd1">
+  <source>Save Selected</source>
+<target>Ausgewählte speichern</target></trans-unit>
+<trans-unit id="s12d6dde9b30c3093">
+  <source>Dismiss</source>
+<target>Verwerfen</target></trans-unit>
 </body>
 </file>
 </xliff>

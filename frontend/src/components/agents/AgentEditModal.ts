@@ -8,6 +8,7 @@ import type { Agent } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import '../shared/BaseModal.js';
 import { formStyles } from '../shared/form-styles.js';
+import { infoBubbleStyles } from '../shared/info-bubble-styles.js';
 import { VelgToast } from '../shared/Toast.js';
 
 interface AgentFormData {
@@ -25,6 +26,7 @@ interface AgentFormData {
 export class VelgAgentEditModal extends LitElement {
   static styles = [
     formStyles,
+    infoBubbleStyles,
     css`
     :host {
       display: block;
@@ -373,6 +375,15 @@ export class VelgAgentEditModal extends LitElement {
     );
   }
 
+  private _renderInfoBubble(text: string) {
+    return html`
+      <span class="info-bubble">
+        <span class="info-bubble__icon">i</span>
+        <span class="info-bubble__tooltip">${text}</span>
+      </span>
+    `;
+  }
+
   protected render() {
     const systemOptions = this._getSystemOptions();
     const genderOptions = this._getGenderOptions();
@@ -390,6 +401,7 @@ export class VelgAgentEditModal extends LitElement {
           <div class="form__group">
             <label class="form__label" for="agent-name">
               ${msg('Name')} <span class="form__required">*</span>
+              ${this._renderInfoBubble(msg('Used in relationship descriptions, event reactions, and embassy assignments.'))}
             </label>
             <input
               class="form__input ${this._errors.name ? 'form__input--error' : ''}"
@@ -403,7 +415,10 @@ export class VelgAgentEditModal extends LitElement {
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="agent-system">${msg('System')}</label>
+            <label class="form__label" for="agent-system">
+              ${msg('System')}
+              ${this._renderInfoBubble(msg('The faction or organization. Events tagged with a matching system name attract this agent and increase reaction probability.'))}
+            </label>
             <select
               class="form__select"
               id="agent-system"
@@ -415,7 +430,10 @@ export class VelgAgentEditModal extends LitElement {
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="agent-gender">${msg('Gender')}</label>
+            <label class="form__label" for="agent-gender">
+              ${msg('Gender')}
+              ${this._renderInfoBubble(msg('Used in AI-generated text for pronouns and portrait generation.'))}
+            </label>
             <select
               class="form__select"
               id="agent-gender"
@@ -439,7 +457,10 @@ export class VelgAgentEditModal extends LitElement {
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="agent-character">${msg('Character')}</label>
+            <label class="form__label" for="agent-character">
+              ${msg('Character')}
+              ${this._renderInfoBubble(msg('Personality traits and behavioral patterns. Longer descriptions produce richer AI reactions. Mystical/spiritual traits resonate with Dream bleed.'))}
+            </label>
             <textarea
               class="form__textarea"
               id="agent-character"
@@ -450,7 +471,10 @@ export class VelgAgentEditModal extends LitElement {
           </div>
 
           <div class="form__group">
-            <label class="form__label" for="agent-background">${msg('Background')}</label>
+            <label class="form__label" for="agent-background">
+              ${msg('Background')}
+              ${this._renderInfoBubble(msg('Origin story and life history. Feeds into AI reactions, relationships, and echo narratives. Detailed backgrounds increase narrative weight in cross-simulation bleed.'))}
+            </label>
             <textarea
               class="form__textarea"
               id="agent-background"
@@ -479,7 +503,10 @@ export class VelgAgentEditModal extends LitElement {
                 }
 
                 <div class="form__group">
-                  <label class="form__label" for="agent-portrait-desc">${msg('Portrait Description')}</label>
+                  <label class="form__label" for="agent-portrait-desc">
+                    ${msg('Portrait Description')}
+                    ${this._renderInfoBubble(msg('Visual description used by the image AI. Does not affect game mechanics — purely aesthetic.'))}
+                  </label>
                   <textarea
                     class="form__textarea form__textarea--sm"
                     id="agent-portrait-desc"

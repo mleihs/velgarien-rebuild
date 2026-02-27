@@ -152,12 +152,20 @@ class TestEvaluateEchoCandidates:
             event["campaign_id"] = campaign_id
         return event
 
-    def _multi_table_supabase(self, settings_data=None, connections_data=None):
+    def _multi_table_supabase(
+        self,
+        settings_data=None,
+        connections_data=None,
+        health_data=None,
+        embassy_data=None,
+    ):
         """Create a supabase mock that returns different data per table."""
         mock = MagicMock()
         table_data = {
             "simulation_settings": settings_data or [],
             "simulation_connections": connections_data or [],
+            "mv_simulation_health": health_data or [],
+            "mv_embassy_effectiveness": embassy_data or [],
         }
 
         def make_table(name):
@@ -167,6 +175,7 @@ class TestEvaluateEchoCandidates:
             b.in_.return_value = b
             b.or_.return_value = b
             b.order.return_value = b
+            b.limit.return_value = b
             r = MagicMock()
             r.data = table_data.get(name, [])
             b.execute.return_value = r
@@ -256,17 +265,20 @@ class TestEvaluateEchoCandidates:
 
     @pytest.mark.asyncio
     async def test_returns_candidates_for_valid_event(self):
-        """Happy path: event meets all criteria, returns candidates."""
+        """Happy path: event meets all criteria, returns candidates with strength."""
         event = self._make_event(impact=10)
         settings = [
             {"setting_key": "bleed_enabled", "setting_value": True},
             {"setting_key": "bleed_min_impact", "setting_value": "5"},
+            {"setting_key": "bleed_strength_decay", "setting_value": "0.6"},
         ]
         connections = [
             {
                 "simulation_a_id": str(SIM_A),
                 "simulation_b_id": str(SIM_B),
                 "is_active": True,
+                "strength": 0.5,
+                "bleed_vectors": ["resonance"],
             },
         ]
         mock = self._multi_table_supabase(
@@ -277,6 +289,8 @@ class TestEvaluateEchoCandidates:
         assert len(result) == 1
         assert result[0]["target_simulation_id"] == str(SIM_B)
         assert result[0]["depth"] == 1
+        assert result[0]["echo_vector"] == "resonance"
+        assert 0.0 < result[0]["echo_strength"] <= 1.0
 
     @pytest.mark.asyncio
     async def test_reverse_connection_direction(self):
@@ -285,12 +299,15 @@ class TestEvaluateEchoCandidates:
         settings = [
             {"setting_key": "bleed_enabled", "setting_value": True},
             {"setting_key": "bleed_min_impact", "setting_value": "5"},
+            {"setting_key": "bleed_strength_decay", "setting_value": "0.6"},
         ]
         connections = [
             {
                 "simulation_a_id": str(SIM_B),
                 "simulation_b_id": str(SIM_A),
                 "is_active": True,
+                "strength": 0.5,
+                "bleed_vectors": ["memory"],
             },
         ]
         mock = self._multi_table_supabase(
@@ -300,6 +317,110 @@ class TestEvaluateEchoCandidates:
         result = await EchoService.evaluate_echo_candidates(mock, event, SIM_A)
         assert len(result) == 1
         assert result[0]["target_simulation_id"] == str(SIM_B)
+        assert result[0]["echo_vector"] == "memory"
+
+
+class TestComputeEchoStrength:
+    """Tests for the echo strength computation formula."""
+
+    def test_base_case(self):
+        """Connection strength alone, no bonuses."""
+        s = EchoService.compute_echo_strength(
+            connection_strength=0.5, echo_depth=1, strength_decay=0.6,
+        )
+        # 0.5 * 1.0 (no embassy) * 1.0 (no tags) * 0.6^1 * 1.0 (no instability)
+        assert abs(s - 0.3) < 0.01
+
+    def test_embassy_boost(self):
+        """High embassy effectiveness increases strength."""
+        s = EchoService.compute_echo_strength(
+            connection_strength=0.5, embassy_effectiveness=1.0,
+            echo_depth=1, strength_decay=0.6,
+        )
+        # 0.5 * 1.3 (embassy) * 1.0 * 0.6 * 1.0 = 0.39
+        assert abs(s - 0.39) < 0.01
+
+    def test_tag_resonance_boost(self):
+        """Matching tags boost strength by 20% per tag (max 3)."""
+        s = EchoService.compute_echo_strength(
+            connection_strength=0.5, tag_resonance_count=2,
+            echo_depth=1, strength_decay=0.6,
+        )
+        # 0.5 * 1.0 * 1.4 (2 tags) * 0.6 * 1.0 = 0.42
+        assert abs(s - 0.42) < 0.01
+
+    def test_tag_resonance_capped_at_3(self):
+        """More than 3 matching tags doesn't increase beyond cap."""
+        s3 = EchoService.compute_echo_strength(
+            connection_strength=0.5, tag_resonance_count=3,
+            echo_depth=1, strength_decay=0.6,
+        )
+        s5 = EchoService.compute_echo_strength(
+            connection_strength=0.5, tag_resonance_count=5,
+            echo_depth=1, strength_decay=0.6,
+        )
+        assert s3 == s5
+
+    def test_depth_decay(self):
+        """Each depth level applies decay exponentially."""
+        s1 = EchoService.compute_echo_strength(
+            connection_strength=1.0, echo_depth=1, strength_decay=0.6,
+        )
+        s2 = EchoService.compute_echo_strength(
+            connection_strength=1.0, echo_depth=2, strength_decay=0.6,
+        )
+        s3 = EchoService.compute_echo_strength(
+            connection_strength=1.0, echo_depth=3, strength_decay=0.6,
+        )
+        # Depth 1: 0.6, Depth 2: 0.36, Depth 3: 0.216
+        assert abs(s1 - 0.6) < 0.01
+        assert abs(s2 - 0.36) < 0.01
+        assert abs(s3 - 0.216) < 0.01
+
+    def test_instability_boost(self):
+        """Unstable source zones bleed louder."""
+        s_stable = EchoService.compute_echo_strength(
+            connection_strength=0.5, source_instability=0.0,
+            echo_depth=1, strength_decay=0.6,
+        )
+        s_unstable = EchoService.compute_echo_strength(
+            connection_strength=0.5, source_instability=0.8,
+            echo_depth=1, strength_decay=0.6,
+        )
+        assert s_unstable > s_stable
+
+    def test_clamped_to_one(self):
+        """Maximum strength is 1.0 even with all boosts."""
+        s = EchoService.compute_echo_strength(
+            connection_strength=1.0, embassy_effectiveness=1.0,
+            tag_resonance_count=3, echo_depth=1, strength_decay=1.0,
+            source_instability=1.0,
+        )
+        assert s == 1.0
+
+
+class TestTagResonance:
+    """Tests for bleed vector → tag resonance matching."""
+
+    def test_matching_tags(self):
+        assert EchoService.count_tag_resonance(["trade", "economy"], "commerce") == 2
+
+    def test_no_matching_tags(self):
+        assert EchoService.count_tag_resonance(["fire", "war"], "commerce") == 0
+
+    def test_case_insensitive(self):
+        assert EchoService.count_tag_resonance(["Trade", "ECONOMY"], "commerce") == 2
+
+    def test_empty_tags(self):
+        assert EchoService.count_tag_resonance([], "commerce") == 0
+
+    def test_unknown_vector(self):
+        assert EchoService.count_tag_resonance(["trade"], "unknown_vector") == 0
+
+    def test_dream_vector(self):
+        assert EchoService.count_tag_resonance(
+            ["vision", "mystical", "economic"], "dream",
+        ) == 2
 
 
 class TestCreateEcho:

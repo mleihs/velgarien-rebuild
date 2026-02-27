@@ -6,6 +6,7 @@ import type { SettingCategory } from '../../types/index.js';
 
 import './GeneralSettingsPanel.js';
 import './WorldSettingsPanel.js';
+import './BleedSettingsPanel.js';
 import './AISettingsPanel.js';
 import './IntegrationSettingsPanel.js';
 import './DesignSettingsPanel.js';
@@ -198,6 +199,11 @@ export class VelgSettingsView extends LitElement {
         `;
       case 'world':
         return html`
+          <velg-bleed-settings-panel
+            .simulationId=${this.simulationId}
+            @unsaved-change=${this._handleUnsavedChange}
+            @settings-saved=${this._handleSettingsSaved}
+          ></velg-bleed-settings-panel>
           <velg-world-settings-panel
             .simulationId=${this.simulationId}
             @unsaved-change=${this._handleUnsavedChange}

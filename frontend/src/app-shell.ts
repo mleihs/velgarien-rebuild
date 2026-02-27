@@ -30,7 +30,9 @@ import './components/platform/InvitationAcceptView.js';
 import './components/platform/CreateSimulationWizard.js';
 import './components/platform/UserProfileView.js';
 import './components/lore/SimulationLoreView.js';
+import './components/health/SimulationHealthView.js';
 import './components/multiverse/CartographerMap.js';
+import './components/epoch/EpochCommandCenter.js';
 import './components/shared/CookieConsent.js';
 
 @localized()
@@ -134,6 +136,16 @@ export class VelgApp extends LitElement {
         },
       },
       {
+        path: '/epoch',
+        render: () => html`<velg-epoch-command-center></velg-epoch-command-center>`,
+        enter: async () => {
+          await this._authReady;
+          seoService.setTitle(['Epoch Command Center']);
+          analyticsService.trackPageView('/epoch', document.title);
+          return true;
+        },
+      },
+      {
         path: '/invitations/:token',
         render: ({ token }) =>
           html`<velg-invitation-accept-view .token=${token ?? ''}></velg-invitation-accept-view>`,
@@ -172,6 +184,11 @@ export class VelgApp extends LitElement {
       {
         path: '/simulations/:id/lore',
         render: ({ id }) => this._renderSimulationView(id ?? '', 'lore'),
+        enter: async ({ id }) => this._enterSimulationRoute(id),
+      },
+      {
+        path: '/simulations/:id/health',
+        render: ({ id }) => this._renderSimulationView(id ?? '', 'health'),
         enter: async ({ id }) => this._enterSimulationRoute(id),
       },
       {
@@ -451,6 +468,9 @@ export class VelgApp extends LitElement {
     switch (view) {
       case 'lore':
         content = html`<velg-simulation-lore-view .simulationId=${resolvedId}></velg-simulation-lore-view>`;
+        break;
+      case 'health':
+        content = html`<velg-simulation-health-view .simulationId=${resolvedId}></velg-simulation-health-view>`;
         break;
       case 'agents':
         content = html`<velg-agents-view .simulationId=${resolvedId}></velg-agents-view>`;

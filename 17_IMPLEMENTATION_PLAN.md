@@ -791,7 +791,7 @@ frontend/src/components/platform/
 
 #### P2.1.2 — Agents Router + Service
 **Dateien:** `backend/routers/agents.py`, `backend/services/agent_service.py`, `backend/tests/integration/test_agents_router.py`
-**Aktion:** 7 Endpoints: GET list (Pagination, Filter, Full-Text Search via `search_vector @@`), GET one, POST create, PUT update, DELETE (soft), POST generate-portrait (stub), GET reactions
+**Aktion:** 6 Endpoints: GET list (Pagination, Filter, Full-Text Search via `search_vector @@`), GET one, POST create, PUT update, DELETE (soft), GET reactions. Portrait generation via `/generate/portrait-description` in generation router.
 **Akzeptanz:** CRUD vollstaendig testbar via `/docs`. Pagination funktioniert. Full-Text Suche ueber search_vector.
 **Abh.:** P2.1.1, P1.3.9
 **Ref.:** 05_API_SPECIFICATION §Agents

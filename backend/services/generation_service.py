@@ -284,8 +284,15 @@ class GenerationService:
         self,
         event_type: str,
         locale: str = "de",
+        *,
+        game_context: dict | None = None,
     ) -> dict:
-        """Generate an event description."""
+        """Generate an event description.
+
+        Args:
+            game_context: Optional game mechanics context (zone_stability,
+                simulation_health) to bias event tone and severity.
+        """
         return await self._generate(
             template_type="event_generation",
             model_purpose="event_generation",
@@ -295,6 +302,7 @@ class GenerationService:
                 "locale_name": LOCALE_NAMES.get(locale, locale),
             },
             locale=locale,
+            game_context=game_context,
         )
 
     async def generate_agent_reaction(
@@ -302,8 +310,16 @@ class GenerationService:
         agent_data: dict,
         event_data: dict,
         locale: str = "de",
+        *,
+        game_context: dict | None = None,
     ) -> str:
-        """Generate an agent's reaction to an event."""
+        """Generate an agent's reaction to an event.
+
+        Args:
+            game_context: Optional game mechanics context (zone_stability,
+                building_readiness, etc.) appended to the prompt for richer
+                narrative generation.
+        """
         result = await self._generate(
             template_type="agent_reactions",
             model_purpose="agent_reactions",
@@ -317,6 +333,7 @@ class GenerationService:
                 "locale_name": LOCALE_NAMES.get(locale, locale),
             },
             locale=locale,
+            game_context=game_context,
         )
         return result.get("content", "")
 
@@ -446,8 +463,14 @@ class GenerationService:
         target_description: str,
         echo_vector: str,
         locale: str = "de",
+        *,
+        game_context: dict | None = None,
     ) -> dict:
         """Transform a source event into a target simulation's voice.
+
+        Args:
+            game_context: Optional metrics (embassy_effectiveness, simulation
+                health, bleed_permeability) to shape echo narrative intensity.
 
         Returns dict with: title, description
         """
@@ -464,6 +487,7 @@ class GenerationService:
                 "locale_name": LOCALE_NAMES.get(locale, locale),
             },
             locale=locale,
+            game_context=game_context,
         )
 
         parsed = self._parse_json_content(result.get("content", ""))
@@ -571,13 +595,25 @@ class GenerationService:
         model_purpose: str,
         variables: dict[str, str],
         locale: str,
+        *,
+        game_context: dict | None = None,
     ) -> dict:
-        """Core generation pipeline: resolve prompt + model, call LLM with fallback."""
+        """Core generation pipeline: resolve prompt + model, call LLM with fallback.
+
+        Args:
+            game_context: Optional dict of game mechanics metrics. When provided,
+                a structured context block is appended to the user prompt so the
+                LLM can incorporate simulation state into its narrative.
+        """
         # 1. Resolve prompt template
         prompt = await self._prompt_resolver.resolve(template_type, locale)
 
         # 2. Fill template with variables
         filled_prompt = self._prompt_resolver.fill_template(prompt, variables)
+
+        # 2b. Append game mechanics context if provided
+        if game_context:
+            filled_prompt += self._format_game_context(game_context)
 
         # 3. Build system prompt with language instruction
         system_prompt = prompt.system_prompt or ""
@@ -640,6 +676,53 @@ class GenerationService:
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
             )
+
+    @staticmethod
+    def _format_game_context(ctx: dict) -> str:
+        """Format game mechanics metrics as a structured context block.
+
+        This is appended to the user prompt so the LLM can reflect simulation
+        state in its narrative output. Only non-empty values are included.
+        """
+        lines = ["\n\n--- SIMULATION STATE ---"]
+
+        if "zone_stability" in ctx:
+            s = ctx["zone_stability"]
+            lines.append(
+                f"Zone stability: {s:.0%} ({ctx.get('zone_stability_label', '')})"
+            )
+        if "zone_security" in ctx:
+            lines.append(f"Zone security level: {ctx['zone_security']}")
+        if "building_readiness" in ctx:
+            r = ctx["building_readiness"]
+            lines.append(f"Average building readiness: {r:.0%}")
+        if "critical_buildings" in ctx:
+            lines.append(
+                f"Critically understaffed buildings: {ctx['critical_buildings']}"
+            )
+        if "simulation_health" in ctx:
+            h = ctx["simulation_health"]
+            lines.append(
+                f"Overall simulation health: {h:.0%} ({ctx.get('health_label', '')})"
+            )
+        if "embassy_effectiveness" in ctx:
+            e = ctx["embassy_effectiveness"]
+            lines.append(f"Embassy effectiveness: {e:.0%}")
+        if "bleed_permeability" in ctx:
+            p = ctx["bleed_permeability"]
+            lines.append(f"Bleed permeability: {p:.0%}")
+        if "diplomatic_reach" in ctx:
+            lines.append(f"Diplomatic reach: {ctx['diplomatic_reach']:.2f}")
+        if "event_pressure" in ctx:
+            lines.append(f"Recent event pressure: {ctx['event_pressure']:.0%}")
+
+        # Narrative guidance based on metrics
+        guidance = ctx.get("narrative_guidance")
+        if guidance:
+            lines.append(f"\nNarrative tone: {guidance}")
+
+        lines.append("---")
+        return "\n".join(lines)
 
     async def _get_simulation_name(self) -> str:
         """Get the simulation name from the database."""

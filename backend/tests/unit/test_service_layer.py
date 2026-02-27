@@ -106,12 +106,12 @@ class TestGetUserMemberships:
             {
                 "simulation_id": str(uuid4()),
                 "member_role": "owner",
-                "simulations": {"name": "Shard Alpha"},
+                "simulations": {"name": "Shard Alpha", "slug": "shard-alpha"},
             },
             {
                 "simulation_id": str(uuid4()),
                 "member_role": "editor",
-                "simulations": {"name": "Shard Beta"},
+                "simulations": {"name": "Shard Beta", "slug": "shard-beta"},
             },
         ]
         mock_sb = MagicMock()
@@ -130,7 +130,7 @@ class TestGetUserMemberships:
         # Verify correct table and select
         mock_sb.table.assert_called_once_with("simulation_members")
         mock_sb.table.return_value.select.assert_called_once_with(
-            "simulation_id, member_role, simulations(name)",
+            "simulation_id, member_role, simulations(name, slug)",
         )
 
     async def test_returns_empty_list_when_no_memberships(self):

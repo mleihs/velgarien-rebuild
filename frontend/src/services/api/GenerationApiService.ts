@@ -69,6 +69,13 @@ export class GenerationApiService extends BaseApiService {
   ): Promise<ApiResponse<Record<string, unknown>>> {
     return this.post(`/simulations/${simulationId}/generate/image`, data);
   }
+
+  generateRelationships(
+    simulationId: string,
+    data: { agent_id: string; locale: string },
+  ): Promise<ApiResponse<Record<string, unknown>[]>> {
+    return this.post(`/simulations/${simulationId}/generate/relationships`, data);
+  }
 }
 
 export const generationApi = new GenerationApiService();

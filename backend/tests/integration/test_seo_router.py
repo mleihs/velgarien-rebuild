@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from backend.app import app
 
-SIM_VELGARIEN = "10000000-0000-0000-0000-000000000001"
+SIM_VELGARIEN_SLUG = "velgarien"
 
 
 @pytest.fixture()
@@ -82,8 +82,8 @@ class TestSitemapXml:
     def test_contains_simulation_views(self, client: TestClient):
         r = client.get("/sitemap.xml")
         text = r.text
-        for view in ["agents", "buildings", "events", "locations", "social", "chat"]:
-            assert f"/simulations/{SIM_VELGARIEN}/{view}" in text
+        for view in ["lore", "agents", "buildings", "events", "locations", "social", "chat"]:
+            assert f"/simulations/{SIM_VELGARIEN_SLUG}/{view}" in text
 
     def test_homepage_has_highest_priority(self, client: TestClient):
         r = client.get("/sitemap.xml")

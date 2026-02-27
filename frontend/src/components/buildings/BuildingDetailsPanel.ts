@@ -2,8 +2,13 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import { buildingsApi, embassiesApi } from '../../services/api/index.js';
-import type { Building, BuildingAgentRelation, Embassy } from '../../types/index.js';
+import { buildingsApi, embassiesApi, healthApi } from '../../services/api/index.js';
+import type {
+  Building,
+  BuildingAgentRelation,
+  BuildingReadiness,
+  Embassy,
+} from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import { buildingAltText } from '../../utils/text.js';
 import '../shared/Lightbox.js';
@@ -177,6 +182,70 @@ export class VelgBuildingDetailsPanel extends LitElement {
       color: var(--color-text-muted);
       font-style: italic;
     }
+
+    /* --- Readiness section --- */
+
+    .panel__readiness {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .panel__readiness-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .panel__readiness-track {
+      flex: 1;
+      height: 8px;
+      background: var(--color-surface-sunken);
+      border: var(--border-width-thin) solid var(--color-border);
+      overflow: hidden;
+    }
+
+    .panel__readiness-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .panel__readiness-value {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-sm);
+      min-width: 48px;
+      text-align: right;
+    }
+
+    .panel__readiness-label {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .panel__readiness-label--critical {
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+    }
+
+    .panel__readiness-label--understaffed {
+      background: var(--color-warning-bg);
+      color: var(--color-accent);
+    }
+
+    .panel__readiness-label--operational {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+    }
+
+    .panel__readiness-label--overcrowded {
+      background: var(--color-info-bg);
+      color: var(--color-secondary);
+    }
   `,
   ];
 
@@ -187,6 +256,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
   @state() private _agents: BuildingAgentRelation[] = [];
   @state() private _loadingAgents = false;
   @state() private _embassy: Embassy | null = null;
+  @state() private _readiness: BuildingReadiness | null = null;
   @state() private _lightboxSrc: string | null = null;
   @state() private _lightboxAlt = '';
 
@@ -195,9 +265,11 @@ export class VelgBuildingDetailsPanel extends LitElement {
       if (this.open && this.building) {
         this._loadAgents();
         this._loadEmbassy();
+        this._loadReadiness();
       } else {
         this._agents = [];
         this._embassy = null;
+        this._readiness = null;
       }
     }
   }
@@ -238,6 +310,22 @@ export class VelgBuildingDetailsPanel extends LitElement {
       }
     } catch {
       // Embassy data not critical — fail silently
+    }
+  }
+
+  private async _loadReadiness(): Promise<void> {
+    if (!this.building || !this.simulationId) return;
+    try {
+      const response = await healthApi.listBuildingReadiness(this.simulationId);
+      if (response.success && response.data) {
+        const buildings = Array.isArray(response.data)
+          ? response.data
+          : ((response.data as { data?: BuildingReadiness[] }).data ?? []);
+        this._readiness =
+          buildings.find((b: BuildingReadiness) => b.building_id === this.building?.id) ?? null;
+      }
+    } catch {
+      // Readiness data not critical — fail silently
     }
   }
 
@@ -326,6 +414,67 @@ export class VelgBuildingDetailsPanel extends LitElement {
           <velg-badge variant="warning">${msg('Ambassador')}</velg-badge>
         </div>
         ${amb.role ? html`<span class="panel__ambassador-role">${amb.role}</span>` : nothing}
+      </div>
+    `;
+  }
+
+  private _readinessColor(value: number): string {
+    if (value < 0.3) return 'var(--color-danger)';
+    if (value < 0.5) return 'var(--color-accent)';
+    if (value < 0.8) return 'var(--color-success)';
+    return 'var(--color-primary)';
+  }
+
+  private _staffingLabelClass(status: string): string {
+    const s = status.toLowerCase();
+    if (s.includes('critical')) return 'panel__readiness-label--critical';
+    if (s.includes('understaffed')) return 'panel__readiness-label--understaffed';
+    if (s.includes('overcrowded')) return 'panel__readiness-label--overcrowded';
+    return 'panel__readiness-label--operational';
+  }
+
+  private _renderReadiness() {
+    const r = this._readiness;
+    if (!r) return nothing;
+
+    const pct = Math.round(r.readiness * 100);
+    const fillColor = this._readinessColor(r.readiness);
+
+    return html`
+      <div class="panel__readiness">
+        <div class="panel__readiness-bar">
+          <div class="panel__readiness-track">
+            <div
+              class="panel__readiness-fill"
+              style="width: ${pct}%; background: ${fillColor}"
+            ></div>
+          </div>
+          <span class="panel__readiness-value" style="color: ${fillColor}">${pct}%</span>
+        </div>
+
+        <div class="panel__detail-grid">
+          <div class="panel__detail-item">
+            <span class="panel__detail-label">${msg('Staffing')}</span>
+            <span class="panel__detail-value">
+              ${r.assigned_agents} / ${r.population_capacity}
+              <span class="panel__readiness-label ${this._staffingLabelClass(r.staffing_status)}">
+                ${r.staffing_status}
+              </span>
+            </span>
+          </div>
+          <div class="panel__detail-item">
+            <span class="panel__detail-label">${msg('Qualification')}</span>
+            <span class="panel__detail-value">${(r.qualification_match * 100).toFixed(0)}%</span>
+          </div>
+          <div class="panel__detail-item">
+            <span class="panel__detail-label">${msg('Condition Factor')}</span>
+            <span class="panel__detail-value">${r.condition_factor}</span>
+          </div>
+          <div class="panel__detail-item">
+            <span class="panel__detail-label">${msg('Criticality')}</span>
+            <span class="panel__detail-value">${r.criticality_weight}x</span>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -475,6 +624,17 @@ export class VelgBuildingDetailsPanel extends LitElement {
                       }
                     </div>
                   </div>
+
+                  ${
+                    this._readiness
+                      ? html`
+                        <div class="panel__section">
+                          <velg-section-header>${msg('Operations')}</velg-section-header>
+                          ${this._renderReadiness()}
+                        </div>
+                      `
+                      : nothing
+                  }
 
                   ${
                     this._embassy

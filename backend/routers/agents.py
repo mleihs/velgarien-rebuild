@@ -118,25 +118,6 @@ async def delete_agent(
     return {"success": True, "data": agent}
 
 
-@router.post("/{agent_id}/generate-portrait", response_model=SuccessResponse[dict])
-async def generate_portrait(
-    simulation_id: UUID,
-    agent_id: UUID,
-    user: CurrentUser = Depends(get_current_user),
-    _role_check: str = Depends(require_role("editor")),
-    supabase: Client = Depends(get_supabase),
-) -> dict:
-    """Generate a portrait for an agent (stub — AI integration in Phase 3)."""
-    agent = await _service.get(supabase, simulation_id, agent_id)
-    return {
-        "success": True,
-        "data": {
-            "agent_id": agent["id"],
-            "status": "pending",
-            "message": "Portrait generation will be available in Phase 3.",
-        },
-    }
-
 
 @router.get("/{agent_id}/reactions", response_model=SuccessResponse[list])
 async def get_agent_reactions(

@@ -6,6 +6,7 @@ import { agentsApi, buildingsApi, embassiesApi, simulationsApi } from '../../ser
 import type { Agent, Building, EchoVector, Simulation } from '../../types/index.js';
 import '../shared/BaseModal.js';
 import { formStyles } from '../shared/form-styles.js';
+import { infoBubbleStyles } from '../shared/info-bubble-styles.js';
 import { VelgToast } from '../shared/Toast.js';
 import '../shared/VelgAvatar.js';
 import '../shared/VelgBadge.js';
@@ -17,6 +18,7 @@ type Step = 'partner' | 'protocol' | 'ambassadors' | 'confirm';
 export class VelgEmbassyCreateModal extends LitElement {
   static styles = [
     formStyles,
+    infoBubbleStyles,
     css`
       :host {
         display: block;
@@ -47,59 +49,6 @@ export class VelgEmbassyCreateModal extends LitElement {
       .steps__item--done {
         border-color: var(--color-primary);
         color: var(--color-primary);
-      }
-
-      /* --- Info Bubble --- */
-
-      .info-bubble {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        cursor: help;
-        margin-left: var(--space-1);
-      }
-
-      .info-bubble__icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        font-size: 10px;
-        font-weight: 700;
-        line-height: 1;
-        background: var(--color-text-secondary);
-        color: var(--color-surface);
-        flex-shrink: 0;
-        user-select: none;
-      }
-
-      .info-bubble__tooltip {
-        display: none;
-        position: absolute;
-        bottom: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--color-text-primary);
-        color: var(--color-surface);
-        padding: var(--space-2) var(--space-3);
-        font-family: var(--font-sans);
-        font-size: var(--text-xs);
-        font-weight: 400;
-        text-transform: none;
-        letter-spacing: 0;
-        line-height: 1.5;
-        white-space: normal;
-        width: 220px;
-        z-index: var(--z-tooltip);
-        box-shadow: var(--shadow-md);
-        pointer-events: none;
-      }
-
-      .info-bubble:hover .info-bubble__tooltip,
-      .info-bubble:focus-within .info-bubble__tooltip {
-        display: block;
       }
 
       /* --- Building Preview --- */
@@ -551,7 +500,7 @@ export class VelgEmbassyCreateModal extends LitElement {
         <div class="form__group">
           <label class="form__label">
             ${msg('Target Simulation')}
-            ${this._renderInfoBubble(msg('The partner simulation to establish diplomatic relations with.'))}
+            ${this._renderInfoBubble(msg('The partner world this embassy connects to. Each simulation pair can have multiple embassies with different bleed vectors.'))}
           </label>
           <select class="form__select" .value=${this._targetSimId} @change=${this._handleTargetSimChange}>
             <option value="">${msg('Select simulation...')}</option>
@@ -565,7 +514,7 @@ export class VelgEmbassyCreateModal extends LitElement {
               <div class="form__group">
                 <label class="form__label">
                   ${msg('Target Building')}
-                  ${this._renderInfoBubble(msg('The building in the partner simulation that will house the embassy.'))}
+                  ${this._renderInfoBubble(msg('The partner building that will house the embassy. Its condition and staffing affect embassy effectiveness.'))}
                 </label>
                 <select
                   class="form__select"
@@ -585,18 +534,6 @@ export class VelgEmbassyCreateModal extends LitElement {
             : nothing
         }
 
-        <div class="footer">
-          <button class="footer__btn footer__btn--cancel" @click=${this._close}>
-            ${msg('Cancel')}
-          </button>
-          <button
-            class="footer__btn footer__btn--save"
-            ?disabled=${!this._targetSimId || !this._targetBuildingId}
-            @click=${this._handleNext}
-          >
-            ${msg('Next')}
-          </button>
-        </div>
       </form>
     `;
   }
@@ -616,7 +553,7 @@ export class VelgEmbassyCreateModal extends LitElement {
         <div class="form__group">
           <label class="form__label">
             ${msg('Bleed Vector')}
-            ${this._renderInfoBubble(msg('The channel through which reality bleeds between connected simulations.'))}
+            ${this._renderInfoBubble(msg('The thematic channel through which reality bleeds. Commerce: trade events. Language: linguistic drift. Memory: traumatic echoes. Resonance: parallel relationships. Architecture: structural influence. Dream: visions. Desire: yearning.'))}
           </label>
           <select
             class="form__select"
@@ -632,7 +569,7 @@ export class VelgEmbassyCreateModal extends LitElement {
         <div class="form__group">
           <label class="form__label">
             ${msg('The Question')}
-            ${this._renderInfoBubble(msg('The fundamental existential question this embassy explores between worlds.'))}
+            ${this._renderInfoBubble(msg('The fundamental existential question this embassy explores. Shapes AI narrative when events bleed through this channel. A well-crafted question produces richer echo narratives.'))}
           </label>
           <textarea
             class="form__textarea"
@@ -645,14 +582,6 @@ export class VelgEmbassyCreateModal extends LitElement {
           ></textarea>
         </div>
 
-        <div class="footer">
-          <button class="footer__btn footer__btn--cancel" @click=${this._handleBack}>
-            ${msg('Back')}
-          </button>
-          <button class="footer__btn footer__btn--save" @click=${this._handleNext}>
-            ${msg('Next')}
-          </button>
-        </div>
       </form>
     `;
   }
@@ -774,14 +703,6 @@ export class VelgEmbassyCreateModal extends LitElement {
         </div>
       </div>
 
-      <div class="footer" style="margin-top: var(--space-4);">
-        <button class="footer__btn footer__btn--cancel" @click=${this._handleBack}>
-          ${msg('Back')}
-        </button>
-        <button class="footer__btn footer__btn--save" @click=${this._handleNext}>
-          ${msg('Next')}
-        </button>
-      </div>
     `;
   }
 
@@ -842,7 +763,30 @@ export class VelgEmbassyCreateModal extends LitElement {
           : nothing
       }
 
-      <div class="footer" style="margin-top: var(--space-4);">
+    `;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Footer (centralized, rendered in slot="footer")
+  // ---------------------------------------------------------------------------
+
+  private _renderFooter() {
+    if (this._step === 'partner') {
+      return html`
+        <button class="footer__btn footer__btn--cancel" @click=${this._close}>
+          ${msg('Cancel')}
+        </button>
+        <button
+          class="footer__btn footer__btn--save"
+          ?disabled=${!this._targetSimId || !this._targetBuildingId}
+          @click=${this._handleNext}
+        >
+          ${msg('Next')}
+        </button>
+      `;
+    }
+    if (this._step === 'confirm') {
+      return html`
         <button class="footer__btn footer__btn--cancel" @click=${this._handleBack}>
           ${msg('Back')}
         </button>
@@ -853,7 +797,16 @@ export class VelgEmbassyCreateModal extends LitElement {
         >
           ${this._loading ? msg('Establishing...') : msg('Establish & Activate')}
         </button>
-      </div>
+      `;
+    }
+    // protocol + ambassadors
+    return html`
+      <button class="footer__btn footer__btn--cancel" @click=${this._handleBack}>
+        ${msg('Back')}
+      </button>
+      <button class="footer__btn footer__btn--save" @click=${this._handleNext}>
+        ${msg('Next')}
+      </button>
     `;
   }
 
@@ -875,6 +828,7 @@ export class VelgEmbassyCreateModal extends LitElement {
         ${this._step === 'protocol' ? this._renderProtocolStep() : nothing}
         ${this._step === 'ambassadors' ? this._renderAmbassadorsStep() : nothing}
         ${this._step === 'confirm' ? this._renderConfirmStep() : nothing}
+        <div slot="footer">${this._renderFooter()}</div>
       </velg-base-modal>
     `;
   }
