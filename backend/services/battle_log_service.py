@@ -45,8 +45,12 @@ class BattleLogService:
         if mission_id:
             data["mission_id"] = str(mission_id)
 
-        resp = supabase.table("battle_log").insert(data).execute()
-        return resp.data[0] if resp.data else data
+        try:
+            resp = supabase.table("battle_log").insert(data).execute()
+            return resp.data[0] if resp.data else data
+        except Exception:
+            logger.debug("Battle log insert skipped (RLS): %s", event_type)
+            return data
 
     # ── Convenience Loggers ───────────────────────────────
 

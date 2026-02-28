@@ -24,6 +24,12 @@ class ScoringService:
         cycle_number: int,
     ) -> list[dict]:
         """Compute and store scores for all participants in the current cycle."""
+        # Refresh materialized views so freshly cloned game instances have data
+        try:
+            supabase.rpc("refresh_all_game_metrics").execute()
+        except Exception:
+            logger.warning("Failed to refresh materialized views before scoring")
+
         epoch = await EpochService.get(supabase, epoch_id)
         participants = await EpochService.list_participants(supabase, epoch_id)
 

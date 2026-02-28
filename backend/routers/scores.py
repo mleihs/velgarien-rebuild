@@ -78,8 +78,11 @@ async def compute_scores(
     epoch = await EpochService.get(supabase, epoch_id)
     cycle_number = cycle or epoch.get("current_cycle", 1)
     data = await ScoringService.compute_cycle_scores(supabase, epoch_id, cycle_number)
-    await AuditService.log_action(
-        supabase, None, user.id, "epoch_scores", None, "create",
-        details={"epoch_id": str(epoch_id), "cycle": cycle_number, "scores_computed": len(data)},
-    )
+    try:
+        await AuditService.log_action(
+            supabase, None, user.id, "epoch_scores", None, "create",
+            details={"epoch_id": str(epoch_id), "cycle": cycle_number, "scores_computed": len(data)},
+        )
+    except Exception:
+        logger.debug("Audit log skipped for score compute (RLS)")
     return {"success": True, "data": data}

@@ -91,9 +91,12 @@ async def create_epoch(
         description=body.description,
         config=body.config.model_dump() if body.config else None,
     )
-    await AuditService.log_action(
-        supabase, None, user.id, "game_epochs", data["id"], "create",
-    )
+    try:
+        await AuditService.log_action(
+            supabase, None, user.id, "game_epochs", data["id"], "create",
+        )
+    except Exception:
+        logger.debug("Audit log skipped for epoch create (RLS)")
     return {"success": True, "data": data}
 
 
@@ -132,10 +135,13 @@ async def start_epoch(
     await BattleLogService.log_phase_change(
         supabase, epoch_id, 1, "lobby", "foundation"
     )
-    await AuditService.log_action(
-        supabase, None, user.id, "game_epochs", epoch_id, "update",
-        details={"action": "start", "new_status": "foundation"},
-    )
+    try:
+        await AuditService.log_action(
+            supabase, None, user.id, "game_epochs", epoch_id, "update",
+            details={"action": "start", "new_status": "foundation"},
+        )
+    except Exception:
+        logger.debug("Audit log skipped for epoch start (RLS)")
     return {"success": True, "data": data}
 
 
@@ -153,10 +159,13 @@ async def advance_phase(
     await BattleLogService.log_phase_change(
         supabase, epoch_id, epoch.get("current_cycle", 1), old_status, data["status"]
     )
-    await AuditService.log_action(
-        supabase, None, user.id, "game_epochs", epoch_id, "update",
-        details={"action": "advance", "old_status": old_status, "new_status": data["status"]},
-    )
+    try:
+        await AuditService.log_action(
+            supabase, None, user.id, "game_epochs", epoch_id, "update",
+            details={"action": "advance", "old_status": old_status, "new_status": data["status"]},
+        )
+    except Exception:
+        logger.debug("Audit log skipped for epoch advance (RLS)")
     return {"success": True, "data": data}
 
 
@@ -173,10 +182,13 @@ async def cancel_epoch(
     await BattleLogService.log_phase_change(
         supabase, epoch_id, epoch.get("current_cycle", 0), epoch["status"], "cancelled"
     )
-    await AuditService.log_action(
-        supabase, None, user.id, "game_epochs", epoch_id, "update",
-        details={"action": "cancel", "old_status": epoch["status"]},
-    )
+    try:
+        await AuditService.log_action(
+            supabase, None, user.id, "game_epochs", epoch_id, "update",
+            details={"action": "cancel", "old_status": epoch["status"]},
+        )
+    except Exception:
+        logger.debug("Audit log skipped for epoch cancel (RLS)")
     return {"success": True, "data": data}
 
 
@@ -200,10 +212,13 @@ async def resolve_cycle(
 ) -> dict:
     """Resolve the current cycle (allocate RP, advance cycle counter). Creator only."""
     data = await EpochService.resolve_cycle(supabase, epoch_id)
-    await AuditService.log_action(
-        supabase, None, user.id, "game_epochs", epoch_id, "update",
-        details={"action": "resolve_cycle", "cycle": data.get("current_cycle")},
-    )
+    try:
+        await AuditService.log_action(
+            supabase, None, user.id, "game_epochs", epoch_id, "update",
+            details={"action": "resolve_cycle", "cycle": data.get("current_cycle")},
+        )
+    except Exception:
+        logger.debug("Audit log skipped for resolve-cycle (RLS)")
     return {"success": True, "data": data}
 
 

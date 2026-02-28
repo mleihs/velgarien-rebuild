@@ -142,10 +142,13 @@ async def resolve_missions(
     cycle = epoch.get("current_cycle", 1)
     for mission in results:
         await BattleLogService.log_mission_result(supabase, epoch_id, cycle, mission)
-        await AuditService.log_action(
-            supabase, None, user.id, "operative_missions", mission.get("id"), "update",
-            details={"action": "resolve", "outcome": mission.get("mission_result", {}).get("outcome")},
-        )
+        try:
+            await AuditService.log_action(
+                supabase, None, user.id, "operative_missions", mission.get("id"), "update",
+                details={"action": "resolve", "outcome": mission.get("mission_result", {}).get("outcome")},
+            )
+        except Exception:
+            logger.debug("Audit log skipped for mission resolve (RLS)")
 
     return {"success": True, "data": results}
 

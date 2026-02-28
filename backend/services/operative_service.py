@@ -21,6 +21,7 @@ SECURITY_LEVEL_MAP: dict[str, float] = {
     "high": 8.5,
     "guarded": 7.0,
     "moderate": 5.5,
+    "medium": 5.5,
     "low": 4.0,
     "lawless": 2.0,
     "contested": 3.0,
@@ -276,15 +277,14 @@ class OperativeService:
                 sec_level = zone_resp.data.get("security_level", "moderate")
                 zone_security = SECURITY_LEVEL_MAP.get(sec_level, 5.0)
 
-        # Guardian count in target zone
+        # Guardian count in target simulation (guardians defend their own sim)
         guardian_count = 0
-        if body.target_zone_id and body.target_simulation_id:
+        if body.target_simulation_id:
             guardians_resp = (
                 supabase.table("operative_missions")
                 .select("id")
                 .eq("operative_type", "guardian")
                 .eq("source_simulation_id", str(body.target_simulation_id))
-                .eq("target_zone_id", str(body.target_zone_id))
                 .in_("status", ["active"])
                 .execute()
             )
