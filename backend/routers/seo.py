@@ -9,6 +9,8 @@ from supabase import Client
 
 router = APIRouter(tags=["seo"])
 
+INDEXNOW_KEY = "299fb48f40654304a83169241a35900a"
+
 ROBOTS_TXT = """User-agent: *
 Allow: /
 Allow: /dashboard
@@ -49,6 +51,9 @@ async def sitemap_xml(supabase: Client = Depends(get_anon_supabase)) -> Response
     # Multiverse map
     _add_url(urlset, "https://metaverse.center/multiverse", now, "0.8", "weekly")
 
+    # How to Play guide
+    _add_url(urlset, "https://metaverse.center/how-to-play", now, "0.7", "monthly")
+
     # Per-simulation views
     for sim in simulations:
         sim_updated = sim.get("updated_at", now)
@@ -71,6 +76,11 @@ async def sitemap_xml(supabase: Client = Depends(get_anon_supabase)) -> Response
         media_type="application/xml",
         headers={"Cache-Control": "public, max-age=3600"},
     )
+
+
+@router.get(f"/{INDEXNOW_KEY}.txt", response_class=PlainTextResponse)
+async def indexnow_key() -> PlainTextResponse:
+    return PlainTextResponse(content=INDEXNOW_KEY)
 
 
 def _add_url(parent: Element, loc: str, lastmod: str, priority: str, changefreq: str) -> None:

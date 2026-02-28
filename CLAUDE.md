@@ -109,6 +109,7 @@ python3.13 -m ruff check --fix backend/       # Auto-fix lint issues
 # Frontend (run from frontend/ directory)
 npm run dev                                    # Vite dev server on :5173
 npx vitest run                                 # Run tests
+npx tsc --noEmit                              # TypeScript type-check (run BEFORE push)
 npx biome check src/                          # Lint
 npx biome check --write src/                  # Auto-fix lint issues
 npx lit-localize extract                       # Extract msg() strings to XLIFF
@@ -142,10 +143,20 @@ sleep 5 && curl -s http://localhost:8000/api/v1/health && head -5 /tmp/velgarien
 # Docker queries (when psql not available)
 docker exec supabase_db_velgarien-rebuild psql -U postgres -c "SELECT ..."
 
+# Pre-Push Checklist (run ALL before git push)
+cd frontend && npx tsc --noEmit               # TypeScript type-check (catches CI failures)
+cd frontend && npx biome check src/           # Lint check
+cd frontend && npx vitest run                 # Unit tests
+python3.13 -m ruff check backend/            # Backend lint
+python3.13 -m pytest backend/tests/ -v       # Backend tests
+
 # Production Deployment
 SUPABASE_ACCESS_TOKEN=sbp_... supabase db push    # Push migrations to production
 git push origin main                                # Code deploy (Railway auto-builds)
 curl -s https://metaverse.center/api/v1/health     # Verify production health
+# Notify search engines of updated pages (IndexNow — Bing/Yandex/Seznam/Naver)
+curl -s -X POST "https://api.indexnow.org/indexnow" -H "Content-Type: application/json" \
+  -d "$(curl -s https://metaverse.center/sitemap.xml | grep -oE 'https://metaverse\.center/[^<]+' | jq -Rsc '{host:"metaverse.center",key:"299fb48f40654304a83169241a35900a",keyLocation:"https://metaverse.center/299fb48f40654304a83169241a35900a.txt",urlList:split("\n")|map(select(length>0))}')"
 
 # Production DB via REST API (NOT via MCP — MCP is local only!)
 curl -s "https://bffjoupddfjaljqrwqck.supabase.co/rest/v1/TABLE?select=COLS" \
