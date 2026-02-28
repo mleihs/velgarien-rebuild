@@ -22,24 +22,24 @@ export class VelgEpochInvitePanel extends LitElement {
   static styles = css`
     /* ── Scan-line overlay on entire panel ── */
     :host {
-      --amber: #f59e0b;
-      --amber-dim: #b87a08;
-      --amber-glow: rgba(245, 158, 11, 0.2);
-      --panel-bg: #0f0f0f;
-      --surface: #1a1a1a;
-      --border-dim: #333;
-      --text-bright: #f0f0f0;
-      --text-mid: #ccc;
-      --text-dim: #999;
+      --amber: var(--color-warning);
+      --amber-dim: var(--color-warning-hover);
+      --amber-glow: color-mix(in srgb, var(--color-warning) 20%, transparent);
+      --panel-bg: var(--color-gray-950);
+      --surface: var(--color-gray-900);
+      --border-dim: var(--color-gray-700);
+      --text-bright: var(--color-gray-100);
+      --text-mid: var(--color-gray-300);
+      --text-dim: var(--color-gray-500);
     }
 
     /* Override VelgSidePanel theme tokens — force dark HUD aesthetic */
     velg-side-panel {
-      --color-surface-raised: #0f0f0f;
-      --color-surface-header: #141414;
-      --color-text-primary: #f0f0f0;
-      --border-default: 1px solid #333;
-      --border-medium: 1px solid #333;
+      --color-surface-raised: var(--color-gray-950);
+      --color-surface-header: var(--color-gray-900);
+      --color-text-primary: var(--color-gray-100);
+      --border-default: 1px solid var(--color-gray-700);
+      --border-medium: 1px solid var(--color-gray-700);
     }
 
     .panel-body {
@@ -139,7 +139,7 @@ export class VelgEpochInvitePanel extends LitElement {
     }
 
     .send-btn:hover:not(:disabled) {
-      background: #fbbf24;
+      background: var(--color-warning-border);
       box-shadow: 0 0 12px var(--amber-glow);
     }
 
@@ -282,8 +282,8 @@ export class VelgEpochInvitePanel extends LitElement {
     }
 
     .status-badge--accepted {
-      border: 1px solid #22c55e;
-      color: #4ade80;
+      border: 1px solid var(--color-success);
+      color: var(--color-success);
     }
 
     .status-badge--expired {
@@ -292,8 +292,8 @@ export class VelgEpochInvitePanel extends LitElement {
     }
 
     .status-badge--revoked {
-      border: 1px solid #dc2626;
-      color: #ef4444;
+      border: 1px solid var(--color-danger-hover);
+      color: var(--color-danger);
     }
 
     .status-badge__dot {
@@ -319,8 +319,8 @@ export class VelgEpochInvitePanel extends LitElement {
     }
 
     .revoke-btn:hover {
-      border-color: #dc2626;
-      color: #ef4444;
+      border-color: var(--color-danger-hover);
+      color: var(--color-danger);
     }
 
     /* ── Empty state ── */

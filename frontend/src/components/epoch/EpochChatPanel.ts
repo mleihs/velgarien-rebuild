@@ -25,17 +25,19 @@ type ChatChannel = 'epoch' | 'team';
 export class VelgEpochChatPanel extends LitElement {
   static styles = css`
     :host {
-      --amber: #f59e0b;
-      --amber-dim: #b87a08;
-      --amber-glow: rgba(245, 158, 11, 0.15);
-      --green-signal: #22c55e;
-      --panel-bg: #0f0f0f;
-      --surface: #1a1a1a;
-      --surface-raised: #222;
-      --border-dim: #333;
-      --text-bright: #f0f0f0;
-      --text-mid: #bbb;
-      --text-dim: #777;
+      --amber: var(--color-warning);
+      --amber-dim: var(--color-warning-hover);
+      --amber-glow: color-mix(in srgb, var(--color-warning) 15%, transparent);
+      --amber-tint: color-mix(in srgb, var(--color-warning) 8%, transparent);
+      --amber-border: color-mix(in srgb, var(--color-warning) 20%, transparent);
+      --green-signal: var(--color-success);
+      --panel-bg: var(--color-gray-950);
+      --surface: var(--color-gray-900);
+      --surface-raised: var(--color-gray-800);
+      --border-dim: var(--color-gray-700);
+      --text-bright: var(--color-gray-100);
+      --text-mid: var(--color-gray-300);
+      --text-dim: var(--color-gray-500);
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -216,8 +218,8 @@ export class VelgEpochChatPanel extends LitElement {
     }
 
     .msg--self .msg__body {
-      background: rgba(245, 158, 11, 0.08);
-      border: 1px solid rgba(245, 158, 11, 0.2);
+      background: var(--amber-tint);
+      border: 1px solid var(--amber-border);
       border-right: 3px solid var(--amber);
       color: var(--text-bright);
     }
@@ -288,7 +290,7 @@ export class VelgEpochChatPanel extends LitElement {
     }
 
     .send-btn:hover:not(:disabled) {
-      background: #fbbf24;
+      background: var(--color-warning-border);
       box-shadow: 0 0 12px var(--amber-glow);
     }
 
@@ -315,7 +317,7 @@ export class VelgEpochChatPanel extends LitElement {
     }
 
     .char-count--danger {
-      color: #ef4444;
+      color: var(--color-danger);
     }
 
     /* ── Disabled overlay ── */
@@ -394,7 +396,7 @@ export class VelgEpochChatPanel extends LitElement {
         : await epochChatApi.listMessages(this.epochId, { limit: 50 });
 
     if (result.success && result.data) {
-      const messages = result.data as unknown as EpochChatMessage[];
+      const messages = result.data;
       const total = (result.meta as { total?: number } | undefined)?.total ?? 0;
       if (channel === 'epoch') {
         realtimeService.epochMessages.value = messages;
@@ -425,7 +427,7 @@ export class VelgEpochChatPanel extends LitElement {
         : await epochChatApi.listMessages(this.epochId, { limit: 50, before: oldestTime });
 
     if (result.success && result.data) {
-      const older = result.data as unknown as EpochChatMessage[];
+      const older = result.data;
       const total = (result.meta as { total?: number } | undefined)?.total ?? 0;
       if (this._activeChannel === 'epoch') {
         realtimeService.epochMessages.value = [...older, ...this._epochMessages];

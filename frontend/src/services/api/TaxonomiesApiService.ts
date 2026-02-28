@@ -1,21 +1,12 @@
-import type {
-  ApiResponse,
-  PaginatedResponse,
-  SimulationTaxonomy,
-  TaxonomyType,
-} from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { ApiResponse, SimulationTaxonomy, TaxonomyType } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class TaxonomiesApiService extends BaseApiService {
   list(
     simulationId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<SimulationTaxonomy>>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/taxonomies`, params);
-    }
-    return this.get(`/simulations/${simulationId}/taxonomies`, params);
+  ): Promise<ApiResponse<SimulationTaxonomy[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/taxonomies`, params);
   }
 
   getByType(simulationId: string, type: TaxonomyType): Promise<ApiResponse<SimulationTaxonomy[]>> {

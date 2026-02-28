@@ -112,6 +112,21 @@ export class BaseApiService {
   }
 
   /**
+   * GET for simulation-scoped reads. Uses public endpoint when user is
+   * not authenticated OR not a member of the current simulation.
+   * This ensures authenticated non-members can still browse all sims.
+   */
+  protected getSimulationData<T>(
+    path: string,
+    params?: Record<string, string>,
+  ): Promise<ApiResponse<T>> {
+    if (!appState.isAuthenticated.value || !appState.currentRole.value) {
+      return this.getPublic(path, params);
+    }
+    return this.get(path, params);
+  }
+
+  /**
    * Public GET — routes to /api/v1/public prefix, no Authorization header.
    * Used for anonymous read access to active simulation data.
    */

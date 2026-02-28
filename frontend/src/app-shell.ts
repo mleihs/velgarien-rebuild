@@ -329,16 +329,37 @@ export class VelgApp extends LitElement {
 
   /**
    * Shared enter guard for simulation routes.
-   * Awaits auth, then resolves the slug/UUID to a simulation BEFORE render runs.
-   * This eliminates the race condition where render fires with an unresolved slug.
+   * Awaits auth, resolves slug/UUID to a simulation, and determines membership
+   * BEFORE render runs. This ensures API services route correctly (public vs
+   * authenticated) based on `currentRole` being set.
    */
   private async _enterSimulationRoute(id: string | undefined): Promise<boolean> {
     await this._authReady;
     if (id) {
       const resolved = await this._resolveSimulation(id);
       if (!resolved) return false;
+      await this._checkMembership(resolved);
     }
     return true;
+  }
+
+  /** Determine current user's membership role for a simulation. */
+  private async _checkMembership(simulationId: string): Promise<void> {
+    if (!appState.isAuthenticated.value) {
+      appState.setCurrentRole(null);
+      return;
+    }
+    const response = await membersApi.list(simulationId);
+    if (response.success && response.data) {
+      const members = Array.isArray(response.data) ? response.data : [];
+      const userId = appState.user.value?.id;
+      const me = members.find((m) => m.user_id === userId);
+      appState.setCurrentRole(
+        me ? (me.member_role as 'owner' | 'admin' | 'editor' | 'viewer') : null,
+      );
+    } else {
+      appState.setCurrentRole(null);
+    }
   }
 
   /** Wait for auth to be ready, then redirect authenticated users away from login/register. */
@@ -417,45 +438,19 @@ export class VelgApp extends LitElement {
     if (this._lastLoadedSimulationId === simulationId) return;
     this._lastLoadedSimulationId = simulationId;
 
-    if (appState.isAuthenticated.value) {
-      // Authenticated: load taxonomies, member role, and design settings in parallel
-      const [taxResponse, membersResponse, settingsResponse] = await Promise.all([
-        taxonomiesApi.list(simulationId, { limit: '500' }),
-        membersApi.list(simulationId),
-        settingsApi.list(simulationId, 'design'),
-      ]);
+    // Membership already determined in _enterSimulationRoute().
+    // Load taxonomies + design settings (both use public endpoints for non-members).
+    const [taxResponse, settingsResponse] = await Promise.all([
+      taxonomiesApi.list(simulationId, { limit: '500' }),
+      settingsApi.list(simulationId, 'design'),
+    ]);
 
-      if (taxResponse.success && taxResponse.data) {
-        appState.setTaxonomies(Array.isArray(taxResponse.data) ? taxResponse.data : []);
-      }
+    if (taxResponse.success && taxResponse.data) {
+      appState.setTaxonomies(Array.isArray(taxResponse.data) ? taxResponse.data : []);
+    }
 
-      if (membersResponse.success && membersResponse.data) {
-        const members = Array.isArray(membersResponse.data) ? membersResponse.data : [];
-        const userId = appState.user.value?.id;
-        const me = members.find((m) => m.user_id === userId);
-        if (me) {
-          appState.setCurrentRole(me.member_role as 'owner' | 'admin' | 'editor' | 'viewer');
-        }
-      }
-
-      if (settingsResponse.success && settingsResponse.data) {
-        appState.setSettings(Array.isArray(settingsResponse.data) ? settingsResponse.data : []);
-      }
-    } else {
-      // Anonymous: load taxonomies + design settings via public API, skip members
-      appState.setCurrentRole(null);
-      const [taxResponse, settingsResponse] = await Promise.all([
-        taxonomiesApi.list(simulationId, { limit: '500' }),
-        settingsApi.list(simulationId, 'design'),
-      ]);
-
-      if (taxResponse.success && taxResponse.data) {
-        appState.setTaxonomies(Array.isArray(taxResponse.data) ? taxResponse.data : []);
-      }
-
-      if (settingsResponse.success && settingsResponse.data) {
-        appState.setSettings(Array.isArray(settingsResponse.data) ? settingsResponse.data : []);
-      }
+    if (settingsResponse.success && settingsResponse.data) {
+      appState.setSettings(Array.isArray(settingsResponse.data) ? settingsResponse.data : []);
     }
   }
 

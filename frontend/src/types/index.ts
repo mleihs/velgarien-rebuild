@@ -609,6 +609,14 @@ export interface AgentRelationship {
   target_agent?: Agent;
 }
 
+export interface RelationshipSuggestion {
+  target_agent_id: string;
+  relationship_type: string;
+  intensity: number;
+  description: string;
+  is_bidirectional: boolean;
+}
+
 // --- Event Echoes ---
 
 export type EchoVector =

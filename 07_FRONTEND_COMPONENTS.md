@@ -1,7 +1,9 @@
 # 07 - Frontend Components: Komponenten + Simulation-Settings-UI
 
-**Version:** 1.5
+**Version:** 1.7
 **Datum:** 2026-02-28
+**Aenderung v1.7:** Public API routing fix — `BaseApiService.getSimulationData()` helper checks both `isAuthenticated` AND `currentRole` for simulation-scoped reads. 14 API services migrated. `_enterSimulationRoute()` determines membership via `_checkMembership()` before render. `SettingsApiService` design category always uses public endpoint.
+**Aenderung v1.6:** Full-Stack Audit v2 — EpochCommandCenter decomposed into 5 child components (EpochOpsBoard, EpochOverviewTab, EpochOperationsTab, EpochAlliancesTab, EpochLobbyActions). HowToPlayView CSS extracted to htp-styles.ts. New shared CSS: grid-layout-styles.ts (entity card grids for 5 views). ~60 hardcoded hex colors replaced with CSS custom property tokens in 10 epoch components. Updated counts: 123 files across 16 subdirectories, 101 @customElement components, 10 shared CSS modules.
 **Aenderung v1.5:** Epoch Realtime — EpochChatPanel (dual-channel tactical comms), EpochPresenceIndicator (online user dots), EpochReadyPanel (cycle readiness toggle). EpochCommandCenter now has collapsible COMMS sidebar on Operations Board. RealtimeService singleton (4 Supabase Realtime channels with Preact Signals). EpochChatApiService. Updated counts: 116 files across 16 subdirectories, 96 @customElement components, 23 API services + 8 platform services. how-to-play/ and epoch invite components also now reflected.
 **Aenderung v1.4:** Accurate component audit — 107 files across 15 subdirectories, 90 @customElement components. Updated shared/ (16 components + 8 CSS modules + 1 base class), removed dead code listings (DataTable, FormBuilder, NotificationCenter, CampaignDetailView, CampaignMetrics, SentimentBadge, SupabaseRealtimeService, PresenceService). Added health/, epoch/, lore/, EventPicker, BleedSettingsPanel, PromptsSettingsPanel. Updated service layer (22 API services + 7 platform services).
 **Aenderung v1.3:** Cartographer's Map (Multiverse-Visualisierung). Agent Relationships UI (RelationshipCard, RelationshipEditModal). Event Echoes UI (EchoCard, EchoTriggerModal). 7 neue Multiverse-Komponenten. Bleed-Filter in EventsView.
@@ -14,7 +16,7 @@
 
 ### Plattform-Level
 
-**116 component files** across 16 subdirectories. **96 @customElement** components. **16 shared components + 8 CSS modules + 1 base class.**
+**123 component files** across 16 subdirectories. **101 @customElement** components. **16 shared components + 10 CSS modules + 1 base class.**
 
 ```
 App (Root)
@@ -108,7 +110,12 @@ SimulationShell (Layout mit Navigation)
 ├── SimulationLoreView
 │   └── Lore Content (4 per-simulation content files)
 ├── SimulationHealthView (Game Metrics Dashboard)
-├── EpochCommandCenter (Competitive PvP)
+├── EpochCommandCenter (Competitive PvP — orchestrator, delegates to subcomponents)
+│   ├── EpochOpsBoard (dossier cards + COMMS sidebar, dispatches select/join/create events)
+│   ├── EpochOverviewTab (overview + mission render, dispatches deploy/counter/recall events)
+│   ├── EpochOperationsTab (operations tab, dispatches recall events)
+│   ├── EpochAlliancesTab (alliances tab, dispatches create/join/leave-team events)
+│   ├── EpochLobbyActions (lobby + admin controls, dispatches epoch lifecycle events)
 │   ├── EpochCreationWizard
 │   ├── EpochLeaderboard
 │   ├── EpochBattleLog
@@ -116,8 +123,7 @@ SimulationShell (Layout mit Navigation)
 │   ├── EpochInvitePanel (VelgSidePanel slide-out, email invitations)
 │   ├── EpochChatPanel (dual-channel tactical comms: ALL CHANNELS / TEAM FREQ)
 │   ├── EpochPresenceIndicator (online user dot per simulation_id)
-│   ├── EpochReadyPanel (cycle ready toggle with live broadcast)
-│   └── Collapsible COMMS Sidebar (Operations Board, toggle with unread badge)
+│   └── EpochReadyPanel (cycle ready toggle with live broadcast)
 └── SettingsView
     ├── GeneralSettingsPanel
     ├── WorldSettingsPanel (Taxonomien)
@@ -131,7 +137,7 @@ SimulationShell (Layout mit Navigation)
 
 ### Shared Components
 
-**16 components + 8 CSS modules + 1 base class** (25 files total)
+**16 components + 10 CSS modules + 1 base class** (27 files total)
 
 ```
 Shared (wiederverwendbar ueber alle Views)
@@ -160,7 +166,8 @@ Shared (wiederverwendbar ueber alle Views)
 │   ├── settings-styles.ts           .settings-panel, .settings-form, .settings-btn, .settings-toggle
 │   ├── info-bubble-styles.ts        Game mechanics info bubble tooltips
 │   ├── panel-cascade-styles.ts      Detail panel staggered cascade entrance animations
-│   └── typography-styles.ts         Shared typography patterns
+│   ├── typography-styles.ts         Shared typography patterns
+│   └── grid-layout-styles.ts       Entity card grids (.entity-grid, --grid-min-width, responsive breakpoints)
 └── Base Class (1)
     └── BaseSettingsPanel            Abstract base for simulation_settings-backed panels (load/save/dirty-tracking)
 ```
@@ -493,7 +500,7 @@ Siehe **10_AUTH_AND_SECURITY.md** für vollständige Code-Beispiele der Supabase
 
 ```
 frontend/src/services/api/
-├── BaseApiService.ts               # Basis mit JWT-Header, Error-Handling, Simulation-Context, getPublic()
+├── BaseApiService.ts               # Basis mit JWT-Header, Error-Handling, getPublic(), getSimulationData() (auth+role check)
 ├── SimulationsApiService.ts        # Simulations CRUD + slug resolution
 ├── MembersApiService.ts            # Simulation membership management
 ├── SettingsApiService.ts           # Simulation settings (design, AI, integration, access)
@@ -715,10 +722,10 @@ Alle Änderungen zeigen eine Live-Preview innerhalb der Shell. Preset-Auswahl f�
 | multiverse/ | 7 | 4 | CartographerMap, MapGraph, MapTooltip, MapConnectionPanel + 3 utilities |
 | settings/ | 9 | 9 | SettingsView + 8 panels (General, World, AI, Integration, Design, Access, Prompts, Bleed) |
 | health/ | 1 | 1 | SimulationHealthView (game metrics dashboard) |
-| epoch/ | 10 | 10 | CommandCenter, CreationWizard, Leaderboard, BattleLog, DeployOperativeModal, InvitePanel, InviteAcceptView, ChatPanel, PresenceIndicator, ReadyPanel |
-| how-to-play/ | 4 | 1 | HowToPlayView + 3 content/type files (htp-types, htp-content-rules, htp-content-matches) |
-| shared/ | 25 | 16 | 16 components + 8 CSS modules + 1 base class |
-| **Gesamt** | **116** | **96** (in components/) | **16 Verzeichnisse** |
+| epoch/ | 15 | 15 | CommandCenter (orchestrator), OpsBoard, OverviewTab, OperationsTab, AlliancesTab, LobbyActions, CreationWizard, Leaderboard, BattleLog, DeployOperativeModal, InvitePanel, InviteAcceptView, ChatPanel, PresenceIndicator, ReadyPanel |
+| how-to-play/ | 5 | 1 | HowToPlayView + htp-styles (extracted CSS) + 3 content/type files (htp-types, htp-content-rules, htp-content-matches) |
+| shared/ | 27 | 16 | 16 components + 10 CSS modules + 1 base class |
+| **Gesamt** | **123** | **101** (in components/) | **16 Verzeichnisse** |
 
 ### Utilities
 

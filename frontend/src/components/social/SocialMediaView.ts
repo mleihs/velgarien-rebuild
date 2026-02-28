@@ -3,6 +3,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { socialMediaApi } from '../../services/api/index.js';
 import type { SocialMediaPost } from '../../types/index.js';
+import { gridLayoutStyles } from '../shared/grid-layout-styles.js';
 import type { FilterChangeDetail } from '../shared/SharedFilterBar.js';
 import { VelgToast } from '../shared/Toast.js';
 
@@ -17,7 +18,9 @@ import './PostTransformModal.js';
 @localized()
 @customElement('velg-social-media-view')
 export class VelgSocialMediaView extends LitElement {
-  static styles = css`
+  static styles = [
+    gridLayoutStyles,
+    css`
     :host { display: block; }
     .social { display: flex; flex-direction: column; gap: var(--space-4); }
     .social__header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
@@ -31,9 +34,9 @@ export class VelgSocialMediaView extends LitElement {
       box-shadow: var(--shadow-md); cursor: pointer; transition: all var(--transition-fast);
     }
     .social__btn:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-lg); }
-    .social__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); }
-    @media (max-width: 480px) { .social__grid { grid-template-columns: 1fr; } }
-  `;
+    .entity-grid { --grid-min-width: 260px; }
+  `,
+  ];
 
   @property({ type: String }) simulationId = '';
   @state() private _posts: SocialMediaPost[] = [];
@@ -152,7 +155,7 @@ export class VelgSocialMediaView extends LitElement {
         ${
           !this._loading && this._posts.length > 0
             ? html`
-          <div class="social__grid">
+          <div class="entity-grid">
             ${this._posts.map(
               (p) => html`
               <velg-post-card .post=${p} @post-transform=${this._handleTransform}></velg-post-card>

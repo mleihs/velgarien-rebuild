@@ -22,10 +22,20 @@ type AuthMode = 'login' | 'register';
 export class VelgEpochInviteAcceptView extends LitElement {
   static styles = css`
     :host {
+      --amber: var(--color-warning);
+      --amber-light: var(--color-warning-border);
+      --amber-glow: color-mix(in srgb, var(--color-warning) 15%, transparent);
+      --hud-bg: var(--color-gray-950);
+      --hud-surface: var(--color-gray-900);
+      --hud-border: var(--color-gray-800);
+      --hud-border-dim: var(--color-gray-700);
+      --hud-text: var(--color-gray-200);
+      --hud-text-dim: var(--color-gray-600);
+      --hud-text-muted: var(--color-gray-500);
       display: block;
       min-height: 100vh;
-      background: #0a0a0a;
-      color: #e5e5e5;
+      background: var(--hud-bg);
+      color: var(--hud-text);
       font-family: var(--font-brutalist, 'Courier New', Courier, monospace);
     }
 
@@ -49,14 +59,14 @@ export class VelgEpochInviteAcceptView extends LitElement {
       flex-direction: column;
       justify-content: center;
       padding: clamp(32px, 6vw, 80px);
-      border-right: 1px solid #1a1a1a;
+      border-right: 1px solid var(--hud-surface);
       overflow: hidden;
     }
 
     @media (max-width: 768px) {
       .intel {
         border-right: none;
-        border-bottom: 1px solid #1a1a1a;
+        border-bottom: 1px solid var(--hud-surface);
         padding: 40px 24px;
       }
     }
@@ -71,8 +81,8 @@ export class VelgEpochInviteAcceptView extends LitElement {
         0deg,
         transparent,
         transparent 3px,
-        rgba(245 158 11 / 0.012) 3px,
-        rgba(245 158 11 / 0.012) 6px
+        color-mix(in srgb, var(--amber) 1.2%, transparent) 3px,
+        color-mix(in srgb, var(--amber) 1.2%, transparent) 6px
       );
       z-index: 1;
     }
@@ -88,12 +98,12 @@ export class VelgEpochInviteAcceptView extends LitElement {
       font-weight: 900;
       letter-spacing: 5px;
       text-transform: uppercase;
-      color: #555;
+      color: var(--hud-text-dim);
       animation: flicker-in 0.6s ease-out;
     }
 
     .intel__classification span {
-      color: #f59e0b;
+      color: var(--amber);
     }
 
     @keyframes flicker-in {
@@ -109,7 +119,7 @@ export class VelgEpochInviteAcceptView extends LitElement {
       font-weight: 900;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: #f59e0b;
+      color: var(--amber);
       line-height: 1.1;
       animation: slide-up 0.5s ease-out 0.2s both;
     }
@@ -120,9 +130,9 @@ export class VelgEpochInviteAcceptView extends LitElement {
     }
 
     .intel__dossier {
-      border: 1px dashed #333;
+      border: 1px dashed var(--hud-border-dim);
       padding: 20px 24px;
-      background: #0f0f0f;
+      background: var(--color-gray-950);
       animation: slide-up 0.5s ease-out 0.35s both;
     }
 
@@ -132,14 +142,14 @@ export class VelgEpochInviteAcceptView extends LitElement {
       font-weight: 900;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: #555;
+      color: var(--hud-text-dim);
     }
 
     .intel__dossier-text {
       margin: 0;
       font-size: 13px;
       line-height: 1.8;
-      color: #999;
+      color: var(--hud-text-muted);
       font-style: italic;
     }
 
@@ -149,12 +159,12 @@ export class VelgEpochInviteAcceptView extends LitElement {
       gap: 6px;
       margin-top: 24px;
       padding: 4px 12px;
-      border: 1px solid #333;
+      border: 1px solid var(--hud-border-dim);
       font-size: 9px;
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #666;
+      color: var(--hud-text-dim);
       animation: slide-up 0.5s ease-out 0.5s both;
     }
 
@@ -162,8 +172,8 @@ export class VelgEpochInviteAcceptView extends LitElement {
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: #f59e0b;
-      box-shadow: 0 0 6px #f59e0b;
+      background: var(--amber);
+      box-shadow: 0 0 6px var(--amber);
     }
 
     /* ── Right: Auth Terminal ── */
@@ -181,7 +191,7 @@ export class VelgEpochInviteAcceptView extends LitElement {
       font-weight: 900;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #555;
+      color: var(--hud-text-dim);
     }
 
     /* ── Auth Tabs ── */
@@ -189,7 +199,7 @@ export class VelgEpochInviteAcceptView extends LitElement {
       display: flex;
       gap: 0;
       margin-bottom: 28px;
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid var(--hud-border);
     }
 
     .auth-tab {
@@ -198,7 +208,7 @@ export class VelgEpochInviteAcceptView extends LitElement {
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
-      color: #555;
+      color: var(--hud-text-dim);
       font-family: inherit;
       font-size: 10px;
       font-weight: 900;
@@ -209,12 +219,12 @@ export class VelgEpochInviteAcceptView extends LitElement {
     }
 
     .auth-tab:hover {
-      color: #888;
+      color: var(--hud-text-muted);
     }
 
     .auth-tab--active {
-      color: #f59e0b;
-      border-bottom-color: #f59e0b;
+      color: var(--amber);
+      border-bottom-color: var(--amber);
     }
 
     /* ── Form ── */
@@ -235,14 +245,14 @@ export class VelgEpochInviteAcceptView extends LitElement {
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #555;
+      color: var(--hud-text-dim);
     }
 
     .field__input {
       padding: 10px 14px;
-      background: #111;
-      border: 1px solid #222;
-      color: #e5e5e5;
+      background: var(--hud-surface);
+      border: 1px solid var(--hud-border);
+      color: var(--hud-text);
       font-family: inherit;
       font-size: 13px;
       letter-spacing: 0.5px;
@@ -251,19 +261,19 @@ export class VelgEpochInviteAcceptView extends LitElement {
     }
 
     .field__input:focus {
-      border-color: #f59e0b;
-      box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.15);
+      border-color: var(--amber);
+      box-shadow: 0 0 0 1px var(--amber-glow);
     }
 
     .field__input::placeholder {
-      color: #333;
+      color: var(--hud-border-dim);
     }
 
     .auth-btn {
       margin-top: 8px;
       padding: 12px 24px;
-      background: #f59e0b;
-      color: #0a0a0a;
+      background: var(--amber);
+      color: var(--hud-bg);
       border: none;
       font-family: inherit;
       font-size: 12px;
@@ -275,8 +285,8 @@ export class VelgEpochInviteAcceptView extends LitElement {
     }
 
     .auth-btn:hover:not(:disabled) {
-      background: #fbbf24;
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+      background: var(--amber-light);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--amber) 20%, transparent);
     }
 
     .auth-btn:active:not(:disabled) {
@@ -290,9 +300,9 @@ export class VelgEpochInviteAcceptView extends LitElement {
 
     .auth-error {
       padding: 8px 12px;
-      border: 1px solid #7f1d1d;
-      background: rgba(127, 29, 29, 0.15);
-      color: #ef4444;
+      border: 1px solid var(--color-danger-hover);
+      background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+      color: var(--color-danger);
       font-size: 11px;
       letter-spacing: 0.5px;
     }
@@ -316,22 +326,22 @@ export class VelgEpochInviteAcceptView extends LitElement {
       font-weight: 900;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #22c55e;
+      color: var(--color-success);
     }
 
     .access-granted__msg {
       margin: 0 0 28px;
       font-size: 10px;
       letter-spacing: 1px;
-      color: #555;
+      color: var(--hud-text-dim);
     }
 
     .enter-btn {
       display: inline-block;
       padding: 14px 32px;
-      background: #f59e0b;
-      color: #0a0a0a;
-      border: 2px solid #f59e0b;
+      background: var(--amber);
+      color: var(--hud-bg);
+      border: 2px solid var(--amber);
       font-family: inherit;
       font-size: 12px;
       font-weight: 900;
@@ -343,8 +353,8 @@ export class VelgEpochInviteAcceptView extends LitElement {
     }
 
     .enter-btn:hover {
-      background: #fbbf24;
-      box-shadow: 0 0 24px rgba(245, 158, 11, 0.25);
+      background: var(--amber-light);
+      box-shadow: 0 0 24px color-mix(in srgb, var(--amber) 25%, transparent);
     }
 
     /* ── Loading / Error / Expired states ── */
@@ -360,7 +370,7 @@ export class VelgEpochInviteAcceptView extends LitElement {
       max-width: 480px;
       width: 100%;
       padding: 40px;
-      border: 1px solid #222;
+      border: 1px solid var(--hud-border);
       text-align: center;
     }
 
@@ -373,30 +383,30 @@ export class VelgEpochInviteAcceptView extends LitElement {
     }
 
     .state-card__title--error {
-      color: #ef4444;
+      color: var(--color-danger);
     }
 
     .state-card__title--expired {
-      color: #f59e0b;
+      color: var(--amber);
     }
 
     .state-card__title--loading {
-      color: #555;
+      color: var(--hud-text-dim);
     }
 
     .state-card__text {
       margin: 0;
       font-size: 12px;
       line-height: 1.7;
-      color: #666;
+      color: var(--hud-text-dim);
     }
 
     .state-card__link {
       display: inline-block;
       margin-top: 20px;
       padding: 10px 24px;
-      border: 1px solid #333;
-      color: #999;
+      border: 1px solid var(--hud-border-dim);
+      color: var(--hud-text-muted);
       font-family: inherit;
       font-size: 10px;
       font-weight: 900;
@@ -408,8 +418,8 @@ export class VelgEpochInviteAcceptView extends LitElement {
     }
 
     .state-card__link:hover {
-      border-color: #f59e0b;
-      color: #f59e0b;
+      border-color: var(--amber);
+      color: var(--amber);
     }
 
     /* Loading pulse */
@@ -589,7 +599,7 @@ export class VelgEpochInviteAcceptView extends LitElement {
       return html`
         <div class="state-screen">
           <div class="state-card">
-            <h1 class="state-card__title" style="color: #22c55e;">
+            <h1 class="state-card__title" style="color: var(--color-success);">
               ${msg('Summons Already Accepted')}
             </h1>
             <p class="state-card__text">

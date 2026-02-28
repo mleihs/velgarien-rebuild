@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { buildingsApi } from '../../services/api/index.js';
 import type { Building } from '../../types/index.js';
+import { gridLayoutStyles } from '../shared/grid-layout-styles.js';
 import type { FilterChangeDetail } from '../shared/SharedFilterBar.js';
 import { viewHeaderStyles } from '../shared/view-header-styles.js';
 import '../shared/SharedFilterBar.js';
@@ -23,19 +24,14 @@ import './EmbassyCreateModal.js';
 export class VelgBuildingsView extends LitElement {
   static styles = [
     viewHeaderStyles,
+    gridLayoutStyles,
     css`
     :host {
       display: block;
     }
 
-    .view__grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    .entity-grid {
       gap: var(--space-5);
-    }
-
-    @media (max-width: 480px) {
-      .view__grid { grid-template-columns: 1fr; }
     }
   `,
   ];
@@ -325,7 +321,7 @@ export class VelgBuildingsView extends LitElement {
     return html`
       <span class="view__count">${this._total !== 1 ? msg(str`${this._total} buildings total`) : msg(str`${this._total} building total`)}</span>
 
-      <div class="view__grid">
+      <div class="entity-grid">
         ${this._buildings.map(
           (building, i) => html`
             <velg-building-card

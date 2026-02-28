@@ -523,7 +523,7 @@ velgarien-platform/
 #### P1.3.2 — Auth Dependencies (JWT + Supabase Client)
 **Dateien:** `backend/dependencies.py`
 **Aktion:**
-- `get_current_user()` — JWT-Validierung via python-jose
+- `get_current_user()` — JWT-Validierung via PyJWT (ES256/JWKS + HS256 Fallback)
 - `get_supabase()` — Client mit User-JWT (RLS aktiv)
 - `get_admin_supabase()` — Service Key (nur fuer Admin-Ops)
 - `get_simulation_context()` — Membership-Pruefung

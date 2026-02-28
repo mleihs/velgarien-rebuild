@@ -1,22 +1,15 @@
 import type { ApiResponse, City, CityStreet, Zone } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class LocationsApiService extends BaseApiService {
   // --- Cities ---
 
   listCities(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<City[]>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/locations/cities`, params);
-    }
-    return this.get(`/simulations/${simulationId}/locations/cities`, params);
+    return this.getSimulationData(`/simulations/${simulationId}/locations/cities`, params);
   }
 
   getCity(simulationId: string, cityId: string): Promise<ApiResponse<City>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/locations/cities/${cityId}`);
-    }
-    return this.get(`/simulations/${simulationId}/locations/cities/${cityId}`);
+    return this.getSimulationData(`/simulations/${simulationId}/locations/cities/${cityId}`);
   }
 
   createCity(simulationId: string, data: Partial<City>): Promise<ApiResponse<City>> {
@@ -34,17 +27,11 @@ export class LocationsApiService extends BaseApiService {
   // --- Zones ---
 
   listZones(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<Zone[]>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/locations/zones`, params);
-    }
-    return this.get(`/simulations/${simulationId}/locations/zones`, params);
+    return this.getSimulationData(`/simulations/${simulationId}/locations/zones`, params);
   }
 
   getZone(simulationId: string, zoneId: string): Promise<ApiResponse<Zone>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/locations/zones/${zoneId}`);
-    }
-    return this.get(`/simulations/${simulationId}/locations/zones/${zoneId}`);
+    return this.getSimulationData(`/simulations/${simulationId}/locations/zones/${zoneId}`);
   }
 
   createZone(simulationId: string, data: Partial<Zone>): Promise<ApiResponse<Zone>> {
@@ -65,10 +52,7 @@ export class LocationsApiService extends BaseApiService {
     simulationId: string,
     params?: Record<string, string>,
   ): Promise<ApiResponse<CityStreet[]>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/locations/streets`, params);
-    }
-    return this.get(`/simulations/${simulationId}/locations/streets`, params);
+    return this.getSimulationData(`/simulations/${simulationId}/locations/streets`, params);
   }
 
   createStreet(simulationId: string, data: Partial<CityStreet>): Promise<ApiResponse<CityStreet>> {

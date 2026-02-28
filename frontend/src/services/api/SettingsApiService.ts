@@ -1,5 +1,4 @@
 import type { ApiResponse, SettingCategory, SimulationSetting } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class SettingsApiService extends BaseApiService {
@@ -7,21 +6,25 @@ export class SettingsApiService extends BaseApiService {
     simulationId: string,
     category?: SettingCategory,
   ): Promise<ApiResponse<SimulationSetting[]>> {
-    if (!appState.isAuthenticated.value) {
+    // Design settings are publicly readable (anon RLS policy, migration 020).
+    // Always use public endpoint for design to avoid 403 for authenticated non-members.
+    if (category === 'design') {
       return this.getPublic(`/simulations/${simulationId}/settings`);
     }
-    const params = category ? { category } : undefined;
-    return this.get(`/simulations/${simulationId}/settings`, params);
+    return this.getSimulationData(
+      `/simulations/${simulationId}/settings`,
+      category ? { category } : undefined,
+    );
   }
 
   getByCategory(
     simulationId: string,
     category: SettingCategory,
   ): Promise<ApiResponse<SimulationSetting[]>> {
-    if (!appState.isAuthenticated.value) {
+    if (category === 'design') {
       return this.getPublic(`/simulations/${simulationId}/settings`);
     }
-    return this.get(`/simulations/${simulationId}/settings`, { category });
+    return this.getSimulationData(`/simulations/${simulationId}/settings`, { category });
   }
 
   getById(simulationId: string, settingId: string): Promise<ApiResponse<SimulationSetting>> {

@@ -19,6 +19,7 @@ Disallow: /login
 Disallow: /register
 Disallow: /profile
 Disallow: /new-simulation
+Disallow: /epoch/join
 Disallow: /api/
 
 Sitemap: https://metaverse.center/sitemap.xml
@@ -53,6 +54,9 @@ async def sitemap_xml(supabase: Client = Depends(get_anon_supabase)) -> Response
 
     # How to Play guide
     _add_url(urlset, "https://metaverse.center/how-to-play", now, "0.7", "monthly")
+
+    # Epoch lobby
+    _add_url(urlset, "https://metaverse.center/epoch", now, "0.6", "daily")
 
     # Per-simulation views
     for sim in simulations:

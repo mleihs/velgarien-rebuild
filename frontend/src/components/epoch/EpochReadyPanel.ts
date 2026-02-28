@@ -22,15 +22,15 @@ import { VelgToast } from '../shared/Toast.js';
 export class VelgEpochReadyPanel extends LitElement {
   static styles = css`
     :host {
-      --amber: #f59e0b;
-      --amber-dim: #b87a08;
-      --amber-glow: rgba(245, 158, 11, 0.15);
-      --panel-bg: #0f0f0f;
-      --surface: #1a1a1a;
-      --border-dim: #333;
-      --text-bright: #f0f0f0;
-      --text-mid: #bbb;
-      --text-dim: #777;
+      --amber: var(--color-warning);
+      --amber-dim: var(--color-warning-hover);
+      --amber-glow: color-mix(in srgb, var(--color-warning) 15%, transparent);
+      --panel-bg: var(--color-gray-950);
+      --surface: var(--color-gray-900);
+      --border-dim: var(--color-gray-700);
+      --text-bright: var(--color-gray-100);
+      --text-mid: var(--color-gray-300);
+      --text-dim: var(--color-gray-500);
       display: block;
       font-family: var(--font-brutalist, 'Courier New', monospace);
     }
@@ -138,7 +138,7 @@ export class VelgEpochReadyPanel extends LitElement {
 
     .participant__tag--ready {
       color: var(--amber);
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
     }
 
     .participant__tag--waiting {
@@ -167,7 +167,7 @@ export class VelgEpochReadyPanel extends LitElement {
     }
 
     .ready-btn--signal:hover:not(:disabled) {
-      background: rgba(245, 158, 11, 0.1);
+      background: color-mix(in srgb, var(--amber) 10%, transparent);
       box-shadow: 0 0 16px var(--amber-glow);
     }
 
@@ -177,8 +177,8 @@ export class VelgEpochReadyPanel extends LitElement {
     }
 
     .ready-btn--revoke:hover:not(:disabled) {
-      border-color: #ef4444;
-      color: #ef4444;
+      border-color: var(--color-danger);
+      color: var(--color-danger);
     }
 
     .ready-btn:disabled {

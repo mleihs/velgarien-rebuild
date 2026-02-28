@@ -3,27 +3,16 @@ import type {
   Building,
   BuildingAgentRelation,
   BuildingProfessionRequirement,
-  PaginatedResponse,
 } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class BuildingsApiService extends BaseApiService {
-  list(
-    simulationId: string,
-    params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<Building>>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/buildings`, params);
-    }
-    return this.get(`/simulations/${simulationId}/buildings`, params);
+  list(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<Building[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/buildings`, params);
   }
 
   getById(simulationId: string, buildingId: string): Promise<ApiResponse<Building>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/buildings/${buildingId}`);
-    }
-    return this.get(`/simulations/${simulationId}/buildings/${buildingId}`);
+    return this.getSimulationData(`/simulations/${simulationId}/buildings/${buildingId}`);
   }
 
   create(simulationId: string, data: Partial<Building>): Promise<ApiResponse<Building>> {
@@ -95,7 +84,7 @@ export class BuildingsApiService extends BaseApiService {
   listPublic(
     simulationId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<Building>>> {
+  ): Promise<ApiResponse<Building[]>> {
     return this.getPublic(`/simulations/${simulationId}/buildings`, params);
   }
 }

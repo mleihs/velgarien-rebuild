@@ -5,11 +5,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 from backend.dependencies import get_current_user, get_supabase, require_role
-from backend.middleware.rate_limit import RATE_LIMIT_AI_GENERATION
+from backend.middleware.rate_limit import RATE_LIMIT_AI_GENERATION, limiter
 from backend.models.common import CurrentUser, SuccessResponse
 from backend.services.external.openrouter import OpenRouterError
 from backend.services.external_service_resolver import ExternalServiceResolver
@@ -25,60 +23,65 @@ router = APIRouter(
     tags=["generation"],
 )
 
-limiter = Limiter(key_func=get_remote_address)
-
-
 # --- Request models ---
 
 
 class GenerateAgentRequest(BaseModel):
     """Request to generate an agent description."""
 
-    name: str = Field(..., min_length=1, max_length=255)
-    system: str = ""
-    gender: str = ""
-    locale: str = "de"
+    name: str = Field(..., min_length=1, max_length=255, description="Display name of the agent to generate.")
+    system: str = Field("", description="Agent's system/faction affiliation within the simulation.")
+    gender: str = Field("", description="Agent's gender (used for pronoun selection in generated text).")
+    locale: str = Field("de", description="Target language for the generated description (ISO 639-1).")
 
 
 class GenerateBuildingRequest(BaseModel):
     """Request to generate a building description."""
 
-    building_type: str = Field(..., min_length=1)
-    name: str | None = None
-    style: str | None = None
-    condition: str | None = None
-    locale: str = "de"
+    building_type: str = Field(
+        ..., min_length=1, description="Taxonomy building type (e.g. 'residential', 'military')."
+    )
+    name: str | None = Field(None, description="Optional building name; unnamed buildings get a generic description.")
+    style: str | None = Field(None, description="Architectural style (e.g. 'brutalist', 'gothic', 'industrial').")
+    condition: str | None = Field(None, description="Current building condition (e.g. 'good', 'damaged', 'ruins').")
+    locale: str = Field("de", description="Target language for the generated description (ISO 639-1).")
 
 
 class GeneratePortraitRequest(BaseModel):
     """Request to generate a portrait description."""
 
-    agent_id: UUID
-    agent_name: str = Field(..., min_length=1)
-    agent_data: dict | None = None
+    agent_id: UUID = Field(..., description="UUID of the agent whose portrait to describe.")
+    agent_name: str = Field(..., min_length=1, description="Display name of the agent (used in the prompt).")
+    agent_data: dict | None = Field(
+        None, description="Optional agent metadata (appearance, background) for the prompt."
+    )
 
 
 class GenerateEventRequest(BaseModel):
     """Request to generate an event."""
 
-    event_type: str = Field(..., min_length=1)
-    locale: str = "de"
+    event_type: str = Field(
+        ..., min_length=1, description="Taxonomy event type (e.g. 'political', 'social', 'military')."
+    )
+    locale: str = Field("de", description="Target language for the generated event (ISO 639-1).")
 
 
 class GenerateRelationshipsRequest(BaseModel):
     """Request to generate agent relationships."""
 
-    agent_id: UUID
-    locale: str = "de"
+    agent_id: UUID = Field(..., description="UUID of the focal agent to generate relationships for.")
+    locale: str = Field("de", description="Target language for relationship descriptions (ISO 639-1).")
 
 
 class GenerateImageRequest(BaseModel):
     """Request to generate an image for an entity."""
 
-    entity_type: str = Field(..., pattern="^(agent|building)$")
-    entity_id: UUID
-    entity_name: str = Field(..., min_length=1)
-    extra: dict | None = None
+    entity_type: str = Field(
+        ..., pattern="^(agent|building)$", description="Entity kind: 'agent' or 'building'."
+    )
+    entity_id: UUID = Field(..., description="UUID of the entity to generate an image for.")
+    entity_name: str = Field(..., min_length=1, description="Display name of the entity (used in the image prompt).")
+    extra: dict | None = Field(None, description="Additional entity metadata passed to the image generation pipeline.")
 
 
 # --- Helpers ---

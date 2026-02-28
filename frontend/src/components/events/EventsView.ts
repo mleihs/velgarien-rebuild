@@ -13,6 +13,7 @@ import '../shared/Pagination.js';
 import '../shared/LoadingState.js';
 import '../shared/ErrorState.js';
 import '../shared/EmptyState.js';
+import { gridLayoutStyles } from '../shared/grid-layout-styles.js';
 import { viewHeaderStyles } from '../shared/view-header-styles.js';
 import './EventCard.js';
 import './EventEditModal.js';
@@ -23,19 +24,10 @@ import './EventDetailsPanel.js';
 export class VelgEventsView extends LitElement {
   static styles = [
     viewHeaderStyles,
+    gridLayoutStyles,
     css`
     :host {
       display: block;
-    }
-
-    .view__grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: var(--space-4);
-    }
-
-    @media (max-width: 480px) {
-      .view__grid { grid-template-columns: 1fr; }
     }
 
     .events__bleed-filter {
@@ -291,7 +283,7 @@ export class VelgEventsView extends LitElement {
                 ></velg-empty-state>
               `
                 : html`
-                <div class="view__grid">
+                <div class="entity-grid">
                   ${this._events.map(
                     (evt, i) => html`
                       <velg-event-card

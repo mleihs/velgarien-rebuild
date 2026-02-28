@@ -1,7 +1,8 @@
 # 03 - Database Schema New: Neues Schema mit Simulation-Kontext
 
-**Version:** 2.4
+**Version:** 2.5
 **Datum:** 2026-02-28
+**Aenderung v2.5:** Neuer Index `idx_echo_source_sim_status` auf event_echoes(source_simulation_id, status) fuer Scoring-Queries.
 **Aenderung v2.4:** 2 neue Tabellen (epoch_invitations, epoch_chat_messages). 41 Tabellen gesamt, 170 RLS-Policies, ~40 unique Triggers (63 Trigger-Eintraege), 8 Views, 4 materialisierte Views, 21 Functions (ohne unaccent-Varianten). Migrationen 034-037. Operative Effects (ambassador blocking, infiltration penalty, betrayal penalty). Game Instances (simulation cloning for balanced PvP). Epoch Invitations (email-based player invitations with AI lore). Epoch Realtime (in-game chat + ready signals via Supabase broadcast triggers).
 **Aenderung v2.3:** 9 neue Tabellen (embassies, game_epochs, epoch_teams, epoch_participants, operative_missions, epoch_scores, battle_log + vorherige agent_relationships, event_echoes, simulation_connections). 39 Tabellen gesamt, 161 RLS-Policies, ~38 unique Triggers (59 Trigger-Eintraege), 8 Views, 4 materialisierte Views, 19 Functions (ohne unaccent-Varianten). Migrationen 026-033. Competitive Layer (Epochs, Operatives, Scoring, Battle Log). Embassies & Ambassadors (Cross-Sim Diplomatic Buildings). Game-Mechanics-Functions (materialized view refresh, weight fallback, epoch status validation).
 **Aenderung v2.2:** 3 neue Tabellen (agent_relationships, event_echoes, simulation_connections). 30 Tabellen gesamt, 130 RLS-Policies, 25 Triggers. Migration 026. Taxonomy-Typ `relationship_type` mit 24 Werten (6 pro Simulation).
@@ -1689,6 +1690,7 @@ CREATE TABLE event_echoes (
 CREATE INDEX idx_echo_source ON event_echoes(source_event_id);
 CREATE INDEX idx_echo_target_sim ON event_echoes(target_simulation_id);
 CREATE INDEX idx_echo_status ON event_echoes(status);
+CREATE INDEX idx_echo_source_sim_status ON event_echoes(source_simulation_id, status);
 ```
 
 **Constraints:**

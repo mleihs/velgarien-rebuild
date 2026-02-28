@@ -1,7 +1,8 @@
 # 04 - Domain Models: Entitaeten mit Simulation-Scope
 
-**Version:** 2.4
+**Version:** 2.5
 **Datum:** 2026-02-28
+**Aenderung v2.5:** RelationshipSuggestion interface (AI-generated relationship suggestions for inline review in AgentDetailsPanel).
 **Aenderung v2.4:** Epoch Chat types (EpochChatMessage, PresenceUser). Epoch Invitation types (EpochInvitation, EpochInvitationStatus). HowToPlay types (HtpSection, HtpOperativeCard, HtpMatch, HtpMatchReplay). cycle_ready on EpochParticipant. simulation_type/source_template_id/epoch_id on Simulation.
 **Aenderung v2.3:** Embassy types (EmbassyStatus, EmbassyAmbassador, EmbassyMetadata, Embassy). Game Mechanics types (BuildingReadiness, ZoneStability, EmbassyEffectiveness, SimulationHealth, SimulationHealthDashboard). Competitive Layer types (Epoch, EpochParticipant, EpochTeam, OperativeMission, LeaderboardEntry, EpochScore, BattleLogEntry + enums). Chat fixes (AgentBrief, ChatEventReference, optional agent_id in ChatConversation). SettingCategory + `'prompts'`.
 **Aenderung v2.2:** 6 neue Interfaces (AgentRelationship, EventEcho, EchoVector, EchoStatus, SimulationConnection, MapData). Taxonomy-Typ `relationship_type`. Prompt-Template-Typen `relationship_generation` + `event_echo_transformation`.
@@ -735,6 +736,15 @@ interface AgentRelationship {
   // Populated
   source_agent?: Agent;
   target_agent?: Agent;
+}
+
+// AI-generated suggestion (used in AgentDetailsPanel inline review flow)
+interface RelationshipSuggestion {
+  target_agent_id: string;
+  relationship_type: string;
+  intensity: number;
+  description: string;
+  is_bidirectional: boolean;
 }
 ```
 

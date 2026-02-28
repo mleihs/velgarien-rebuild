@@ -1,25 +1,16 @@
-import type { ApiResponse, EchoVector, EventEcho, PaginatedResponse } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { ApiResponse, EchoVector, EventEcho } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class EchoesApiService extends BaseApiService {
   listForSimulation(
     simulationId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<EventEcho>>> {
-    const path = `/simulations/${simulationId}/echoes`;
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(path, params);
-    }
-    return this.get(path, params);
+  ): Promise<ApiResponse<EventEcho[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/echoes`, params);
   }
 
   listForEvent(simulationId: string, eventId: string): Promise<ApiResponse<EventEcho[]>> {
-    const path = `/simulations/${simulationId}/events/${eventId}/echoes`;
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(path);
-    }
-    return this.get(path);
+    return this.getSimulationData(`/simulations/${simulationId}/events/${eventId}/echoes`);
   }
 
   triggerEcho(

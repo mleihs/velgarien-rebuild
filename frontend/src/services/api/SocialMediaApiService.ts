@@ -1,6 +1,5 @@
 import type {
   ApiResponse,
-  PaginatedResponse,
   SocialMediaAgentReaction,
   SocialMediaComment,
   SocialMediaPost,
@@ -12,8 +11,8 @@ export class SocialMediaApiService extends BaseApiService {
   listPosts(
     simulationId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<SocialMediaPost>>> {
-    if (!appState.isAuthenticated.value) {
+  ): Promise<ApiResponse<SocialMediaPost[]>> {
+    if (!appState.isAuthenticated.value || !appState.currentRole.value) {
       return this.getPublic(`/simulations/${simulationId}/social-media`, params);
     }
     return this.get(`/simulations/${simulationId}/social-media/posts`, params);

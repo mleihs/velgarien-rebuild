@@ -1,7 +1,8 @@
 # 12 - Design System: Komplett-Neuaufbau
 
-**Version:** 1.1
-**Datum:** 2026-02-25
+**Version:** 1.2
+**Datum:** 2026-02-28
+**Aenderung v1.2:** Shared CSS Modules section added (10 modules documented). grid-layout-styles.ts for entity card grids. htp-styles.ts for HowToPlayView. ~60 hardcoded hex colors in epoch components replaced with CSS custom property tokens.
 **Aenderung v1.1:** 6 Theme-Presets implementiert (default, brutalist, fantasy-kingdom, cyberpunk, steampunk, deep-space-horror). WCAG 2.1 AA Kontrast-Validierung: 88 Tests (14 Paare pro Preset). Mindest-Kontrast: 4.5:1 (Normal-Text), 3.0:1 (Muted-Text, Button-Text, Badge-Text).
 
 ---
@@ -1279,6 +1280,27 @@ CSS Custom Properties durchdringen Shadow DOM automatisch - daher funktioniert d
 | Form-Styles | components + 5 Modals (7x) | `_form.css` |
 | Modal-Styles | components + VelgBaseModal (2x) | `_modal.css` |
 | Table-Styles | components + VelgDataTable (2x) | `_table.css` |
+
+---
+
+## Shared CSS Modules (10)
+
+Wiederverwendbare CSS-Module in `components/shared/` und `components/how-to-play/`. Verwendung: `static styles = [formStyles, css\`...\`]` — lokale Styles gewinnen per Kaskade.
+
+| Modul | Datei | Inhalt | Verwendet von |
+|-------|-------|--------|---------------|
+| `cardStyles` | `card-styles.ts` | `.card` hover/active + `.card--embassy` pulsing ring + gradient hover | AgentCard, BuildingCard, EventCard, CampaignCard, TrendCard |
+| `formStyles` | `form-styles.ts` | `.form`, `.form__group`, `.form__input/.form__textarea/.form__select`, `.footer` | Alle EditModals (Agent, Building, Event, etc.) |
+| `viewHeaderStyles` | `view-header-styles.ts` | `.view`, `.view__header`, `.view__title`, `.view__create-btn` | AgentsView, BuildingsView, EventsView |
+| `panelButtonStyles` | `panel-button-styles.ts` | `.panel__btn` base + `--edit`, `--danger`, `--generate` Varianten | Alle DetailsPanel-Komponenten |
+| `settingsStyles` | `settings-styles.ts` | `.settings-panel`, `.settings-form`, `.settings-btn`, `.settings-toggle` | AI, Integration, Design, Access Settings-Panels |
+| `infoBubbleStyles` | `info-bubble-styles.ts` | `renderInfoBubble(title, text)` Shared Render-Funktion | Alle EditModals mit Game-Mechanics-Tooltips |
+| `panelCascadeStyles` | `panel-cascade-styles.ts` | Staggered Detail-Panel Eingangs-Animationen | AgentDetailsPanel, BuildingDetailsPanel, EventDetailsPanel |
+| `typographyStyles` | `typography-styles.ts` | `.label-brutalist` Uppercase Brutalist-Labels | Diverse Komponenten |
+| `gridLayoutStyles` | `grid-layout-styles.ts` | `.entity-grid` mit `--grid-min-width` Custom Property, responsive Breakpoints | AgentsView, BuildingsView, EventsView, SocialMediaView, CampaignDashboard |
+| `htpStyles` | `how-to-play/htp-styles.ts` | Komplett-CSS fuer HowToPlayView (~1100 Zeilen), extrahiert fuer Uebersichtlichkeit | HowToPlayView |
+
+**grid-layout-styles.ts** — dedupliziert identische Grid-CSS aus 5 Views. Konfigurierbar via `--grid-min-width` Custom Property (default 240px, SocialMediaView/CampaignDashboard: 260px). Responsive Breakpoints: 640px (2 Spalten), 400px (1 Spalte).
 
 ---
 

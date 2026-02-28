@@ -1,9 +1,9 @@
-import type { ApiResponse, PaginatedResponse, Simulation } from '../../types/index.js';
+import type { ApiResponse, Simulation } from '../../types/index.js';
 import { appState } from '../AppStateManager.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class SimulationsApiService extends BaseApiService {
-  list(params?: Record<string, string>): Promise<ApiResponse<PaginatedResponse<Simulation>>> {
+  list(params?: Record<string, string>): Promise<ApiResponse<Simulation[]>> {
     if (!appState.isAuthenticated.value) {
       return this.getPublic('/simulations', params);
     }
@@ -33,7 +33,7 @@ export class SimulationsApiService extends BaseApiService {
     return this.delete(`/simulations/${id}`);
   }
 
-  listPublic(params?: Record<string, string>): Promise<ApiResponse<PaginatedResponse<Simulation>>> {
+  listPublic(params?: Record<string, string>): Promise<ApiResponse<Simulation[]>> {
     return this.getPublic('/simulations', params);
   }
 }

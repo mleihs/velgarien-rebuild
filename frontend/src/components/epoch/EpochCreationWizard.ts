@@ -818,6 +818,7 @@ export class VelgEpochCreationWizard extends LitElement {
           <input
             class="field__input"
             type="text"
+            aria-label=${msg('Epoch Name')}
             placeholder=${msg('The First Convergence')}
             .value=${this._name}
             @input=${(e: Event) => {
@@ -833,6 +834,7 @@ export class VelgEpochCreationWizard extends LitElement {
           </label>
           <textarea
             class="field__textarea"
+            aria-label=${msg('Description')}
             placeholder=${msg('Optional briefing for participants...')}
             .value=${this._description}
             @input=${(e: Event) => {
@@ -851,6 +853,7 @@ export class VelgEpochCreationWizard extends LitElement {
           </div>
           <input
             type="range"
+            aria-label=${msg('Duration')}
             min="3"
             max="60"
             .value=${String(this._durationDays)}
@@ -883,6 +886,7 @@ export class VelgEpochCreationWizard extends LitElement {
           </div>
           <input
             type="range"
+            aria-label=${msg('Cycle Interval')}
             min="2"
             max="24"
             .value=${String(this._cycleHours)}
@@ -904,6 +908,7 @@ export class VelgEpochCreationWizard extends LitElement {
             </div>
             <input
               type="range"
+              aria-label=${msg('RP per Cycle')}
               min="5"
               max="25"
               .value=${String(this._rpPerCycle)}
@@ -923,6 +928,7 @@ export class VelgEpochCreationWizard extends LitElement {
             </div>
             <input
               type="range"
+              aria-label=${msg('RP Cap')}
               min="15"
               max="75"
               step="5"
@@ -944,6 +950,7 @@ export class VelgEpochCreationWizard extends LitElement {
           </div>
           <input
             type="range"
+            aria-label=${msg('Max Team Size')}
             min="2"
             max="8"
             .value=${String(this._maxTeamSize)}
@@ -960,8 +967,18 @@ export class VelgEpochCreationWizard extends LitElement {
           </span>
           <div
             class="toggle ${this._allowBetrayal ? 'toggle--on' : ''}"
+            role="switch"
+            tabindex="0"
+            aria-checked=${this._allowBetrayal}
+            aria-label=${msg('Allow Betrayal')}
             @click=${() => {
               this._allowBetrayal = !this._allowBetrayal;
+            }}
+            @keydown=${(e: KeyboardEvent) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this._allowBetrayal = !this._allowBetrayal;
+              }
             }}
           >
             <div class="toggle__thumb"></div>
@@ -1068,6 +1085,7 @@ export class VelgEpochCreationWizard extends LitElement {
               </div>
               <input
                 type="range"
+                aria-label=${d.label}
                 min="0"
                 max="100"
                 step="5"

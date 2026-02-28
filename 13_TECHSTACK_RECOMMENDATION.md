@@ -1,7 +1,8 @@
 # 13 - Tech Stack Recommendation
 
-**Version:** 1.4
-**Datum:** 2026-02-25
+**Version:** 1.5
+**Datum:** 2026-02-28
+**Aenderung v1.5:** PyJWT Migration (python-jose → PyJWT[crypto]>=2.8.0), Python 3.13 minimum requirement, removed structlog + tenacity (unused).
 **Aenderung v1.4:** Biome 2.4 (exakte Version), Playwright E2E-Testing, Replicate API (Flux Dev) fuer Bildgenerierung, @lit/localize Runtime-Modus mit XLIFF-Workflow (893 Strings).
 **Änderung v1.3:** Lokale Supabase-Entwicklungsumgebung dokumentiert
 **Änderung v1.2:** Biome, Zod, @lit-labs/router, supabase-py async-Korrektur hinzugefügt
@@ -103,7 +104,7 @@
 | **Supabase Python SDK** | 2.x | Datenbank-Client | Nativer Supabase-Support, RLS-kompatibel |
 | **httpx** | 0.27+ | Async HTTP Client | Async-Aufrufe zu OpenRouter, Replicate, Facebook, News-APIs |
 | **LangChain** | 0.1+ | AI-Orchestrierung | Chat Memory, Prompt Templates, Chain-Komposition |
-| **structlog** | 23+ | Strukturiertes Logging | JSON-Logging, Kontext-Propagation |
+| **slowapi** | 0.1+ | Rate Limiting | Pro-Endpoint Rate Limiting (AI, chat, standard) |
 
 **Entfernen (gegenüber Altsystem):**
 - `Flask`, `flask-cors`, `flask-socketio` (durch FastAPI ersetzt)
@@ -120,9 +121,9 @@
 | `fastapi` | Web Framework | Ersetzt Flask |
 | `uvicorn[standard]` | ASGI Server | Ersetzt Gunicorn als primären Server |
 | `pydantic-settings` | Konfiguration | Typsichere .env-Konfiguration |
-| `python-jose[cryptography]` | JWT-Validierung | Supabase JWT-Token-Validierung |
+| `PyJWT[crypto]` | JWT-Validierung | Supabase JWT-Token-Validierung (ES256 via JWKS + HS256 Fallback) |
 | `cryptography` | Verschlüsselung | API-Key-Verschlüsselung in simulation_settings |
-| `tenacity` | Retry-Logik | Retry für externe API-Aufrufe |
+| `slowapi` | Rate Limiting | Request rate limiting per endpoint |
 | `ruff` | Linting + Formatting (Python) | Schneller als flake8 + black kombiniert |
 
 ### Infrastruktur
@@ -349,8 +350,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "If-Updated-At"],
 )
 ```
 
@@ -456,7 +457,7 @@ settings = Settings()
 [project]
 name = "velgarien-platform"
 version = "2.0.0"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.110.0",
     "uvicorn[standard]>=0.27.0",
@@ -468,15 +469,14 @@ dependencies = [
     "langchain-openai>=0.0.5",
     "Pillow>=10.0.1",
     "cryptography>=41.0.7",
-    "python-jose[cryptography]>=3.3.0",
-    "structlog>=23.2.0",
-    "tenacity>=9.1.2",
+    "PyJWT[crypto]>=2.8.0",
+    "slowapi>=0.1.9",
     "python-dotenv>=1.1.0",
     "python-multipart>=0.0.9",
 ]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py313"
 line-length = 120
 
 [tool.ruff.lint]
@@ -766,15 +766,14 @@ direkt im Browser verwaltet werden — identisch zum Cloud-Dashboard.
 | `uvicorn[standard]` | ASGI Server (ersetzt Gunicorn als primären Server) |
 | `pydantic` + `pydantic-settings` | Validierung, Serialisierung, Konfiguration |
 | `httpx` | Async HTTP Client für externe APIs |
-| `python-jose[cryptography]` | JWT-Validierung |
+| `PyJWT[crypto]` | JWT-Validierung (ES256 via JWKS + HS256) |
 | `python-multipart` | File-Upload-Support |
 | `supabase` | DB Client |
 | `langchain` + `langchain-openai` | AI Orchestrierung |
 | `Pillow` | Bildverarbeitung |
 | `cryptography` | API-Key-Verschlüsselung |
-| `structlog` | Logging |
+| `slowapi` | Rate Limiting |
 | `python-dotenv` | Env-Variablen (Fallback) |
-| `tenacity` | Retry-Logik |
 | `ruff` | Linting + Formatting |
 
 ### Backend: Entfernen (gegenüber Altsystem)

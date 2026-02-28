@@ -1,22 +1,9 @@
-import type {
-  ApiResponse,
-  Campaign,
-  CampaignEvent,
-  CampaignMetric,
-  PaginatedResponse,
-} from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { ApiResponse, Campaign, CampaignEvent, CampaignMetric } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class CampaignsApiService extends BaseApiService {
-  list(
-    simulationId: string,
-    params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<Campaign>>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/campaigns`, params);
-    }
-    return this.get(`/simulations/${simulationId}/campaigns`, params);
+  list(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<Campaign[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/campaigns`, params);
   }
 
   getById(simulationId: string, campaignId: string): Promise<ApiResponse<Campaign>> {

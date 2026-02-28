@@ -30,19 +30,19 @@ export class VelgEpochPresenceIndicator extends LitElement {
     }
 
     .dot--online {
-      background: #22c55e;
-      box-shadow: 0 0 4px rgba(34, 197, 94, 0.6);
+      background: var(--color-success);
+      box-shadow: 0 0 4px color-mix(in srgb, var(--color-success) 60%, transparent);
       animation: pulse-online 2s ease-in-out infinite;
     }
 
     .dot--offline {
-      background: #555;
+      background: var(--color-gray-600);
       box-shadow: none;
     }
 
     @keyframes pulse-online {
-      0%, 100% { box-shadow: 0 0 4px rgba(34, 197, 94, 0.6); }
-      50% { box-shadow: 0 0 8px rgba(34, 197, 94, 0.9); }
+      0%, 100% { box-shadow: 0 0 4px color-mix(in srgb, var(--color-success) 60%, transparent); }
+      50% { box-shadow: 0 0 8px color-mix(in srgb, var(--color-success) 90%, transparent); }
     }
   `;
 

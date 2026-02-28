@@ -1,7 +1,9 @@
 # 10 - Auth and Security
 
-**Version:** 1.2
-**Datum:** 2026-02-25
+**Version:** 1.4
+**Datum:** 2026-02-28
+**Aenderung v1.4:** Public API Routing Fix: `BaseApiService.getSimulationData()` prueft sowohl `isAuthenticated` als auch `currentRole` — routet zu Public-Endpoints wenn nicht authentifiziert ODER nicht Mitglied der Simulation. `_enterSimulationRoute()` bestimmt Membership via `_checkMembership()` VOR dem Render. `SettingsApiService` Design-Kategorie nutzt immer Public-Endpoint (anon RLS Policy). 14 Services migriert auf `getSimulationData()`.
+**Aenderung v1.3:** Security Hardening (Full-Stack Audit): PyJWT Migration (python-jose → PyJWT mit JWKS-Support fuer ES256 + HS256 Fallback), JWKS Cache TTL (1h), JWT-Fehlermeldungen sanitisiert (keine internen Details), CORS explizite Allowlists (allow_methods/allow_headers statt Wildcard).
 **Aenderung v1.2:** Public-First-Architektur: `get_anon_supabase()` erstellt Supabase-Client ohne JWT (anon-Key only). 21 anon-SELECT-RLS-Policies fuer oeffentlichen Lesezugriff. Frontend-Services routen GET-Requests via `appState.isAuthenticated.value` zu `/api/v1/public/*` (anon) oder `/api/v1/*` (auth). Rate-Limiting: 100/min fuer Public-Endpoints.
 
 ---
@@ -102,8 +104,10 @@ export const authService = new SupabaseAuthService();
 Das Backend erhält den Supabase-JWT im `Authorization` Header und validiert ihn:
 
 ```python
+import time
+import jwt as pyjwt
+from jwt import PyJWKClient
 from fastapi import Depends, HTTPException, Header
-from jose import jwt, JWTError
 from pydantic import BaseModel
 from uuid import UUID
 
@@ -112,24 +116,54 @@ class CurrentUser(BaseModel):
     email: str
     access_token: str  # Original-Token für Supabase-Client
 
+# JWKS client with TTL-based cache (1 hour)
+_jwks_client: PyJWKClient | None = None
+_jwks_fetched_at: float = 0
+_JWKS_TTL = 3600
+
+def _get_jwks_client() -> PyJWKClient:
+    """Get or create a JWKS client with TTL-based cache invalidation."""
+    global _jwks_client, _jwks_fetched_at
+    now = time.monotonic()
+    if _jwks_client is None or (now - _jwks_fetched_at) >= _JWKS_TTL:
+        url = f"{settings.supabase_url}/auth/v1/.well-known/jwks.json"
+        _jwks_client = PyJWKClient(url, headers={"apikey": settings.supabase_anon_key})
+        _jwks_fetched_at = now
+    return _jwks_client
+
+def _decode_jwt(token: str) -> dict:
+    """Decode JWT using JWKS (ES256, production) or shared secret (HS256, local)."""
+    header = pyjwt.get_unverified_header(token)
+    alg = header.get("alg", "HS256")
+    if alg == "HS256":
+        return pyjwt.decode(token, settings.supabase_jwt_secret,
+                            algorithms=["HS256"], audience="authenticated")
+    # ES256 (production) — fetch signing key from JWKS endpoint
+    client = _get_jwks_client()
+    signing_key = client.get_signing_key_from_jwt(token)
+    return pyjwt.decode(token, signing_key.key,
+                        algorithms=["ES256"], audience="authenticated")
+
 async def get_current_user(authorization: str = Header(...)) -> CurrentUser:
     """Validiert den Supabase-JWT aus dem Authorization Header."""
     try:
         token = authorization.replace("Bearer ", "")
-        payload = jwt.decode(
-            token,
-            settings.supabase_jwt_secret,
-            algorithms=["HS256"],
-            audience="authenticated"
-        )
+        payload = _decode_jwt(token)
         return CurrentUser(
             id=UUID(payload["sub"]),
             email=payload.get("email", ""),
-            access_token=token  # Wird an Supabase-Client weitergegeben
+            access_token=token
         )
-    except (JWTError, KeyError, ValueError):
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    except Exception:
+        # Sanitized error — no internal details leaked to client
+        raise HTTPException(status_code=401, detail="Invalid or expired token.")
 ```
+
+**Sicherheits-Hinweise (v1.3):**
+- **PyJWT statt python-jose:** `python-jose` ist unmaintained (letzte Release 2024, keine Python 3.14 Wheels). PyJWT 2.11+ ist aktiv gepflegt, unterstuetzt ES256+JWKS nativ.
+- **JWKS Cache TTL:** Signing Keys werden 1 Stunde gecacht. Verhindert JWKS-Endpoint-Spam bei hohem Traffic.
+- **JWT-Fehlermeldungen sanitisiert:** Fehlermeldungen enthalten keine internen Details (z.B. keine Token-Decode-Fehler). Echte Fehler werden auf WARNING-Level geloggt.
+- **CORS Allowlists:** `allow_methods` und `allow_headers` verwenden explizite Listen statt Wildcards (`["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]`, `["Authorization", "Content-Type", "If-Updated-At"]`).
 
 ### JWT Token-Struktur (Supabase-generiert)
 
@@ -584,5 +618,5 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 | Keine Security Headers | Fehlend | Vollständig via Middleware |
 | Kein Rate Limiting | Fehlend | Pro Endpoint-Typ + Supabase Auth built-in |
 | Permissive RLS | `USING (true)` auf vielen Tabellen | Simulation-basierte Isolation, kein pauschaler Bypass |
-| Kein CORS | Teilweise | Korrekt konfiguriert (Supabase URL + API URL) |
+| Kein CORS | Teilweise | Korrekt konfiguriert (explizite Allowlists, Supabase URL + API URL) |
 | Keine Input-Validierung | Nur Applikations-Logik | Pydantic Models + FK-Constraints + RLS |

@@ -343,10 +343,7 @@ export class VelgEventDetailsPanel extends LitElement {
     try {
       const response = await simulationsApi.list();
       if (response.success && response.data) {
-        const data = response.data;
-        this._simulations = Array.isArray(data)
-          ? data
-          : ((data as { items?: Simulation[] }).items ?? []);
+        this._simulations = response.data;
       }
     } catch {
       // Simulations list is optional context

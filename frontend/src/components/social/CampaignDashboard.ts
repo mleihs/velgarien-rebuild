@@ -4,6 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { campaignsApi } from '../../services/api/index.js';
 import type { Campaign } from '../../types/index.js';
 
+import { gridLayoutStyles } from '../shared/grid-layout-styles.js';
 import '../shared/LoadingState.js';
 import '../shared/ErrorState.js';
 import '../shared/EmptyState.js';
@@ -13,14 +14,16 @@ import './CampaignCard.js';
 @localized()
 @customElement('velg-campaign-dashboard')
 export class VelgCampaignDashboard extends LitElement {
-  static styles = css`
+  static styles = [
+    gridLayoutStyles,
+    css`
     :host { display: block; }
     .campaigns { display: flex; flex-direction: column; gap: var(--space-4); }
     .campaigns__header { display: flex; align-items: center; justify-content: space-between; }
     .campaigns__title { font-family: var(--font-brutalist); font-weight: var(--font-black); font-size: var(--text-2xl); text-transform: uppercase; letter-spacing: var(--tracking-brutalist); margin: 0; }
-    .campaigns__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); }
-    @media (max-width: 480px) { .campaigns__grid { grid-template-columns: 1fr; } }
-  `;
+    .entity-grid { --grid-min-width: 260px; }
+  `,
+  ];
 
   @property({ type: String }) simulationId = '';
   @state() private _campaigns: Campaign[] = [];
@@ -79,7 +82,7 @@ export class VelgCampaignDashboard extends LitElement {
         ${
           !this._loading && this._campaigns.length > 0
             ? html`
-          <div class="campaigns__grid">
+          <div class="entity-grid">
             ${this._campaigns.map((c, i) => html`<velg-campaign-card style="--i: ${i}" .campaign=${c} .simulationId=${this.simulationId}></velg-campaign-card>`)}
           </div>
           <velg-pagination .currentPage=${this._page} .totalItems=${this._total} .pageSize=${this._pageSize} @page-change=${this._handlePageChange}></velg-pagination>

@@ -1,10 +1,11 @@
 import logging
+import time
 from typing import Annotated
 from uuid import UUID
 
-import httpx
+import jwt as pyjwt
 from fastapi import Depends, Header, HTTPException, Path, Query, status
-from jose import JWTError, jwt
+from jwt import PyJWKClient
 from supabase_auth.errors import AuthApiError
 
 from backend.config import settings
@@ -21,35 +22,31 @@ ROLE_HIERARCHY: dict[str, int] = {
     "owner": 3,
 }
 
-# Cached JWKS keys (populated on first use)
-_jwks_cache: dict | None = None
+# Cached JWKS client and TTL
+_jwks_client: PyJWKClient | None = None
+_jwks_fetched_at: float = 0
+_JWKS_TTL = 3600  # Re-fetch JWKS keys after 1 hour
 
 
-def _get_jwks() -> dict:
-    """Fetch and cache the JWKS from the Supabase Auth server."""
-    global _jwks_cache  # noqa: PLW0603
-    if _jwks_cache is not None:
-        return _jwks_cache
-    try:
+def _get_jwks_client() -> PyJWKClient:
+    """Get or create a JWKS client with TTL-based cache invalidation."""
+    global _jwks_client, _jwks_fetched_at  # noqa: PLW0603
+    now = time.monotonic()
+    if _jwks_client is None or (now - _jwks_fetched_at) >= _JWKS_TTL:
         url = f"{settings.supabase_url}/auth/v1/.well-known/jwks.json"
-        resp = httpx.get(url, headers={"apikey": settings.supabase_anon_key}, timeout=5)
-        resp.raise_for_status()
-        _jwks_cache = resp.json()
-        logger.info("Fetched JWKS from %s (%d keys)", url, len(_jwks_cache.get("keys", [])))
-    except Exception:
-        logger.warning("Could not fetch JWKS, falling back to HS256 only")
-        _jwks_cache = {"keys": []}
-    return _jwks_cache
+        _jwks_client = PyJWKClient(url, headers={"apikey": settings.supabase_anon_key})
+        _jwks_fetched_at = now
+        logger.info("Initialized JWKS client from %s", url)
+    return _jwks_client
 
 
 def _decode_jwt(token: str) -> dict:
     """Decode a JWT using JWKS (ES256) or shared secret (HS256)."""
-    # Read the unverified header to determine algorithm
-    header = jwt.get_unverified_header(token)
+    header = pyjwt.get_unverified_header(token)
     alg = header.get("alg", "HS256")
 
     if alg == "HS256":
-        return jwt.decode(
+        return pyjwt.decode(
             token,
             settings.supabase_jwt_secret,
             algorithms=["HS256"],
@@ -57,20 +54,15 @@ def _decode_jwt(token: str) -> dict:
         )
 
     # For ES256+, look up the signing key from JWKS
-    kid = header.get("kid")
-    jwks_data = _get_jwks()
-    signing_key = None
-    for key_data in jwks_data.get("keys", []):
-        if key_data.get("kid") == kid:
-            signing_key = key_data
-            break
+    try:
+        jwks_client = _get_jwks_client()
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+    except pyjwt.PyJWKClientError as e:
+        raise pyjwt.InvalidTokenError(f"No matching JWKS key found: {e}") from e
 
-    if not signing_key:
-        raise JWTError(f"No matching JWKS key found for kid={kid}")
-
-    return jwt.decode(
+    return pyjwt.decode(
         token,
-        signing_key,
+        signing_key.key,
         algorithms=[alg],
         audience="authenticated",
     )
@@ -90,10 +82,11 @@ async def get_current_user(
 
     try:
         payload = _decode_jwt(token)
-    except JWTError as e:
+    except pyjwt.PyJWTError as e:
+        logger.warning("JWT decode failed: %s", e)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Invalid or expired token: {e}",
+            detail="Invalid or expired token.",
         ) from e
 
     user_id = payload.get("sub")

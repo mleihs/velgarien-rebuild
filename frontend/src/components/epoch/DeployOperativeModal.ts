@@ -1110,6 +1110,7 @@ export class VelgDeployOperativeModal extends LitElement {
           <label class="field__label">${msg('Select Agent')}</label>
           <select
             class="field__select"
+            aria-label=${msg('Select Agent')}
             .value=${this._selectedAgentId}
             @change=${(e: Event) => {
               this._selectedAgentId = (e.target as HTMLSelectElement).value;
@@ -1190,6 +1191,7 @@ export class VelgDeployOperativeModal extends LitElement {
                 <label class="field__label">${msg('Deploy via Embassy')}</label>
                 <select
                   class="field__select"
+                  aria-label=${msg('Deploy via Embassy')}
                   .value=${this._selectedEmbassyId}
                   @change=${this._handleEmbassyChange}
                 >
@@ -1277,6 +1279,7 @@ export class VelgDeployOperativeModal extends LitElement {
                 <label class="field__label">${msg('Target Zone')}</label>
                 <select
                   class="field__select"
+                  aria-label=${msg('Target Zone')}
                   .value=${this._selectedZoneId}
                   @change=${(e: Event) => {
                     this._selectedZoneId = (e.target as HTMLSelectElement).value;
@@ -1299,6 +1302,7 @@ export class VelgDeployOperativeModal extends LitElement {
                 <label class="field__label">${msg('Target Building')}</label>
                 <select
                   class="field__select"
+                  aria-label=${msg('Target Building')}
                   .value=${this._selectedBuildingId}
                   @change=${(e: Event) => {
                     this._selectedBuildingId = (e.target as HTMLSelectElement).value;
@@ -1321,6 +1325,7 @@ export class VelgDeployOperativeModal extends LitElement {
                 <label class="field__label">${msg('Target Agent')}</label>
                 <select
                   class="field__select"
+                  aria-label=${msg('Target Agent')}
                   .value=${this._selectedTargetAgentId}
                   @change=${(e: Event) => {
                     this._selectedTargetAgentId = (e.target as HTMLSelectElement).value;
@@ -1374,7 +1379,12 @@ export class VelgDeployOperativeModal extends LitElement {
     const successPct = Math.round(this._estimateSuccess() * 100);
     const circumference = 2 * Math.PI * 34;
     const dashoffset = circumference * (1 - successPct / 100);
-    const ringColor = successPct >= 70 ? '#4ade80' : successPct >= 40 ? '#f59e0b' : '#ef4444';
+    const ringColor =
+      successPct >= 70
+        ? 'var(--color-success)'
+        : successPct >= 40
+          ? 'var(--color-warning)'
+          : 'var(--color-danger)';
     const pctColor =
       successPct >= 70
         ? 'summary__val--green'

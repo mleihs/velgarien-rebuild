@@ -1,4 +1,4 @@
-import type { ApiResponse } from '../../types/index.js';
+import type { ApiResponse, RelationshipSuggestion } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export interface GenerateAgentRequest {
@@ -73,7 +73,7 @@ export class GenerationApiService extends BaseApiService {
   generateRelationships(
     simulationId: string,
     data: { agent_id: string; locale: string },
-  ): Promise<ApiResponse<Record<string, unknown>[]>> {
+  ): Promise<ApiResponse<RelationshipSuggestion[]>> {
     return this.post(`/simulations/${simulationId}/generate/relationships`, data);
   }
 }

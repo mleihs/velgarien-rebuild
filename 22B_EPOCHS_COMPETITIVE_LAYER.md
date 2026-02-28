@@ -1,7 +1,8 @@
 # 22 - Epochs & Competitive Layer
 
-**Version:** 1.1
+**Version:** 1.2
 **Date:** 2026-02-28
+**Change v1.2:** EpochCommandCenter decomposed from monolithic 3364-line file into orchestrator (1934 lines) + 5 child components: EpochOpsBoard (ops board + COMMS sidebar), EpochOverviewTab, EpochOperationsTab, EpochAlliancesTab, EpochLobbyActions. Data flows via Lit properties, mutations via CustomEvent bubbling. ~60 hardcoded hex colors replaced with CSS custom property tokens across all epoch components.
 
 ---
 
@@ -62,9 +63,14 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 
 | Component | File | Lines | Purpose |
 |-----------|------|-------|---------|
-| **EpochCommandCenter** | `components/epoch/EpochCommandCenter.ts` | 1288 | Main dashboard — lobby/active epoch views, 5 tabs |
-| **EpochCreationWizard** | `components/epoch/EpochCreationWizard.ts` | 1141 | 3-step epoch setup (Parameters/Economy/Doctrine) |
-| **DeployOperativeModal** | `components/epoch/DeployOperativeModal.ts` | 1469 | 3-step operative deployment (Asset/Mission/Target) |
+| **EpochCommandCenter** | `components/epoch/EpochCommandCenter.ts` | 1934 | Orchestrator — fetches state, delegates to subcomponents, handles mutations |
+| **EpochOpsBoard** | `components/epoch/EpochOpsBoard.ts` | 1065 | Operations board: dossier cards + COMMS sidebar (collapsible chat panel) |
+| **EpochOverviewTab** | `components/epoch/EpochOverviewTab.ts` | 488 | Overview + mission cards, dispatches deploy/counter/recall events |
+| **EpochOperationsTab** | `components/epoch/EpochOperationsTab.ts` | 355 | Operations tab, dispatches recall events |
+| **EpochAlliancesTab** | `components/epoch/EpochAlliancesTab.ts` | 400 | Alliances tab, dispatches create/join/leave-team events |
+| **EpochLobbyActions** | `components/epoch/EpochLobbyActions.ts` | 397 | Lobby actions + admin controls, dispatches epoch lifecycle events |
+| **EpochCreationWizard** | `components/epoch/EpochCreationWizard.ts` | 1245 | 3-step epoch setup (Parameters/Economy/Doctrine) |
+| **DeployOperativeModal** | `components/epoch/DeployOperativeModal.ts` | 1502 | 3-step operative deployment (Asset/Mission/Target) |
 | **EpochLeaderboard** | `components/epoch/EpochLeaderboard.ts` | 411 | Sortable score table with per-dimension bars |
 | **EpochBattleLog** | `components/epoch/EpochBattleLog.ts` | 262 | Narrative event feed with filtering |
 | **EpochsApiService** | `services/api/EpochsApiService.ts` | 203 | 27 API methods for epochs + operatives + scores |
@@ -433,7 +439,7 @@ All channels use Supabase Realtime with `config: { private: true }` for authenti
 | **EpochChatPanel** | `components/epoch/EpochChatPanel.ts` | Dual-channel chat interface with ALL CHANNELS / TEAM FREQ tabs. REST-based message catch-up on mount + Supabase Realtime Broadcast for live incoming messages. Directional message styling (own messages right-aligned, others left-aligned). Simulation name + theme color per sender. |
 | **EpochPresenceIndicator** | `components/epoch/EpochPresenceIndicator.ts` | Online user dot indicator per simulation. Subscribes to Presence channel. Green dot = online, dim = offline. Shown in leaderboard and chat sender labels. |
 | **EpochReadyPanel** | `components/epoch/EpochReadyPanel.ts` | Cycle ready toggle with live broadcast status display. Shows all participants' ready states in real time. Visual progress bar toward full readiness. |
-| **EpochCommandCenter** | `components/epoch/EpochCommandCenter.ts` | Modified: added collapsible COMMS sidebar on Operations Board tab. Shows EpochChatPanel for user's active epoch participation. |
+| **EpochOpsBoard** | `components/epoch/EpochOpsBoard.ts` | Extracted from EpochCommandCenter: dossier cards + collapsible COMMS sidebar. Shows EpochChatPanel for user's active epoch participation. |
 
 ### RealtimeService (Platform Service)
 
@@ -463,7 +469,7 @@ Unread badge counting uses focus tracking — messages received while the chat p
 
 ### Operations Board COMMS Panel
 
-The EpochCommandCenter Operations tab gains a collapsible COMMS sidebar for in-context communication during tactical operations.
+The EpochOpsBoard (extracted from EpochCommandCenter) provides a collapsible COMMS sidebar for in-context communication during tactical operations.
 
 **Layout:**
 - Desktop: two-column grid — operative cards on the left, chat panel (360px fixed width) on the right

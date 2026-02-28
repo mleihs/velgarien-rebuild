@@ -1,33 +1,20 @@
-import type { ApiResponse, EchoVector, Embassy, PaginatedResponse } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { ApiResponse, EchoVector, Embassy } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class EmbassiesApiService extends BaseApiService {
   listForSimulation(
     simulationId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<Embassy>>> {
-    const path = `/simulations/${simulationId}/embassies`;
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(path, params);
-    }
-    return this.get(path, params);
+  ): Promise<ApiResponse<Embassy[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/embassies`, params);
   }
 
   getById(simulationId: string, embassyId: string): Promise<ApiResponse<Embassy>> {
-    const path = `/simulations/${simulationId}/embassies/${embassyId}`;
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(path);
-    }
-    return this.get(path);
+    return this.getSimulationData(`/simulations/${simulationId}/embassies/${embassyId}`);
   }
 
   getForBuilding(simulationId: string, buildingId: string): Promise<ApiResponse<Embassy | null>> {
-    const path = `/simulations/${simulationId}/buildings/${buildingId}/embassy`;
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(path);
-    }
-    return this.get(path);
+    return this.getSimulationData(`/simulations/${simulationId}/buildings/${buildingId}/embassy`);
   }
 
   create(

@@ -13,7 +13,6 @@ import type {
   EpochTeam,
   LeaderboardEntry,
   OperativeMission,
-  PaginatedResponse,
 } from '../../types/index.js';
 import { appState } from '../AppStateManager.js';
 import { BaseApiService } from './BaseApiService.js';
@@ -21,7 +20,7 @@ import { BaseApiService } from './BaseApiService.js';
 export class EpochsApiService extends BaseApiService {
   // ── Epochs ──────────────────────────────────────────
 
-  listEpochs(params?: Record<string, string>): Promise<ApiResponse<PaginatedResponse<Epoch>>> {
+  listEpochs(params?: Record<string, string>): Promise<ApiResponse<Epoch[]>> {
     if (!appState.isAuthenticated.value) {
       return this.getPublic('/epochs', params);
     }
@@ -117,7 +116,7 @@ export class EpochsApiService extends BaseApiService {
   listMissions(
     epochId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<OperativeMission>>> {
+  ): Promise<ApiResponse<OperativeMission[]>> {
     return this.get(`/epochs/${epochId}/operatives`, params);
   }
 
@@ -186,7 +185,7 @@ export class EpochsApiService extends BaseApiService {
   getBattleLog(
     epochId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<BattleLogEntry>>> {
+  ): Promise<ApiResponse<BattleLogEntry[]>> {
     if (!appState.isAuthenticated.value) {
       return this.getPublic(`/epochs/${epochId}/battle-log`, params);
     }
@@ -196,7 +195,7 @@ export class EpochsApiService extends BaseApiService {
   getBattleLogPublic(
     epochId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<BattleLogEntry>>> {
+  ): Promise<ApiResponse<BattleLogEntry[]>> {
     return this.getPublic(`/epochs/${epochId}/battle-log`, params);
   }
 

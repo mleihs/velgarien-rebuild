@@ -1,23 +1,13 @@
-import type { Agent, ApiResponse, EventReaction, PaginatedResponse } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { Agent, ApiResponse, EventReaction } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class AgentsApiService extends BaseApiService {
-  list(
-    simulationId: string,
-    params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<Agent>>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/agents`, params);
-    }
-    return this.get(`/simulations/${simulationId}/agents`, params);
+  list(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<Agent[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/agents`, params);
   }
 
   getById(simulationId: string, agentId: string): Promise<ApiResponse<Agent>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/agents/${agentId}`);
-    }
-    return this.get(`/simulations/${simulationId}/agents/${agentId}`);
+    return this.getSimulationData(`/simulations/${simulationId}/agents/${agentId}`);
   }
 
   create(simulationId: string, data: Partial<Agent>): Promise<ApiResponse<Agent>> {
@@ -44,10 +34,7 @@ export class AgentsApiService extends BaseApiService {
     return this.delete(`/simulations/${simulationId}/agents/${agentId}/reactions/${reactionId}`);
   }
 
-  listPublic(
-    simulationId: string,
-    params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<Agent>>> {
+  listPublic(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<Agent[]>> {
     return this.getPublic(`/simulations/${simulationId}/agents`, params);
   }
 }

@@ -3,7 +3,7 @@
  * REST endpoints for message persistence (catch-up) — live messages come via Realtime.
  */
 
-import type { ApiResponse, EpochChatMessage, PaginatedResponse } from '../../types/index.js';
+import type { ApiResponse, EpochChatMessage } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class EpochChatApiServiceImpl extends BaseApiService {
@@ -22,7 +22,7 @@ export class EpochChatApiServiceImpl extends BaseApiService {
   listMessages(
     epochId: string,
     params?: { limit?: number; before?: string },
-  ): Promise<ApiResponse<PaginatedResponse<EpochChatMessage>>> {
+  ): Promise<ApiResponse<EpochChatMessage[]>> {
     const queryParams: Record<string, string> = {};
     if (params?.limit) queryParams.limit = String(params.limit);
     if (params?.before) queryParams.before = params.before;
@@ -33,7 +33,7 @@ export class EpochChatApiServiceImpl extends BaseApiService {
     epochId: string,
     teamId: string,
     params?: { limit?: number; before?: string },
-  ): Promise<ApiResponse<PaginatedResponse<EpochChatMessage>>> {
+  ): Promise<ApiResponse<EpochChatMessage[]>> {
     const queryParams: Record<string, string> = {};
     if (params?.limit) queryParams.limit = String(params.limit);
     if (params?.before) queryParams.before = params.before;

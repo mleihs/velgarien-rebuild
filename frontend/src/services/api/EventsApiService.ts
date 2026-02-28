@@ -1,23 +1,13 @@
-import type { ApiResponse, Event, EventReaction, PaginatedResponse } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { ApiResponse, Event, EventReaction } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class EventsApiService extends BaseApiService {
-  list(
-    simulationId: string,
-    params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<Event>>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/events`, params);
-    }
-    return this.get(`/simulations/${simulationId}/events`, params);
+  list(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<Event[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/events`, params);
   }
 
   getById(simulationId: string, eventId: string): Promise<ApiResponse<Event>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/events/${eventId}`);
-    }
-    return this.get(`/simulations/${simulationId}/events/${eventId}`);
+    return this.getSimulationData(`/simulations/${simulationId}/events/${eventId}`);
   }
 
   create(simulationId: string, data: Partial<Event>): Promise<ApiResponse<Event>> {

@@ -1,10 +1,4 @@
-import type {
-  ApiResponse,
-  PaginatedResponse,
-  Event as SimEvent,
-  SocialTrend,
-} from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { ApiResponse, Event as SimEvent, SocialTrend } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export interface BrowseArticle {
@@ -15,14 +9,8 @@ export interface BrowseArticle {
 }
 
 export class SocialTrendsApiService extends BaseApiService {
-  list(
-    simulationId: string,
-    params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<SocialTrend>>> {
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(`/simulations/${simulationId}/social-trends`, params);
-    }
-    return this.get(`/simulations/${simulationId}/social-trends`, params);
+  list(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<SocialTrend[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/social-trends`, params);
   }
 
   fetch(

@@ -1,11 +1,11 @@
-import type { ApiResponse, PaginatedResponse, PromptTemplate } from '../../types/index.js';
+import type { ApiResponse, PromptTemplate } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class PromptTemplatesApiService extends BaseApiService {
   list(
     simulationId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<PromptTemplate>>> {
+  ): Promise<ApiResponse<PromptTemplate[]>> {
     return this.get(`/simulations/${simulationId}/prompt-templates`, params);
   }
 

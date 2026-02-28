@@ -8,7 +8,13 @@ import {
   generationApi,
   relationshipsApi,
 } from '../../services/api/index.js';
-import type { Agent, AgentRelationship, Embassy, EventReaction } from '../../types/index.js';
+import type {
+  Agent,
+  AgentRelationship,
+  Embassy,
+  EventReaction,
+  RelationshipSuggestion,
+} from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import { agentAltText } from '../../utils/text.js';
 import '../buildings/EmbassyLink.js';
@@ -23,14 +29,6 @@ import '../shared/VelgSectionHeader.js';
 import '../shared/VelgSidePanel.js';
 import './RelationshipCard.js';
 import './RelationshipEditModal.js';
-
-interface RelationshipSuggestion {
-  target_agent_id: string;
-  relationship_type: string;
-  intensity: number;
-  description: string;
-  is_bidirectional: boolean;
-}
 
 @localized()
 @customElement('velg-agent-details-panel')
@@ -591,8 +589,7 @@ export class VelgAgentDetailsPanel extends LitElement {
     try {
       const response = await agentsApi.list(this.simulationId, { limit: '100' });
       if (response.success && response.data) {
-        // BaseApiService extracts json.data, so response.data is already Agent[]
-        this._allAgents = response.data as unknown as Agent[];
+        this._allAgents = response.data;
       } else {
         this._allAgents = [];
       }
@@ -608,8 +605,7 @@ export class VelgAgentDetailsPanel extends LitElement {
       const response = await embassiesApi.listForSimulation(this.simulationId, { limit: '50' });
       if (!response.success || !response.data) return;
 
-      // BaseApiService extracts json.data, so response.data is already Embassy[]
-      const embassies = response.data as unknown as Embassy[];
+      const embassies = response.data;
       const agentName = this.agent.name;
       const simId = this.simulationId;
       const assignments: { embassy: Embassy; localBuildingId: string }[] = [];
@@ -721,7 +717,7 @@ export class VelgAgentDetailsPanel extends LitElement {
       });
 
       if (response.success && Array.isArray(response.data) && response.data.length > 0) {
-        this._suggestions = response.data as unknown as RelationshipSuggestion[];
+        this._suggestions = response.data;
         this._selectedSuggestions = new Set(this._suggestions.map((_, i) => i));
         VelgToast.success(msg(str`${this._suggestions.length} suggestions generated`));
       } else {

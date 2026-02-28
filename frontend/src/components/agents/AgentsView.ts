@@ -5,6 +5,7 @@ import { appState } from '../../services/AppStateManager.js';
 import { agentsApi } from '../../services/api/index.js';
 import type { Agent } from '../../types/index.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
+import { gridLayoutStyles } from '../shared/grid-layout-styles.js';
 import type { FilterChangeDetail, FilterConfig } from '../shared/SharedFilterBar.js';
 import { VelgToast } from '../shared/Toast.js';
 import { viewHeaderStyles } from '../shared/view-header-styles.js';
@@ -23,27 +24,14 @@ import './AgentDetailsPanel.js';
 export class VelgAgentsView extends LitElement {
   static styles = [
     viewHeaderStyles,
+    gridLayoutStyles,
     css`
     :host {
       display: block;
     }
 
-    .view__grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    .entity-grid {
       gap: var(--space-5);
-    }
-
-    @media (max-width: 640px) {
-      .view__grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .view__grid {
-        grid-template-columns: 1fr;
-      }
     }
   `,
   ];
@@ -323,7 +311,7 @@ export class VelgAgentsView extends LitElement {
 
     return html`
       <span class="view__count">${msg(str`${this._total} Agent${this._total !== 1 ? 's' : ''}`)}</span>
-      <div class="view__grid">
+      <div class="entity-grid">
         ${this._agents.map(
           (agent, i) => html`
             <velg-agent-card

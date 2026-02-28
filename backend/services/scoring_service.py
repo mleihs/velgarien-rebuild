@@ -250,7 +250,31 @@ class ScoringService:
         cycle_number: int,
         epoch: dict,
     ) -> list[dict]:
-        """Normalize scores across participants and compute weighted composites."""
+        """Normalize raw scores across participants and compute weighted composites.
+
+        Normalization algorithm (two-pass):
+
+        Pass 1 — Max-normalize per dimension:
+            For each of the 5 scoring dimensions (stability, influence,
+            sovereignty, diplomatic, military), find the maximum raw value
+            among all participants in this cycle. Each participant's raw
+            score is then scaled to 0-100 relative to that maximum:
+                normalized[dim] = (raw / max_raw) * 100
+            This ensures fair comparison regardless of absolute magnitude
+            differences between dimensions (e.g. stability ~0-100 vs
+            military ~0-20). If a dimension's max is 0, all values stay 0.
+
+        Pass 2 — Weighted composite:
+            The 5 normalized scores are combined into a single composite
+            using configurable weights (from epoch.config.score_weights,
+            defaulting to stability=25, influence=20, sovereignty=20,
+            diplomatic=15, military=20, summing to 100):
+                composite = sum(normalized[dim] * weight[dim] / 100)
+            Result is rounded to 2 decimal places and persisted.
+
+        Each participant's composite_score is upserted back to the
+        epoch_scores table.
+        """
         config = {**DEFAULT_CONFIG, **epoch.get("config", {})}
         weights = config.get("score_weights", {})
 
@@ -266,7 +290,10 @@ class ScoringService:
         if not scores:
             return []
 
-        # Find max in each dimension for normalization
+        # Pass 1: Find max in each dimension for normalization.
+        # Each dimension is independently scaled so that the best performer
+        # scores 100 and others are proportional. A floor of 1.0 prevents
+        # division by zero when all participants score 0 in a dimension.
         dimensions = ["stability", "influence", "sovereignty", "diplomatic", "military"]
         maxes = {}
         for dim in dimensions:
@@ -274,7 +301,7 @@ class ScoringService:
             values = [s[col] for s in scores]
             maxes[dim] = max(values) if values and max(values) > 0 else 1.0
 
-        # Default weights
+        # Default weights (sum to 100 for percentage-based composition)
         w = {
             "stability": weights.get("stability", 25),
             "influence": weights.get("influence", 20),
@@ -283,6 +310,7 @@ class ScoringService:
             "military": weights.get("military", 20),
         }
 
+        # Pass 2: Normalize each participant and compute weighted composite
         updated = []
         for s in scores:
             normalized = {}

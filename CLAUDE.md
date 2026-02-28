@@ -15,7 +15,7 @@
 
 Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT_OVERVIEW.md` for full context.
 
-**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + full-stack audit remediation (security hardening, dead code removal, code deduplication, accessibility, epoch theming, SEO improvements) + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph with starfield, energy pulses, node glow drift) + Settings architecture cleanup (shared CSS + BaseSettingsPanel base class) + Slug-based URLs (`/simulations/speranza/lore` instead of UUIDs) + Building description prompt fix (short functional output) + Embassies & Ambassadors (cross-sim diplomatic buildings, `is_ambassador` computed flag, `.card--embassy` pulsing ring + gradient hover effects with per-theme colors, 4-step creation wizard with ambassador assignment) + UI polish (SimulationNav diagonal gradient dwell effects, PlatformHeader marching ants map button, LoreScroll microanimations, close button hover effects) + English default locale + Game Systems (materialized views, mechanics service, info bubbles, AI prompt integration, bleed threshold/echo pipeline) + AI Relationship Generation (inline review flow in AgentDetailsPanel) + Dramatic Microanimations (23 files: staggered card grids, panel cascades, badge pops, impact bar segment grows, directional chat messages, tab crossfades, toast slide-out fix, theme-aware duration scaling) + Game Feature Completions (5 operative effects: propagandist, assassin, infiltrator, alliance, betrayal) + Game Instances (template cloning for balanced PvP) + How-to-Play tutorial (dark military-console guide with match replays) + Epoch Invitations (lore-flavored email invites via Resend API + OpenRouter AI lore generation) + Epoch Realtime Chat (REST + Supabase Broadcast, dual-channel epoch/team comms, presence tracking, cycle-ready signals) + Operations Board COMMS sidebar (collapsible chat panel on epoch list view). 160 tasks. ~1774 localized UI strings (EN/DE). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
+**Current Status:** All 6 phases complete + i18n fully implemented + codebase audit applied + architecture audit applied + full-stack audit remediation (security hardening, dead code removal, code deduplication, accessibility, epoch theming, SEO improvements) + lore expansion + dashboard LoreScroll + per-simulation theming + WCAG contrast validation + public-first architecture (anonymous read access) + anonymous view audit applied + Station Null (sim 3) added + Speranza (sim 4) added + per-simulation lore pages (4×6 chapters) + SEO/GA4/deep-linking implemented + GA4 comprehensive event tracking (37 events) + Agent Relationships + Event Echoes (Bleed mechanic) + Cartographer's Map (multiverse force-directed graph with starfield, energy pulses, node glow drift) + Settings architecture cleanup (shared CSS + BaseSettingsPanel base class) + Slug-based URLs (`/simulations/speranza/lore` instead of UUIDs) + Building description prompt fix (short functional output) + Embassies & Ambassadors (cross-sim diplomatic buildings, `is_ambassador` computed flag, `.card--embassy` pulsing ring + gradient hover effects with per-theme colors, 4-step creation wizard with ambassador assignment) + UI polish (SimulationNav diagonal gradient dwell effects, PlatformHeader marching ants map button, LoreScroll microanimations, close button hover effects) + English default locale + Game Systems (materialized views, mechanics service, info bubbles, AI prompt integration, bleed threshold/echo pipeline) + AI Relationship Generation (inline review flow in AgentDetailsPanel) + Dramatic Microanimations (23 files: staggered card grids, panel cascades, badge pops, impact bar segment grows, directional chat messages, tab crossfades, toast slide-out fix, theme-aware duration scaling) + Game Feature Completions (5 operative effects: propagandist, assassin, infiltrator, alliance, betrayal) + Game Instances (template cloning for balanced PvP) + How-to-Play tutorial (dark military-console guide with match replays) + Epoch Invitations (lore-flavored email invites via Resend API + OpenRouter AI lore generation) + Epoch Realtime Chat (REST + Supabase Broadcast, dual-channel epoch/team comms, presence tracking, cycle-ready signals) + Operations Board COMMS sidebar (collapsible chat panel on epoch list view) + full-stack audit v2 (security hardening, PyJWT migration, component decomposition, CSS token migration, grid deduplication). 160 tasks. ~1774 localized UI strings (EN/DE). Production deployed on Railway + hosted Supabase. 4 simulations: Velgarien (dark), Capybara Kingdom (fantasy), Station Null (sci-fi horror), Speranza (post-apocalyptic).
 
 ## Tech Stack
 
@@ -39,7 +39,7 @@ Multi-simulation platform rebuilt from a single-world Flask app. See `00_PROJECT
 
 **Defense in Depth:** FastAPI `Depends()` validates roles (Layer 1), Supabase RLS validates access (Layer 2).
 
-**Public-First Architecture:** Anonymous users can browse all simulation data (read-only) without authentication. Frontend API services check `appState.isAuthenticated.value` and route GET requests to `/api/v1/public/*` (anon, no JWT) or `/api/v1/*` (authenticated). Backend public router uses `get_anon_supabase()` with anon RLS policies. Write operations require authentication. LoginPanel slides in from right via `VelgSidePanel`.
+**Public-First Architecture:** All simulation data is browsable read-only without membership. Frontend API services use `BaseApiService.getSimulationData()` which checks both `appState.isAuthenticated.value` AND `appState.currentRole.value` — routes to `/api/v1/public/*` (anon RLS) when unauthenticated or not a member, `/api/v1/*` (authenticated RLS) when a member. This ensures authenticated non-members can browse any simulation without 403 errors. Backend public router uses `get_anon_supabase()` with anon RLS policies. Write operations require authentication + membership. LoginPanel slides in from right via `VelgSidePanel`.
 
 ## Directory Structure
 
@@ -53,7 +53,7 @@ backend/              FastAPI application
   services/           Business logic (BaseService + 23 entity + audit + simulation + external + email)
   middleware/         Rate limiting, security headers (CSP), SEO crawler detection + HTML enrichment
   utils/              Encryption (AES-256 for settings), search helpers
-  tests/              pytest tests (473 tests: unit + integration + security + performance)
+  tests/              pytest tests (500 tests: unit + integration + security + performance)
 frontend/             Lit + Vite application
   src/
     app-shell.ts      Main app with @lit-labs/router (auth + simulation-scoped routes)
@@ -61,7 +61,7 @@ frontend/             Lit + Vite application
       auth/           Login, Register views, LoginPanel (slide-in)
       platform/       PlatformHeader, UserMenu, DevAccountSwitcher, SimulationsDashboard, LoreScroll, CreateSimulationWizard, UserProfileView, InvitationAcceptView
       layout/         SimulationShell, SimulationHeader, SimulationNav
-      shared/         16 reusable components + 8 shared CSS modules + BaseSettingsPanel base class (see Code Reusability)
+      shared/         16 reusable components + 10 shared CSS modules + BaseSettingsPanel base class (see Code Reusability)
       agents/         AgentsView, AgentCard, AgentEditModal, AgentDetailsPanel
       buildings/      BuildingsView, BuildingCard, BuildingEditModal, BuildingDetailsPanel, EmbassyCreateModal, EmbassyLink
       events/         EventsView, EventCard, EventEditModal, EventDetailsPanel
@@ -71,8 +71,8 @@ frontend/             Lit + Vite application
       lore/           SimulationLoreView, lore-content dispatcher, 4 content files (per-simulation ~3500 words each)
       multiverse/   CartographerMap, MapGraph, MapConnectionPanel, MapTooltip, map-force, map-data, map-types
       settings/       SettingsView + 7 panels (General, World, AI, Integration, Design, Access, View) + BleedSettingsPanel
-      epoch/          EpochCommandCenter (with COMMS sidebar), EpochCreationWizard, DeployOperativeModal, EpochLeaderboard, EpochBattleLog, EpochInvitePanel, EpochInviteAcceptView, EpochChatPanel, EpochPresenceIndicator, EpochReadyPanel
-      how-to-play/    HowToPlayView, htp-types, htp-content-rules, htp-content-matches
+      epoch/          EpochCommandCenter (orchestrator), EpochOpsBoard, EpochOverviewTab, EpochOperationsTab, EpochAlliancesTab, EpochLobbyActions, EpochCreationWizard, DeployOperativeModal, EpochLeaderboard, EpochBattleLog, EpochInvitePanel, EpochInviteAcceptView, EpochChatPanel, EpochPresenceIndicator, EpochReadyPanel
+      how-to-play/    HowToPlayView, htp-styles, htp-types, htp-content-rules, htp-content-matches
       health/         SimulationHealthView
     services/         Supabase client, 19 API services, AppStateManager, NotificationService, ThemeService, theme-presets, SeoService, AnalyticsService
       realtime/       RealtimeService (singleton, Supabase Realtime channels for epoch chat/presence/status)
@@ -83,7 +83,7 @@ frontend/             Lit + Vite application
     styles/           CSS design tokens (tokens/: 8 files — colors, typography, spacing, borders, shadows, animation, layout, z-index) + base styles (base/)
     utils/            Shared utilities (text.ts, icons.ts, theme-colors.ts)
     types/            TypeScript interfaces (index.ts) + Zod validation schemas (validation/)
-  tests/              vitest tests (365 tests: validation + API + notification + theme contrast + SEO/analytics + settings)
+  tests/              vitest tests (386 tests: validation + API + notification + theme contrast + SEO/analytics + settings)
 e2e/                  Playwright E2E tests (81 specs across 12 files)
   playwright.config.ts
   helpers/            auth.ts, fixtures.ts
@@ -247,7 +247,7 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 ## Backend Patterns
 
 - **Config:** `backend/config.py` — `Settings(BaseSettings)` with `extra="ignore"`, reads `.env`. Includes `resend_api_key` for transactional email. Imported as `app_settings` in `app.py` to avoid conflict with `routers.settings`.
-- **Auth:** `get_current_user()` validates JWT via python-jose, returns `CurrentUser(id, email, access_token)`
+- **Auth:** `get_current_user()` validates JWT via PyJWT (JWKS for ES256, shared secret for HS256), returns `CurrentUser(id, email, access_token)`. JWKS keys cached with 1-hour TTL. JWT errors sanitized (no internal details leaked).
 - **Supabase client:** `get_supabase()` creates client with user's JWT (RLS enforced). `get_anon_supabase()` creates client with anon key only (no JWT, anon RLS policies for public endpoints).
 - **Role checking:** `require_role("admin")` factory returns Depends() that checks simulation_members. `require_epoch_creator()` checks epoch ownership. `require_simulation_member("editor")` checks role via query param (for platform-level endpoints).
 - **Rate limiting:** slowapi — 30/hr AI generation, 10/min AI chat, 5/min external API, 100/min standard
@@ -265,15 +265,15 @@ All endpoints under `/api/v1/`. Swagger UI at `/api/docs`. Responses use unified
 - **ALWAYS use `frontend-design` skill** when designing or polishing UI components. This ensures distinctive, high-quality aesthetics instead of generic defaults.
 - Components extend `LitElement` with `@customElement('velg-...')`
 - State via Preact Signals (`appState` in `AppStateManager.ts`)
-- API calls through `BaseApiService` (auto-attaches JWT from appState). `getPublic()` method routes to `/api/v1/public/*` without Authorization header for anonymous access. Always import existing API service singletons (e.g., `simulationsApi`, `buildingsApi`) — never create inline service classes in components.
-- **Public API routing pattern:** API services check `appState.isAuthenticated.value` on read methods — if false, call `this.getPublic(path)` instead of `this.get(path)`. Applied to 11 services: Simulations, Agents, Buildings, Events, Chat, Locations (list + detail), Taxonomies, Settings, SocialMedia, SocialTrends, Campaigns.
+- API calls through `BaseApiService` (auto-attaches JWT from appState). `getPublic()` method routes to `/api/v1/public/*` without Authorization header for anonymous access. `getSimulationData()` helper checks both `isAuthenticated` AND `currentRole` — routes to public endpoint when user is not authenticated OR not a member of the current simulation. Always import existing API service singletons (e.g., `simulationsApi`, `buildingsApi`) — never create inline service classes in components.
+- **Public API routing pattern:** Simulation-scoped API services use `this.getSimulationData(path)` for read methods — routes to `/api/v1/public/*` when unauthenticated OR authenticated-but-not-a-member, and to `/api/v1/*` when authenticated AND a member. Applied to 14 services: Agents, Buildings, Events, Chat, Locations, Taxonomies, Settings, SocialMedia, SocialTrends, Campaigns, Relationships, Echoes, Embassies, Health. Special cases: `SettingsApiService` design category **always** uses public endpoint (anon RLS policy, migration 020); `SocialMediaApiService` has different public/auth paths so uses inline check. Platform-level services (Simulations, Connections, Epochs) check only `isAuthenticated`.
 - **Multiverse Map:** Force-directed graph at `/multiverse` (platform-level route). Custom physics simulation in `map-force.ts` (~130 lines). SVG rendering in Lit Shadow DOM with pan/zoom. Mobile fallback to card list at ≤768px.
 - **API contract:** Backend endpoints using query params (e.g., `assign-agent?agent_id=...`, `profession-requirements?profession=...`) must use `URLSearchParams` in the frontend — never send these as JSON body. `PaginatedResponse<T>` uses `meta?: { count, total, limit, offset }` matching the backend structure.
 - Routing via `@lit-labs/router` (Reactive Controller in app-shell). Platform-level routes: `/dashboard`, `/multiverse`, `/how-to-play`, `/epoch/join` (token-based invite acceptance). Simulation-scoped: `/simulations/:slug/lore`, `/agents`, `/buildings`, etc.
 - All types in `frontend/src/types/index.ts`
 - Design tokens as CSS Custom Properties in `styles/tokens/`
-- **Shared components:** 16 reusable components + 8 shared CSS modules + `BaseSettingsPanel` base class in `components/shared/` — see Code Reusability section for full list
-- **Slug-based URLs:** Simulation routes use slugs (`/simulations/speranza/lore`) instead of UUIDs. `app-shell._enterSimulationRoute()` (router `enter()` callback) resolves slug→UUID via `_resolveSimulation()` before render, eliminating the race condition where `render()` fired before resolution completed. All navigation links use `simulation.slug`. SEO middleware returns 301 redirects from UUID→slug for crawlers.
+- **Shared components:** 16 reusable components + 10 shared CSS modules + `BaseSettingsPanel` base class in `components/shared/` — see Code Reusability section for full list
+- **Slug-based URLs:** Simulation routes use slugs (`/simulations/speranza/lore`) instead of UUIDs. `app-shell._enterSimulationRoute()` (router `enter()` callback) resolves slug→UUID via `_resolveSimulation()` and determines membership via `_checkMembership()` before render, ensuring `currentRole` is set before components mount and fire API calls. All navigation links use `simulation.slug`. SEO middleware returns 301 redirects from UUID→slug for crawlers.
 - **Shared icons:** All SVG icons centralized in `utils/icons.ts` — import `{ icons }` and use `icons.edit()`, `icons.trash()`, etc. Never define inline SVG icon methods in components.
 - **Entity views:** Each entity has 4 files: ListView, Card, EditModal, DetailsPanel (except Chat which has 6)
 - **Event naming:** `import type { Event as SimEvent }` to avoid DOM `Event` conflict
@@ -346,6 +346,8 @@ npx lit-localize build      # Regenerates src/locales/generated/de.ts
      - `info-bubble-styles.ts` — `renderInfoBubble(title, text)` shared render function for info tooltips in edit modals
      - `panel-cascade-styles.ts` — `panelCascadeStyles` for staggered detail panel section animations
      - `typography-styles.ts` — `typographyStyles` with `.label-brutalist` class for uppercase brutalist labels
+     - `grid-layout-styles.ts` — `gridLayoutStyles` for entity card grids (`.entity-grid` with `--grid-min-width` custom property, responsive breakpoints). Used by AgentsView, BuildingsView, EventsView, SocialMediaView, CampaignDashboard.
+     - `htp-styles.ts` (in `how-to-play/`) — extracted HowToPlayView CSS (~1100 lines), not in shared/ but a shared-style pattern
    - **Usage:** `static styles = [formStyles, css\`...\`]` — local styles win by cascade for per-component overrides
 2. **Check `services/`** — BaseApiService provides CRUD patterns. Extend it for new API services. BaseService (backend) provides generic CRUD with soft-delete, audit logging, and optimistic locking.
 3. **Check existing components** for similar patterns — entity views follow a consistent 4-file pattern (ListView, Card, EditModal, DetailsPanel). Copy the pattern, don't reinvent it.
@@ -396,8 +398,8 @@ See `18_THEMING_SYSTEM.md` for full contrast documentation.
 | `19_DEPLOYMENT_INFRASTRUCTURE.md` | Production deployment, dev→prod sync, data migration playbook | v1.0 |
 | `20_RELATIONSHIPS_ECHOES_MAP.md` | Agent relationships, event echoes, cartographer's map — feature docs + user manual | v1.0 |
 | `21_EMBASSIES.md` | Embassies & ambassadors: cross-sim diplomatic feature, visual effects, user manual | v1.0 |
-| `22_GAME_SYSTEMS.md` | Game mechanics: materialized views, computed attributes, bleed system | v1.0 |
-| `22_EPOCHS_COMPETITIVE_LAYER.md` | Competitive PvP: epochs, operatives, scoring, battle log, epoch chat, realtime | v1.1 |
+| `22A_GAME_SYSTEMS.md` | Game mechanics: materialized views, computed attributes, bleed system | v1.0 |
+| `22B_EPOCHS_COMPETITIVE_LAYER.md` | Competitive PvP: epochs, operatives, scoring, battle log, epoch chat, realtime | v1.2 |
 | `23_MICROANIMATIONS.md` | Dramatic entrance animations, stagger patterns, theme-aware motion across all UI | v1.0 |
 | `GAME_DESIGN_DOCUMENT.md` | High-level game design concept and vision | v1.0 |
 

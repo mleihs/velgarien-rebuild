@@ -1,25 +1,16 @@
-import type { AgentRelationship, ApiResponse, PaginatedResponse } from '../../types/index.js';
-import { appState } from '../AppStateManager.js';
+import type { AgentRelationship, ApiResponse } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class RelationshipsApiService extends BaseApiService {
   listForAgent(simulationId: string, agentId: string): Promise<ApiResponse<AgentRelationship[]>> {
-    const path = `/simulations/${simulationId}/agents/${agentId}/relationships`;
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(path);
-    }
-    return this.get(path);
+    return this.getSimulationData(`/simulations/${simulationId}/agents/${agentId}/relationships`);
   }
 
   listForSimulation(
     simulationId: string,
     params?: Record<string, string>,
-  ): Promise<ApiResponse<PaginatedResponse<AgentRelationship>>> {
-    const path = `/simulations/${simulationId}/relationships`;
-    if (!appState.isAuthenticated.value) {
-      return this.getPublic(path, params);
-    }
-    return this.get(path, params);
+  ): Promise<ApiResponse<AgentRelationship[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/relationships`, params);
   }
 
   create(
