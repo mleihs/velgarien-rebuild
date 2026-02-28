@@ -16,15 +16,23 @@ import { customElement, state } from 'lit/decorators.js';
 
 import { getMatches } from './htp-content-matches.js';
 import {
+  getBleedThresholdRules,
+  getBleedVectors,
+  getEchoLifecycle,
+  getEchoStrengthFormula,
+  getEmbassyInfo,
+  getNormalizationRules,
   getOperativeCards,
   getPhases,
   getRpRules,
+  getScoreDimensions,
   getScorePresets,
   getSuccessFormula,
   getTactics,
   getTocSections,
 } from './htp-content-rules.js';
 import type {
+  BleedVector,
   CycleData,
   FinalStanding,
   MatchConfig,
@@ -924,6 +932,141 @@ export class VelgHowToPlay extends LitElement {
       color: var(--color-warning);
     }
 
+    /* ═══ VECTOR GRID ═══════════════════════════════ */
+
+    .vector-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+
+    .vector-card {
+      background: var(--color-gray-900);
+      border: 1px solid var(--color-gray-800);
+      border-left: 4px solid;
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      opacity: 0;
+      animation: card-in var(--duration-entrance, 350ms) var(--ease-dramatic) forwards;
+      animation-delay: calc(var(--i, 0) * var(--duration-stagger, 40ms));
+    }
+
+    .vector-card__name {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist);
+      color: var(--color-gray-0);
+    }
+
+    .vector-card__desc {
+      color: var(--color-gray-400);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .vector-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .vector-tag {
+      font-family: var(--font-mono, monospace);
+      font-size: 9px;
+      padding: 1px 5px;
+      border: 1px solid var(--color-gray-700);
+      color: var(--color-gray-500);
+    }
+
+    /* ═══ DIMENSION FORMULAS ═════════════════════════ */
+
+    .dim-block {
+      background: var(--color-gray-900);
+      border: 1px solid var(--color-gray-800);
+      border-left: 4px solid;
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+
+    .dim-block__header {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+
+    .dim-block__name {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist);
+      color: var(--color-gray-0);
+    }
+
+    .dim-title {
+      font-size: 10px;
+      font-style: italic;
+      padding: 1px 6px;
+      border: 1px solid;
+      opacity: 0.8;
+    }
+
+    .dim-block__formula {
+      font-family: var(--font-mono, monospace);
+      font-size: var(--text-sm);
+      color: var(--color-info);
+      margin-bottom: var(--space-2);
+    }
+
+    .dim-block__explanation {
+      color: var(--color-gray-400);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* ═══ LIFECYCLE STEPS ═══════════════════════════ */
+
+    .lifecycle {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: var(--space-4) 0;
+      flex-wrap: wrap;
+    }
+
+    .lifecycle__step {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .lifecycle__dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .lifecycle__name {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+    }
+
+    .lifecycle__arrow {
+      color: var(--color-gray-600);
+      font-size: 10px;
+      margin: 0 var(--space-2);
+    }
+
     /* ═══ RESPONSIVE ═════════════════════════════════ */
 
     @media (max-width: 768px) {
@@ -974,7 +1117,8 @@ export class VelgHowToPlay extends LitElement {
       }
 
       .ops-grid,
-      .tactics-grid {
+      .tactics-grid,
+      .vector-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1008,7 +1152,8 @@ export class VelgHowToPlay extends LitElement {
       .hero__sub,
       .hero__line,
       .op-card,
-      .tactic-card {
+      .tactic-card,
+      .vector-card {
         animation: none;
         opacity: 1;
         transform: none;
@@ -1087,9 +1232,11 @@ export class VelgHowToPlay extends LitElement {
 
         <main class="content">
           ${this._renderEpochs()}
+          ${this._renderGettingStarted()}
           ${this._renderPhases()}
           ${this._renderRp()}
           ${this._renderOperatives()}
+          ${this._renderEmbassies()}
           ${this._renderScoring()}
           ${this._renderAlliances()}
           ${this._renderBleed()}
@@ -1157,17 +1304,74 @@ export class VelgHowToPlay extends LitElement {
         <p class="section__text">
           ${msg('An Epoch is a competitive season where simulations battle across five dimensions: Stability, Influence, Sovereignty, Diplomatic, and Military. Each epoch is time-limited, divided into phases, and scored in real time. Deploy operatives, forge alliances, sabotage rivals, and climb the leaderboard. Anyone can spectate; only participants can act.')}
         </p>
+
+        <div class="callout callout--info">
+          <div class="callout__label">${msg('Game Instances')}</div>
+          <div class="callout__text">
+            ${msg('When an epoch starts, every participating simulation is cloned into a balanced "game instance." Your original simulation (the template) is never modified. All gameplay happens on the clone. When the epoch ends, game instances are archived and your template remains intact.')}
+          </div>
+        </div>
       </section>
     `;
   }
 
-  /* ── Section 2: Phases ───────────────────────────── */
+  /* ── Section 2: Getting Started ──────────────────── */
+
+  private _renderGettingStarted() {
+    const rules = getNormalizationRules();
+    return html`
+      <section class="section" id="getting-started">
+        ${this._renderSectionHeader('02', msg('Getting Started'))}
+        <p class="section__text">
+          ${msg('Any simulation owner can create an epoch. Other players join by accepting an invitation or entering the lobby before it closes.')}
+        </p>
+
+        <div class="callout callout--tip">
+          <div class="callout__label">${msg('Creating an Epoch')}</div>
+          <div class="callout__text">
+            ${msg('Open the Epoch Command Center from your simulation, choose a scoring preset, set the cycle duration, and launch. You can invite players via email \u2014 each invitation includes a lore-flavored dossier generated by AI.')}
+          </div>
+        </div>
+
+        <div class="callout callout--info">
+          <div class="callout__label">${msg('Joining an Epoch')}</div>
+          <div class="callout__text">
+            ${msg('Accept an email invitation (click the link in the dossier) or navigate to an open epoch in the lobby phase and click Join. You select which simulation to enter with.')}
+          </div>
+        </div>
+
+        <p class="section__text" style="margin-top: var(--space-4)">
+          ${msg('To ensure fair competition, all simulations are normalized when the epoch starts:')}
+        </p>
+
+        <div class="readout">
+          ${rules.map(
+            (r) => html`
+              <div class="readout__cell">
+                <span class="readout__label">${r.attribute}</span>
+                <span class="readout__value">${r.normalizedTo}</span>
+              </div>
+            `,
+          )}
+        </div>
+
+        <div class="callout callout--warn">
+          <div class="callout__label">${msg('Equal Footing')}</div>
+          <div class="callout__text">
+            ${msg('Normalization means a brand-new simulation has the same competitive potential as a fully developed one. Strategy and timing matter more than preparation.')}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  /* ── Section 3: Phases ───────────────────────────── */
 
   private _renderPhases() {
     const phases = getPhases();
     return html`
       <section class="section" id="phases">
-        ${this._renderSectionHeader('02', msg('Phases & Timeline'))}
+        ${this._renderSectionHeader('03', msg('Phases & Timeline'))}
         <p class="section__text">
           ${msg('Every epoch progresses through 5 phases. Each phase changes what actions are available and how scores are calculated.')}
         </p>
@@ -1190,13 +1394,13 @@ export class VelgHowToPlay extends LitElement {
     `;
   }
 
-  /* ── Section 3: Resonance Points ─────────────────── */
+  /* ── Section 4: Resonance Points ─────────────────── */
 
   private _renderRp() {
     const rules = getRpRules();
     return html`
       <section class="section" id="rp">
-        ${this._renderSectionHeader('03', msg('Resonance Points (RP)'))}
+        ${this._renderSectionHeader('04', msg('Resonance Points (RP)'))}
         <p class="section__text">
           ${msg('RP is your action economy. Every cycle, each participant receives RP to spend on deploying operatives or running counter-intelligence sweeps. Unspent RP carries over, capped at 30.')}
         </p>
@@ -1214,13 +1418,13 @@ export class VelgHowToPlay extends LitElement {
     `;
   }
 
-  /* ── Section 4: Operatives ───────────────────────── */
+  /* ── Section 5: Operatives ───────────────────────── */
 
   private _renderOperatives() {
     const ops = getOperativeCards();
     return html`
       <section class="section" id="operatives">
-        ${this._renderSectionHeader('04', msg('Operatives'))}
+        ${this._renderSectionHeader('05', msg('Operatives'))}
         <p class="section__text">
           ${msg('Six operative types, each with different costs, timings, and effects. Choose wisely — RP is scarce.')}
         </p>
@@ -1234,6 +1438,13 @@ export class VelgHowToPlay extends LitElement {
           <div class="callout__text">${msg('Every mission is resolved with a probability roll:')}</div>
           <div class="formula">${getSuccessFormula()}</div>
           <div class="callout__text">${msg('Clamped to [0.05, 0.95]. Guardians reduce success by 20% each. Embassy infiltration reduces effectiveness by 50%.')}</div>
+        </div>
+
+        <div class="callout callout--danger">
+          <div class="callout__label">${msg('Mission Outcomes')}</div>
+          <div class="callout__text">
+            ${msg('Three possible outcomes: Success \u2014 the mission completes and its effect is applied. Failed \u2014 the mission fails silently, no penalty. Detected \u2014 the mission fails AND you lose 3 military score. Detection is rolled separately: if the success roll fails AND a second roll also fails, the operative is caught.')}
+          </div>
         </div>
       </section>
     `;
@@ -1270,10 +1481,50 @@ export class VelgHowToPlay extends LitElement {
     `;
   }
 
-  /* ── Section 5: Scoring ──────────────────────────── */
+  /* ── Section 6: Embassies ───────────────────────── */
+
+  private _renderEmbassies() {
+    const info = getEmbassyInfo();
+    return html`
+      <section class="section" id="embassies">
+        ${this._renderSectionHeader('06', msg('Embassies & Ambassadors'))}
+        <p class="section__text">
+          ${msg('Embassies are diplomatic buildings that connect two simulations. They serve as deployment channels for operatives, boost diplomatic scoring, and increase bleed echo strength. Every embassy has an ambassador \u2014 a designated agent who represents your simulation abroad.')}
+        </p>
+
+        <div class="readout">
+          ${info.map(
+            (r) => html`
+              <div class="readout__cell">
+                <span class="readout__label">${r.label}</span>
+                <span class="readout__value">${r.value}</span>
+              </div>
+            `,
+          )}
+        </div>
+
+        <div class="callout callout--tip">
+          <div class="callout__label">${msg('Ambassador Role')}</div>
+          <div class="callout__text">
+            ${msg('Ambassadors are high-value targets. An assassin can block ambassador status for 3 cycles, crippling your embassy effectiveness. An infiltrator reduces embassy effectiveness by 50% for 3 cycles. Protect your ambassadors with guardians in embassy zones.')}
+          </div>
+        </div>
+
+        <div class="callout callout--warn">
+          <div class="callout__label">${msg('Embassy Defense')}</div>
+          <div class="callout__text">
+            ${msg('Embassy effectiveness directly feeds into the operative success formula (+embassy_eff \u00D7 0.15) and the diplomatic score dimension (sum(eff) \u00D7 10). Losing embassy effectiveness hurts both your offense and your score.')}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  /* ── Section 7: Scoring ──────────────────────────── */
 
   private _renderScoring() {
     const presets = getScorePresets();
+    const scoreDims = getScoreDimensions();
     const dims: { name: string; color: string; key: string }[] = [
       { name: msg('Stability'), color: 'var(--color-success)', key: 'stability' },
       { name: msg('Influence'), color: 'var(--color-epoch-influence)', key: 'influence' },
@@ -1285,7 +1536,7 @@ export class VelgHowToPlay extends LitElement {
 
     return html`
       <section class="section" id="scoring">
-        ${this._renderSectionHeader('05', msg('Scoring System'))}
+        ${this._renderSectionHeader('07', msg('Scoring System'))}
         <p class="section__text">
           ${msg('Scores are computed across 5 dimensions, normalized against other participants, then weighted by the epoch preset to produce a composite score. Highest composite wins.')}
         </p>
@@ -1330,16 +1581,36 @@ export class VelgHowToPlay extends LitElement {
             )}
           </tbody>
         </table>
+
+        ${scoreDims.map(
+          (d) => html`
+            <div class="dim-block" style="border-left-color: ${d.color}">
+              <div class="dim-block__header">
+                <span class="dim-block__name">${d.name}</span>
+                <span class="dim-title" style="color: ${d.color}; border-color: ${d.color}">${d.title}</span>
+              </div>
+              <div class="dim-block__formula">${d.formula}</div>
+              <div class="dim-block__explanation">${d.explanation}</div>
+            </div>
+          `,
+        )}
+
+        <div class="callout callout--tip">
+          <div class="callout__label">${msg('Dimension Titles')}</div>
+          <div class="callout__text">
+            ${msg('The winner of each dimension receives a title displayed on the leaderboard. Score highest in Stability to earn "The Unshaken," dominate Influence for "The Resonant," and so on. Titles persist after the epoch ends.')}
+          </div>
+        </div>
       </section>
     `;
   }
 
-  /* ── Section 6: Alliances ────────────────────────── */
+  /* ── Section 8: Alliances ────────────────────────── */
 
   private _renderAlliances() {
     return html`
       <section class="section" id="alliances">
-        ${this._renderSectionHeader('06', msg('Alliances & Diplomacy'))}
+        ${this._renderSectionHeader('08', msg('Alliances & Diplomacy'))}
         <p class="section__text">
           ${msg('Form teams with other simulations. Allies share no direct resources, but gain diplomatic scoring bonuses and can coordinate strikes. Embassies serve as deployment channels for operatives.')}
         </p>
@@ -1361,33 +1632,110 @@ export class VelgHowToPlay extends LitElement {
     `;
   }
 
-  /* ── Section 7: Bleed ────────────────────────────── */
+  /* ── Section 9: Bleed ────────────────────────────── */
 
   private _renderBleed() {
+    const vectors = getBleedVectors();
+    const thresholdRules = getBleedThresholdRules();
+    const lifecycle = getEchoLifecycle();
     return html`
       <section class="section" id="bleed">
-        ${this._renderSectionHeader('07', msg('Bleed & Echoes'))}
+        ${this._renderSectionHeader('09', msg('Bleed & Echoes'))}
         <p class="section__text">
-          ${msg('The Bleed is the cross-simulation influence that connects the multiverse. Events in one simulation can echo into others, creating ripple effects. During Reckoning phase, bleed is amplified \u2014 sovereignty scores fluctuate more, and echo opportunities multiply.')}
+          ${msg('The Bleed is the cross-simulation influence that connects the multiverse. When an event occurs in one simulation, it may "bleed" into connected simulations as an echo \u2014 a weaker copy that carries thematic resonance. Bleed is the engine that drives the Influence and Sovereignty dimensions.')}
         </p>
 
-        <div class="callout callout--warn">
-          <div class="callout__label">${msg('Sovereignty')}</div>
+        <p class="section__text" style="margin-top: var(--space-3)">
+          ${msg('Every echo travels through one of seven vectors. The vector determines which event tags resonate, amplifying or dampening the echo strength.')}
+        </p>
+
+        <div class="vector-grid">
+          ${vectors.map((v, i) => this._renderVectorCard(v, i))}
+        </div>
+
+        <div class="callout callout--info">
+          <div class="callout__label">${msg('Echo Strength Formula')}</div>
+          <div class="callout__text">${msg("Each echo's strength is calculated as:")}</div>
+          <div class="formula">${getEchoStrengthFormula()}</div>
           <div class="callout__text">
-            ${msg('Sovereignty measures how well you resist foreign influence. Events with data_source "bleed" or "propagandist" count against your sovereignty score. Strong sovereignty = resilient simulation.')}
+            ${msg('Embassy effectiveness boosts echo strength by up to 30%. Each matching tag adds 20% (max 3 tags). Cascaded echoes weaken exponentially via the decay factor. Unstable source zones bleed louder.')}
+          </div>
+        </div>
+
+        <p class="section__text" style="margin-top: var(--space-4)">
+          ${msg("Not every event triggers a bleed. The event's impact level must meet or exceed the modified threshold:")}
+        </p>
+
+        <div class="readout">
+          ${thresholdRules.map(
+            (r) => html`
+              <div class="readout__cell">
+                <span class="readout__label">${r.label}</span>
+                <span class="readout__value">${r.value}</span>
+              </div>
+            `,
+          )}
+        </div>
+
+        <p class="section__text" style="margin-top: var(--space-4)">
+          ${msg('Echoes follow a lifecycle from creation to resolution:')}
+        </p>
+
+        <div class="lifecycle">
+          ${lifecycle.map(
+            (step, i) => html`
+              ${i > 0 ? html`<span class="lifecycle__arrow">\u25B8</span>` : nothing}
+              <div class="lifecycle__step">
+                <div class="lifecycle__dot" style="background: ${step.color}"></div>
+                <span class="lifecycle__name" style="color: ${step.color}">${step.name}</span>
+              </div>
+            `,
+          )}
+        </div>
+
+        <div class="callout callout--danger">
+          <div class="callout__label">${msg('Cascade Depth')}</div>
+          <div class="callout__text">
+            ${msg('An echo can itself trigger further bleeds in other simulations \u2014 a cascade. Default max depth is 2. Each cascade level multiplies by the decay factor (default 0.6), so a depth-2 echo has only 36% of the original strength. During Reckoning, max depth increases by 1.')}
+          </div>
+        </div>
+
+        <div class="callout callout--warn">
+          <div class="callout__label">${msg('Reckoning Amplification')}</div>
+          <div class="callout__text">
+            ${msg("During the Reckoning phase, the bleed threshold drops by 2 and cascade depth increases by 1. Events that wouldn't bleed during Competition suddenly punch through. Sovereignty scores can shift dramatically in the final cycles.")}
+          </div>
+        </div>
+
+        <div class="callout callout--tip">
+          <div class="callout__label">${msg('Sovereignty Impact')}</div>
+          <div class="callout__text">
+            ${msg('Your sovereignty score is 100 \u00D7 (1 \u2212 bleed_impact / total_impact). Every incoming echo and propagandist event erodes your sovereignty. Defend against bleed by maintaining stable zones (reduces target instability bonus) and protecting your embassies (reduces echo strength multiplier).')}
           </div>
         </div>
       </section>
     `;
   }
 
-  /* ── Section 8: Tactics ──────────────────────────── */
+  private _renderVectorCard(vector: BleedVector, index: number) {
+    return html`
+      <div class="vector-card" style="border-left-color: ${vector.color}; --i: ${index}">
+        <span class="vector-card__name" style="color: ${vector.color}">${vector.name}</span>
+        <div class="vector-card__desc">${vector.description}</div>
+        <div class="vector-tags">
+          ${vector.tags.map((t) => html`<span class="vector-tag">${t}</span>`)}
+        </div>
+      </div>
+    `;
+  }
+
+  /* ── Section 10: Tactics ─────────────────────────── */
 
   private _renderTactics() {
     const tactics = getTactics();
     return html`
       <section class="section" id="tactics">
-        ${this._renderSectionHeader('08', msg('Tactics & Strategies'))}
+        ${this._renderSectionHeader('10', msg('Tactics & Strategies'))}
         <p class="section__text">
           ${msg('Proven strategies for each phase, economy management, counter-play patterns, and preset-specific approaches. Study these before your first deployment.')}
         </p>
@@ -1411,13 +1759,13 @@ export class VelgHowToPlay extends LitElement {
     `;
   }
 
-  /* ── Section 9: Matches ──────────────────────────── */
+  /* ── Section 11: Matches ─────────────────────────── */
 
   private _renderMatches() {
     const matches = getMatches();
     return html`
       <section class="section" id="matches">
-        ${this._renderSectionHeader('09', msg('Example Matches'))}
+        ${this._renderSectionHeader('11', msg('Example Matches'))}
         <p class="section__text">
           ${msg('Five fully worked-out matches showing different strategies, presets, and mechanics in action. Expand each match to see cycle-by-cycle replays.')}
         </p>

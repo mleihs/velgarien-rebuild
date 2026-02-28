@@ -4,14 +4,24 @@
  */
 
 import { msg } from '@lit/localize';
-import type { OperativeCard, TacticCard, TocSection } from './htp-types.js';
+import type {
+  BleedVector,
+  EmbassyInfoCard,
+  NormalizationRule,
+  OperativeCard,
+  ScoreDimension,
+  TacticCard,
+  TocSection,
+} from './htp-types.js';
 
 export function getTocSections(): TocSection[] {
   return [
     { id: 'epochs', label: msg('What is an Epoch?') },
+    { id: 'getting-started', label: msg('Getting Started') },
     { id: 'phases', label: msg('Phases & Timeline') },
     { id: 'rp', label: msg('Resonance Points') },
     { id: 'operatives', label: msg('Operatives') },
+    { id: 'embassies', label: msg('Embassies & Ambassadors') },
     { id: 'scoring', label: msg('Scoring System') },
     { id: 'alliances', label: msg('Alliances & Diplomacy') },
     { id: 'bleed', label: msg('Bleed & Echoes') },
@@ -260,5 +270,167 @@ export function getTactics(): TacticCard[] {
         'With 35% diplomatic weight, your embassies ARE your score. Each ally gives +10% diplomatic. Protect embassies from infiltrators, never betray allies (the \u221220% penalty is fatal), and focus on building the largest alliance network possible.',
       ),
     },
+  ];
+}
+
+export function getNormalizationRules(): NormalizationRule[] {
+  return [
+    { attribute: msg('Agents'), normalizedTo: msg('Max 6 per simulation') },
+    { attribute: msg('Buildings'), normalizedTo: msg('Max 8 per simulation') },
+    { attribute: msg('Condition'), normalizedTo: msg('All set to "good"') },
+    { attribute: msg('Capacity'), normalizedTo: msg('All set to 30') },
+    { attribute: msg('Qualifications'), normalizedTo: msg('All set to 5') },
+    {
+      attribute: msg('Security levels'),
+      normalizedTo: msg('1\u00D7 high, 2\u00D7 medium, 1\u00D7 low'),
+    },
+    { attribute: msg('Debuffs'), normalizedTo: msg('All penalties cleared') },
+  ];
+}
+
+export function getEmbassyInfo(): EmbassyInfoCard[] {
+  return [
+    {
+      label: msg('Creation'),
+      value: msg('4-step wizard: partner \u2192 protocol \u2192 ambassadors \u2192 confirm'),
+    },
+    { label: msg('Ambassador'), value: msg('Special agent status \u2014 targeted by assassins') },
+    {
+      label: msg('Effectiveness'),
+      value: msg('Feeds into success formula: +embassy_eff \u00D7 0.15'),
+    },
+    { label: msg('Diplomatic score'), value: msg('sum(effectiveness) \u00D7 10') },
+    { label: msg('Infiltrator vulnerability'), value: msg('\u221250% effectiveness for 3 cycles') },
+    { label: msg('Assassin vulnerability'), value: msg('Blocks ambassador for 3 cycles') },
+  ];
+}
+
+export function getScoreDimensions(): ScoreDimension[] {
+  return [
+    {
+      key: 'stability',
+      name: msg('Stability'),
+      color: 'var(--color-success)',
+      formula: 'avg(zone_stability) \u00D7 100',
+      explanation: msg(
+        'Average stability across all zones, scaled to 0\u2013100. Saboteurs degrade buildings, which lowers zone stability. Defend your infrastructure.',
+      ),
+      title: msg('The Unshaken'),
+    },
+    {
+      key: 'influence',
+      name: msg('Influence'),
+      color: 'var(--color-epoch-influence)',
+      formula: 'sum(completed_echo_strengths)',
+      explanation: msg(
+        'Total strength of echoes you have successfully sent into other simulations during the epoch. More bleed = more influence.',
+      ),
+      title: msg('The Resonant'),
+    },
+    {
+      key: 'sovereignty',
+      name: msg('Sovereignty'),
+      color: 'var(--color-info)',
+      formula: '100 \u00D7 (1 \u2212 bleed_impact / total_impact)',
+      explanation: msg(
+        'Measures resistance to foreign influence. Events with data_source "bleed" or "propagandist" count against you. High sovereignty = resilient simulation.',
+      ),
+      title: msg('The Sovereign'),
+    },
+    {
+      key: 'diplomatic',
+      name: msg('Diplomatic'),
+      color: 'var(--color-warning)',
+      formula:
+        'sum(eff) \u00D7 10 \u00D7 (1 + 0.1 \u00D7 allies) \u00D7 (1 \u2212 betrayal_penalty)',
+      explanation: msg(
+        'Embassy effectiveness times 10, multiplied by alliance bonus (+10% per ally) and reduced by betrayal penalty (\u221220%). Protect your embassies and honor your alliances.',
+      ),
+      title: msg('The Architect'),
+    },
+    {
+      key: 'military',
+      name: msg('Military'),
+      color: 'var(--color-danger)',
+      formula: 'sum(mission_scores) \u2212 sum(detected \u00D7 3)',
+      explanation: msg(
+        'Sum of successful mission values minus detection penalties (\u22123 per detected mission). High reward, high risk.',
+      ),
+      title: msg('The Shadow'),
+    },
+  ];
+}
+
+export function getBleedVectors(): BleedVector[] {
+  return [
+    {
+      name: msg('Commerce'),
+      color: 'var(--color-warning)',
+      tags: ['commerce', 'trade', 'economy', 'market', 'merchant', 'gold'],
+      description: msg('Trade routes and economic influence. Markets echo across boundaries.'),
+    },
+    {
+      name: msg('Language'),
+      color: 'var(--color-info)',
+      tags: ['language', 'linguistic', 'communication', 'translation', 'dialect'],
+      description: msg('Linguistic drift and communication patterns. Words bleed between worlds.'),
+    },
+    {
+      name: msg('Memory'),
+      color: 'var(--color-epoch-influence)',
+      tags: ['memory', 'trauma', 'history', 'echo', 'past', 'loss'],
+      description: msg('Collective trauma and shared history. Past events resonate forward.'),
+    },
+    {
+      name: msg('Resonance'),
+      color: 'var(--color-success)',
+      tags: ['resonance', 'relationship', 'parallel', 'mirror', 'bond'],
+      description: msg(
+        'Relationship parallels between simulations. Bonds mirror across the divide.',
+      ),
+    },
+    {
+      name: msg('Architecture'),
+      color: 'var(--color-gray-400)',
+      tags: ['architecture', 'building', 'construction', 'structure', 'ruin'],
+      description: msg('Structural influence. Buildings cast shadows into neighboring realities.'),
+    },
+    {
+      name: msg('Dream'),
+      color: 'var(--color-text-secondary)',
+      tags: ['dream', 'vision', 'prophecy', 'mystical', 'spiritual', 'sleep'],
+      description: msg('Visions and prophetic leakage. Dreams slip between simulation barriers.'),
+    },
+    {
+      name: msg('Desire'),
+      color: 'var(--color-danger)',
+      tags: ['desire', 'yearning', 'longing', 'need', 'hunger', 'want'],
+      description: msg('Yearning and need. The deepest urges cross all boundaries.'),
+    },
+  ];
+}
+
+export function getEchoStrengthFormula(): string {
+  return 'base \u00D7 (1 + embassy_eff \u00D7 0.3) \u00D7 (1 + tag_resonance \u00D7 0.2) \u00D7 decay^depth \u00D7 (1 + instability \u00D7 0.2)';
+}
+
+export function getBleedThresholdRules(): { label: string; value: string }[] {
+  return [
+    { label: msg('Base impact threshold'), value: '8' },
+    { label: msg('High instability (\u003E 0.7)'), value: '\u22121' },
+    { label: msg('Strong embassy (\u003E 0.8)'), value: '\u22121' },
+    { label: msg('Minimum floor'), value: '5' },
+    { label: msg('Probabilistic zone (1\u20132 below)'), value: msg('15% base chance') },
+    { label: msg('Reckoning phase'), value: msg('Threshold \u22122, cascade depth +1') },
+  ];
+}
+
+export function getEchoLifecycle(): { name: string; color: string }[] {
+  return [
+    { name: msg('Pending'), color: 'var(--color-gray-500)' },
+    { name: msg('Generating'), color: 'var(--color-info)' },
+    { name: msg('Completed'), color: 'var(--color-success)' },
+    { name: msg('Rejected'), color: 'var(--color-warning)' },
+    { name: msg('Failed'), color: 'var(--color-danger)' },
   ];
 }

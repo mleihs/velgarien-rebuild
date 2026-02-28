@@ -21,8 +21,10 @@ from backend.models.epoch import (
     TeamCreate,
     TeamResponse,
 )
+from backend.models.epoch_chat import ReadySignal
 from backend.services.audit_service import AuditService
 from backend.services.battle_log_service import BattleLogService
+from backend.services.epoch_chat_service import EpochChatService
 from backend.services.epoch_service import EpochService
 from backend.services.game_instance_service import GameInstanceService
 from supabase import Client
@@ -349,5 +351,22 @@ async def leave_team(
     await AuditService.log_action(
         supabase, simulation_id, user.id, "epoch_teams", None, "update",
         details={"action": "leave", "epoch_id": str(epoch_id)},
+    )
+    return {"success": True, "data": data}
+
+
+# ── Ready Signals ─────────────────────────────────────
+
+
+@router.post("/{epoch_id}/ready", response_model=SuccessResponse)
+async def toggle_ready(
+    epoch_id: UUID,
+    body: ReadySignal,
+    user: CurrentUser = Depends(get_current_user),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Toggle cycle_ready for a participant. Triggers realtime broadcast."""
+    data = await EpochChatService.toggle_ready(
+        supabase, epoch_id, body.simulation_id, body.ready,
     )
     return {"success": True, "data": data}

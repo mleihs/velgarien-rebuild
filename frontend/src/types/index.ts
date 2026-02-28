@@ -903,6 +903,7 @@ export interface EpochParticipant {
   last_rp_grant_at?: string;
   final_scores?: Record<string, number>;
   betrayal_penalty?: number;
+  cycle_ready?: boolean;
   simulations?: {
     name: string;
     slug: string;
@@ -989,6 +990,25 @@ export interface BattleLogEntry {
   is_public: boolean;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+export interface EpochChatMessage {
+  id: UUID;
+  epoch_id: UUID;
+  sender_id: UUID;
+  sender_simulation_id: UUID;
+  channel_type: 'epoch' | 'team';
+  team_id?: UUID;
+  content: string;
+  created_at: string;
+  sender_name?: string;
+}
+
+export interface PresenceUser {
+  user_id: string;
+  simulation_id: string;
+  simulation_name: string;
+  online_at: string;
 }
 
 // --- API Response Types ---

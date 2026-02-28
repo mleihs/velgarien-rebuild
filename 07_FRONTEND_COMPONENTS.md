@@ -1,7 +1,8 @@
 # 07 - Frontend Components: Komponenten + Simulation-Settings-UI
 
-**Version:** 1.4
+**Version:** 1.5
 **Datum:** 2026-02-28
+**Aenderung v1.5:** Epoch Realtime — EpochChatPanel (dual-channel tactical comms), EpochPresenceIndicator (online user dots), EpochReadyPanel (cycle readiness toggle). EpochCommandCenter now has collapsible COMMS sidebar on Operations Board. RealtimeService singleton (4 Supabase Realtime channels with Preact Signals). EpochChatApiService. Updated counts: 116 files across 16 subdirectories, 96 @customElement components, 23 API services + 8 platform services. how-to-play/ and epoch invite components also now reflected.
 **Aenderung v1.4:** Accurate component audit — 107 files across 15 subdirectories, 90 @customElement components. Updated shared/ (16 components + 8 CSS modules + 1 base class), removed dead code listings (DataTable, FormBuilder, NotificationCenter, CampaignDetailView, CampaignMetrics, SentimentBadge, SupabaseRealtimeService, PresenceService). Added health/, epoch/, lore/, EventPicker, BleedSettingsPanel, PromptsSettingsPanel. Updated service layer (22 API services + 7 platform services).
 **Aenderung v1.3:** Cartographer's Map (Multiverse-Visualisierung). Agent Relationships UI (RelationshipCard, RelationshipEditModal). Event Echoes UI (EchoCard, EchoTriggerModal). 7 neue Multiverse-Komponenten. Bleed-Filter in EventsView.
 **Aenderung v1.2:** LoreScroll-Akkordeon auf Dashboard. LoginPanel (Slide-from-Right). SimulationCard mit Banner-Bild + Zaehler. VelgSimulationShell Theming-Lifecycle (connectedCallback/disconnectedCallback). Anonymer Read-Only-Modus in allen Entity-Komponenten via `appState.isAuthenticated.value`.
@@ -13,7 +14,7 @@
 
 ### Plattform-Level
 
-**107 component files** across 15 subdirectories. **90 @customElement** components. **16 shared components + 8 CSS modules + 1 base class.**
+**116 component files** across 16 subdirectories. **96 @customElement** components. **16 shared components + 8 CSS modules + 1 base class.**
 
 ```
 App (Root)
@@ -111,7 +112,12 @@ SimulationShell (Layout mit Navigation)
 │   ├── EpochCreationWizard
 │   ├── EpochLeaderboard
 │   ├── EpochBattleLog
-│   └── DeployOperativeModal (extends BaseModal)
+│   ├── DeployOperativeModal (extends BaseModal)
+│   ├── EpochInvitePanel (VelgSidePanel slide-out, email invitations)
+│   ├── EpochChatPanel (dual-channel tactical comms: ALL CHANNELS / TEAM FREQ)
+│   ├── EpochPresenceIndicator (online user dot per simulation_id)
+│   ├── EpochReadyPanel (cycle ready toggle with live broadcast)
+│   └── Collapsible COMMS Sidebar (Operations Board, toggle with unread badge)
 └── SettingsView
     ├── GeneralSettingsPanel
     ├── WorldSettingsPanel (Taxonomien)
@@ -449,6 +455,8 @@ export class AppShell extends LitElement {
 /simulations/:slug/settings         → SettingsView
 /simulations/:slug/settings/:tab    → SettingsView (spezifischer Tab)
 /simulations/:slug/members          → MembersView
+/how-to-play                        → HowToPlayView
+/epoch/join                         → EpochInviteAcceptView (token-based invite acceptance)
 /auth/login                         → LoginView
 /auth/register                      → RegisterView
 /invite/:token                      → InvitationAcceptView
@@ -459,7 +467,7 @@ export class AppShell extends LitElement {
 
 ## Service-Layer (Hybrid-Architektur)
 
-Das Frontend kommuniziert mit **zwei Targets**: Supabase direkt (Auth) und FastAPI (Business-Logik, 22 API services).
+Das Frontend kommuniziert mit **zwei Targets**: Supabase direkt (Auth, Realtime) und FastAPI (Business-Logik, 23 API services).
 
 ### Supabase Direct Services
 
@@ -507,11 +515,12 @@ frontend/src/services/api/
 ├── ConnectionsApiService.ts        # Simulation connections + map data (Phase 6)
 ├── EmbassiesApiService.ts          # Embassy buildings + ambassador management
 ├── EpochsApiService.ts             # Competitive epochs, operatives, scoring
+├── EpochChatApiService.ts          # Epoch chat messages (REST catch-up) + ready signals
 ├── HealthApiService.ts             # Simulation health + game mechanics
 └── index.ts                        # Re-exports all service singletons
 ```
 
-**22 API services** (excluding BaseApiService and index.ts).
+**23 API services** (excluding BaseApiService and index.ts).
 
 ### Platform-Level Services
 
@@ -524,9 +533,32 @@ frontend/src/services/
 ├── SeoService.ts                   # Meta tags, document title, structured data
 ├── AnalyticsService.ts             # GA4 event tracking (37 events)
 ├── GenerationProgressService.ts    # AI generation progress tracking
-└── i18n/
-    └── locale-service.ts           # LocaleService: initLocale, setLocale, getInitialLocale
+├── i18n/
+│   └── locale-service.ts           # LocaleService: initLocale, setLocale, getInitialLocale
+└── realtime/
+    └── RealtimeService.ts          # Singleton: 4 Supabase Realtime channels with Preact Signals
 ```
+
+**RealtimeService** (`realtimeService` singleton) manages all Supabase Realtime channels for epoch gameplay. Exposes reactive Preact Signals consumed by epoch components:
+
+| Signal | Type | Description |
+|--------|------|-------------|
+| `onlineUsers` | `Signal<PresenceUser[]>` | Currently online epoch participants |
+| `epochMessages` | `Signal<EpochChatMessage[]>` | Epoch-wide chat message feed |
+| `teamMessages` | `Signal<EpochChatMessage[]>` | Team-only chat message feed |
+| `readyStates` | `Signal<Record<string, boolean>>` | Cycle readiness per simulation_id |
+| `unreadEpochCount` | `Signal<number>` | Unread epoch chat badge counter |
+| `unreadTeamCount` | `Signal<number>` | Unread team chat badge counter |
+
+**Channel naming convention:**
+| Channel | Protocol | Purpose |
+|---------|----------|---------|
+| `epoch:{id}:chat` | Broadcast | Epoch-wide chat messages |
+| `epoch:{id}:presence` | Presence | Online user tracking |
+| `epoch:{id}:status` | Broadcast | Ready signals, cycle events |
+| `epoch:{id}:team:{tid}:chat` | Broadcast | Team-only chat messages |
+
+**Lifecycle:** `joinEpoch(epochId, userId, simulationId, simulationName)` subscribes to all channels. `leaveEpoch(epochId)` unsubscribes and resets signals. `joinTeam(epochId, teamId)` / `leaveTeam()` manage team channel. Focus methods (`setEpochChatFocused`, `setTeamChatFocused`) reset unread counters.
 
 ### BaseApiService (erweitert)
 
@@ -570,6 +602,8 @@ class BaseApiService {
 | News/Social Media | SocialTrendsApiService | FastAPI |
 | Relationships, Echoes, Connections | RelationshipsApi, EchoesApi, ConnectionsApi | FastAPI |
 | Embassies, Epochs, Health | EmbassiesApi, EpochsApi, HealthApi | FastAPI |
+| Epoch Chat (REST catch-up) | EpochChatApiService | FastAPI |
+| Epoch Realtime (live messages, presence, ready) | RealtimeService | Supabase Realtime |
 
 ---
 
@@ -681,9 +715,10 @@ Alle Änderungen zeigen eine Live-Preview innerhalb der Shell. Preset-Auswahl f�
 | multiverse/ | 7 | 4 | CartographerMap, MapGraph, MapTooltip, MapConnectionPanel + 3 utilities |
 | settings/ | 9 | 9 | SettingsView + 8 panels (General, World, AI, Integration, Design, Access, Prompts, Bleed) |
 | health/ | 1 | 1 | SimulationHealthView (game metrics dashboard) |
-| epoch/ | 5 | 5 | CommandCenter, CreationWizard, Leaderboard, BattleLog, DeployOperativeModal |
+| epoch/ | 10 | 10 | CommandCenter, CreationWizard, Leaderboard, BattleLog, DeployOperativeModal, InvitePanel, InviteAcceptView, ChatPanel, PresenceIndicator, ReadyPanel |
+| how-to-play/ | 4 | 1 | HowToPlayView + 3 content/type files (htp-types, htp-content-rules, htp-content-matches) |
 | shared/ | 25 | 16 | 16 components + 8 CSS modules + 1 base class |
-| **Gesamt** | **107** | **90** (in components/) | **15 Verzeichnisse** |
+| **Gesamt** | **116** | **96** (in components/) | **16 Verzeichnisse** |
 
 ### Utilities
 
@@ -1080,3 +1115,133 @@ Modal zum Ausloesen eines Event-Echos in eine verbundene Simulation. Nur fuer ad
 - Zeigt `VelgEchoCard` pro Echo oder "No echoes yet" als Leer-Zustand
 - **Trigger-Button:** `"Trigger Echo"` mit Sparkle-Icon (nur `canAdmin`)
 - **Echo-Klick:** Wenn Target-Event vorhanden, dispatcht `event-click` Event zum Navigieren
+
+---
+
+## Epoch Realtime UI
+
+### EpochCommandCenter — COMMS Sidebar
+
+The Operations Board (lobby view when no epoch is selected) includes a **collapsible COMMS sidebar** that provides persistent chat access. Toggle button in the ops board header with satellite dish icon, unread badge counter, and pulsing animation when active.
+
+**Behavior:**
+- `_showComms` boolean toggle — opens/closes the sidebar with `comms-open` slide-in animation
+- Auto-discovers an active epoch for comms via `_findCommsEpoch()` — scans active/foundation/competition/reckoning epochs, matches current user's participant record
+- Joins Realtime channels on discovery (`realtimeService.joinEpoch()`)
+- Falls back to "No Active Channel" empty state if no epoch is available
+- COMMS sidebar is separate from the detail view — when the user enters an epoch detail, the comms epoch channel is swapped if needed
+- Mobile: sidebar goes full-width below ops board (`flex-direction: column` at `<=1200px`)
+
+**CSS Classes:** `.comms-toggle`, `.comms-toggle--active`, `.comms-toggle__unread`, `.comms-sidebar`, `.comms-sidebar__header`, `.comms-sidebar__signal` (animated signal bars), `.comms-sidebar__freq`, `.comms-sidebar__close`, `.comms-sidebar__body`, `.comms-empty`
+
+### VelgEpochChatPanel (`velg-epoch-chat-panel`)
+
+Dual-channel tactical comms interface for epoch player-to-player chat. Dark military HUD aesthetic.
+
+**Tag:** `<velg-epoch-chat-panel>`
+
+**Properties:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `epochId` | `string` | Active epoch ID |
+| `mySimulationId` | `string` | Current user's simulation ID |
+| `myTeamId` | `string` | Current user's team ID (for team channel) |
+| `epochStatus` | `string` | Current epoch status (controls send permission) |
+
+**State:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `_activeChannel` | `ChatChannel` | `'epoch'` or `'team'` — tab selection |
+| `_input` | `string` | Current message input text |
+| `_sending` | `boolean` | Sending state (disables input) |
+
+**Channels:**
+- **ALL CHANNELS** (`epoch`): Epoch-wide public diplomacy — all participants see all messages
+- **TEAM FREQ** (`team`): Alliance-only encrypted comms — only team members see messages
+
+**Message Flow:**
+1. **REST catch-up on mount:** `epochChatApi.listMessages()` / `epochChatApi.listTeamMessages()` loads recent history
+2. **Realtime for live messages:** `realtimeService.epochMessages` / `realtimeService.teamMessages` signals append new messages reactively
+3. **Send:** `epochChatApi.sendMessage()` (REST POST), message appears via Broadcast return trip
+
+**Message Display:**
+- Own transmissions: right-aligned with amber tint (`--amber-glow` background)
+- Incoming intel: left-aligned in gray surface
+- Each message shows: simulation name (uppercase label), content, relative timestamp
+- Messages list auto-scrolls to bottom on new messages
+- 2000 character limit on input with character counter
+
+**Unread Badges:**
+- Channel tabs show unread counters from `realtimeService.unreadEpochCount` / `realtimeService.unreadTeamCount`
+- Counters reset when switching to the channel via `realtimeService.setEpochChatFocused()` / `realtimeService.setTeamChatFocused()`
+
+**Events:**
+| Event | Detail | Beschreibung |
+|-------|--------|-------------|
+| (none) | - | All state managed internally via signals + REST |
+
+### VelgEpochPresenceIndicator (`velg-epoch-presence`)
+
+Compact online/offline signal lamp — a 7px dot that pulses green when the simulation's player is online.
+
+**Tag:** `<velg-epoch-presence>`
+
+**Properties:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `simulationId` | `string` | Simulation ID to check presence for |
+
+**State:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `_isOnline` | `boolean` | Computed from `realtimeService.onlineUsers` signal |
+
+**Rendering:**
+- **Online:** Green pulsing dot (`#22c55e`) with `box-shadow` glow, `pulse-online` keyframe animation (2s ease-in-out infinite)
+- **Offline:** Gray dormant dot (`#555`), no animation
+- Tooltip shows "Online" / "Offline"
+
+**Lifecycle:**
+- `connectedCallback`: Creates `effect()` subscription to `realtimeService.onlineUsers` signal, checks if any user matches `simulationId`
+- `disconnectedCallback`: Disposes effect subscription
+
+### VelgEpochReadyPanel (`velg-epoch-ready-panel`)
+
+Cycle readiness dashboard with segmented progress bar. Shows "4/6 Ready for Resolution" with visual segments for each participant.
+
+**Tag:** `<velg-epoch-ready-panel>`
+
+**Properties:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `epochId` | `string` | Active epoch ID |
+| `participants` | `EpochParticipant[]` | All epoch participants |
+| `mySimulationId` | `string` | Current user's simulation ID |
+
+**State:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `_readyStates` | `Record<string, boolean>` | Computed from `realtimeService.readyStates` signal |
+| `_toggling` | `boolean` | Toggle button loading state |
+
+**Rendering:**
+- **Header:** "CYCLE READINESS" label + "{n}/{total} Ready" count in amber
+- **Segmented bar:** Flex row of segments, one per participant. `bar__seg--ready` (amber, glowing) or `bar__seg--waiting` (dim gray). Stagger-in animation.
+- **Participant list:** Each row shows simulation name + check icon (ready) or dash icon (not ready)
+- **Toggle button:** "SIGNAL READY" / "REVOKE READY" — calls `epochChatApi.setReady()` then broadcasts via Realtime status channel
+
+**Visibility:** Only displayed during active epoch phases (foundation, competition, reckoning).
+
+### EpochChatApiService
+
+REST API service for epoch chat persistence and ready signals. Live messages arrive via Realtime, but this service handles initial catch-up loading and message sending.
+
+**Singleton:** `epochChatApi` (exported from `EpochChatApiService.ts`)
+
+**Methods:**
+| Method | HTTP | Path | Description |
+|--------|------|------|-------------|
+| `sendMessage(epochId, data)` | POST | `/epochs/{epochId}/chat` | Send a chat message (content, channel_type, simulation_id, team_id?) |
+| `listMessages(epochId, params?)` | GET | `/epochs/{epochId}/chat` | List epoch-wide messages (limit, before cursor) |
+| `listTeamMessages(epochId, teamId, params?)` | GET | `/epochs/{epochId}/chat/team/{teamId}` | List team messages (limit, before cursor) |
+| `setReady(epochId, simulationId, ready)` | POST | `/epochs/{epochId}/ready` | Toggle cycle readiness for a simulation |

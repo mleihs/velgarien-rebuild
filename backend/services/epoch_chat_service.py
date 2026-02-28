@@ -1,0 +1,208 @@
+"""Service layer for epoch chat message operations."""
+
+import logging
+from uuid import UUID
+
+from fastapi import HTTPException, status
+
+from supabase import Client
+
+logger = logging.getLogger(__name__)
+
+
+class EpochChatService:
+    """Service for epoch chat CRUD and ready signal toggling."""
+
+    @staticmethod
+    async def send_message(
+        supabase: Client,
+        epoch_id: UUID,
+        sender_id: UUID,
+        sender_simulation_id: UUID,
+        content: str,
+        channel_type: str = "epoch",
+        team_id: UUID | None = None,
+    ) -> dict:
+        """Validate and insert a chat message.
+
+        Validates:
+        - Epoch exists and is active (not completed/cancelled)
+        - For team messages, the sender's participant has matching team_id
+        """
+        # Validate epoch is active
+        epoch_resp = (
+            supabase.table("game_epochs")
+            .select("id, status")
+            .eq("id", str(epoch_id))
+            .limit(1)
+            .execute()
+        )
+        if not epoch_resp.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Epoch not found.",
+            )
+        epoch = epoch_resp.data[0]
+        if epoch["status"] in ("completed", "cancelled"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot send messages in a completed or cancelled epoch.",
+            )
+
+        # For team messages, validate sender is on that team
+        if channel_type == "team":
+            if not team_id:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="team_id is required for team messages.",
+                )
+            participant_resp = (
+                supabase.table("epoch_participants")
+                .select("id, team_id")
+                .eq("epoch_id", str(epoch_id))
+                .eq("simulation_id", str(sender_simulation_id))
+                .limit(1)
+                .execute()
+            )
+            if not participant_resp.data:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You are not a participant in this epoch.",
+                )
+            if str(participant_resp.data[0].get("team_id")) != str(team_id):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You are not a member of this team.",
+                )
+
+        # Insert message
+        insert_data = {
+            "epoch_id": str(epoch_id),
+            "sender_id": str(sender_id),
+            "sender_simulation_id": str(sender_simulation_id),
+            "channel_type": channel_type,
+            "content": content,
+        }
+        if team_id and channel_type == "team":
+            insert_data["team_id"] = str(team_id)
+
+        response = (
+            supabase.table("epoch_chat_messages")
+            .insert(insert_data)
+            .execute()
+        )
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to send message.",
+            )
+
+        # Enrich with sender simulation name
+        msg = response.data[0]
+        return await EpochChatService._enrich_sender_name(supabase, msg)
+
+    @staticmethod
+    async def list_messages(
+        supabase: Client,
+        epoch_id: UUID,
+        channel_type: str = "epoch",
+        team_id: UUID | None = None,
+        limit: int = 50,
+        before: str | None = None,
+    ) -> tuple[list[dict], int]:
+        """Fetch paginated messages with cursor-based pagination.
+
+        Returns (messages, total_count). Messages ordered by created_at DESC.
+        `before` is an ISO timestamp cursor for older messages.
+        """
+        query = (
+            supabase.table("epoch_chat_messages")
+            .select("*", count="exact")
+            .eq("epoch_id", str(epoch_id))
+            .eq("channel_type", channel_type)
+        )
+
+        if channel_type == "team" and team_id:
+            query = query.eq("team_id", str(team_id))
+
+        if before:
+            query = query.lt("created_at", before)
+
+        query = query.order("created_at", desc=True).limit(limit)
+        response = query.execute()
+
+        messages = response.data or []
+        total = response.count or 0
+
+        # Enrich with sender names (batch)
+        if messages:
+            sim_ids = list({m["sender_simulation_id"] for m in messages})
+            sim_resp = (
+                supabase.table("simulations")
+                .select("id, name")
+                .in_("id", sim_ids)
+                .execute()
+            )
+            name_map = {s["id"]: s["name"] for s in (sim_resp.data or [])}
+            for m in messages:
+                m["sender_name"] = name_map.get(m["sender_simulation_id"])
+
+        # Return in chronological order (oldest first) for display
+        messages.reverse()
+        return messages, total
+
+    @staticmethod
+    async def toggle_ready(
+        supabase: Client,
+        epoch_id: UUID,
+        simulation_id: UUID,
+        ready: bool,
+    ) -> dict:
+        """Toggle cycle_ready for a participant."""
+        # Validate epoch is in an active phase
+        epoch_resp = (
+            supabase.table("game_epochs")
+            .select("id, status")
+            .eq("id", str(epoch_id))
+            .limit(1)
+            .execute()
+        )
+        if not epoch_resp.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Epoch not found.",
+            )
+        if epoch_resp.data[0]["status"] not in ("foundation", "competition", "reckoning"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ready signals are only available during active epoch phases.",
+            )
+
+        response = (
+            supabase.table("epoch_participants")
+            .update({"cycle_ready": ready})
+            .eq("epoch_id", str(epoch_id))
+            .eq("simulation_id", str(simulation_id))
+            .execute()
+        )
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Participant not found in this epoch.",
+            )
+        return response.data[0]
+
+    @staticmethod
+    async def _enrich_sender_name(supabase: Client, message: dict) -> dict:
+        """Add sender_name from simulations table."""
+        sim_resp = (
+            supabase.table("simulations")
+            .select("name")
+            .eq("id", message["sender_simulation_id"])
+            .limit(1)
+            .execute()
+        )
+        message["sender_name"] = (
+            sim_resp.data[0]["name"] if sim_resp.data else None
+        )
+        return message

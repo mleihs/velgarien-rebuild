@@ -1,7 +1,8 @@
 # 05 - API Specification: Alle Endpoints (Simulation-Scoped)
 
-**Version:** 1.3
+**Version:** 1.4
 **Datum:** 2026-02-28
+**Aenderung v1.4:** 227 Endpoints total (30 Router). Neue Router: epoch_chat (3 Endpoints + 1 Ready-Signal auf epochs), epoch_invitations (4 Endpoints). Public-Endpoints erweitert auf 45 (epoch-invitation Token-Validierung). Epoch-Router erweitert um Ready-Signal.
 **Aenderung v1.3:** 217 Endpoints total (28 Router). Neue Router: health, seo, embassies, epochs, operatives, scores, game_mechanics. 44 Public-Endpoints. Generation-Router erweitert um `/relationships`. Chat-Router erweitert auf 11 Endpoints. Campaigns-Router erweitert auf 8 Endpoints. Social-Trends erweitert auf 8 Endpoints. Settings-Router erweitert auf 6 Endpoints. Invitations-Router erweitert auf 4 Endpoints.
 **Aenderung v1.2:** 157 Endpoints total (23 Router). 3 neue Router (relationships, echoes, connections). 6 neue Public-Endpoints fuer Relationships/Echoes/Connections/Map-Data. Aggregierter Map-Data-Endpoint.
 **Aenderung v1.1:** 136 Endpoints total (20 Router). 20 Public-Endpoints unter `/api/v1/public/*` fuer anonymen Lesezugriff (Rate-Limit: 100/min). Public-Simulations-Endpoint liefert jetzt `agent_count`, `building_count`, `event_count` via `simulation_dashboard` View.
@@ -934,7 +935,7 @@ Verbindung loeschen. Verwendet `admin_supabase`.
 
 ## 21. Public Endpoints — Relationships, Echoes, Connections, Map-Data (Details)
 
-Detail-Dokumentation fuer ausgewaehlte Public-Endpoints. Vollstaendige Liste aller 44 Public-Endpoints: siehe Abschnitt 27.
+Detail-Dokumentation fuer ausgewaehlte Public-Endpoints. Vollstaendige Liste aller 45 Public-Endpoints: siehe Abschnitt 29.
 
 ### `GET /api/v1/public/simulations/:simId/agents/:agentId/relationships`
 Beziehungen eines Agenten (oeffentlich).
@@ -1259,7 +1260,164 @@ Punkte fuer aktuellen oder angegebenen Zyklus berechnen und speichern. Nur Epoch
 
 ---
 
-## 26. Game Mechanics / Health Dashboard (Simulation-Scoped)
+## 26. Epoch Chat (`/api/v1/epochs/{epoch_id}/chat`)
+
+Echtzeit-Kommunikation innerhalb einer Epoche. Unterstuetzt epoch-weite Nachrichten und team-interne Kanaele. Cursor-basierte Pagination.
+
+### `POST /api/v1/epochs/:epochId/chat`
+Nachricht senden (epoch-weit oder team-intern).
+
+**Auth:** JWT (Teilnehmer der Epoche)
+
+**Rate Limit:** 30/min
+
+**Body:**
+```json
+{
+  "channel_type": "epoch",
+  "team_id": null,
+  "simulation_id": "uuid",
+  "content": "Message text..."
+}
+```
+
+| Feld | Typ | Required | Beschreibung |
+|------|-----|----------|-------------|
+| `channel_type` | enum | Ja | `epoch` (alle) oder `team` (nur Teammitglieder) |
+| `team_id` | UUID | Nein | Team-ID (required wenn `channel_type = "team"`) |
+| `simulation_id` | UUID | Ja | Absender-Simulation |
+| `content` | string | Ja | Nachrichtentext |
+
+**Response:** `SuccessResponse[EpochChatMessage]`
+
+### `GET /api/v1/epochs/:epochId/chat`
+Epoch-weite Nachrichten auflisten (Cursor-basierte Pagination).
+
+**Auth:** JWT (Teilnehmer der Epoche)
+
+**Query:** `?before=<ISO-timestamp>&limit=50`
+
+| Parameter | Typ | Default | Beschreibung |
+|-----------|-----|---------|-------------|
+| `before` | string | - | ISO-Timestamp Cursor fuer Pagination |
+| `limit` | int | 50 | Max Ergebnisse (1-100) |
+
+**Response:** `PaginatedResponse[EpochChatMessage]`
+
+### `GET /api/v1/epochs/:epochId/chat/team/:teamId`
+Team-interne Nachrichten auflisten. Nur fuer Mitglieder des Teams sichtbar.
+
+**Auth:** JWT (muss Mitglied des Teams sein)
+
+**Query:** `?before=<ISO-timestamp>&limit=50`
+
+**Response:** `PaginatedResponse[EpochChatMessage]`
+
+### `POST /api/v1/epochs/:epochId/ready`
+Cycle-Ready-Signal umschalten. Signalisiert, dass ein Teilnehmer bereit fuer den naechsten Zyklus ist. Loest Realtime-Broadcast aus.
+
+**Auth:** JWT (Teilnehmer der Epoche)
+
+**Body:**
+```json
+{
+  "simulation_id": "uuid",
+  "ready": true
+}
+```
+
+**Response:** `SuccessResponse[EpochParticipant]`
+
+### EpochChatMessage Schema
+
+```json
+{
+  "id": "uuid",
+  "epoch_id": "uuid",
+  "user_id": "uuid",
+  "simulation_id": "uuid",
+  "channel_type": "epoch",
+  "team_id": null,
+  "content": "Message text...",
+  "created_at": "2026-02-28T12:00:00Z",
+  "simulation_name": "Velgarien",
+  "simulation_slug": "velgarien"
+}
+```
+
+---
+
+## 27. Epoch Invitations (`/api/v1/epochs/{epoch_id}/invitations`)
+
+Email-basierte Spielereinladungen fuer Epochen. Ersteller kann Spieler per E-Mail einladen. Einladungen enthalten AI-generierten Lore-Text. Versand ueber Resend API.
+
+### `POST /api/v1/epochs/:epochId/invitations`
+Einladung erstellen und per E-Mail versenden. Generiert automatisch Lore-Text via OpenRouter (gecached pro Epoche).
+
+**Auth:** Epoch-Creator
+
+**Rate Limit:** 10/min
+
+**Body:**
+```json
+{
+  "email": "player@example.com",
+  "expires_in_hours": 168,
+  "locale": "en"
+}
+```
+
+| Feld | Typ | Required | Default | Beschreibung |
+|------|-----|----------|---------|-------------|
+| `email` | string | Ja | - | E-Mail-Adresse des Eingeladenen |
+| `expires_in_hours` | int | Nein | 168 | Gueltigkeitsdauer in Stunden |
+| `locale` | string | Nein | `"en"` | Sprache fuer Lore-Text und E-Mail |
+
+**Response:** `SuccessResponse[EpochInvitationResponse]` (Status 201)
+
+### `GET /api/v1/epochs/:epochId/invitations`
+Alle Einladungen einer Epoche auflisten.
+
+**Auth:** Epoch-Creator
+
+**Response:** `SuccessResponse[list[EpochInvitationResponse]]`
+
+### `DELETE /api/v1/epochs/:epochId/invitations/:invitationId`
+Einladung widerrufen (setzt Status auf `revoked`).
+
+**Auth:** Epoch-Creator
+
+**Response:** `SuccessResponse`
+
+### `POST /api/v1/epochs/:epochId/invitations/regenerate-lore`
+AI-generierten Lore-Text fuer Einladungen neu generieren. Ueberschreibt den gecachten Text in `game_epochs.config.invitation_lore`.
+
+**Auth:** Epoch-Creator
+
+**Rate Limit:** 5/min
+
+**Response:** `SuccessResponse[{ "lore_text": "..." }]`
+
+### EpochInvitationResponse Schema
+
+```json
+{
+  "id": "uuid",
+  "epoch_id": "uuid",
+  "email": "player@example.com",
+  "token": "unique-token",
+  "status": "pending",
+  "invited_by": "uuid",
+  "invited_role": "participant",
+  "expires_at": "2026-03-07T12:00:00Z",
+  "created_at": "2026-02-28T12:00:00Z",
+  "updated_at": "2026-02-28T12:00:00Z"
+}
+```
+
+---
+
+## 28. Game Mechanics / Health Dashboard (Simulation-Scoped)
 
 Lese-Endpoints fuer Materialized Views (mv_building_readiness, mv_zone_stability, mv_embassy_effectiveness, mv_simulation_health). Berechnete Spielwerte fuer Buildings, Zonen und Embassies. Admin-only Refresh-Trigger.
 
@@ -1307,7 +1465,7 @@ Manuelles Refresh aller Materialized Views. Normalerweise ueber Trigger automati
 
 ---
 
-## 27. Public Endpoints — Gesamt (44 Endpoints)
+## 29. Public Endpoints — Gesamt (45 Endpoints)
 
 Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter `/api/v1/public/`.
 
@@ -1379,6 +1537,7 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | 42 | GET | `/epochs/:epochId/leaderboard` | Bestenliste |
 | 43 | GET | `/epochs/:epochId/standings` | Endstaende |
 | 44 | GET | `/epochs/:epochId/battle-log` | Battle-Log (oeffentlicher Feed) |
+| 45 | GET | `/epoch-invitations/:token` | Epoch-Einladung per Token validieren |
 
 ---
 
@@ -1409,9 +1568,11 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | Echoes | 5 | List (Sim/Event) + Trigger + Approve + Reject |
 | Connections | 4 | List + Create + Patch + Delete |
 | Embassies | 8 | List + Get + GetForBuilding + Create + Update + Activate + Suspend + Dissolve |
-| Epochs | 16 | CRUD + Lifecycle (Start/Advance/Cancel/ResolveCycle) + Participants + Teams |
+| Epochs | 17 | CRUD + Lifecycle (Start/Advance/Cancel/ResolveCycle) + Participants + Teams + Ready |
+| Epoch Chat | 3 | Send + List (Epoch-wide) + List (Team) |
+| Epoch Invitations | 4 | Create+Send + List + Revoke + RegenerateLore |
 | Operatives | 7 | Deploy + List + Threats + Get + Recall + Resolve + CounterIntel |
 | Scores | 4 | Leaderboard + Standings + History + Compute |
 | Game Mechanics | 8 | Health Dashboard + Sim/Buildings/Zones/Embassies + Refresh |
-| Public | 44 | Anonymer Lesezugriff (alle GET-only) |
-| **Gesamt** | **217** | **28 Router** |
+| Public | 45 | Anonymer Lesezugriff (alle GET-only) |
+| **Gesamt** | **227** | **30 Router** |

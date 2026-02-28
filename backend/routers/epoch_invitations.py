@@ -45,6 +45,7 @@ async def create_invitation(
 
     invitation = await EpochInvitationService.create_and_send(
         supabase, epoch_id, user.id, body.email, body.expires_in_hours, base_url,
+        locale=body.locale,
     )
 
     await _audit(supabase, user.id, invitation["id"], "create", {"email": body.email, "epoch_id": str(epoch_id)})

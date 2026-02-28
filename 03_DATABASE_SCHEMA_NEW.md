@@ -1,7 +1,8 @@
 # 03 - Database Schema New: Neues Schema mit Simulation-Kontext
 
-**Version:** 2.3
+**Version:** 2.4
 **Datum:** 2026-02-28
+**Aenderung v2.4:** 2 neue Tabellen (epoch_invitations, epoch_chat_messages). 41 Tabellen gesamt, 170 RLS-Policies, ~40 unique Triggers (63 Trigger-Eintraege), 8 Views, 4 materialisierte Views, 21 Functions (ohne unaccent-Varianten). Migrationen 034-037. Operative Effects (ambassador blocking, infiltration penalty, betrayal penalty). Game Instances (simulation cloning for balanced PvP). Epoch Invitations (email-based player invitations with AI lore). Epoch Realtime (in-game chat + ready signals via Supabase broadcast triggers).
 **Aenderung v2.3:** 9 neue Tabellen (embassies, game_epochs, epoch_teams, epoch_participants, operative_missions, epoch_scores, battle_log + vorherige agent_relationships, event_echoes, simulation_connections). 39 Tabellen gesamt, 161 RLS-Policies, ~38 unique Triggers (59 Trigger-Eintraege), 8 Views, 4 materialisierte Views, 19 Functions (ohne unaccent-Varianten). Migrationen 026-033. Competitive Layer (Epochs, Operatives, Scoring, Battle Log). Embassies & Ambassadors (Cross-Sim Diplomatic Buildings). Game-Mechanics-Functions (materialized view refresh, weight fallback, epoch status validation).
 **Aenderung v2.2:** 3 neue Tabellen (agent_relationships, event_echoes, simulation_connections). 30 Tabellen gesamt, 130 RLS-Policies, 25 Triggers. Migration 026. Taxonomy-Typ `relationship_type` mit 24 Werten (6 pro Simulation).
 **Aenderung v2.1:** 24 Migrationen (001-021 + ensure_dev_user). 27 Tabellen, 122 RLS-Policies (inkl. 21 anon SELECT), 22 Triggers, 6 Views + 2 materialisierte Views. 4 Storage-Buckets (agent.portraits, building.images, user.agent.portraits, simulation.assets). `banner_url` und `icon_url` Felder in `simulations` Tabelle.
@@ -887,7 +888,7 @@ RETURNS numeric AS $$
 $$ LANGUAGE sql IMMUTABLE;
 ```
 
-### Game-Mechanics Functions (Migration 031-032)
+### Game-Mechanics Functions (Migration 031-032, 037)
 
 ```sql
 -- Refresh all 4 game-mechanics materialized views
@@ -961,6 +962,16 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Trigger function: Broadcasts new epoch chat messages via Supabase Realtime (Migration 037)
+-- Sends to epoch:{epoch_id}:chat (epoch-wide) or epoch:{epoch_id}:team:{team_id}:chat (team-only)
+CREATE OR REPLACE FUNCTION broadcast_epoch_chat()
+RETURNS TRIGGER AS $$ ... $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger function: Broadcasts cycle_ready changes via Supabase Realtime (Migration 037)
+-- Sends to epoch:{epoch_id}:status
+CREATE OR REPLACE FUNCTION broadcast_ready_signal()
+RETURNS TRIGGER AS $$ ... $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 ### Trigger Functions
@@ -1124,6 +1135,14 @@ CREATE TRIGGER trg_zones_metrics_stale AFTER INSERT OR UPDATE OR DELETE ON zones
     FOR EACH ROW EXECUTE FUNCTION notify_game_metrics_stale();
 CREATE TRIGGER trg_embassies_metrics_stale AFTER INSERT OR UPDATE OR DELETE ON embassies
     FOR EACH ROW EXECUTE FUNCTION notify_game_metrics_stale();
+
+-- Broadcast epoch chat messages to Realtime channels (Migration 037)
+CREATE TRIGGER trg_broadcast_epoch_chat AFTER INSERT ON epoch_chat_messages
+    FOR EACH ROW EXECUTE FUNCTION broadcast_epoch_chat();
+
+-- Broadcast ready signal changes to Realtime channels (Migration 037)
+CREATE TRIGGER trg_broadcast_ready_signal AFTER UPDATE OF cycle_ready ON epoch_participants
+    FOR EACH ROW EXECUTE FUNCTION broadcast_ready_signal();
 ```
 
 ---
@@ -1397,6 +1416,8 @@ CREATE POLICY agents_delete ON agents FOR DELETE
 | `operative_missions` | Source/Target Member | Source Member | Source Owner | - |
 | `epoch_scores` | Anon/Member | Auth | - | - |
 | `battle_log` | Public/Member | Auth | - | - |
+| `epoch_invitations` | Creator/Anon(token) | Creator | Creator | Creator |
+| `epoch_chat_messages` | Anon(epoch)/Participant(epoch+team) | Participant | - | - |
 | `audit_log` | Admin+ | Service only | - | - |
 
 ---
@@ -1466,15 +1487,15 @@ CREATE POLICY simulation_assets_insert ON storage.objects FOR INSERT
 
 | Metrik | Wert |
 |--------|------|
-| Tabellen | 39 (+ embassies, game_epochs, epoch_teams, epoch_participants, operative_missions, epoch_scores, battle_log gegenueber v2.2) |
-| Trigger Functions | 8 (set_updated_at, update_conversation_stats, enforce_single_primary_profession, validate_simulation_status_transition, immutable_slug, prevent_last_owner_removal, notify_game_metrics_stale, validate_epoch_status_transition) |
+| Tabellen | 41 (+ epoch_invitations, epoch_chat_messages gegenueber v2.3) |
+| Trigger Functions | 10 (set_updated_at, update_conversation_stats, enforce_single_primary_profession, validate_simulation_status_transition, immutable_slug, prevent_last_owner_removal, notify_game_metrics_stale, validate_epoch_status_transition, broadcast_epoch_chat, broadcast_ready_signal) |
 | Utility Functions | 7 (role_meets_minimum, generate_slug, validate_taxonomy_value, game_weight_fallback, refresh_all_game_metrics, refresh_building_readiness, refresh_embassy_effectiveness, refresh_zone_stability) |
 | RLS Functions | 3 |
-| Functions gesamt | 19 (ohne unaccent-Varianten) |
-| Triggers | ~38 unique (~59 Eintraege inkl. updated_at auf allen Tabellen + business logic) |
+| Functions gesamt | 21 (ohne unaccent-Varianten) |
+| Triggers | ~40 unique (~63 Eintraege inkl. updated_at auf allen Tabellen + business logic + broadcast) |
 | Regular Views | 8 (4x active_* + simulation_dashboard + conversation_summaries + agent_statistics + campaign_performance) |
 | Materialized Views | 4 (mv_building_readiness + mv_zone_stability + mv_embassy_effectiveness + mv_simulation_health) |
-| RLS-Policies | 161 (inkl. anon SELECT + Phase-6 + Embassy + Competitive Layer) |
+| RLS-Policies | 170 (inkl. anon SELECT + Phase-6 + Embassy + Competitive Layer + Epoch Chat + Epoch Invitations) |
 | Indexes | ~80 (inkl. partial, GIN, unique) |
 | Storage Buckets | 4 |
 
@@ -1574,6 +1595,8 @@ CREATE POLICY simulation_assets_insert ON storage.objects FOR INSERT
 | `operative_missions` | Agenten-basierte Missionen (Spionage, Diplomatie, Sabotage) (Migration 032) |
 | `epoch_scores` | Pro-Zyklus Multi-Dimension Scoring (Migration 032) |
 | `battle_log` | Narrativer Epoch-Event-Log (Migration 032) |
+| `epoch_invitations` | Email-basierte Spielereinladungen mit AI-Lore (Migration 036) |
+| `epoch_chat_messages` | In-Game Chat (epoch-weit + team-only) mit Realtime-Broadcast (Migration 037) |
 
 ### Typ-Korrekturen
 
@@ -2001,3 +2024,158 @@ Narrativer Log aller Epoch-Events: Missionen, Score-Aenderungen, Allianzen, Konf
 - `battle_log_anon_select` — SELECT fuer anon: nur oeffentliche Eintraege (`is_public = true`)
 - `battle_log_insert` — INSERT fuer authentifizierte User
 - `battle_log_select` — SELECT fuer oeffentliche Eintraege ODER Mitglieder von Source-/Target-Simulation
+
+---
+
+## Epoch Invitations & Realtime Tabellen (Migrationen 034-037)
+
+Migrationen 034-037 erweitern den Competitive Layer: Operative Effects (ambassador_blocked_until, infiltration_penalty, betrayal_penalty Spalten auf bestehenden Tabellen), Game Instances (simulation_type, source_template_id, epoch_id Spalten + clone/archive/delete PL/pgSQL-Funktionen), Email-basierte Epoch-Einladungen und Echtzeit-Chat.
+
+### `epoch_invitations`
+
+Email-basierte Einladungen fuer Epochen. Creator kann Spieler per Email einladen, optional mit AI-generierter Lore. Token-basierte Akzeptanz ueber oeffentliche Seite.
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `epoch_id` | uuid | NO | |
+| `invited_email` | text | NO | |
+| `invite_token` | text | NO | UNIQUE |
+| `invited_by_id` | uuid | NO | |
+| `status` | text | NO | `'pending'` |
+| `expires_at` | timestamptz | NO | |
+| `accepted_at` | timestamptz | YES | |
+| `accepted_by_id` | uuid | YES | |
+| `created_at` | timestamptz | NO | `now()` |
+
+**Foreign Keys:**
+- `epoch_id` → `game_epochs(id) ON DELETE CASCADE`
+- `invited_by_id` → `auth.users(id)`
+- `accepted_by_id` → `auth.users(id)`
+
+**CHECK Constraints:**
+- `status IN ('pending', 'accepted', 'expired', 'revoked')`
+
+**Indexes:**
+- `idx_epoch_invitations_token` — `invite_token` (fuer Token-Lookup)
+- `idx_epoch_invitations_epoch` — `epoch_id` (fuer Epoch-basierte Abfragen)
+
+**RLS:** 5 Policies:
+- `epoch_invitations_creator_select` — SELECT fuer Epoch-Creator und Einladende
+- `epoch_invitations_creator_insert` — INSERT fuer Epoch-Creator
+- `epoch_invitations_creator_update` — UPDATE fuer Epoch-Creator (Revoke)
+- `epoch_invitations_anon_select` — SELECT fuer anon (Token-Validierung auf oeffentlicher Accept-Seite)
+- `epoch_invitations_accept` — UPDATE fuer authentifizierte User (Akzeptanz)
+
+### `epoch_chat_messages`
+
+In-Game Chat fuer Epochen. Unterstuetzt epoch-weite Nachrichten (alle Teilnehmer) und team-only Nachrichten (nur Allianz-Mitglieder). Neue Nachrichten werden via Supabase Realtime Broadcast-Triggers an die entsprechenden Channels gepusht.
+
+```sql
+CREATE TABLE epoch_chat_messages (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  epoch_id        UUID NOT NULL REFERENCES game_epochs(id) ON DELETE CASCADE,
+  sender_id       UUID NOT NULL REFERENCES auth.users(id),
+  sender_simulation_id UUID NOT NULL REFERENCES simulations(id),
+  channel_type    TEXT NOT NULL DEFAULT 'epoch'
+                  CHECK (channel_type IN ('epoch', 'team')),
+  team_id         UUID REFERENCES epoch_teams(id) ON DELETE SET NULL,
+  content         TEXT NOT NULL CHECK (char_length(content) BETWEEN 1 AND 2000),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Indexes for cursor-based pagination
+CREATE INDEX idx_epoch_chat_epoch_created ON epoch_chat_messages (epoch_id, created_at);
+CREATE INDEX idx_epoch_chat_team_created ON epoch_chat_messages (team_id, created_at)
+  WHERE team_id IS NOT NULL;
+```
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `epoch_id` | uuid | NO | |
+| `sender_id` | uuid | NO | |
+| `sender_simulation_id` | uuid | NO | |
+| `channel_type` | text | NO | `'epoch'` |
+| `team_id` | uuid | YES | |
+| `content` | text | NO | |
+| `created_at` | timestamptz | NO | `now()` |
+
+**Foreign Keys:**
+- `epoch_id` → `game_epochs(id) ON DELETE CASCADE`
+- `sender_id` → `auth.users(id)`
+- `sender_simulation_id` → `simulations(id)`
+- `team_id` → `epoch_teams(id) ON DELETE SET NULL`
+
+**CHECK Constraints:**
+- `channel_type IN ('epoch', 'team')`
+- `char_length(content) BETWEEN 1 AND 2000`
+
+**Indexes:**
+- `idx_epoch_chat_epoch_created` — `(epoch_id, created_at)` fuer Cursor-basierte Pagination
+- `idx_epoch_chat_team_created` — `(team_id, created_at) WHERE team_id IS NOT NULL` (partial)
+
+**RLS:** 4 Policies:
+- `epoch_chat_select_epoch` — SELECT fuer authentifizierte Epoch-Teilnehmer: epoch-weite Nachrichten (`channel_type = 'epoch'`)
+- `epoch_chat_select_team` — SELECT fuer authentifizierte Team-Mitglieder: team-only Nachrichten (`channel_type = 'team'`, team_id muss matchen)
+- `epoch_chat_insert` — INSERT fuer Epoch-Teilnehmer (`sender_id = auth.uid()`)
+- `epoch_chat_select_anon` — SELECT fuer anon: nur epoch-weite Nachrichten (oeffentliche Zuschauer)
+
+**Spaltenergaenzung auf `epoch_participants` (Migration 037):**
+
+```sql
+ALTER TABLE epoch_participants ADD COLUMN cycle_ready BOOLEAN NOT NULL DEFAULT false;
+```
+
+### Broadcast Trigger Functions (Migration 037)
+
+Zwei `SECURITY DEFINER` Functions fuer Supabase Realtime Broadcast:
+
+```sql
+-- Broadcast neue Chat-Nachricht an den passenden Realtime-Channel
+CREATE OR REPLACE FUNCTION broadcast_epoch_chat()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.channel_type = 'team' AND NEW.team_id IS NOT NULL THEN
+    PERFORM realtime.send(
+      to_jsonb(NEW),
+      'new_message',
+      'epoch:' || NEW.epoch_id::text || ':team:' || NEW.team_id::text || ':chat',
+      true
+    );
+  ELSE
+    PERFORM realtime.send(
+      to_jsonb(NEW),
+      'new_message',
+      'epoch:' || NEW.epoch_id::text || ':chat',
+      true
+    );
+  END IF;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Broadcast Ready-Signal-Aenderungen
+CREATE OR REPLACE FUNCTION broadcast_ready_signal()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF OLD.cycle_ready IS DISTINCT FROM NEW.cycle_ready THEN
+    PERFORM realtime.send(
+      jsonb_build_object(
+        'simulation_id', NEW.simulation_id,
+        'cycle_ready', NEW.cycle_ready
+      ),
+      'ready_changed',
+      'epoch:' || NEW.epoch_id::text || ':status',
+      true
+    );
+  END IF;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+**Realtime Channel Naming:**
+- Epoch-Chat: `epoch:{epoch_id}:chat`
+- Team-Chat: `epoch:{epoch_id}:team:{team_id}:chat`
+- Ready-Status: `epoch:{epoch_id}:status`

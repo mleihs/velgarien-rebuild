@@ -1,0 +1,305 @@
+/**
+ * EpochReadyPanel — cycle readiness dashboard with segmented progress bar.
+ *
+ * Shows "4/6 Ready for Resolution" with a segmented bar where each participant
+ * is a segment (lit amber = ready, dim = not ready). Participant list with
+ * check/dash icons. Toggle button to signal or revoke readiness.
+ *
+ * Only displayed during active epoch phases (foundation/competition/reckoning).
+ */
+
+import { localized, msg } from '@lit/localize';
+import { effect } from '@preact/signals-core';
+import { css, html, LitElement, nothing } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { epochChatApi } from '../../services/api/EpochChatApiService.js';
+import { realtimeService } from '../../services/realtime/RealtimeService.js';
+import type { EpochParticipant } from '../../types/index.js';
+import { VelgToast } from '../shared/Toast.js';
+
+@localized()
+@customElement('velg-epoch-ready-panel')
+export class VelgEpochReadyPanel extends LitElement {
+  static styles = css`
+    :host {
+      --amber: #f59e0b;
+      --amber-dim: #b87a08;
+      --amber-glow: rgba(245, 158, 11, 0.15);
+      --panel-bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --border-dim: #333;
+      --text-bright: #f0f0f0;
+      --text-mid: #bbb;
+      --text-dim: #777;
+      display: block;
+      font-family: var(--font-brutalist, 'Courier New', monospace);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-3, 12px);
+    }
+
+    .header__label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .header__count {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--amber);
+    }
+
+    /* ── Segmented bar ── */
+    .bar {
+      display: flex;
+      gap: 3px;
+      height: 8px;
+      margin-bottom: var(--space-3, 12px);
+    }
+
+    .bar__seg {
+      flex: 1;
+      border-radius: 1px;
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+
+    .bar__seg--ready {
+      background: var(--amber);
+      box-shadow: 0 0 6px var(--amber-glow);
+    }
+
+    .bar__seg--waiting {
+      background: var(--border-dim);
+    }
+
+    /* ── Participant list ── */
+    .participants {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      margin-bottom: var(--space-3, 12px);
+    }
+
+    .participant {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 8px);
+      padding: var(--space-1, 4px) var(--space-2, 8px);
+      background: var(--surface);
+      transition: background 0.15s;
+    }
+
+    .participant:hover {
+      background: var(--surface);
+    }
+
+    .participant__icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .participant__icon--ready {
+      color: var(--amber);
+    }
+
+    .participant__icon--waiting {
+      color: var(--text-dim);
+    }
+
+    .participant__name {
+      font-size: var(--text-sm, 13px);
+      color: var(--text-mid);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .participant__tag {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 1px 6px;
+    }
+
+    .participant__tag--ready {
+      color: var(--amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .participant__tag--waiting {
+      color: var(--text-dim);
+      border: 1px solid var(--border-dim);
+    }
+
+    /* ── Toggle button ── */
+    .ready-btn {
+      width: 100%;
+      padding: var(--space-2, 8px) var(--space-4, 16px);
+      border: 2px solid;
+      font-family: var(--font-brutalist, 'Courier New', monospace);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+    }
+
+    .ready-btn--signal {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .ready-btn--signal:hover:not(:disabled) {
+      background: rgba(245, 158, 11, 0.1);
+      box-shadow: 0 0 16px var(--amber-glow);
+    }
+
+    .ready-btn--revoke {
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+    }
+
+    .ready-btn--revoke:hover:not(:disabled) {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .ready-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  `;
+
+  @property() epochId = '';
+  @property({ type: Array }) participants: EpochParticipant[] = [];
+  @property() mySimulationId = '';
+  @property() epochStatus = '';
+
+  @state() private _readyStates: Record<string, boolean> = {};
+  @state() private _toggling = false;
+
+  private _disposeEffect?: () => void;
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._disposeEffect = effect(() => {
+      this._readyStates = realtimeService.readyStates.value;
+    });
+  }
+
+  disconnectedCallback() {
+    this._disposeEffect?.();
+    super.disconnectedCallback();
+  }
+
+  private _isActivePhase(): boolean {
+    return ['foundation', 'competition', 'reckoning'].includes(this.epochStatus);
+  }
+
+  private _getReadyCount(): number {
+    return Object.values(this._readyStates).filter(Boolean).length;
+  }
+
+  private _isMyReady(): boolean {
+    return this._readyStates[this.mySimulationId] ?? false;
+  }
+
+  private async _toggleReady() {
+    if (this._toggling || !this.mySimulationId) return;
+    this._toggling = true;
+
+    const newReady = !this._isMyReady();
+    const result = await epochChatApi.setReady(this.epochId, this.mySimulationId, newReady);
+
+    if (result.success) {
+      // Optimistic update — Realtime broadcast may not be connected yet
+      realtimeService.readyStates.value = {
+        ...realtimeService.readyStates.value,
+        [this.mySimulationId]: newReady,
+      };
+    } else {
+      VelgToast.error(msg('Failed to update ready signal.'));
+    }
+    this._toggling = false;
+  }
+
+  protected render() {
+    if (!this._isActivePhase()) return nothing;
+
+    const total = this.participants.length;
+    const readyCount = this._getReadyCount();
+    const myReady = this._isMyReady();
+
+    return html`
+      <div class="header">
+        <span class="header__label">${msg('Cycle Readiness')}</span>
+        <span class="header__count">${readyCount}/${total}</span>
+      </div>
+
+      <!-- Segmented progress bar -->
+      <div class="bar">
+        ${this.participants.map((p) => {
+          const ready = this._readyStates[p.simulation_id] ?? false;
+          return html`<div class="bar__seg ${ready ? 'bar__seg--ready' : 'bar__seg--waiting'}"></div>`;
+        })}
+      </div>
+
+      <!-- Participant list -->
+      <div class="participants">
+        ${this.participants.map((p) => {
+          const ready = this._readyStates[p.simulation_id] ?? false;
+          const name = (p.simulations as { name: string } | undefined)?.name ?? p.simulation_id;
+          return html`
+            <div class="participant">
+              <span class="participant__icon ${ready ? 'participant__icon--ready' : 'participant__icon--waiting'}">
+                ${ready ? '\u2713' : '\u2014'}
+              </span>
+              <span class="participant__name">${name}</span>
+              <span class="participant__tag ${ready ? 'participant__tag--ready' : 'participant__tag--waiting'}">
+                ${ready ? msg('Ready') : msg('Waiting')}
+              </span>
+            </div>
+          `;
+        })}
+      </div>
+
+      <!-- Toggle button -->
+      ${
+        this.mySimulationId
+          ? html`
+          <button
+            class="ready-btn ${myReady ? 'ready-btn--revoke' : 'ready-btn--signal'}"
+            @click=${this._toggleReady}
+            ?disabled=${this._toggling}
+          >
+            ${myReady ? msg('Revoke Ready') : msg('Signal Ready')}
+          </button>
+        `
+          : nothing
+      }
+    `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'velg-epoch-ready-panel': VelgEpochReadyPanel;
+  }
+}

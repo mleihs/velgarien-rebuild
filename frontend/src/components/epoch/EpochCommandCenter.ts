@@ -17,6 +17,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { epochsApi } from '../../services/api/EpochsApiService.js';
 import { simulationsApi } from '../../services/api/SimulationsApiService.js';
+import { realtimeService } from '../../services/realtime/RealtimeService.js';
 import type {
   BattleLogEntry,
   Epoch,
@@ -35,8 +36,11 @@ import './EpochBattleLog.js';
 import './EpochCreationWizard.js';
 import './DeployOperativeModal.js';
 import './EpochInvitePanel.js';
+import './EpochChatPanel.js';
+import './EpochPresenceIndicator.js';
+import './EpochReadyPanel.js';
 
-type TabId = 'overview' | 'leaderboard' | 'operations' | 'battle-log' | 'alliances';
+type TabId = 'overview' | 'leaderboard' | 'operations' | 'battle-log' | 'alliances' | 'chat';
 
 @localized()
 @customElement('velg-epoch-command-center')
@@ -449,6 +453,22 @@ export class VelgEpochCommandCenter extends LitElement {
       border-bottom-color: var(--color-gray-100);
       animation: tab-underline 0.3s ease-out;
       transform-origin: left;
+    }
+
+    .tab__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      margin-left: var(--space-1, 4px);
+      border-radius: 8px;
+      background: #f59e0b;
+      color: var(--color-gray-950);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0;
     }
 
     /* ── Content Area ─────────────────────────── */
@@ -1459,6 +1479,269 @@ export class VelgEpochCommandCenter extends LitElement {
       }
     }
 
+    /* ── COMMS Toggle ─────────────────────── */
+
+    .comms-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1-5);
+      padding: var(--space-1-5) var(--space-3);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-gray-500);
+      background: transparent;
+      border: 1px solid var(--color-gray-700);
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comms-toggle::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(245 158 11 / 0.03) 2px,
+        rgba(245 158 11 / 0.03) 3px
+      );
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .comms-toggle:hover {
+      border-color: var(--color-gray-500);
+      color: var(--color-gray-300);
+    }
+
+    .comms-toggle--active {
+      color: #f59e0b;
+      border-color: #f59e0b;
+      box-shadow: 0 0 12px rgba(245 158 11 / 0.2), inset 0 0 12px rgba(245 158 11 / 0.05);
+    }
+
+    .comms-toggle--active::before {
+      opacity: 1;
+    }
+
+    .comms-toggle__icon {
+      font-size: 12px;
+      transition: transform 0.3s;
+    }
+
+    .comms-toggle--active .comms-toggle__icon {
+      animation: comms-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes comms-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .comms-toggle__unread {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 14px;
+      height: 14px;
+      padding: 0 3px;
+      border-radius: 7px;
+      background: #f59e0b;
+      color: var(--color-gray-950);
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    /* ── COMMS Panel (ops board sidebar) ── */
+
+    .ops-board--with-comms {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: var(--space-4);
+    }
+
+    .ops-board__main {
+      min-width: 0;
+    }
+
+    .comms-sidebar {
+      position: sticky;
+      top: calc(var(--header-height, 56px) + var(--space-4));
+      height: calc(100vh - var(--header-height, 56px) - var(--space-8));
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--color-gray-800);
+      background: var(--color-gray-950);
+      overflow: hidden;
+      animation: comms-open 0.35s ease-out;
+      z-index: 2;
+    }
+
+    @keyframes comms-open {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+        clip-path: inset(0 0 0 100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    /* Scanline wash on open */
+    .comms-sidebar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(245 158 11 / 0.015) 2px,
+        rgba(245 158 11 / 0.015) 3px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .comms-sidebar__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2-5) var(--space-3);
+      border-bottom: 1px solid var(--color-gray-800);
+      background: rgba(245 158 11 / 0.03);
+      flex-shrink: 0;
+    }
+
+    .comms-sidebar__signal {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+    }
+
+    .comms-sidebar__bar {
+      width: 3px;
+      background: #f59e0b;
+      border-radius: 1px 1px 0 0;
+      animation: signal-bar 1.5s ease-in-out infinite;
+    }
+
+    .comms-sidebar__bar:nth-child(1) { height: 4px; animation-delay: 0s; }
+    .comms-sidebar__bar:nth-child(2) { height: 7px; animation-delay: 0.15s; }
+    .comms-sidebar__bar:nth-child(3) { height: 10px; animation-delay: 0.3s; }
+    .comms-sidebar__bar:nth-child(4) { height: 12px; animation-delay: 0.45s; }
+
+    @keyframes signal-bar {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .comms-sidebar__freq {
+      font-family: var(--font-mono, monospace);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #f59e0b;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .comms-sidebar__close {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid transparent;
+      color: var(--color-gray-600);
+      cursor: pointer;
+      font-size: 10px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .comms-sidebar__close:hover {
+      color: var(--color-gray-300);
+      border-color: var(--color-gray-700);
+    }
+
+    .comms-sidebar__body {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .comms-sidebar__body velg-epoch-chat-panel {
+      height: 100%;
+    }
+
+    /* ── COMMS Empty State ───────────────── */
+
+    .comms-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: var(--space-6);
+      text-align: center;
+      gap: var(--space-3);
+    }
+
+    .comms-empty__icon {
+      font-size: 28px;
+      opacity: 0.3;
+    }
+
+    .comms-empty__title {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-gray-500);
+    }
+
+    .comms-empty__desc {
+      font-family: var(--font-mono, monospace);
+      font-size: var(--text-xs);
+      color: var(--color-gray-600);
+      line-height: 1.5;
+    }
+
+    /* ── COMMS Mobile ────────────────────── */
+
+    @media (max-width: 768px) {
+      .ops-board--with-comms {
+        grid-template-columns: 1fr;
+      }
+
+      .comms-sidebar {
+        position: relative;
+        top: auto;
+        height: auto;
+        max-height: 50vh;
+        margin-top: var(--space-4);
+      }
+    }
+
     /* ── Recall Button ─────────────────────── */
 
     .mission__recall {
@@ -1535,10 +1818,22 @@ export class VelgEpochCommandCenter extends LitElement {
   @state() private _creatingTeam = false;
   @state() private _teamName = '';
   @state() private _actionLoading = false;
+  @state() private _showComms = false;
+  @state() private _commsEpoch: Epoch | null = null;
+  @state() private _commsParticipant: EpochParticipant | null = null;
 
   async connectedCallback() {
     super.connectedCallback();
     await this._loadData();
+  }
+
+  disconnectedCallback() {
+    if (this._epoch) {
+      realtimeService.leaveEpoch(this._epoch.id);
+    } else if (this._commsEpoch) {
+      realtimeService.leaveEpoch(this._commsEpoch.id);
+    }
+    super.disconnectedCallback();
   }
 
   private async _loadData() {
@@ -1588,6 +1883,65 @@ export class VelgEpochCommandCenter extends LitElement {
     }
 
     this._loading = false;
+
+    // Find an epoch for the comms panel (ops board only — when no epoch is selected)
+    if (!this._epoch) {
+      await this._findCommsEpoch();
+    }
+  }
+
+  private async _findCommsEpoch() {
+    if (!appState.isAuthenticated.value) {
+      this._commsEpoch = null;
+      this._commsParticipant = null;
+      return;
+    }
+
+    const mySimIds = appState.simulations.value
+      .filter((s) => !s.simulation_type || s.simulation_type === 'template')
+      .map((s) => s.id);
+    if (mySimIds.length === 0) {
+      this._commsEpoch = null;
+      this._commsParticipant = null;
+      return;
+    }
+
+    // Check active epochs for one where user is a participant
+    for (const epoch of this._activeEpochs) {
+      const resp = await epochsApi.listParticipants(epoch.id);
+      if (!resp.success) continue;
+      const participants = (resp.data as EpochParticipant[]) || [];
+      const myPart = participants.find(
+        (p) =>
+          mySimIds.includes(p.simulation_id) ||
+          mySimIds.includes(
+            (p.simulations as { source_template_id?: string } | undefined)?.source_template_id ??
+              '',
+          ),
+      );
+      if (myPart) {
+        this._commsEpoch = epoch;
+        this._commsParticipant = myPart;
+
+        // Join Realtime channel for the comms epoch
+        const simName =
+          (myPart.simulations as { name: string } | undefined)?.name ?? myPart.simulation_id;
+        realtimeService.joinEpoch(
+          epoch.id,
+          appState.user.value?.id ?? '',
+          myPart.simulation_id,
+          simName,
+        );
+        if (myPart.team_id) {
+          realtimeService.joinTeam(epoch.id, myPart.team_id);
+        }
+        return;
+      }
+    }
+
+    // No active epoch participation found
+    this._commsEpoch = null;
+    this._commsParticipant = null;
   }
 
   private async _loadEpochDetails(epochId: string) {
@@ -1645,6 +1999,25 @@ export class VelgEpochCommandCenter extends LitElement {
       );
       if (threatResult.success) {
         this._threats = (threatResult.data as OperativeMission[]) || [];
+      }
+    }
+
+    // Initialize Realtime channels for this epoch
+    if (this._myParticipant && this._epoch) {
+      const simName =
+        (this._myParticipant.simulations as { name: string } | undefined)?.name ??
+        this._myParticipant.simulation_id;
+      realtimeService.joinEpoch(
+        this._epoch.id,
+        appState.user.value?.id ?? '',
+        this._myParticipant.simulation_id,
+        simName,
+      );
+      realtimeService.initReadyStates(this._participants);
+
+      // Join team channel if on a team
+      if (this._myParticipant.team_id) {
+        realtimeService.joinTeam(this._epoch.id, this._myParticipant.team_id);
       }
     }
   }
@@ -1847,82 +2220,156 @@ export class VelgEpochCommandCenter extends LitElement {
     const mySims = appState.simulations.value.filter(
       (s) => !s.simulation_type || s.simulation_type === 'template',
     );
+    const isAuth = appState.isAuthenticated.value;
+    const unreadTotal =
+      realtimeService.unreadEpochCount.value + realtimeService.unreadTeamCount.value;
 
     return html`
-      <div class="ops-board">
-        <div class="ops-board__header">
-          <div class="ops-board__title-block">
-            <span class="ops-board__surtitle">${msg('Competitive Layer')}</span>
-            <h1 class="ops-board__title">${msg('Epoch Command Center')}</h1>
+      <div class="ops-board ${this._showComms ? 'ops-board--with-comms' : ''}">
+        <div class="ops-board__main">
+          <div class="ops-board__header">
+            <div class="ops-board__title-block">
+              <span class="ops-board__surtitle">${msg('Competitive Layer')}</span>
+              <h1 class="ops-board__title">${msg('Epoch Command Center')}</h1>
+            </div>
+            <div style="display: flex; gap: var(--space-2); align-items: center;">
+              ${
+                isAuth
+                  ? html`
+                  <button
+                    class="comms-toggle ${this._showComms ? 'comms-toggle--active' : ''}"
+                    @click=${this._toggleComms}
+                    aria-label=${this._showComms ? msg('Close Comms') : msg('Open Comms')}
+                    aria-expanded=${this._showComms}
+                  >
+                    <span class="comms-toggle__icon">${'\u{1F4E1}'}</span>
+                    ${msg('Comms')}
+                    ${!this._showComms && unreadTotal > 0 ? html`<span class="comms-toggle__unread">${unreadTotal}</span>` : nothing}
+                  </button>
+                  <button class="ops-board__create-btn" @click=${this._createEpoch}>
+                    + ${msg('Create New Epoch')}
+                  </button>
+                `
+                  : nothing
+              }
+            </div>
           </div>
+
           ${
-            appState.isAuthenticated.value
+            this._activeEpochs.length > 0
               ? html`
-              <button class="ops-board__create-btn" @click=${this._createEpoch}>
-                + ${msg('Create New Epoch')}
-              </button>
+              <div class="dossier-grid">
+                ${this._activeEpochs.map((e) => this._renderDossierCard(e, mySims))}
+                ${
+                  isAuth
+                    ? html`
+                  <div
+                    class="dossier-card dossier-card--create"
+                    @click=${this._createEpoch}
+                  >
+                    <div class="dossier-create__inner">
+                      <span class="dossier-create__plus">+</span>
+                      <span class="dossier-create__label">${msg('New Epoch')}</span>
+                    </div>
+                  </div>
+                `
+                    : nothing
+                }
+              </div>
+            `
+              : html`
+              <div class="dossier-grid">
+                ${
+                  isAuth
+                    ? html`
+                  <div
+                    class="dossier-card dossier-card--create"
+                    @click=${this._createEpoch}
+                  >
+                    <div class="dossier-create__inner">
+                      <span class="dossier-create__plus">+</span>
+                      <span class="dossier-create__label">${msg('Create First Epoch')}</span>
+                    </div>
+                  </div>
+                `
+                    : html`
+                  <div class="ops-board__no-auth">
+                    ${msg('Sign in to create or join an epoch.')}
+                  </div>
+                `
+                }
+              </div>
+            `
+          }
+
+          ${
+            this._pastEpochs.length > 0
+              ? html`
+              <div class="ops-board__section-title">${msg('Completed Operations')}</div>
+              <div class="dossier-grid">
+                ${this._pastEpochs.map((epoch) => this._renderDossierCard(epoch, mySims))}
+              </div>
             `
               : nothing
           }
         </div>
 
-        ${
-          this._activeEpochs.length > 0
-            ? html`
-            <div class="dossier-grid">
-              ${this._activeEpochs.map((e) => this._renderDossierCard(e, mySims))}
-              ${
-                appState.isAuthenticated.value
-                  ? html`
-                <div
-                  class="dossier-card dossier-card--create"
-                  @click=${this._createEpoch}
-                >
-                  <div class="dossier-create__inner">
-                    <span class="dossier-create__plus">+</span>
-                    <span class="dossier-create__label">${msg('New Epoch')}</span>
-                  </div>
-                </div>
-              `
-                  : nothing
-              }
-            </div>
-          `
-            : html`
-            <div class="dossier-grid">
-              ${
-                appState.isAuthenticated.value
-                  ? html`
-                <div
-                  class="dossier-card dossier-card--create"
-                  @click=${this._createEpoch}
-                >
-                  <div class="dossier-create__inner">
-                    <span class="dossier-create__plus">+</span>
-                    <span class="dossier-create__label">${msg('Create First Epoch')}</span>
-                  </div>
-                </div>
-              `
-                  : html`
-                <div class="ops-board__no-auth">
-                  ${msg('Sign in to create or join an epoch.')}
-                </div>
-              `
-              }
-            </div>
-          `
-        }
+        ${this._showComms ? this._renderCommsPanel() : nothing}
+      </div>
+    `;
+  }
 
-        ${
-          this._pastEpochs.length > 0
-            ? html`
-            <div class="ops-board__section-title">${msg('Completed Operations')}</div>
-            <div class="dossier-grid">
-              ${this._pastEpochs.map((epoch) => this._renderDossierCard(epoch, mySims))}
+  private _toggleComms() {
+    this._showComms = !this._showComms;
+  }
+
+  private _renderCommsPanel() {
+    if (!this._commsEpoch || !this._commsParticipant) {
+      return html`
+        <div class="comms-sidebar">
+          <div class="comms-sidebar__header">
+            <span class="comms-sidebar__freq">${msg('Comms')}</span>
+            <button
+              class="comms-sidebar__close"
+              @click=${this._toggleComms}
+              aria-label=${msg('Close Comms')}
+            >&times;</button>
+          </div>
+          <div class="comms-sidebar__body">
+            <div class="comms-empty">
+              <div class="comms-empty__icon">${'\u{1F4E1}'}</div>
+              <div class="comms-empty__title">${msg('No Active Channel')}</div>
+              <div class="comms-empty__desc">${msg('Join an epoch to access comms')}</div>
             </div>
-          `
-            : nothing
-        }
+          </div>
+        </div>
+      `;
+    }
+
+    return html`
+      <div class="comms-sidebar">
+        <div class="comms-sidebar__header">
+          <div class="comms-sidebar__signal">
+            <div class="comms-sidebar__bar"></div>
+            <div class="comms-sidebar__bar"></div>
+            <div class="comms-sidebar__bar"></div>
+            <div class="comms-sidebar__bar"></div>
+          </div>
+          <span class="comms-sidebar__freq">${this._commsEpoch.name}</span>
+          <button
+            class="comms-sidebar__close"
+            @click=${this._toggleComms}
+            aria-label=${msg('Close Comms')}
+          >&times;</button>
+        </div>
+        <div class="comms-sidebar__body">
+          <velg-epoch-chat-panel
+            .epochId=${this._commsEpoch.id}
+            .mySimulationId=${this._commsParticipant.simulation_id}
+            .myTeamId=${this._commsParticipant.team_id ?? ''}
+            .epochStatus=${this._commsEpoch.status}
+          ></velg-epoch-chat-panel>
+        </div>
       </div>
     `;
   }
@@ -2020,6 +2467,10 @@ export class VelgEpochCommandCenter extends LitElement {
   }
 
   private async _onSelectEpoch(epoch: Epoch) {
+    // Leave comms epoch channel if we were on the ops board
+    if (this._commsEpoch && this._commsEpoch.id !== epoch.id) {
+      realtimeService.leaveEpoch(this._commsEpoch.id);
+    }
     this._epoch = epoch;
     this._activeTab = 'overview';
     await this._loadEpochDetails(epoch.id);
@@ -2110,8 +2561,11 @@ export class VelgEpochCommandCenter extends LitElement {
   // ── Tab Navigation ───────────────────────────────
 
   private _renderTabs() {
-    const tabs: { id: TabId; label: string }[] = [
+    const unreadTotal =
+      realtimeService.unreadEpochCount.value + realtimeService.unreadTeamCount.value;
+    const tabs: { id: TabId; label: string; badge?: number }[] = [
       { id: 'overview', label: msg('Overview') },
+      { id: 'chat', label: msg('Chat'), badge: this._activeTab !== 'chat' ? unreadTotal : 0 },
       { id: 'leaderboard', label: msg('Leaderboard') },
       { id: 'operations', label: msg('Operations') },
       { id: 'battle-log', label: msg('Battle Log') },
@@ -2127,6 +2581,7 @@ export class VelgEpochCommandCenter extends LitElement {
               @click=${() => this._switchTab(t.id)}
             >
               ${t.label}
+              ${t.badge && t.badge > 0 ? html`<span class="tab__badge">${t.badge}</span>` : nothing}
             </button>
           `,
         )}
@@ -2140,6 +2595,15 @@ export class VelgEpochCommandCenter extends LitElement {
     switch (this._activeTab) {
       case 'overview':
         return this._renderOverview();
+      case 'chat':
+        return html`
+          <velg-epoch-chat-panel
+            .epochId=${this._epoch?.id ?? ''}
+            .mySimulationId=${this._myParticipant?.simulation_id ?? ''}
+            .myTeamId=${this._myParticipant?.team_id ?? ''}
+            .epochStatus=${this._epoch?.status ?? ''}
+          ></velg-epoch-chat-panel>
+        `;
       case 'leaderboard':
         return html`
           <velg-epoch-leaderboard
@@ -2224,6 +2688,29 @@ export class VelgEpochCommandCenter extends LitElement {
               </div>
             </div>
           `
+        }
+
+        <!-- Cycle Readiness -->
+        ${
+          this._myParticipant &&
+          this._epoch &&
+          ['foundation', 'competition', 'reckoning'].includes(this._epoch.status)
+            ? html`
+            <div class="panel">
+              <div class="panel__header">
+                <h3 class="panel__title">${msg('Cycle Status')}</h3>
+              </div>
+              <div class="panel__body">
+                <velg-epoch-ready-panel
+                  .epochId=${this._epoch.id}
+                  .participants=${this._participants}
+                  .mySimulationId=${this._myParticipant.simulation_id}
+                  .epochStatus=${this._epoch.status}
+                ></velg-epoch-ready-panel>
+              </div>
+            </div>
+          `
+            : nothing
         }
 
         <!-- Active Operations -->
@@ -2407,6 +2894,7 @@ export class VelgEpochCommandCenter extends LitElement {
                         ${members.map(
                           (p) => html`
                             <div class="alliance__member">
+                              <velg-epoch-presence .simulationId=${p.simulation_id}></velg-epoch-presence>
                               ${(p.simulations as { name: string } | undefined)?.name ?? p.simulation_id}
                             </div>
                           `,
@@ -2451,6 +2939,7 @@ export class VelgEpochCommandCenter extends LitElement {
             ${this._participants.map(
               (p) => html`
               <div class="alliance__member">
+                <velg-epoch-presence .simulationId=${p.simulation_id}></velg-epoch-presence>
                 ${(p.simulations as { name: string } | undefined)?.name ?? p.simulation_id}
                 ${p.team_id ? '' : html` <span style="color: var(--color-gray-600)">(${msg('unaligned')})</span>`}
               </div>
@@ -2630,7 +3119,10 @@ export class VelgEpochCommandCenter extends LitElement {
 
   // ── Actions ──────────────────────────────────────
 
-  private _backToOpsBoard() {
+  private async _backToOpsBoard() {
+    if (this._epoch) {
+      realtimeService.leaveEpoch(this._epoch.id);
+    }
     this._epoch = null;
     this._participants = [];
     this._teams = [];
@@ -2640,6 +3132,8 @@ export class VelgEpochCommandCenter extends LitElement {
     this._battleLog = [];
     this._myParticipant = null;
     this._activeTab = 'overview';
+    // Re-establish comms channel for the ops board
+    await this._findCommsEpoch();
   }
 
   private _createEpoch() {

@@ -66,3 +66,29 @@ export interface TocSection {
   id: string;
   label: string;
 }
+
+export interface BleedVector {
+  name: string;
+  color: string;
+  tags: string[];
+  description: string;
+}
+
+export interface ScoreDimension {
+  key: string;
+  name: string;
+  color: string;
+  formula: string;
+  explanation: string;
+  title: string;
+}
+
+export interface EmbassyInfoCard {
+  label: string;
+  value: string;
+}
+
+export interface NormalizationRule {
+  attribute: string;
+  normalizedTo: string;
+}

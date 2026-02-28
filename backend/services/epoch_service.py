@@ -549,6 +549,11 @@ class EpochService:
         for p in participants:
             await cls._grant_rp(supabase, p["id"], rp_amount, config["rp_cap"])
 
+        # Reset all cycle_ready flags before advancing
+        supabase.table("epoch_participants").update(
+            {"cycle_ready": False}
+        ).eq("epoch_id", str(epoch_id)).execute()
+
         # Increment cycle
         resp = (
             supabase.table("game_epochs")

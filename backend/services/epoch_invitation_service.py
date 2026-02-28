@@ -9,7 +9,7 @@ import httpx
 from fastapi import HTTPException, status
 
 from backend.config import settings
-from backend.services.email_templates import render_epoch_invitation
+from backend.services.email_templates import epoch_invitation_subject, render_epoch_invitation
 from backend.services.external.openrouter import OpenRouterService
 from backend.services.prompt_service import PromptResolver
 from supabase import Client
@@ -59,6 +59,7 @@ class EpochInvitationService:
         email: str,
         expires_in_hours: int,
         base_url: str,
+        locale: str = "en",
     ) -> dict:
         """Create invitation, generate lore, fetch epoch name, and send email."""
         lore_text = await EpochInvitationService.generate_lore(supabase, epoch_id)
@@ -84,6 +85,7 @@ class EpochInvitationService:
             recipient_email=email,
             lore_text=lore_text,
             invite_url=invite_url,
+            locale=locale,
         )
         invitation["email_sent"] = email_sent
 
@@ -285,6 +287,7 @@ class EpochInvitationService:
         recipient_email: str,
         lore_text: str,
         invite_url: str,
+        locale: str = "en",
     ) -> bool:
         """Send invitation email via Resend API."""
         if not settings.resend_api_key:
@@ -295,12 +298,13 @@ class EpochInvitationService:
             epoch_name=epoch_name,
             lore_text=lore_text,
             invite_url=invite_url,
+            locale=locale,
         )
 
         payload = {
             "from": "metaverse.center <onboarding@resend.dev>",
             "to": [recipient_email],
-            "subject": f"CLASSIFIED: Epoch Summons — {epoch_name}",
+            "subject": epoch_invitation_subject(epoch_name, locale),
             "html": html_body,
         }
 

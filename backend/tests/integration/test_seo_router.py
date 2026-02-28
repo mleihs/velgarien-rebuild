@@ -7,6 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.app import app
+from backend.tests.integration.conftest import requires_supabase
 
 SIM_VELGARIEN_SLUG = "velgarien"
 
@@ -54,6 +55,7 @@ class TestRobotsTxt:
         assert "Sitemap: https://metaverse.center/sitemap.xml" in r.text
 
 
+@requires_supabase
 class TestSitemapXml:
     def test_returns_200(self, client: TestClient):
         r = client.get("/sitemap.xml")

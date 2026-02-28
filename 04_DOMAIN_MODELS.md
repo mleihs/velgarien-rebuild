@@ -1,7 +1,8 @@
 # 04 - Domain Models: Entitaeten mit Simulation-Scope
 
-**Version:** 2.3
+**Version:** 2.4
 **Datum:** 2026-02-28
+**Aenderung v2.4:** Epoch Chat types (EpochChatMessage, PresenceUser). Epoch Invitation types (EpochInvitation, EpochInvitationStatus). HowToPlay types (HtpSection, HtpOperativeCard, HtpMatch, HtpMatchReplay). cycle_ready on EpochParticipant. simulation_type/source_template_id/epoch_id on Simulation.
 **Aenderung v2.3:** Embassy types (EmbassyStatus, EmbassyAmbassador, EmbassyMetadata, Embassy). Game Mechanics types (BuildingReadiness, ZoneStability, EmbassyEffectiveness, SimulationHealth, SimulationHealthDashboard). Competitive Layer types (Epoch, EpochParticipant, EpochTeam, OperativeMission, LeaderboardEntry, EpochScore, BattleLogEntry + enums). Chat fixes (AgentBrief, ChatEventReference, optional agent_id in ChatConversation). SettingCategory + `'prompts'`.
 **Aenderung v2.2:** 6 neue Interfaces (AgentRelationship, EventEcho, EchoVector, EchoStatus, SimulationConnection, MapData). Taxonomy-Typ `relationship_type`. Prompt-Template-Typen `relationship_generation` + `event_echo_transformation`.
 **Aenderung v2.1:** `banner_url`, `icon_url` Felder in Simulation-Interface. `agent_count`, `building_count`, `event_count`, `member_count` als optionale enriched-Felder (von `simulation_dashboard` View).
@@ -1101,5 +1102,45 @@ interface BattleLogEntry {
   is_public: boolean;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+// ── Epoch Invitations (Migration 036) ───────────────────
+
+type EpochInvitationStatus = 'pending' | 'accepted' | 'revoked' | 'expired';
+
+interface EpochInvitation {
+  id: UUID;
+  epoch_id: UUID;
+  invited_by_id: UUID;
+  invited_email: string;
+  invited_role: string;
+  invite_token: UUID;
+  status: EpochInvitationStatus;
+  accepted_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── Epoch Chat (Migration 037) ──────────────────────────
+
+type EpochChatChannelType = 'epoch' | 'team';
+
+interface EpochChatMessage {
+  id: UUID;
+  epoch_id: UUID;
+  sender_id: UUID;
+  sender_simulation_id: UUID;
+  channel_type: EpochChatChannelType;
+  team_id?: UUID;
+  content: string;
+  created_at: string;
+  sender_simulation_name?: string; // enriched client-side
+}
+
+interface PresenceUser {
+  user_id: string;
+  simulation_id: string;
+  simulation_name: string;
+  online_at: string;
 }
 ```

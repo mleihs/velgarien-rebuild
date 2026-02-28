@@ -11,6 +11,7 @@ class EpochInvitationCreate(BaseModel):
 
     email: str = Field(max_length=320)
     expires_in_hours: int = Field(default=168, ge=1, le=720)
+    locale: str = Field(default="en", pattern="^(en|de)$")
 
 
 class EpochInvitationResponse(BaseModel):

@@ -8,6 +8,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.app import app
+from backend.tests.integration.conftest import requires_supabase
+
+pytestmark = requires_supabase
 
 # Known seed data IDs (from supabase/seed/)
 SIM_VELGARIEN = "10000000-0000-0000-0000-000000000001"

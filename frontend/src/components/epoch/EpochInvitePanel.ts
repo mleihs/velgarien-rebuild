@@ -11,6 +11,7 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { epochsApi } from '../../services/api/EpochsApiService.js';
+import { localeService } from '../../services/i18n/locale-service.js';
 import type { EpochInvitation } from '../../types/index.js';
 import { VelgToast } from '../shared/Toast.js';
 import '../shared/VelgSidePanel.js';
@@ -371,6 +372,7 @@ export class VelgEpochInvitePanel extends LitElement {
     this._sending = true;
     const result = await epochsApi.sendInvitation(this.epochId, {
       email: this._email.trim(),
+      locale: localeService.currentLocale,
     });
 
     if (result.success) {

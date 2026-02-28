@@ -1,7 +1,7 @@
 # 22 - Epochs & Competitive Layer
 
-**Version:** 1.0
-**Date:** 2026-02-27
+**Version:** 1.1
+**Date:** 2026-02-28
 
 ---
 
@@ -23,7 +23,7 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 
 ### Database Schema
 
-**6 new tables** (migration 032):
+**7 tables** (migrations 032 + 037):
 
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
@@ -33,6 +33,7 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 | `operative_missions` | Deployed operatives + results | `agent_id`, `operative_type`, `source_simulation_id`, `target_simulation_id`, `embassy_id`, `status`, `success_probability`, `mission_result` |
 | `epoch_scores` | Score snapshots per cycle | `cycle_number`, 5 dimension scores + composite, unique per (epoch, simulation, cycle) |
 | `battle_log` | Narrative event feed | `event_type`, `narrative`, `is_public`, `metadata` |
+| `epoch_chat_messages` | Realtime chat messages (epoch-wide + team) | `epoch_id`, `sender_id`, `sender_simulation_id`, `channel_type`, `team_id`, `content` |
 
 **4 materialized views** (migration 031):
 
@@ -337,14 +338,143 @@ interface LeaderboardEntry {
 |-----------|--------|-------|
 | Database tables (migration 032) | Applied locally | NOT pushed to production |
 | Materialized views (migration 031) | Applied locally | NOT pushed to production |
-| Backend routers (3) | Complete | epochs, operatives, scores |
-| Backend services (5) | Complete | epoch, operative, scoring, battle_log, game_mechanics |
-| Frontend components (5) | Complete | Command center, wizard, deploy modal, leaderboard, battle log |
-| Frontend API service | Complete | 27 methods covering all endpoints |
-| TypeScript types | Complete | 12 interfaces + 3 union types |
-| i18n (EN + DE) | Complete | 1322 total strings |
+| Epoch chat table (migration 037) | Applied locally | NOT pushed to production |
+| Backend routers (4) | Complete | epochs, operatives, scores, epoch_chat |
+| Backend services (6) | Complete | epoch, operative, scoring, battle_log, game_mechanics, epoch_chat |
+| Frontend components (8) | Complete | Command center, wizard, deploy modal, leaderboard, battle log, chat panel, presence indicator, ready panel |
+| Frontend API services (2) | Complete | EpochsApiService (27 methods), EpochChatApiService (4 methods) |
+| RealtimeService | Complete | Singleton managing 4 channel types with Preact Signals |
+| TypeScript types | Complete | 14 interfaces + 4 union types |
+| i18n (EN + DE) | Complete | 1666 total strings |
 | Public API endpoints (8) | Complete | Spectator access to leaderboard, battle log, epoch info |
 | Production deployment | Pending | Migrations not pushed, code not deployed |
+
+---
+
+## Epoch Realtime Chat & Coordination (Migration 037)
+
+Epoch participants need real-time communication channels for diplomacy, coordination, and tactical planning. Migration 037 adds an in-game chat system built on Supabase Realtime Broadcast, with separate channels for public epoch-wide diplomacy and private team-only encrypted communications.
+
+### Database Schema
+
+**`epoch_chat_messages` table:**
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | UUID | PK, default gen_random_uuid() | Message identifier |
+| `epoch_id` | UUID | FK game_epochs, NOT NULL | Parent epoch |
+| `sender_id` | UUID | FK auth.users, NOT NULL | Message author |
+| `sender_simulation_id` | UUID | FK simulations, NOT NULL | Sender's simulation (for display context) |
+| `channel_type` | TEXT | NOT NULL, CHECK ('epoch' or 'team') | Channel scope |
+| `team_id` | UUID | FK epoch_teams, NULLABLE | Team channel target (NULL for epoch-wide) |
+| `content` | TEXT | NOT NULL, 1-2000 chars | Message body |
+| `created_at` | TIMESTAMPTZ | default now() | Timestamp |
+
+**Column addition to `epoch_participants`:**
+
+| Column | Type | Default | Description |
+|--------|------|---------|-------------|
+| `cycle_ready` | BOOLEAN | false | Whether participant has signaled ready for next cycle |
+
+**Indexes:**
+
+| Index | Columns | Purpose |
+|-------|---------|---------|
+| `idx_epoch_chat_epoch_created` | (epoch_id, created_at) | Cursor-based pagination for epoch-wide messages |
+| `idx_epoch_chat_team_created` | (team_id, created_at) | Cursor-based pagination for team messages |
+
+### RLS Policies (4)
+
+| Policy | Operation | Rule |
+|--------|-----------|------|
+| `epoch_chat_select` | SELECT | Authenticated users can read all epoch-wide messages (`channel_type = 'epoch'`) |
+| `epoch_chat_team_select` | SELECT | Team members can read their own team messages (matched via `epoch_participants.team_id`) |
+| `epoch_chat_insert` | INSERT | Authenticated users can insert with `sender_id = auth.uid()` |
+| `epoch_chat_anon_select` | SELECT | Anon users can read epoch-wide messages (spectator access) |
+
+### Broadcast Triggers (2)
+
+**`broadcast_epoch_chat`** — On INSERT to `epoch_chat_messages`:
+- Sends via Supabase Realtime Broadcast to topic `epoch:{epoch_id}:chat` for epoch-wide messages
+- Sends to `epoch:{epoch_id}:team:{team_id}:chat` for team messages
+- Payload includes sender_id, sender_simulation_id, channel_type, content, created_at
+
+**`broadcast_ready_signal`** — On UPDATE of `cycle_ready` in `epoch_participants`:
+- Broadcasts to `epoch:{epoch_id}:status` topic
+- Payload includes simulation_id, cycle_ready state
+- Enables live ready-state tracking without polling
+
+### Realtime Architecture (4 Channel Types)
+
+All channels use Supabase Realtime with `config: { private: true }` for authenticated access.
+
+| Channel Pattern | Type | Purpose |
+|----------------|------|---------|
+| `epoch:{id}:chat` | Broadcast | Epoch-wide messages — public diplomacy, announcements, taunts |
+| `epoch:{id}:presence` | Presence | Online user tracking via Supabase Presence API — who's watching |
+| `epoch:{id}:status` | Broadcast | Ready signals, cycle advancement events, phase transitions |
+| `epoch:{id}:team:{tid}:chat` | Broadcast | Team-only messages — alliance coordination, secret planning |
+
+### API Endpoints (4)
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/v1/epochs/{epoch_id}/chat` | authenticated | Send message (epoch-wide or team channel) |
+| GET | `/api/v1/epochs/{epoch_id}/chat` | optional | List epoch-wide messages (cursor-based pagination) |
+| GET | `/api/v1/epochs/{epoch_id}/chat/team/{team_id}` | team member | List team messages (cursor-based pagination) |
+| PATCH | `/api/v1/epochs/{epoch_id}/participants/{simulation_id}/ready` | participant | Toggle cycle_ready state |
+
+### Frontend Components
+
+**3 new components + 1 modified:**
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| **EpochChatPanel** | `components/epoch/EpochChatPanel.ts` | Dual-channel chat interface with ALL CHANNELS / TEAM FREQ tabs. REST-based message catch-up on mount + Supabase Realtime Broadcast for live incoming messages. Directional message styling (own messages right-aligned, others left-aligned). Simulation name + theme color per sender. |
+| **EpochPresenceIndicator** | `components/epoch/EpochPresenceIndicator.ts` | Online user dot indicator per simulation. Subscribes to Presence channel. Green dot = online, dim = offline. Shown in leaderboard and chat sender labels. |
+| **EpochReadyPanel** | `components/epoch/EpochReadyPanel.ts` | Cycle ready toggle with live broadcast status display. Shows all participants' ready states in real time. Visual progress bar toward full readiness. |
+| **EpochCommandCenter** | `components/epoch/EpochCommandCenter.ts` | Modified: added collapsible COMMS sidebar on Operations Board tab. Shows EpochChatPanel for user's active epoch participation. |
+
+### RealtimeService (Platform Service)
+
+Singleton service at `services/realtime/RealtimeService.ts` managing all Supabase Realtime channel subscriptions.
+
+**Preact Signals:**
+
+| Signal | Type | Purpose |
+|--------|------|---------|
+| `onlineUsers` | `Signal<Map<string, PresenceState>>` | Online presence per epoch |
+| `epochMessages` | `Signal<ChatMessage[]>` | Epoch-wide message buffer |
+| `teamMessages` | `Signal<ChatMessage[]>` | Team message buffer |
+| `readyStates` | `Signal<Map<string, boolean>>` | Cycle ready state per simulation |
+| `unreadEpochCount` | `Signal<number>` | Unread epoch message count |
+| `unreadTeamCount` | `Signal<number>` | Unread team message count |
+
+**Channel Lifecycle:**
+
+| Method | Action |
+|--------|--------|
+| `joinEpoch(epochId)` | Subscribe to chat, presence, and status channels |
+| `leaveEpoch()` | Unsubscribe all epoch channels, clear signals |
+| `joinTeam(epochId, teamId)` | Subscribe to team chat channel |
+| `leaveTeam()` | Unsubscribe team channel, clear team signals |
+
+Unread badge counting uses focus tracking — messages received while the chat panel is not visible increment the unread counter. Focusing the panel resets it to zero.
+
+### Operations Board COMMS Panel
+
+The EpochCommandCenter Operations tab gains a collapsible COMMS sidebar for in-context communication during tactical operations.
+
+**Layout:**
+- Desktop: two-column grid — operative cards on the left, chat panel (360px fixed width) on the right
+- Mobile: stacked layout — chat panel below operative cards
+- Collapsible via amber glow toggle button with signal strength indicator icon
+
+**Behavior:**
+- Auto-discovers user's active epoch participation on mount
+- If user is a participant in an active epoch, COMMS panel is available
+- Empty state message when user has no active epoch participation
+- Signal strength indicator reflects WebSocket connection health (connected / reconnecting / disconnected)
 
 ---
 

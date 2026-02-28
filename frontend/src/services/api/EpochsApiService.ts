@@ -204,7 +204,7 @@ export class EpochsApiService extends BaseApiService {
 
   sendInvitation(
     epochId: string,
-    data: { email: string; expires_in_hours?: number },
+    data: { email: string; expires_in_hours?: number; locale?: string },
   ): Promise<ApiResponse<EpochInvitation>> {
     return this.post(`/epochs/${epochId}/invitations`, data);
   }
