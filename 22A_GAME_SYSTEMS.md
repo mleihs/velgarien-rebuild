@@ -316,10 +316,10 @@ At each cycle boundary:
 
 **Success Probability:**
 ```
-base_probability = 0.5
+base_probability = 0.55
 + operative_qualification × 0.05  (0-10 scale → +0 to +0.50)
 - target_zone_security × 0.05    (security_level maps to 0-10 → -0 to -0.50)
-- guardian_presence × 0.20        (per guardian in zone → -0.20 each)
+- min(0.20, guardian_presence × 0.08)  (−0.08 each, cap 0.20)
 + embassy_effectiveness × 0.15   (the embassy used for deployment → +0 to +0.15)
 
 Final probability clamped to [0.05, 0.95]
@@ -374,7 +374,7 @@ Final probability clamped to [0.05, 0.95]
 
 #### 4. Diplomatic Score (Alliance / Network)
 - **What it rewards:** Building and maintaining a strong diplomatic network
-- **Formula:** sum(embassy_effectiveness) × (1 + 0.1 × active_alliance_count)
+- **Formula:** (sum(embassy_effectiveness × 10) + spy_bonus) × (1 + 0.15 × active_alliance_count) × (1 - betrayal_penalty)
 - **Range:** 0–∞ (scales with embassy count and alliance health)
 - **Strategy:** Establish embassies, assign skilled ambassadors, maintain embassy buildings
 - **Counter:** Infiltrators reduce embassy effectiveness; captured operatives cause diplomatic incidents
@@ -382,9 +382,9 @@ Final probability clamped to [0.05, 0.95]
 #### 5. Military Score (Offensive / Aggressive)
 - **What it rewards:** Successful covert operations against rivals
 - **Formula:** sum(mission_value) - sum(failure_penalty)
-  - Successful spy: +2, saboteur: +5, propagandist: +3, assassin: +8, infiltrator: +4
+  - Successful spy: +2, saboteur: +5, propagandist: +5, assassin: +8, infiltrator: +4
   - Failed (undetected): 0
-  - Failed (detected/captured): -3 (any type)
+  - Failed (detected/captured): -2 (any type)
 - **Range:** -∞ to +∞ (high risk, high reward)
 - **Strategy:** Deploy qualified operatives through effective embassies against weak targets
 - **Counter:** Deploy guardians, maintain high zone security, close compromised embassies
@@ -400,7 +400,7 @@ Final probability clamped to [0.05, 0.95]
 - Alliance bonus: +5% to all dimensions for each active alliance member
 - **Betrayal mechanic** (if `allow_betrayal = true`):
   - An allied simulation can deploy operatives against allies
-  - If detected: alliance immediately dissolves, betrayer gets -20% to Diplomatic Score for remainder of epoch
+  - If detected: alliance immediately dissolves, betrayer gets -25% to Diplomatic Score for remainder of epoch
   - If undetected: normal operative effects apply, alliance remains intact (but the betrayer knows...)
   - Strategic tension: betrayal is high-risk but can eliminate a competitor from within
 
@@ -944,7 +944,7 @@ Info bubbles use the existing `_renderInfoBubble(text)` pattern (`.info-bubble` 
 | **RP per Cycle** | "Resonance Points allocated each cycle. Higher values enable more operatives and actions. Default 10 supports ~2 operations per cycle." |
 | **RP Cap** | "Maximum storable RP. Excess is lost. Low caps force constant spending; high caps allow saving for big moves." |
 | **Score Weights** | "How much each dimension contributes to the final score. Adjust to create different epoch flavors — 'Builder' emphasizes Stability, 'Warmonger' emphasizes Military." |
-| **Allow Betrayal** | "When enabled, allied simulations can covertly attack each other. Detection dissolves the alliance and costs -20% Diplomatic Score. Creates tension within teams." |
+| **Allow Betrayal** | "When enabled, allied simulations can covertly attack each other. Detection dissolves the alliance and costs -25% Diplomatic Score. Creates tension within teams." |
 
 ### Deploy Operative
 

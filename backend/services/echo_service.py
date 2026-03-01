@@ -664,17 +664,44 @@ class ConnectionService:
         cls,
         supabase: Client,
     ) -> dict:
-        """Get aggregated data for the Cartographer's Map."""
-        # Simulations with counts
+        """Get aggregated data for the Cartographer's Map.
+
+        Includes game instances (simulation_type, epoch_id, source_template_id)
+        and epoch status for live map rendering. Excludes archived instances.
+        """
+        # Simulations with counts — include game instances, exclude archived
         sims_resp = (
             supabase.table("simulations")
-            .select("id, name, slug, theme, description, banner_url, status")
+            .select(
+                "id, name, slug, theme, description, banner_url, status,"
+                " simulation_type, source_template_id, epoch_id"
+            )
             .eq("status", "active")
             .is_("deleted_at", "null")
             .order("created_at", desc=False)
             .execute()
         )
         simulations = sims_resp.data or []
+
+        # Enrich game instances with epoch status
+        epoch_ids = {
+            s["epoch_id"]
+            for s in simulations
+            if s.get("epoch_id")
+        }
+        epoch_status_map: dict[str, str] = {}
+        if epoch_ids:
+            epoch_resp = (
+                supabase.table("game_epochs")
+                .select("id, status")
+                .in_("id", list(epoch_ids))
+                .execute()
+            )
+            for ep in epoch_resp.data or []:
+                epoch_status_map[ep["id"]] = ep["status"]
+
+        for sim in simulations:
+            sim["epoch_status"] = epoch_status_map.get(sim.get("epoch_id"), None)
 
         # Enrich with counts from dashboard view
         dash_resp = (
@@ -708,11 +735,122 @@ class ConnectionService:
         from backend.services.embassy_service import EmbassyService
         embassies = await EmbassyService.list_all_active(supabase)
 
+        # Active game instance counts per template
+        active_instance_counts: dict[str, int] = {}
+        for sim in simulations:
+            if (
+                sim.get("simulation_type") == "game_instance"
+                and sim.get("source_template_id")
+                and sim.get("epoch_status") in ("lobby", "foundation", "competition", "reckoning")
+            ):
+                tid = sim["source_template_id"]
+                active_instance_counts[tid] = active_instance_counts.get(tid, 0) + 1
+
+        # Operative flow between simulations (active/deployed/en_route missions)
+        operative_flow: dict[str, dict] = {}
+        try:
+            op_resp = (
+                supabase.table("operative_missions")
+                .select("source_simulation_id, target_simulation_id, operative_type")
+                .in_("status", ["deployed", "active", "en_route"])
+                .execute()
+            )
+            for op in op_resp.data or []:
+                src = op.get("source_simulation_id")
+                tgt = op.get("target_simulation_id")
+                if src and tgt:
+                    key = f"{src}|{tgt}"
+                    if key not in operative_flow:
+                        operative_flow[key] = {"count": 0, "types": []}
+                    operative_flow[key]["count"] += 1
+                    op_type = op.get("operative_type")
+                    if op_type and op_type not in operative_flow[key]["types"]:
+                        operative_flow[key]["types"].append(op_type)
+        except Exception:
+            logger.debug("Operative flow query skipped (table may be empty)")
+
+        # Latest cycle score dimensions per game-instance simulation
+        score_dimensions: dict[str, dict] = {}
+        instance_ids = [
+            s["id"] for s in simulations if s.get("simulation_type") == "game_instance"
+        ]
+        if instance_ids:
+            try:
+                # Get the most recent score row per simulation via ordering
+                score_resp = (
+                    supabase.table("epoch_scores")
+                    .select(
+                        "simulation_id, stability_score, influence_score,"
+                        " sovereignty_score, diplomatic_score, military_score,"
+                        " cycle_number"
+                    )
+                    .in_("simulation_id", instance_ids)
+                    .order("cycle_number", desc=True)
+                    .execute()
+                )
+                seen: set[str] = set()
+                for row in score_resp.data or []:
+                    sid = row["simulation_id"]
+                    if sid in seen:
+                        continue
+                    seen.add(sid)
+                    score_dimensions[sid] = {
+                        "stability": row.get("stability_score", 0),
+                        "influence": row.get("influence_score", 0),
+                        "sovereignty": row.get("sovereignty_score", 0),
+                        "diplomatic": row.get("diplomatic_score", 0),
+                        "military": row.get("military_score", 0),
+                    }
+            except Exception:
+                logger.debug("Score dimensions query skipped")
+
+        # Sparkline data: last 10 composite scores per template (from completed epochs)
+        sparklines: dict[str, list[float]] = {}
+        template_ids = [
+            s["id"] for s in simulations
+            if s.get("simulation_type") in (None, "template")
+        ]
+        if template_ids:
+            try:
+                spark_resp = (
+                    supabase.table("epoch_scores")
+                    .select(
+                        "simulation_id, composite_score, cycle_number,"
+                        " simulations!inner(source_template_id)"
+                    )
+                    .order("cycle_number", desc=True)
+                    .limit(200)
+                    .execute()
+                )
+                # Group by source_template_id, keep last 10 per template
+                template_scores: dict[str, list[float]] = {}
+                for row in spark_resp.data or []:
+                    sim_data = row.get("simulations")
+                    if not sim_data:
+                        continue
+                    tmpl_id = sim_data.get("source_template_id")
+                    if tmpl_id and tmpl_id in template_ids:
+                        if tmpl_id not in template_scores:
+                            template_scores[tmpl_id] = []
+                        if len(template_scores[tmpl_id]) < 10:
+                            template_scores[tmpl_id].append(
+                                float(row.get("composite_score", 0))
+                            )
+                # Reverse so chronological order (oldest first)
+                for tid, scores_list in template_scores.items():
+                    sparklines[tid] = list(reversed(scores_list))
+            except Exception:
+                logger.debug("Sparkline data query skipped")
+
         return {
             "simulations": simulations,
             "connections": connections,
             "echo_counts": echo_counts,
             "embassies": embassies,
+            "active_instance_counts": active_instance_counts,
+            "operative_flow": operative_flow,
+            "score_dimensions": score_dimensions,
+            "sparklines": sparklines,
         }
 
     @classmethod

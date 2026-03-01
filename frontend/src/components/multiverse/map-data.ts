@@ -19,6 +19,25 @@ export const VECTOR_LABELS: Record<string, string> = {
 /** Embassy edge color — warm orange, distinct from bleed purple */
 export const EMBASSY_EDGE_COLOR = '#f97316';
 
+/** Operative type → trail color */
+export const OPERATIVE_COLORS: Record<string, string> = {
+  spy: '#3b82f6', // blue
+  saboteur: '#f59e0b', // amber
+  propagandist: '#a78bfa', // purple
+  assassin: '#ef4444', // red
+  guardian: '#22c55e', // green
+  infiltrator: '#06b6d4', // cyan
+};
+
+/** Score dimension → color */
+export const SCORE_DIMENSION_COLORS: Record<string, string> = {
+  stability: '#22c55e', // green
+  influence: '#a78bfa', // purple
+  sovereignty: '#3b82f6', // blue
+  diplomatic: '#f59e0b', // amber
+  military: '#ef4444', // red
+};
+
 /** Vector emoji for compact display */
 export const VECTOR_ICONS: Record<string, string> = {
   commerce: '\u{1F4B0}',

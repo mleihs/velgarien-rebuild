@@ -369,19 +369,19 @@ The RP costs are deliberately varied to create **opportunity cost decisions**. 8
 
 | Type | RP | Deploy | Duration | Effect | Score Value |
 |------|-----|--------|----------|--------|-------------|
-| **Spy** | 3 | Instant | 3 cycles | Reveals target metrics | +2 |
-| **Saboteur** | 5 | 1 cycle | Single | Building condition -1 step | +5 |
-| **Propagandist** | 4 | 1 cycle | 2 cycles | Generates destabilizing event (impact 6-8) | +3 |
+| **Spy** | 3 | Instant | 3 cycles | Reveals zone security + guardian count (battle log intel). +2 Inf, +1 Dip, −2 Sov | +2 |
+| **Saboteur** | 5 | 1 cycle | Single | Zone security −1 tier + building −1 step. −5 Sta, −8 Sov | +5 |
+| **Propagandist** | 4 | 1 cycle | 2 cycles | Generates destabilizing event (impact 6-8) | +5 |
 | **Assassin** | 8 | 2 cycles | Single | Wounds agent (relationships -2, ambassador removed) | +8 |
-| **Guardian** | 3 | Instant | Permanent | +20% enemy detection in zone (self-deploy) | — |
+| **Guardian** | 3 | Instant | Permanent | −8% enemy success per guardian, max −20% (self-deploy) | — |
 | **Infiltrator** | 6 | 2 cycles | 3 cycles | Embassy effectiveness -50% | +4 |
 
 **Success Probability Formula:**
 ```
-P(success) = 0.5
+P(success) = 0.55
   + operative_qualification × 0.05     (+0.00 to +0.50)
   - target_zone_security × 0.05        (-0.00 to -0.50)
-  - guardian_count × 0.20              (-0.20 per guardian)
+  - min(0.20, guardian_count × 0.08)   (-0.08 per guardian, cap 0.20)
   + embassy_effectiveness × 0.15       (+0.00 to +0.15)
 
 Clamped to [0.05, 0.95]
@@ -393,7 +393,7 @@ The base 0.5 means an "average" operative against an "average" target has a coin
 
 - **Agent qualification** (+0.50 max): The single biggest positive modifier. Investing in skilled agents pays off massively. A qualification-10 spy has 50% better odds than a qualification-0 spy.
 - **Zone security** (-0.50 max): The single biggest negative modifier. High-security zones are genuinely hard to infiltrate.
-- **Guardians** (-0.20 each): Stacks. Three guardians in a zone reduce probability by 0.60, making infiltration nearly impossible. But guardians cost RP and don't attack.
+- **Guardians** (-0.08 each, cap −0.20): Two guardians reduce by 0.16, three hit cap at −0.20. Guardians cost RP and don't attack — pure defense.
 - **Embassy effectiveness** (+0.15 max): A smaller bonus, but it rewards embassy maintenance.
 
 The clamp at [0.05, 0.95] means nothing is ever certain. Even a perfect setup can fail (5% chance), and even a terrible one can succeed (5% chance). This preserves tension.
@@ -538,7 +538,7 @@ Form alliance → Share team score bonus → Build trust via embassy investment
 → Betrayal option exists → Detected betrayal = catastrophic diplomatic penalty
 → Should I betray? Should I trust?
 ```
-If `allow_betrayal = true`, alliances become a prisoner's dilemma. Cooperating builds diplomatic score. Betraying can eliminate a competitor. But detected betrayal (-20% Diplomatic Score + alliance dissolution) is catastrophic. This creates genuine social tension between allied players.
+If `allow_betrayal = true`, alliances become a prisoner's dilemma. Cooperating builds diplomatic score. Betraying can eliminate a competitor. But detected betrayal (-25% Diplomatic Score + alliance dissolution) is catastrophic. This creates genuine social tension between allied players.
 
 **Loop 10: Reckoning Chaos**
 ```
@@ -694,15 +694,15 @@ A sustained sabotage campaign against a single high-criticality building can:
 
 #### Is military too strong?
 
-The military scoring dimension rewards successful operations (+2 to +8 per success) and punishes detected failures (-3). At first glance, a skilled player could farm military score by spamming cheap spies (3 RP, +2 on success, low risk).
+The military scoring dimension rewards successful operations (+2 to +8 per success) and punishes detected failures (-2). At first glance, a skilled player could farm military score by spamming cheap spies (3 RP, +2 on success, low risk).
 
 **Balancing factors:**
-- Detection penalty applies regardless of operative type (-3 for any detection)
+- Detection penalty applies regardless of operative type (-2 for any detection)
 - Detection spiral weakens the embassy, reducing future success probability
 - Every deployed agent reduces domestic readiness (Stability cost)
 - Spy information is only valuable if you ACT on it (costing more RP)
 
-**Potential concern:** If a player has many highly qualified agents (qualification 8-10), their success probability is very high (base 0.5 + 0.40-0.50 from qualification). This could make spy spam a dominant strategy. The counter is guardians (+0.20 detection per guardian), but guardians cost RP and don't score.
+**Potential concern:** If a player has many highly qualified agents (qualification 8-10), their success probability is very high (base 0.55 + 0.40-0.50 from qualification). This could make spy spam a dominant strategy. The counter is guardians (−0.08 success per guardian, +4 sovereignty), but guardians cost RP and don't score militarily.
 
 **Recommendation for tuning:** Monitor first real epoch. If spy spam dominates, consider: (a) diminishing returns on spy score after N successful missions in same target, (b) increasing spy RP cost to 4, or (c) adding a "counterintelligence fatigue" mechanic where repeated sweeps in the same zone have diminishing returns.
 
@@ -720,13 +720,13 @@ A pure Builder who never engages with the competitive layer scores well on Stabi
 
 #### Is betrayal too punishing?
 
-Detected betrayal = -20% Diplomatic Score + alliance dissolution. For a player with strong diplomatic investment, this is devastating.
+Detected betrayal = -25% Diplomatic Score + alliance dissolution. For a player with strong diplomatic investment, this is devastating.
 
-**By design:** Betrayal SHOULD be risky. It's meant to be a dramatic, game-defining move, not a routine tactic. The -20% penalty is designed to make betrayal a credible threat (you COULD do it) without making it a dominant strategy (you probably SHOULDN'T unless the payoff is enormous).
+**By design:** Betrayal SHOULD be risky. It's meant to be a dramatic, game-defining move, not a routine tactic. The -25% penalty is designed to make betrayal a credible threat (you COULD do it) without making it a dominant strategy (you probably SHOULDN'T unless the payoff is enormous).
 
 **Potential concern:** If the penalty is too high, no one will ever betray, making the `allow_betrayal` toggle meaningless. If too low, everyone will betray, making alliances meaningless.
 
-**Assessment:** -20% feels right as a starting point. It's roughly equivalent to losing 1 full dimension's contribution to your composite score. Whether this is correct will only be known after live play.
+**Assessment:** -25% provides a stronger deterrent while remaining recoverable over multiple cycles. It's roughly equivalent to losing 1.25 dimensions' contribution to your composite score, validated through 215-game simulation analysis.
 
 ---
 
@@ -1210,7 +1210,7 @@ P(success) = clamp(0.05, 0.95,
   0.5
   + qualification × 0.05
   - zone_security × 0.05
-  - guardians × 0.20
+  - min(0.20, guardians × 0.08)
   + embassy_effectiveness × 0.15
 )
 ```
@@ -1220,10 +1220,10 @@ P(success) = clamp(0.05, 0.95,
 stability = avg(zone_stability) × 100                    [0-100]
 influence = sum(completed_outbound_echo_strength)         [0-∞]
 sovereignty = 100 × (1 - inbound_echo_impact / total_event_impact)  [0-100]
-diplomatic = sum(embassy_effectiveness) × (1 + 0.1 × alliance_count) [0-∞]
+diplomatic = (sum(embassy_effectiveness × 10) + spy_bonus) × (1 + 0.15 × alliance_count) × (1 - betrayal_penalty) [0-∞]
 military = sum(success_values) - sum(detection_penalties)  [-∞ to +∞]
-  spy_success: +2, saboteur: +5, propagandist: +3, assassin: +8, infiltrator: +4
-  any_detection: -3
+  spy_success: +2, saboteur: +5, propagandist: +5, assassin: +8, infiltrator: +4
+  any_detection: -2
 
 composite = weighted_sum(normalized(dim_i) × weight_i)
   where normalized(dim) = dim / max(dim across all participants) × 100

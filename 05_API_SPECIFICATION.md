@@ -1,7 +1,8 @@
 # 05 - API Specification: Alle Endpoints (Simulation-Scoped)
 
-**Version:** 1.4
-**Datum:** 2026-02-28
+**Version:** 1.5
+**Datum:** 2026-03-01
+**Aenderung v1.5:** 228 Endpoints total (30 Router). Public-Endpoints erweitert auf 46 (neuer `/battle-feed` Endpoint fuer globalen oeffentlichen Battle-Feed).
 **Aenderung v1.4:** 227 Endpoints total (30 Router). Neue Router: epoch_chat (3 Endpoints + 1 Ready-Signal auf epochs), epoch_invitations (4 Endpoints). Public-Endpoints erweitert auf 45 (epoch-invitation Token-Validierung). Epoch-Router erweitert um Ready-Signal.
 **Aenderung v1.3:** 217 Endpoints total (28 Router). Neue Router: health, seo, embassies, epochs, operatives, scores, game_mechanics. 44 Public-Endpoints. Generation-Router erweitert um `/relationships`. Chat-Router erweitert auf 11 Endpoints. Campaigns-Router erweitert auf 8 Endpoints. Social-Trends erweitert auf 8 Endpoints. Settings-Router erweitert auf 6 Endpoints. Invitations-Router erweitert auf 4 Endpoints.
 **Aenderung v1.2:** 157 Endpoints total (23 Router). 3 neue Router (relationships, echoes, connections). 6 neue Public-Endpoints fuer Relationships/Echoes/Connections/Map-Data. Aggregierter Map-Data-Endpoint.
@@ -935,7 +936,7 @@ Verbindung loeschen. Verwendet `admin_supabase`.
 
 ## 21. Public Endpoints — Relationships, Echoes, Connections, Map-Data (Details)
 
-Detail-Dokumentation fuer ausgewaehlte Public-Endpoints. Vollstaendige Liste aller 45 Public-Endpoints: siehe Abschnitt 29.
+Detail-Dokumentation fuer ausgewaehlte Public-Endpoints. Vollstaendige Liste aller 46 Public-Endpoints: siehe Abschnitt 29.
 
 ### `GET /api/v1/public/simulations/:simId/agents/:agentId/relationships`
 Beziehungen eines Agenten (oeffentlich).
@@ -1465,7 +1466,7 @@ Manuelles Refresh aller Materialized Views. Normalerweise ueber Trigger automati
 
 ---
 
-## 29. Public Endpoints — Gesamt (45 Endpoints)
+## 29. Public Endpoints — Gesamt (46 Endpoints)
 
 Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter `/api/v1/public/`.
 
@@ -1537,7 +1538,8 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | 42 | GET | `/epochs/:epochId/leaderboard` | Bestenliste |
 | 43 | GET | `/epochs/:epochId/standings` | Endstaende |
 | 44 | GET | `/epochs/:epochId/battle-log` | Battle-Log (oeffentlicher Feed) |
-| 45 | GET | `/epoch-invitations/:token` | Epoch-Einladung per Token validieren |
+| 45 | GET | `/battle-feed?limit={1-50}` | Globaler oeffentlicher Battle-Feed (alle Epochen) |
+| 46 | GET | `/epoch-invitations/:token` | Epoch-Einladung per Token validieren |
 
 ---
 

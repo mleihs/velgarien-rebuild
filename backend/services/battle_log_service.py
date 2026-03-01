@@ -213,6 +213,25 @@ class BattleLogService:
     # ── Query ─────────────────────────────────────────────
 
     @classmethod
+    async def get_global_public_feed(
+        cls,
+        supabase: Client,
+        *,
+        limit: int = 20,
+    ) -> list[dict]:
+        """Get recent public battle log entries across all active epochs."""
+        resp = (
+            supabase.table("battle_log")
+            .select("*, game_epochs!inner(status)")
+            .eq("is_public", True)
+            .in_("game_epochs.status", ["foundation", "competition", "reckoning"])
+            .order("created_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        return resp.data or []
+
+    @classmethod
     async def list_entries(
         cls,
         supabase: Client,

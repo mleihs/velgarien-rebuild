@@ -549,6 +549,21 @@ async def get_map_data(
     return {"success": True, "data": data}
 
 
+# ── Battle Feed ────────────────────────────────────────────────────────
+
+
+@router.get("/battle-feed", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_battle_feed(
+    request: Request,
+    supabase: Client = Depends(get_anon_supabase),
+    limit: int = Query(default=20, ge=1, le=50),
+) -> dict:
+    """Global public battle feed across all active epochs."""
+    data = await BattleLogService.get_global_public_feed(supabase, limit=limit)
+    return {"success": True, "data": data}
+
+
 # ── Embassies ──────────────────────────────────────────────────────────
 
 @router.get("/simulations/{simulation_id}/embassies", response_model=PaginatedResponse)

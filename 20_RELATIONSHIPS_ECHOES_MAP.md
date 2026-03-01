@@ -456,10 +456,11 @@ The "Map" / "Karte" nav link in `PlatformHeader` toggles — clicking it while o
 | DELETE | `/api/v1/connections/{id}` | platform admin | Delete connection |
 | GET | `/api/v1/public/connections` | anon | Public read (for map) |
 | GET | `/api/v1/public/map-data` | anon | Aggregated map data |
+| GET | `/api/v1/public/battle-feed` | anon | Global public battle feed |
 
 ### Map Data Endpoint
 
-**`GET /api/v1/public/map-data`** returns a single payload for map rendering:
+**`GET /api/v1/public/map-data`** returns a single payload for map rendering. Since v2.1, this endpoint is enriched with game instance data when active epochs exist: `active_instance_counts` per template, `operative_flow` per connection edge, `score_dimensions` per game instance, and `sparklines` (last 10 composite scores) per template node. The `MapGraph` component uses this data to render game instance nodes with phase status rings, health arcs, operative trails on edges, and sparkline overlays on template nodes.
 
 ```json
 {

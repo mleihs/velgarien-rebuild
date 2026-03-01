@@ -6,6 +6,7 @@
 import { msg } from '@lit/localize';
 import type {
   BleedVector,
+  ChangelogEntry,
   EmbassyInfoCard,
   NormalizationRule,
   OperativeCard,
@@ -27,6 +28,7 @@ export function getTocSections(): TocSection[] {
     { id: 'bleed', label: msg('Bleed & Echoes') },
     { id: 'tactics', label: msg('Tactics & Strategies') },
     { id: 'matches', label: msg('Example Matches') },
+    { id: 'updates', label: msg('Updates') },
   ];
 }
 
@@ -71,7 +73,7 @@ export function getOperativeCards(): OperativeCard[] {
       description: msg(
         'Gathers intelligence from target simulation. Instant deployment, low cost, low risk.',
       ),
-      effect: msg('Reveals target zone information and active defenses.'),
+      effect: msg('Reveals target zone security levels and guardian count in the battle log.'),
       color: 'var(--color-info)',
     },
     {
@@ -83,7 +85,9 @@ export function getOperativeCards(): OperativeCard[] {
       description: msg(
         "Degrades a target building's condition by one level (good \u2192 moderate \u2192 poor \u2192 ruined).",
       ),
-      effect: msg('Damages infrastructure. Reduces target stability score.'),
+      effect: msg(
+        'Downgrades a random zone\u2019s security level by one tier. Damages infrastructure and stability.',
+      ),
       color: 'var(--color-warning)',
     },
     {
@@ -117,7 +121,7 @@ export function getOperativeCards(): OperativeCard[] {
       missionCycles: 0,
       scoreValue: 0,
       description: msg(
-        'Deploys to your own simulation. Reduces enemy success probability by 20% per guardian in zone.',
+        'Deploys to your own simulation. Reduces enemy success probability by 8% per guardian (max \u221220%).',
       ),
       effect: msg('Passive defense. Permanent while deployed. Foundation-phase only.'),
       color: 'var(--color-success)',
@@ -169,7 +173,7 @@ export function getScorePresets(): { name: string; weights: Record<string, numbe
 }
 
 export function getSuccessFormula(): string {
-  return '0.5 + (qual \u00D7 0.05) \u2212 (zone_sec \u00D7 0.05) \u2212 (guardians \u00D7 0.20) + (embassy_eff \u00D7 0.15)';
+  return '0.55 + (qual \u00D7 0.05) \u2212 (zone_sec \u00D7 0.05) \u2212 min(0.20, guardians \u00D7 0.08) + (embassy_eff \u00D7 0.15)';
 }
 
 export function getTactics(): TacticCard[] {
@@ -238,7 +242,7 @@ export function getTactics(): TacticCard[] {
       title: msg('Guardian Stacking'),
       category: 'counter',
       description: msg(
-        'Each guardian reduces enemy success by 20%. Three guardians in one zone = 60% reduction. Forces enemies to target undefended zones instead. But 9 RP on defense is 9 RP not spent on offense \u2014 only stack when protecting high-value buildings.',
+        'Each guardian reduces enemy success by 8% (capped at \u221220% total). Three guardians reach the cap. Forces enemies to target undefended zones instead. But 9 RP on defense is 9 RP not spent on offense \u2014 only stack when protecting high-value buildings.',
       ),
     },
     {
@@ -267,7 +271,7 @@ export function getTactics(): TacticCard[] {
       title: msg('Diplomat: Embassy Network'),
       category: 'preset',
       description: msg(
-        'With 35% diplomatic weight, your embassies ARE your score. Each ally gives +10% diplomatic. Protect embassies from infiltrators, never betray allies (the \u221220% penalty is fatal), and focus on building the largest alliance network possible.',
+        'With 35% diplomatic weight, your embassies ARE your score. Each ally gives +15% diplomatic. Protect embassies from infiltrators, never betray allies (the \u221225% penalty is fatal), and focus on building the largest alliance network possible.',
       ),
     },
   ];
@@ -311,9 +315,9 @@ export function getScoreDimensions(): ScoreDimension[] {
       key: 'stability',
       name: msg('Stability'),
       color: 'var(--color-success)',
-      formula: 'avg(zone_stability) \u00D7 100',
+      formula: 'avg(zone_stability) \u00D7 100 \u2212 penalties',
       explanation: msg(
-        'Average stability across all zones, scaled to 0\u2013100. Saboteurs degrade buildings, which lowers zone stability. Defend your infrastructure.',
+        'Average stability across all zones, scaled to 0\u2013100. Penalized by propaganda (\u22123), sabotage (\u22125), and assassination (\u22124) attacks. Defend your infrastructure.',
       ),
       title: msg('The Unshaken'),
     },
@@ -321,9 +325,9 @@ export function getScoreDimensions(): ScoreDimension[] {
       key: 'influence',
       name: msg('Influence'),
       color: 'var(--color-epoch-influence)',
-      formula: 'sum(completed_echo_strengths)',
+      formula: 'propaganda \u00D7 5 + spy \u00D7 2 + echoes',
       explanation: msg(
-        'Total strength of echoes you have successfully sent into other simulations during the epoch. More bleed = more influence.',
+        'Propaganda successes (+5) and espionage (+2) plus echo strength from the bleed system. Rewards projecting power across the multiverse.',
       ),
       title: msg('The Resonant'),
     },
@@ -342,9 +346,9 @@ export function getScoreDimensions(): ScoreDimension[] {
       name: msg('Diplomatic'),
       color: 'var(--color-warning)',
       formula:
-        'sum(eff) \u00D7 10 \u00D7 (1 + 0.1 \u00D7 allies) \u00D7 (1 \u2212 betrayal_penalty)',
+        '(sum(eff) \u00D7 10 + spy) \u00D7 (1 + 0.15 \u00D7 allies) \u00D7 (1 \u2212 betrayal)',
       explanation: msg(
-        'Embassy effectiveness times 10, multiplied by alliance bonus (+10% per ally) and reduced by betrayal penalty (\u221220%). Protect your embassies and honor your alliances.',
+        'Embassy effectiveness times 10, plus spy intel bonus (+1 per success), multiplied by alliance bonus (+15% per ally) and reduced by betrayal penalty (\u221225%). Protect your embassies and honor your alliances.',
       ),
       title: msg('The Architect'),
     },
@@ -432,5 +436,83 @@ export function getEchoLifecycle(): { name: string; color: string }[] {
     { name: msg('Completed'), color: 'var(--color-success)' },
     { name: msg('Rejected'), color: 'var(--color-warning)' },
     { name: msg('Failed'), color: 'var(--color-danger)' },
+  ];
+}
+
+export function getChangelog(): ChangelogEntry[] {
+  return [
+    {
+      version: 'v2.0',
+      date: '2026-02-28',
+      title: msg('Game Instance Normalization'),
+      highlights: [
+        msg('Balanced starting conditions for all simulations'),
+        msg('Automatic embassy generation between game instances'),
+        msg('Agent profession qualification leveling'),
+      ],
+      details: [
+        {
+          category: msg('Cloning & Normalization'),
+          changes: [
+            msg('All simulations capped at 6 agents, 8 buildings'),
+            msg('Building conditions normalized to "good"'),
+            msg('Zone security distributed: 1\u00D7 high, 2\u00D7 medium, 1\u00D7 low'),
+            msg('Agent qualifications set to 5'),
+          ],
+        },
+        {
+          category: msg('Mission Success'),
+          changes: [
+            msg('Base success probability raised from 0.50 to 0.55'),
+            msg('Mission success rate increased from 15% to 52%'),
+          ],
+        },
+        {
+          category: msg('Embassy System'),
+          changes: [
+            msg('Embassies auto-generated between all game instances'),
+            msg('Ambassador assignments preserved from templates'),
+          ],
+        },
+      ],
+    },
+    {
+      version: 'v2.1',
+      date: '2026-03-01',
+      title: msg('Balance Patch: Operative Effects & Scoring'),
+      highlights: [
+        msg('All 6 operative types now have real game state effects'),
+        msg('Guardian defense rebalanced (less dominant)'),
+        msg('3 scoring dimensions activated: stability, influence, diplomatic'),
+      ],
+      details: [
+        {
+          category: msg('New Operative Effects'),
+          changes: [
+            msg('Spy: reveals target zone security levels and guardian count in battle log'),
+            msg('Saboteur: downgrades a random zone\u2019s security level by one tier'),
+          ],
+        },
+        {
+          category: msg('Scoring Rebalance'),
+          changes: [
+            msg('Stability: now penalized by sabotage (\u22125) and assassination (\u22124)'),
+            msg('Influence: propaganda +3\u2192+5, spy +1\u2192+2'),
+            msg(
+              'Diplomatic: alliance bonus +10%\u2192+15%, betrayal penalty \u221220%\u2192\u221225%, spy intel +1',
+            ),
+            msg('Sovereignty: spy penalty \u22123\u2192\u22122, guardian bonus +3\u2192+4'),
+          ],
+        },
+        {
+          category: msg('Guardian Tuning'),
+          changes: [
+            msg('Penalty per guardian: 10%\u21928%, cap: 25%\u219220%'),
+            msg('2.5 guardians now reach maximum effect (was 2.5 at old rate)'),
+            msg('Guardians still meaningful but no longer impenetrable'),
+          ],
+        },
+      ],
+    },
   ];
 }

@@ -49,15 +49,33 @@ MISSION_DURATION_CYCLES: dict[str, int] = {
 
 # Score value for successful missions
 MISSION_SCORE_VALUES: dict[str, int] = {
-    "spy": 2,
+    "spy": 3,
     "saboteur": 5,
-    "propagandist": 3,
+    "propagandist": 4,
     "assassin": 8,
-    "infiltrator": 4,
+    "infiltrator": 5,
 }
 
 # Detection penalty for failed missions
-DETECTION_PENALTY = 3
+DETECTION_PENALTY = 2
+
+# Security level downgrade map (saboteur effect)
+SECURITY_DOWNGRADE: dict[str, str] = {
+    "fortress": "maximum",
+    "maximum": "high",
+    "high": "guarded",
+    "guarded": "moderate",
+    "moderate": "low",
+    "medium": "low",
+    "low": "contested",
+    "contested": "lawless",
+    "lawless": "lawless",
+}
+
+
+def _downgrade_security(level: str) -> str:
+    """Downgrade a security level by one tier (e.g., high → guarded)."""
+    return SECURITY_DOWNGRADE.get(level, level)
 
 
 class OperativeService:
@@ -241,14 +259,14 @@ class OperativeService:
         """Calculate mission success probability.
 
         Formula:
-          base = 0.5
+          base = 0.55
           + operative_qualification × 0.05
           - target_zone_security × 0.05
-          - guardian_count × 0.20
+          - min(0.20, guardian_count × 0.08)
           + embassy_effectiveness × 0.15
           Clamped to [0.05, 0.95]
         """
-        base = 0.5
+        base = 0.55
 
         # Agent qualification (check professions for matching skill)
         qualification = 0.0
@@ -315,11 +333,14 @@ class OperativeService:
                         }).eq("id", str(body.embassy_id)).execute()
                 embassy_eff = base_eff
 
+        # Guardian penalty: -0.08 per guardian, capped at -0.20
+        guardian_penalty = min(0.20, guardian_count * 0.08)
+
         probability = (
             base
             + qualification * 0.05
             - zone_security * 0.05
-            - guardian_count * 0.20
+            - guardian_penalty
             + embassy_eff * 0.15
         )
 
@@ -471,7 +492,7 @@ class OperativeService:
         cls, supabase: Client, mission: dict, outcome: str
     ) -> None:
         """Detect betrayal when a mission targets an ally. On detection,
-        dissolve the alliance and apply a -20% diplomatic penalty."""
+        dissolve the alliance and apply a -25% diplomatic penalty."""
         if not mission.get("target_simulation_id"):
             return
 
@@ -525,9 +546,9 @@ class OperativeService:
                 {"team_id": None}
             ).eq("team_id", source_team).execute()
 
-            # Apply -20% diplomatic penalty to betrayer
+            # Apply -25% diplomatic penalty to betrayer
             supabase.table("epoch_participants").update(
-                {"betrayal_penalty": 0.2}
+                {"betrayal_penalty": 0.25}
             ).eq("epoch_id", mission["epoch_id"]).eq(
                 "simulation_id", mission["source_simulation_id"]
             ).execute()
@@ -544,38 +565,114 @@ class OperativeService:
         op_type = mission["operative_type"]
 
         if op_type == "spy":
+            target_sim_id = mission.get("target_simulation_id")
+            intel = {}
+            if target_sim_id:
+                zones_resp = (
+                    supabase.table("zones")
+                    .select("security_level")
+                    .eq("simulation_id", target_sim_id)
+                    .execute()
+                )
+                guardian_resp = (
+                    supabase.table("operative_missions")
+                    .select("id", count="exact")
+                    .eq("operative_type", "guardian")
+                    .eq("source_simulation_id", target_sim_id)
+                    .eq("status", "active")
+                    .execute()
+                )
+                zone_levels = [z["security_level"] for z in (zones_resp.data or [])]
+                guardian_count = guardian_resp.count or 0
+                intel = {"zone_security": zone_levels, "guardian_count": guardian_count}
+
+                epoch_resp = (
+                    supabase.table("game_epochs")
+                    .select("current_cycle")
+                    .eq("id", mission["epoch_id"])
+                    .single()
+                    .execute()
+                )
+                cycle = epoch_resp.data.get("current_cycle", 1) if epoch_resp.data else 1
+
+                await BattleLogService.log_event(
+                    supabase,
+                    UUID(mission["epoch_id"]),
+                    cycle,
+                    "intel_report",
+                    f"Spy intel: {guardian_count} guardians, zones: {zone_levels}",
+                    source_simulation_id=UUID(mission["source_simulation_id"]),
+                    target_simulation_id=UUID(target_sim_id),
+                    mission_id=UUID(mission["id"]),
+                    is_public=False,
+                    metadata=intel,
+                )
+
             return {
                 "outcome": "success",
                 "narrative": "Intelligence gathered successfully.",
                 "intel_gathered": True,
+                "intel": intel,
             }
 
-        if op_type == "saboteur" and mission.get("target_entity_id"):
-            # Degrade building condition
-            building_resp = (
-                supabase.table("buildings")
-                .select("id, building_condition")
-                .eq("id", mission["target_entity_id"])
-                .single()
-                .execute()
-            )
-            if building_resp.data:
-                condition_map = {"good": "moderate", "moderate": "poor", "poor": "ruined"}
-                old_cond = building_resp.data["building_condition"]
-                new_cond = condition_map.get(old_cond, old_cond)
-                if old_cond != new_cond:
-                    supabase.table("buildings").update(
-                        {"building_condition": new_cond}
-                    ).eq("id", mission["target_entity_id"]).execute()
-                return {
-                    "outcome": "success",
-                    "narrative": f"Building sabotaged: {old_cond} → {new_cond}.",
-                    "damage_dealt": {
+        if op_type == "saboteur":
+            result: dict = {"outcome": "success"}
+
+            # Degrade building condition (if targeted)
+            if mission.get("target_entity_id"):
+                building_resp = (
+                    supabase.table("buildings")
+                    .select("id, building_condition")
+                    .eq("id", mission["target_entity_id"])
+                    .single()
+                    .execute()
+                )
+                if building_resp.data:
+                    condition_map = {"good": "moderate", "moderate": "poor", "poor": "ruined"}
+                    old_cond = building_resp.data["building_condition"]
+                    new_cond = condition_map.get(old_cond, old_cond)
+                    if old_cond != new_cond:
+                        supabase.table("buildings").update(
+                            {"building_condition": new_cond}
+                        ).eq("id", mission["target_entity_id"]).execute()
+                    result["damage_dealt"] = {
                         "building_id": mission["target_entity_id"],
                         "old_condition": old_cond,
                         "new_condition": new_cond,
-                    },
-                }
+                    }
+
+            # Downgrade a random zone's security level in target simulation
+            target_sim_id = mission.get("target_simulation_id")
+            if target_sim_id:
+                zones_resp = (
+                    supabase.table("zones")
+                    .select("id, security_level")
+                    .eq("simulation_id", target_sim_id)
+                    .execute()
+                )
+                if zones_resp.data:
+                    target_zone = secrets.SystemRandom().choice(zones_resp.data)
+                    old_level = target_zone["security_level"]
+                    new_level = _downgrade_security(old_level)
+                    if old_level != new_level:
+                        supabase.table("zones").update(
+                            {"security_level": new_level}
+                        ).eq("id", target_zone["id"]).execute()
+                    result["zone_downgraded"] = {
+                        "zone_id": target_zone["id"],
+                        "old_level": old_level,
+                        "new_level": new_level,
+                    }
+
+            narrative_parts = ["Sabotage successful."]
+            if "damage_dealt" in result:
+                d = result["damage_dealt"]
+                narrative_parts.append(f"Building degraded: {d['old_condition']} → {d['new_condition']}.")
+            if "zone_downgraded" in result:
+                z = result["zone_downgraded"]
+                narrative_parts.append(f"Zone security compromised: {z['old_level']} → {z['new_level']}.")
+            result["narrative"] = " ".join(narrative_parts)
+            return result
 
         if op_type == "propagandist":
             # A1: Create a destabilizing event in the target simulation

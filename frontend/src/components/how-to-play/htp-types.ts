@@ -92,3 +92,11 @@ export interface NormalizationRule {
   attribute: string;
   normalizedTo: string;
 }
+
+export interface ChangelogEntry {
+  version: string;
+  date: string;
+  title: string;
+  highlights: string[];
+  details: { category: string; changes: string[] }[];
+}

@@ -719,7 +719,7 @@ Alle Änderungen zeigen eine Live-Preview innerhalb der Shell. Preset-Auswahl f�
 | social/ | 9 | 9 | TrendsView, MediaView, CampaignDashboard, Cards, Modals, TrendFilterBar |
 | locations/ | 5 | 5 | View, CityList, ZoneList, StreetList, LocationEditModal |
 | lore/ | 6 | 1 | SimulationLoreView + lore-content dispatcher + 4 content files |
-| multiverse/ | 7 | 4 | CartographerMap, MapGraph, MapTooltip, MapConnectionPanel + 3 utilities |
+| multiverse/ | 10 | 7 | CartographerMap, MapGraph, MapTooltip, MapConnectionPanel, MapBattleFeed, MapLeaderboardPanel, MapMinimap + 3 utilities |
 | settings/ | 9 | 9 | SettingsView + 8 panels (General, World, AI, Integration, Design, Access, Prompts, Bleed) |
 | health/ | 1 | 1 | SimulationHealthView (game metrics dashboard) |
 | epoch/ | 15 | 15 | CommandCenter (orchestrator), OpsBoard, OverviewTab, OperationsTab, AlliancesTab, LobbyActions, CreationWizard, Leaderboard, BattleLog, DeployOperativeModal, InvitePanel, InviteAcceptView, ChatPanel, PresenceIndicator, ReadyPanel |
@@ -755,7 +755,10 @@ frontend/src/components/multiverse/
 ├── map-types.ts              # TypeScript Interfaces: MapNodeData, MapEdgeData, ForceConfig
 ├── map-data.ts               # Statische Konfiguration: Theme-Farben, Vector-Labels
 ├── MapTooltip.ts             # Hover-Tooltip mit Simulations-Beschreibung + Statistiken
-└── MapConnectionPanel.ts     # Edge-Detail-Panel (erweitert VelgSidePanel)
+├── MapConnectionPanel.ts     # Edge-Detail-Panel (erweitert VelgSidePanel)
+├── MapBattleFeed.ts          # Scrollender Battle-Log-Ticker am unteren Kartenrand
+├── MapLeaderboardPanel.ts    # VelgSidePanel fuer Epoch-Scores bei Instanz-Klick
+└── MapMinimap.ts             # 150×100px Viewport-Uebersicht unten rechts
 ```
 
 ### VelgCartographerMap (`velg-cartographer-map`)

@@ -709,11 +709,28 @@ export interface Embassy {
 
 // --- Map Data ---
 
+export interface ScoreDimensions {
+  stability: number;
+  influence: number;
+  sovereignty: number;
+  diplomatic: number;
+  military: number;
+}
+
+export interface OperativeFlowEntry {
+  count: number;
+  types: string[];
+}
+
 export interface MapData {
   simulations: Simulation[];
   connections: SimulationConnection[];
   echo_counts: Record<string, number>;
   embassies?: Embassy[];
+  active_instance_counts?: Record<string, number>;
+  operative_flow?: Record<string, OperativeFlowEntry>;
+  score_dimensions?: Record<string, ScoreDimensions>;
+  sparklines?: Record<string, number[]>;
 }
 
 // --- Game Mechanics ---

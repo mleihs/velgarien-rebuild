@@ -1,4 +1,9 @@
-import type { ApiResponse, MapData, SimulationConnection } from '../../types/index.js';
+import type {
+  ApiResponse,
+  BattleLogEntry,
+  MapData,
+  SimulationConnection,
+} from '../../types/index.js';
 import { appState } from '../AppStateManager.js';
 import { BaseApiService } from './BaseApiService.js';
 
@@ -12,6 +17,10 @@ export class ConnectionsApiService extends BaseApiService {
 
   getMapData(): Promise<ApiResponse<MapData>> {
     return this.getPublic('/map-data');
+  }
+
+  getBattleFeed(limit = 20): Promise<ApiResponse<BattleLogEntry[]>> {
+    return this.getPublic(`/battle-feed?limit=${limit}`);
   }
 }
 

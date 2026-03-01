@@ -73,9 +73,9 @@ class ScoringService:
         epoch: dict,
     ) -> dict:
         """Compute raw (un-normalized) scores for a simulation."""
-        stability = await cls._compute_stability(supabase, simulation_id)
+        stability = await cls._compute_stability(supabase, epoch_id, simulation_id)
         influence = await cls._compute_influence(supabase, epoch_id, simulation_id)
-        sovereignty = await cls._compute_sovereignty(supabase, simulation_id)
+        sovereignty = await cls._compute_sovereignty(supabase, epoch_id, simulation_id)
         diplomatic = await cls._compute_diplomatic(supabase, epoch_id, simulation_id)
         military = await cls._compute_military(supabase, epoch_id, simulation_id)
 
@@ -88,10 +88,13 @@ class ScoringService:
         }
 
     @classmethod
-    async def _compute_stability(cls, supabase: Client, simulation_id: str) -> float:
-        """Stability = avg zone stability × 100.
+    async def _compute_stability(
+        cls, supabase: Client, epoch_id: UUID, simulation_id: str
+    ) -> float:
+        """Stability = avg(zone_stability) × 100 - propaganda×3 - saboteur×5 - assassin×4.
 
         Rewards keeping infrastructure healthy.
+        Penalized by inbound propaganda events, sabotage, and assassinations.
         """
         resp = (
             supabase.table("mv_zone_stability")
@@ -100,65 +103,143 @@ class ScoringService:
             .execute()
         )
         if not resp.data:
-            return 50.0  # default mid-range
+            base_stability = 50.0
+        else:
+            stabilities = [float(row["stability"]) for row in resp.data]
+            base_stability = (sum(stabilities) / len(stabilities)) * 100
 
-        stabilities = [float(row["stability"]) for row in resp.data]
-        return (sum(stabilities) / len(stabilities)) * 100
+        # Count inbound propaganda events (created by propagandist operatives)
+        propaganda_resp = (
+            supabase.table("events")
+            .select("id", count="exact")
+            .eq("simulation_id", simulation_id)
+            .eq("data_source", "propagandist")
+            .execute()
+        )
+        propaganda_count = propaganda_resp.count or 0
+
+        # Count successful inbound saboteur and assassin missions
+        inbound_resp = (
+            supabase.table("operative_missions")
+            .select("operative_type")
+            .eq("epoch_id", str(epoch_id))
+            .eq("target_simulation_id", simulation_id)
+            .eq("status", "success")
+            .in_("operative_type", ["saboteur", "assassin"])
+            .execute()
+        )
+        saboteur_count = sum(
+            1 for m in (inbound_resp.data or []) if m["operative_type"] == "saboteur"
+        )
+        assassin_count = sum(
+            1 for m in (inbound_resp.data or []) if m["operative_type"] == "assassin"
+        )
+
+        return max(0.0, base_stability - (propaganda_count * 3) - (saboteur_count * 5) - (assassin_count * 4))
 
     @classmethod
     async def _compute_influence(
         cls, supabase: Client, epoch_id: UUID, simulation_id: str
     ) -> float:
-        """Influence = sum of completed outbound echo strength during epoch.
+        """Influence = (propagandist_successes × 5) + (spy_successes × 2) + echo_strength_sum.
 
-        Rewards projecting cultural power through bleed.
+        Rewards projecting cultural and intelligence power.
         """
-        resp = (
+        # Successful outbound propaganda and spy missions
+        missions_resp = (
+            supabase.table("operative_missions")
+            .select("operative_type")
+            .eq("epoch_id", str(epoch_id))
+            .eq("source_simulation_id", simulation_id)
+            .eq("status", "success")
+            .in_("operative_type", ["propagandist", "spy"])
+            .execute()
+        )
+        propagandist_wins = sum(
+            1 for m in (missions_resp.data or []) if m["operative_type"] == "propagandist"
+        )
+        spy_wins = sum(
+            1 for m in (missions_resp.data or []) if m["operative_type"] == "spy"
+        )
+
+        # Echo strength (bleed system — may be 0 in competitive play)
+        echo_resp = (
             supabase.table("event_echoes")
             .select("echo_strength")
             .eq("source_simulation_id", simulation_id)
             .eq("status", "completed")
             .execute()
         )
-        return sum(e.get("echo_strength", 0) for e in resp.data or [])
+        echo_sum = sum(e.get("echo_strength", 0) for e in echo_resp.data or [])
+
+        return (propagandist_wins * 5) + (spy_wins * 2) + echo_sum
 
     @classmethod
-    async def _compute_sovereignty(cls, supabase: Client, simulation_id: str) -> float:
-        """Sovereignty = 100 × (1 - inbound_echo_impact / total_event_impact).
+    async def _compute_sovereignty(
+        cls, supabase: Client, epoch_id: UUID, simulation_id: str
+    ) -> float:
+        """Sovereignty = 100 - type_penalties + detected_bonus + guardian_bonus.
 
-        Rewards resisting foreign influence.
+        Penalties per successful inbound mission type:
+          spy: -2, propagandist: -5, infiltrator: -6, saboteur: -8, assassin: -10
+        Bonuses:
+          +2 per detected inbound mission
+          +4 per active guardian
+
+        Rewards defending your simulation from foreign operatives.
+        Clamped to [0, 100].
         """
-        # Total event impact
-        all_events = (
-            supabase.table("events")
-            .select("impact_level")
-            .eq("simulation_id", simulation_id)
+        type_penalties = {
+            "spy": 2,
+            "propagandist": 5,
+            "infiltrator": 6,
+            "saboteur": 8,
+            "assassin": 10,
+        }
+
+        # Successful inbound missions (attacks against this sim)
+        inbound_resp = (
+            supabase.table("operative_missions")
+            .select("operative_type, status")
+            .eq("epoch_id", str(epoch_id))
+            .eq("target_simulation_id", simulation_id)
+            .in_("status", ["success", "detected", "captured"])
             .execute()
         )
-        total_impact = sum(e.get("impact_level", 0) for e in all_events.data or [])
-        if total_impact == 0:
-            return 100.0
 
-        # Inbound echo impact (events with data_source = 'bleed')
-        bleed_events = (
-            supabase.table("events")
-            .select("impact_level")
-            .eq("simulation_id", simulation_id)
-            .eq("data_source", "bleed")
+        penalty_total = 0.0
+        detected_count = 0
+        for m in inbound_resp.data or []:
+            if m["status"] == "success":
+                penalty_total += type_penalties.get(m["operative_type"], 5)
+            elif m["status"] in ("detected", "captured"):
+                detected_count += 1
+
+        # Active guardians defending this sim
+        guardian_resp = (
+            supabase.table("operative_missions")
+            .select("id")
+            .eq("epoch_id", str(epoch_id))
+            .eq("operative_type", "guardian")
+            .eq("source_simulation_id", simulation_id)
+            .eq("status", "active")
             .execute()
         )
-        bleed_impact = sum(e.get("impact_level", 0) for e in bleed_events.data or [])
+        guardian_count = len(guardian_resp.data or [])
 
-        return max(0, 100 * (1 - bleed_impact / total_impact))
+        return max(0.0, min(100.0,
+            100.0 - penalty_total + (detected_count * 2) + (guardian_count * 4)
+        ))
 
     @classmethod
     async def _compute_diplomatic(
         cls, supabase: Client, epoch_id: UUID, simulation_id: str
     ) -> float:
-        """Diplomatic = sum(embassy_effectiveness) × 10 × (1 + 0.1 × alliance_count) × (1 - betrayal_penalty).
+        """Diplomatic = (sum(embassy_eff) × 10 + spy_bonus) × (1 + 0.15 × allies) × (1 - betrayal_penalty).
 
         Rewards building and maintaining diplomatic networks.
-        Alliance bonus rewards cooperation; betrayal penalty punishes treachery.
+        Alliance bonus (+15% per ally) rewards cooperation; betrayal penalty (-25%) punishes treachery.
+        Spy intel bonus (+1 per successful spy mission) adds diplomatic leverage.
         """
         # Embassy effectiveness from materialized view
         # MV has simulation_a_id and simulation_b_id, not simulation_id
@@ -192,7 +273,7 @@ class ScoringService:
 
         base_score = total_effectiveness * 10  # scale up for scoring
 
-        # A4: Alliance bonus — +10% per active ally
+        # A4: Alliance bonus — +15% per active ally
         active_alliance_count = 0
         participant_resp = (
             supabase.table("epoch_participants")
@@ -215,12 +296,24 @@ class ScoringService:
                 )
                 active_alliance_count = max(0, len(allies_resp.data or []) - 1)
 
-        alliance_multiplier = 1.0 + (0.1 * active_alliance_count)
+        alliance_multiplier = 1.0 + (0.15 * active_alliance_count)
 
-        # A5: Betrayal penalty — -20% diplomatic on detected betrayal
+        # A5: Betrayal penalty — -25% diplomatic on detected betrayal
         betrayal_multiplier = 1.0 - betrayal_penalty
 
-        return base_score * alliance_multiplier * betrayal_multiplier
+        # Spy diplomatic bonus: +1 per successful outbound spy mission
+        spy_resp = (
+            supabase.table("operative_missions")
+            .select("id", count="exact")
+            .eq("epoch_id", str(epoch_id))
+            .eq("source_simulation_id", simulation_id)
+            .eq("operative_type", "spy")
+            .eq("status", "success")
+            .execute()
+        )
+        spy_bonus = spy_resp.count or 0
+
+        return (base_score + spy_bonus) * alliance_multiplier * betrayal_multiplier
 
     @classmethod
     async def _compute_military(
@@ -248,7 +341,11 @@ class ScoringService:
             elif mission["status"] in ("detected", "captured"):
                 score -= DETECTION_PENALTY
 
-        return score
+        # Floor at 0 — military is an achievement score, not a debt score.
+        # Without this floor, a player who attempts many failed missions
+        # ends up with unbounded negative composite that dominates all other
+        # dimensions (e.g., -6000 normalized from 20 detections).
+        return max(score, 0.0)
 
     # ── Normalization ─────────────────────────────────────
 
@@ -359,9 +456,22 @@ class ScoringService:
         """
         epoch = await EpochService.get(supabase, epoch_id)
 
-        # Use latest cycle if not specified
+        # Use the latest *scored* cycle if not specified. current_cycle
+        # points one past the last resolved cycle, so querying it directly
+        # returns empty for completed epochs.
         if cycle_number is None:
-            cycle_number = epoch.get("current_cycle", 1)
+            max_resp = (
+                supabase.table("epoch_scores")
+                .select("cycle_number")
+                .eq("epoch_id", str(epoch_id))
+                .order("cycle_number", desc=True)
+                .limit(1)
+                .execute()
+            )
+            if max_resp.data:
+                cycle_number = max_resp.data[0]["cycle_number"]
+            else:
+                cycle_number = epoch.get("current_cycle", 1)
 
         resp = (
             supabase.table("epoch_scores")

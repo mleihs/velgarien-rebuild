@@ -1,70 +1,20 @@
--- Migration 035: Game Instances — Template/Instance separation
+-- Migration 038: Clone Normalization Fixes
 --
--- Problem: Epoch gameplay writes directly onto template simulations (saboteur
--- degrades building_condition, propagandist creates events, etc.). Simulations
--- are also not balanced for fair competition.
+-- Fixes critical balance issues discovered in 233-game simulation battery:
+--   1. Zone floor = 4 (Velgarien has 3, gets synthetic zone)
+--   2. Agent professions generated for ALL cloned agents (currently 0 rows in any template)
+--   3. Embassy auto-generation for all participant pairs (NM has 0 embassies)
+--   4. Agent floor = 6, building floor = 8 (future-proofing)
+--   5. Building zone distribution (round-robin for synthetic buildings)
 --
--- Solution: When an epoch starts, clone all participating simulations into
--- "game instances" with normalized gameplay values. All epoch logic runs on
--- the clones, leaving templates untouched.
---
--- Creates:
---   1. simulation_type + source columns on simulations
---   2. clone_simulation_for_epoch() — atomic batch clone of N simulations
---   3. Updated views to filter by simulation_type
---   4. RLS updates for game instance access
+-- Without these fixes:
+--   - Velgarien wins 87% (zone stability advantage: 3 vs 4 zones)
+--   - Nova Meridian wins 0% (no embassies = can't deploy)
+--   - All agents have qualification=0 (no agent_professions rows → 15% success rate)
 
 -- ============================================================================
--- 1. ADD COLUMNS TO SIMULATIONS TABLE
+-- Replace clone_simulations_for_epoch with normalized version
 -- ============================================================================
-
-ALTER TABLE simulations
-  ADD COLUMN simulation_type TEXT NOT NULL DEFAULT 'template'
-    CHECK (simulation_type IN ('template', 'game_instance', 'archived')),
-  ADD COLUMN source_template_id UUID REFERENCES simulations(id) ON DELETE SET NULL,
-  ADD COLUMN epoch_id UUID REFERENCES game_epochs(id) ON DELETE SET NULL;
-
-CREATE INDEX idx_simulations_type ON simulations(simulation_type);
-CREATE INDEX idx_simulations_epoch ON simulations(epoch_id) WHERE epoch_id IS NOT NULL;
-CREATE INDEX idx_simulations_source ON simulations(source_template_id) WHERE source_template_id IS NOT NULL;
-
-COMMENT ON COLUMN simulations.simulation_type IS
-  'template = worldbuilding original, game_instance = epoch clone, archived = completed epoch clone';
-COMMENT ON COLUMN simulations.source_template_id IS
-  'For game instances: points to the original template simulation';
-COMMENT ON COLUMN simulations.epoch_id IS
-  'For game instances: which epoch this instance belongs to';
-
--- Existing simulations are all templates
--- (default is 'template', no UPDATE needed)
-
-
--- ============================================================================
--- 2. NORMALIZED GAMEPLAY CONSTANTS
--- ============================================================================
--- Used by the clone function to ensure fair starts.
-
--- The clone function normalizes:
---   building_condition → 'good'        (game_weight 0.85)
---   population_capacity → 30            (uniform)
---   agent qualification_level → 5       (uniform)
---   zones.security_level distribution → 1× high, 2× medium, 1× low
---   ambassador_blocked_until → NULL
---   infiltration_penalty → 0
---   events → NOT cloned (instances start with 0 events)
-
-
--- ============================================================================
--- 3. CLONE FUNCTION — Atomic batch operation
--- ============================================================================
--- Clones all participating template simulations into game instances.
--- Returns a JSON array mapping: [{template_id, instance_id, slug}]
---
--- The function:
---   a) Clones each simulation (with normalized gameplay values)
---   b) Clones agents, buildings, zones, streets, professions, taxonomies, settings
---   c) Remaps embassies and simulation_connections between new instances
---   d) Creates simulation_members for epoch participants
 
 CREATE OR REPLACE FUNCTION clone_simulations_for_epoch(
   p_epoch_id UUID,
@@ -90,6 +40,16 @@ DECLARE
   zone_row RECORD;
   zone_counter INT;
   security_levels TEXT[] := ARRAY['high', 'medium', 'medium', 'low'];
+  -- New variables for normalization
+  agent_clone_count INT;
+  building_clone_count INT;
+  first_cloned_city_id UUID;
+  zone_names TEXT[] := ARRAY['Sector Alpha', 'Sector Beta', 'Sector Gamma', 'Sector Delta'];
+  agent_names TEXT[] := ARRAY['Operative Alpha', 'Operative Beta', 'Operative Gamma', 'Operative Delta', 'Operative Epsilon', 'Operative Zeta'];
+  building_names TEXT[] := ARRAY['Facility Alpha', 'Facility Beta', 'Facility Gamma', 'Facility Delta', 'Facility Epsilon', 'Facility Zeta', 'Facility Eta', 'Facility Theta'];
+  zone_ids UUID[];  -- array of all zone IDs for this instance
+  default_building_type TEXT;
+  professions_count INT;
 BEGIN
   -- ──────────────────────────────────────────────────────
   -- Phase A: Clone each participating simulation
@@ -165,6 +125,7 @@ BEGIN
     WHERE simulation_id = sim.id;
 
     -- A5: Clone cities
+    first_cloned_city_id := NULL;
     FOR old_id IN SELECT id FROM cities WHERE simulation_id = sim.id
     LOOP
       INSERT INTO cities (simulation_id, name, layout_type, description, population)
@@ -172,12 +133,24 @@ BEGIN
       FROM cities WHERE id = old_id
       RETURNING id INTO new_id;
       city_id_map := city_id_map || jsonb_build_object(old_id::text, new_id::text);
+      IF first_cloned_city_id IS NULL THEN
+        first_cloned_city_id := new_id;
+      END IF;
     END LOOP;
 
-    -- A6: Clone zones with NORMALIZED security_level
+    -- Ensure at least one city exists (for synthetic zones/buildings)
+    IF first_cloned_city_id IS NULL THEN
+      INSERT INTO cities (simulation_id, name, layout_type, description, population)
+      VALUES (new_sim_id, 'Central District', 'grid', 'Auto-generated district', 10000)
+      RETURNING id INTO first_cloned_city_id;
+    END IF;
+
+    -- A6: Clone zones with NORMALIZED security_level (up to 4)
     zone_counter := 0;
+    zone_ids := ARRAY[]::UUID[];
     FOR zone_row IN
       SELECT * FROM zones WHERE simulation_id = sim.id ORDER BY name
+      LIMIT 4  -- cap at 4 zones
     LOOP
       zone_counter := zone_counter + 1;
       INSERT INTO zones (
@@ -195,6 +168,26 @@ BEGIN
       )
       RETURNING id INTO new_id;
       zone_id_map := zone_id_map || jsonb_build_object(zone_row.id::text, new_id::text);
+      zone_ids := zone_ids || new_id;
+    END LOOP;
+
+    -- Pad synthetic zones to reach exactly 4
+    WHILE zone_counter < 4 LOOP
+      zone_counter := zone_counter + 1;
+      INSERT INTO zones (
+        simulation_id, city_id, name, zone_type,
+        security_level, population_estimate
+      ) VALUES (
+        new_sim_id,
+        first_cloned_city_id,
+        zone_names[zone_counter],
+        'mixed',
+        security_levels[zone_counter],
+        1000
+      )
+      RETURNING id INTO new_id;
+      zone_id_map := zone_id_map || jsonb_build_object('synthetic_zone_' || zone_counter, new_id::text);
+      zone_ids := zone_ids || new_id;
     END LOOP;
 
     -- A7: Clone city_streets
@@ -208,12 +201,14 @@ BEGIN
     WHERE s.simulation_id = sim.id;
 
     -- A8: Clone agents (max 6, normalized)
+    agent_clone_count := 0;
     FOR old_id IN
       SELECT id FROM agents
       WHERE simulation_id = sim.id AND deleted_at IS NULL
       ORDER BY created_at
       LIMIT 6
     LOOP
+      agent_clone_count := agent_clone_count + 1;
       INSERT INTO agents (
         simulation_id, name, system, character, background, gender,
         primary_profession, portrait_image_url, portrait_description,
@@ -232,16 +227,68 @@ BEGIN
       SELECT new_sim_id, new_id, profession, 5, is_primary  -- normalized to 5
       FROM agent_professions
       WHERE agent_id = old_id;
+
+      -- CRITICAL FIX: Ensure at least one profession exists
+      -- (templates have ZERO agent_professions rows → qualification=0 → 15% success rate)
+      SELECT count(*) INTO professions_count
+      FROM agent_professions WHERE agent_id = new_id;
+
+      IF professions_count = 0 THEN
+        INSERT INTO agent_professions (
+          simulation_id, agent_id, profession,
+          qualification_level, is_primary
+        ) VALUES (
+          new_sim_id, new_id, 'operative',
+          5,    -- normalized game qualification
+          true  -- primary profession
+        );
+      END IF;
+    END LOOP;
+
+    -- Pad synthetic agents to reach exactly 6
+    WHILE agent_clone_count < 6 LOOP
+      agent_clone_count := agent_clone_count + 1;
+      INSERT INTO agents (
+        simulation_id, name, character, background
+      ) VALUES (
+        new_sim_id,
+        agent_names[agent_clone_count],
+        'analytical, resourceful',
+        'Trained field operative assigned to this simulation.'
+      )
+      RETURNING id INTO new_id;
+      agent_id_map := agent_id_map || jsonb_build_object('synthetic_agent_' || agent_clone_count, new_id::text);
+
+      -- Create profession for synthetic agent
+      INSERT INTO agent_professions (
+        simulation_id, agent_id, profession, qualification_level, is_primary
+      ) VALUES (
+        new_sim_id, new_id, 'operative', 5, true
+      );
     END LOOP;
 
     -- A9: Clone buildings (max 8, NORMALIZED condition + capacity)
     -- Embassy buildings are prioritized to ensure cross-sim operations work
+    building_clone_count := 0;
+    -- Get a default building_type from this simulation's taxonomies
+    SELECT value INTO default_building_type
+    FROM simulation_taxonomies
+    WHERE simulation_id = sim.id
+      AND taxonomy_type = 'building_type'
+      AND is_active = true
+    ORDER BY sort_order
+    LIMIT 1;
+    IF default_building_type IS NULL THEN
+      default_building_type := 'facility';
+    END IF;
+
     FOR old_id IN
       SELECT id FROM buildings
       WHERE simulation_id = sim.id AND deleted_at IS NULL
       ORDER BY CASE WHEN special_type = 'embassy' THEN 0 ELSE 1 END, created_at
       LIMIT 8
     LOOP
+      building_clone_count := building_clone_count + 1;
       INSERT INTO buildings (
         simulation_id, zone_id, name, description,
         building_type, building_condition, population_capacity,
@@ -280,6 +327,26 @@ BEGIN
       SELECT new_sim_id, new_id, profession, 3, is_mandatory  -- normalized min level
       FROM building_profession_requirements
       WHERE building_id = old_id;
+    END LOOP;
+
+    -- Pad synthetic buildings to reach exactly 8 (round-robin across zones)
+    WHILE building_clone_count < 8 LOOP
+      building_clone_count := building_clone_count + 1;
+      INSERT INTO buildings (
+        simulation_id, zone_id, name,
+        building_type, building_condition, population_capacity,
+        city_id
+      ) VALUES (
+        new_sim_id,
+        zone_ids[1 + ((building_clone_count - 1) % array_length(zone_ids, 1))],
+        building_names[building_clone_count],
+        default_building_type,
+        'good',
+        30,
+        first_cloned_city_id
+      )
+      RETURNING id INTO new_id;
+      building_id_map := building_id_map || jsonb_build_object('synthetic_bldg_' || building_clone_count, new_id::text);
     END LOOP;
 
     -- A10: Clone agent_relationships (intra-simulation, remapped IDs)
@@ -394,6 +461,150 @@ BEGIN
     );
   END LOOP;
 
+  -- B3: Auto-generate missing embassies for ALL participant pairs
+  -- This ensures every participant can target every other participant.
+  -- Fixes: Nova Meridian has 0 embassy buildings → can't deploy any operatives.
+  DECLARE
+    sim_a_key TEXT;
+    sim_b_key TEXT;
+    sim_a_new UUID;
+    sim_b_new UUID;
+    has_embassy BOOLEAN;
+    emb_building_a UUID;
+    emb_building_b UUID;
+    emb_zone_a UUID;
+    emb_zone_b UUID;
+  BEGIN
+    -- Iterate all pairs of cloned instances
+    FOR sim_a_key IN SELECT jsonb_object_keys(sim_id_map)
+    LOOP
+      FOR sim_b_key IN SELECT jsonb_object_keys(sim_id_map)
+      LOOP
+        -- Skip self-pairs and enforce ordering to avoid duplicates
+        IF sim_a_key >= sim_b_key THEN
+          CONTINUE;
+        END IF;
+
+        sim_a_new := (sim_id_map->>sim_a_key)::UUID;
+        sim_b_new := (sim_id_map->>sim_b_key)::UUID;
+
+        -- Check if embassy already exists between these instances
+        SELECT EXISTS (
+          SELECT 1 FROM embassies
+          WHERE status = 'active'
+            AND (
+              (simulation_a_id = sim_a_new AND simulation_b_id = sim_b_new)
+              OR (simulation_a_id = sim_b_new AND simulation_b_id = sim_a_new)
+            )
+        ) INTO has_embassy;
+
+        IF NOT has_embassy THEN
+          -- Pick first zone in each sim
+          SELECT id INTO emb_zone_a FROM zones
+          WHERE simulation_id = sim_a_new ORDER BY created_at LIMIT 1;
+          SELECT id INTO emb_zone_b FROM zones
+          WHERE simulation_id = sim_b_new ORDER BY created_at LIMIT 1;
+
+          IF emb_zone_a IS NOT NULL AND emb_zone_b IS NOT NULL THEN
+            -- Create embassy building in sim A
+            INSERT INTO buildings (
+              simulation_id, zone_id, name, building_type,
+              building_condition, population_capacity, special_type
+            ) VALUES (
+              sim_a_new, emb_zone_a,
+              'Diplomatic Station ' || substr(sim_b_key, 1, 8),
+              'embassy', 'good', 30, 'embassy'
+            ) RETURNING id INTO emb_building_a;
+
+            -- Create embassy building in sim B
+            INSERT INTO buildings (
+              simulation_id, zone_id, name, building_type,
+              building_condition, population_capacity, special_type
+            ) VALUES (
+              sim_b_new, emb_zone_b,
+              'Diplomatic Station ' || substr(sim_a_key, 1, 8),
+              'embassy', 'good', 30, 'embassy'
+            ) RETURNING id INTO emb_building_b;
+
+            -- Create embassy link (respect ordering constraint)
+            IF emb_building_a < emb_building_b THEN
+              INSERT INTO embassies (
+                building_a_id, simulation_a_id,
+                building_b_id, simulation_b_id,
+                status, connection_type, description,
+                created_by_id, infiltration_penalty
+              ) VALUES (
+                emb_building_a, sim_a_new,
+                emb_building_b, sim_b_new,
+                'active', 'diplomatic',
+                'Auto-generated diplomatic station for epoch competition.',
+                p_created_by_id, 0
+              );
+            ELSE
+              INSERT INTO embassies (
+                building_a_id, simulation_a_id,
+                building_b_id, simulation_b_id,
+                status, connection_type, description,
+                created_by_id, infiltration_penalty
+              ) VALUES (
+                emb_building_b, sim_b_new,
+                emb_building_a, sim_a_new,
+                'active', 'diplomatic',
+                'Auto-generated diplomatic station for epoch competition.',
+                p_created_by_id, 0
+              );
+            END IF;
+          END IF;
+        END IF;
+      END LOOP;
+    END LOOP;
+  END;
+
+  -- B4: Auto-generate missing simulation_connections for ALL participant pairs
+  -- Ensures the multiverse map shows connections between all game instances
+  DECLARE
+    conn_sim_a_key TEXT;
+    conn_sim_b_key TEXT;
+    conn_sim_a_new UUID;
+    conn_sim_b_new UUID;
+    has_connection BOOLEAN;
+  BEGIN
+    FOR conn_sim_a_key IN SELECT jsonb_object_keys(sim_id_map)
+    LOOP
+      FOR conn_sim_b_key IN SELECT jsonb_object_keys(sim_id_map)
+      LOOP
+        IF conn_sim_a_key >= conn_sim_b_key THEN
+          CONTINUE;
+        END IF;
+
+        conn_sim_a_new := (sim_id_map->>conn_sim_a_key)::UUID;
+        conn_sim_b_new := (sim_id_map->>conn_sim_b_key)::UUID;
+
+        SELECT EXISTS (
+          SELECT 1 FROM simulation_connections
+          WHERE is_active = true
+            AND (
+              (simulation_a_id = conn_sim_a_new AND simulation_b_id = conn_sim_b_new)
+              OR (simulation_a_id = conn_sim_b_new AND simulation_b_id = conn_sim_a_new)
+            )
+        ) INTO has_connection;
+
+        IF NOT has_connection THEN
+          INSERT INTO simulation_connections (
+            simulation_a_id, simulation_b_id,
+            connection_type, bleed_vectors, strength,
+            description, is_active
+          ) VALUES (
+            conn_sim_a_new, conn_sim_b_new,
+            'diplomatic', ARRAY['resonance']::TEXT[], 0.5,
+            'Auto-generated connection for epoch competition.',
+            true
+          );
+        END IF;
+      END LOOP;
+    END LOOP;
+  END;
+
   -- ──────────────────────────────────────────────────────
   -- Phase C: Update epoch_participants to point to instances
   -- ──────────────────────────────────────────────────────
@@ -413,154 +624,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Only service_role / admin can call this function
+-- Permissions unchanged
 REVOKE ALL ON FUNCTION clone_simulations_for_epoch FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION clone_simulations_for_epoch TO service_role;
-
-
--- ============================================================================
--- 4. ARCHIVE FUNCTION — Mark instances as archived after epoch ends
--- ============================================================================
-
-CREATE OR REPLACE FUNCTION archive_epoch_instances(p_epoch_id UUID)
-RETURNS void AS $$
-BEGIN
-  UPDATE simulations
-  SET simulation_type = 'archived',
-      status = 'archived',
-      archived_at = now()
-  WHERE epoch_id = p_epoch_id
-    AND simulation_type = 'game_instance';
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-REVOKE ALL ON FUNCTION archive_epoch_instances FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION archive_epoch_instances TO service_role;
-
-
--- ============================================================================
--- 5. CLEANUP FUNCTION — Delete instances (for cancelled epochs)
--- ============================================================================
-
-CREATE OR REPLACE FUNCTION delete_epoch_instances(p_epoch_id UUID)
-RETURNS void AS $$
-DECLARE
-  instance_ids UUID[];
-BEGIN
-  SELECT array_agg(id) INTO instance_ids
-  FROM simulations
-  WHERE epoch_id = p_epoch_id
-    AND simulation_type IN ('game_instance', 'archived');
-
-  IF instance_ids IS NULL THEN
-    RETURN;
-  END IF;
-
-  -- Delete in FK-safe order:
-  -- 1. Cross-sim refs (embassies, connections, echoes)
-  DELETE FROM embassies WHERE simulation_a_id = ANY(instance_ids) OR simulation_b_id = ANY(instance_ids);
-  DELETE FROM simulation_connections WHERE simulation_a_id = ANY(instance_ids) OR simulation_b_id = ANY(instance_ids);
-  DELETE FROM event_echoes WHERE source_simulation_id = ANY(instance_ids) OR target_simulation_id = ANY(instance_ids);
-
-  -- 2. Disable last-owner trigger (instances are expendable)
-  ALTER TABLE simulation_members DISABLE TRIGGER trg_last_owner;
-
-  -- 3. Delete simulations (cascades to agents, buildings, zones, etc.)
-  DELETE FROM simulations WHERE id = ANY(instance_ids);
-
-  -- 4. Re-enable trigger
-  ALTER TABLE simulation_members ENABLE TRIGGER trg_last_owner;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-REVOKE ALL ON FUNCTION delete_epoch_instances FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION delete_epoch_instances TO service_role;
-
-
--- ============================================================================
--- 6. UPDATE simulation_dashboard VIEW — filter out game instances
--- ============================================================================
-
-DROP VIEW IF EXISTS public.simulation_dashboard CASCADE;
-CREATE VIEW public.simulation_dashboard AS
-  SELECT
-    s.id AS simulation_id,
-    s.name,
-    s.slug,
-    s.status,
-    s.theme,
-    s.content_locale,
-    s.owner_id,
-    s.simulation_type,
-    s.source_template_id,
-    s.epoch_id,
-    (SELECT count(*) FROM simulation_members sm WHERE sm.simulation_id = s.id) AS member_count,
-    (SELECT count(*) FROM agents a WHERE a.simulation_id = s.id AND a.deleted_at IS NULL) AS agent_count,
-    (SELECT count(*) FROM buildings b WHERE b.simulation_id = s.id AND b.deleted_at IS NULL) AS building_count,
-    (SELECT count(*) FROM events e WHERE e.simulation_id = s.id AND e.deleted_at IS NULL) AS event_count,
-    s.created_at,
-    s.updated_at
-  FROM simulations s
-  WHERE s.deleted_at IS NULL;
-
--- Re-grant access after view recreation
-GRANT SELECT ON public.simulation_dashboard TO authenticated, anon;
-
-
--- ============================================================================
--- 7. UPDATE mv_simulation_health — filter out game instances from default view
--- ============================================================================
--- Note: materialized views include ALL simulation types so scoring works on
--- game instances. Filtering by type happens in the application layer.
--- The view already filters by status IN ('active', 'configuring') which is fine
--- since game instances get status='active'.
-
-
--- ============================================================================
--- 8. FIX notify_game_metrics_stale trigger for embassies
--- ============================================================================
--- The trigger from migration 031 assumes NEW.simulation_id exists, but
--- embassies has simulation_a_id/simulation_b_id instead.
--- Fix: use dynamic field resolution to avoid "no field" errors.
-
-CREATE OR REPLACE FUNCTION notify_game_metrics_stale()
-RETURNS trigger AS $$
-DECLARE
-  sim_id TEXT := '';
-BEGIN
-  -- Try simulation_id first, then simulation_a_id as fallback
-  BEGIN
-    IF TG_OP = 'DELETE' THEN
-      sim_id := OLD.simulation_id::text;
-    ELSE
-      sim_id := NEW.simulation_id::text;
-    END IF;
-  EXCEPTION WHEN undefined_column THEN
-    BEGIN
-      IF TG_OP = 'DELETE' THEN
-        sim_id := OLD.simulation_a_id::text;
-      ELSE
-        sim_id := NEW.simulation_a_id::text;
-      END IF;
-    EXCEPTION WHEN undefined_column THEN
-      sim_id := '';
-    END;
-  END;
-
-  PERFORM pg_notify('game_metrics_stale', json_build_object(
-    'table', TG_TABLE_NAME,
-    'operation', TG_OP,
-    'simulation_id', sim_id
-  )::text);
-  RETURN COALESCE(NEW, OLD);
-END;
-$$ LANGUAGE plpgsql;
-
-
--- ============================================================================
--- 9. RLS — game instance access
--- ============================================================================
--- Game instances inherit RLS from the base simulations policies.
--- simulation_members are cloned during the clone process, so existing
--- policies that check simulation_members will work for instances too.
--- No additional RLS changes needed.

@@ -18,6 +18,7 @@ import { appState } from '../../services/AppStateManager.js';
 import { epochsApi } from '../../services/api/EpochsApiService.js';
 import { simulationsApi } from '../../services/api/SimulationsApiService.js';
 import { realtimeService } from '../../services/realtime/RealtimeService.js';
+import { seoService } from '../../services/SeoService.js';
 import type {
   BattleLogEntry,
   Epoch,
@@ -1094,6 +1095,10 @@ export class VelgEpochCommandCenter extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
+    seoService.setTitle([msg('Epoch Command Center')]);
+    seoService.setDescription(
+      'Competitive PvP operations dashboard — manage epochs, deploy operatives, track scores.',
+    );
     await this._loadData();
   }
 
@@ -1103,7 +1108,33 @@ export class VelgEpochCommandCenter extends LitElement {
     } else if (this._commsEpoch) {
       realtimeService.leaveEpoch(this._commsEpoch.id);
     }
+    seoService.removeStructuredData();
     super.disconnectedCallback();
+  }
+
+  private _injectEpochSchema(epoch: Epoch): void {
+    const statusMap: Record<string, string> = {
+      lobby: 'https://schema.org/EventScheduled',
+      foundation: 'https://schema.org/EventScheduled',
+      competition: 'https://schema.org/EventScheduled',
+      reckoning: 'https://schema.org/EventScheduled',
+      completed: 'https://schema.org/EventPostponed',
+      cancelled: 'https://schema.org/EventCancelled',
+    };
+    seoService.setStructuredData({
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: epoch.name,
+      description: epoch.description ?? `Competitive PvP epoch: ${epoch.name}`,
+      eventStatus: statusMap[epoch.status] ?? 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+      location: {
+        '@type': 'VirtualLocation',
+        url: 'https://metaverse.center/epoch',
+      },
+      ...(epoch.starts_at ? { startDate: epoch.starts_at } : {}),
+      ...(epoch.ends_at ? { endDate: epoch.ends_at } : {}),
+    });
   }
 
   private async _loadData() {
@@ -1499,6 +1530,7 @@ export class VelgEpochCommandCenter extends LitElement {
     }
     this._epoch = epoch;
     this._activeTab = 'overview';
+    this._injectEpochSchema(epoch);
     await this._loadEpochDetails(epoch.id);
   }
 

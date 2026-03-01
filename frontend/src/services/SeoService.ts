@@ -38,6 +38,21 @@ class SeoService {
     this._setMeta('twitter:image', url);
   }
 
+  /** Inject JSON-LD structured data into <head>. Replaces existing if present. */
+  setStructuredData(data: Record<string, unknown>): void {
+    this.removeStructuredData();
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'velg-structured-data';
+    script.textContent = JSON.stringify(data);
+    document.head.appendChild(script);
+  }
+
+  /** Remove JSON-LD structured data from <head>. */
+  removeStructuredData(): void {
+    document.getElementById('velg-structured-data')?.remove();
+  }
+
   /** Reset all SEO tags to defaults (for dashboard/homepage). */
   reset(): void {
     document.title = DEFAULT_TITLE;
@@ -53,6 +68,7 @@ class SeoService {
     if (canonical) {
       canonical.href = `${BASE_URL}/`;
     }
+    this.removeStructuredData();
   }
 
   private _setMeta(name: string, content: string): void {

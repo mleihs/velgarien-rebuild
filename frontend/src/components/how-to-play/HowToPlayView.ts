@@ -13,11 +13,13 @@
 import { localized, msg, str } from '@lit/localize';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-
+import { analyticsService } from '../../services/AnalyticsService.js';
+import { seoService } from '../../services/SeoService.js';
 import { getMatches } from './htp-content-matches.js';
 import {
   getBleedThresholdRules,
   getBleedVectors,
+  getChangelog,
   getEchoLifecycle,
   getEchoStrengthFormula,
   getEmbassyInfo,
@@ -34,6 +36,7 @@ import {
 import { htpStyles } from './htp-styles.js';
 import type {
   BleedVector,
+  ChangelogEntry,
   CycleData,
   FinalStanding,
   MatchConfig,
@@ -53,6 +56,7 @@ export class VelgHowToPlay extends LitElement {
 
   @state() private _activeSection = 'epochs';
   @state() private _expandedMatches = new Set<number>();
+  @state() private _expandedUpdates = new Set<number>();
 
   private _observer: IntersectionObserver | null = null;
 
@@ -60,12 +64,92 @@ export class VelgHowToPlay extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    seoService.setTitle([msg('How to Play')]);
+    seoService.setDescription(
+      'Learn how Epochs work: competitive PvP, operatives, scoring dimensions, alliances, and bleed mechanics.',
+    );
+    analyticsService.trackPageView('/how-to-play', 'How to Play');
+    this._injectFaqSchema();
     this.updateComplete.then(() => this._setupScrollSpy());
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this._observer?.disconnect();
+    seoService.removeStructuredData();
+  }
+
+  private _injectFaqSchema() {
+    seoService.setStructuredData({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What is an Epoch in metaverse.center?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'An Epoch is a competitive PvP match where simulation owners deploy operatives, form alliances, and compete across five scoring dimensions: stability, influence, sovereignty, diplomatic, and military.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How does scoring work in Epochs?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Scores are computed each cycle across five dimensions derived from your simulation health, zone stability, building readiness, embassy effectiveness, and military operations. The composite score determines your final ranking.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What are operatives and how do I deploy them?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Operatives are agents you deploy against rival simulations. There are six types: Spy (intelligence), Saboteur (building damage), Propagandist (event creation), Assassin (ambassador blocking), Guardian (defense), and Infiltrator (embassy weakening). Each costs Resource Points (RP) to deploy.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I form alliances with other players?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Teams can be formed during an Epoch for shared diplomatic bonuses. However, betrayal is possible — attacking an ally dissolves the alliance and may incur score penalties if detected.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is the Bleed mechanic?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Bleed is the cross-simulation echo system. High-impact events can "bleed" through connections to other simulations, creating transformed echoes. Embassies and connection strength amplify bleed probability.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How are game instances created for Epochs?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'When an Epoch starts, each participating template simulation is cloned into a balanced game instance with normalized agent counts, building conditions, and security levels. Templates remain untouched.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What changed in the latest balance update?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Version 2.1 adds real game state effects to all 6 operative types: spies reveal target intel (zone security + guardian count), saboteurs downgrade zone security tiers, and guardians were rebalanced from -10%/guardian (cap 25%) to -8%/guardian (cap 20%). Scoring dimensions were activated: stability reacts to sabotage and assassination, influence rewards propaganda and espionage more, and diplomatic bonuses from alliances increased to +15%.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How are game instances balanced for fair competition?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Game instances are normalized when an epoch starts: agents capped at 6, buildings at 8, all conditions set to good, capacities to 30, qualifications to 5, and zone security distributed as 1x high, 2x medium, 1x low. Embassies are auto-generated between all participants. This ensures every simulation starts on equal footing.',
+          },
+        },
+      ],
+    });
   }
 
   private _setupScrollSpy() {
@@ -103,6 +187,16 @@ export class VelgHowToPlay extends LitElement {
     this._expandedMatches = next;
   }
 
+  private _toggleUpdate(index: number) {
+    const next = new Set(this._expandedUpdates);
+    if (next.has(index)) {
+      next.delete(index);
+    } else {
+      next.add(index);
+    }
+    this._expandedUpdates = next;
+  }
+
   /* ── Render ─────────────────────────────────────── */
 
   protected render() {
@@ -126,6 +220,7 @@ export class VelgHowToPlay extends LitElement {
           ${this._renderBleed()}
           ${this._renderTactics()}
           ${this._renderMatches()}
+          ${this._renderUpdates()}
         </main>
       </div>
     `;
@@ -321,7 +416,7 @@ export class VelgHowToPlay extends LitElement {
           <div class="callout__label">${msg('Success Probability')}</div>
           <div class="callout__text">${msg('Every mission is resolved with a probability roll:')}</div>
           <div class="formula">${getSuccessFormula()}</div>
-          <div class="callout__text">${msg('Clamped to [0.05, 0.95]. Guardians reduce success by 20% each. Embassy infiltration reduces effectiveness by 50%.')}</div>
+          <div class="callout__text">${msg('Clamped to [0.05, 0.95]. Guardians reduce success by 8% each (max \u221220%). Embassy infiltration reduces effectiveness by 50%.')}</div>
         </div>
 
         <div class="callout callout--danger">
@@ -502,14 +597,14 @@ export class VelgHowToPlay extends LitElement {
         <div class="callout callout--tip">
           <div class="callout__label">${msg('Alliance Bonus')}</div>
           <div class="callout__text">
-            ${msg('Each active ally gives +10% to your diplomatic score. A 3-member alliance means each member gets +20% diplomatic.')}
+            ${msg('Each active ally gives +15% to your diplomatic score. A 3-member alliance means each member gets +30% diplomatic.')}
           </div>
         </div>
 
         <div class="callout callout--danger">
           <div class="callout__label">${msg('Betrayal')}</div>
           <div class="callout__text">
-            ${msg('If allow_betrayal is enabled, allied simulations can attack each other. But beware: if a betrayal mission is detected, the entire alliance dissolves and the betrayer receives a \u221220% diplomatic score penalty. With the Diplomat preset (35% diplomatic weight), this is catastrophic.')}
+            ${msg('If allow_betrayal is enabled, allied simulations can attack each other. But beware: if a betrayal mission is detected, the entire alliance dissolves and the betrayer receives a \u221225% diplomatic score penalty. With the Diplomat preset (35% diplomatic weight), this is catastrophic.')}
           </div>
         </div>
       </section>
@@ -831,6 +926,74 @@ export class VelgHowToPlay extends LitElement {
         <ul class="moments-list">
           ${moments.map((m) => html`<li>${m}</li>`)}
         </ul>
+      </div>
+    `;
+  }
+
+  /* -- Section 12: Updates & Changelog -------------- */
+
+  private _renderUpdates() {
+    const entries = getChangelog();
+    return html`
+      <section class="section" id="updates">
+        ${this._renderSectionHeader('12', msg('Updates & Changelog'))}
+        <p class="section__text">
+          ${msg('Balance patches and game mechanic changes are documented here. Each update includes detailed change notes and the reasoning behind adjustments.')}
+        </p>
+
+        ${entries.map((entry, i) => this._renderChangelogEntry(entry, i))}
+      </section>
+    `;
+  }
+
+  private _renderChangelogEntry(entry: ChangelogEntry, index: number) {
+    const expanded = this._expandedUpdates.has(index);
+    return html`
+      <div class="match">
+        <div class="match__header"
+          role="button"
+          tabindex="0"
+          aria-expanded=${expanded}
+          @click=${() => this._toggleUpdate(index)}
+          @keydown=${(e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this._toggleUpdate(index);
+            }
+          }}
+        >
+          <div class="match__title-group">
+            <h3 class="match__title">
+              <span class="match__meta-tag">${entry.version}</span>
+              ${entry.title}
+            </h3>
+            <span class="match__subtitle">${entry.date}</span>
+          </div>
+          <span class="match__toggle ${expanded ? 'match__toggle--open' : ''}">&#x25BC;</span>
+        </div>
+
+        ${
+          expanded
+            ? html`
+          <div class="match__body">
+            <ul class="moments-list">
+              ${entry.highlights.map((h) => html`<li>${h}</li>`)}
+            </ul>
+
+            ${entry.details.map(
+              (d) => html`
+              <div style="margin-top: var(--space-3)">
+                <div class="standings-label">${d.category}</div>
+                <ul class="moments-list">
+                  ${d.changes.map((c) => html`<li>${c}</li>`)}
+                </ul>
+              </div>
+            `,
+            )}
+          </div>
+        `
+            : nothing
+        }
       </div>
     `;
   }

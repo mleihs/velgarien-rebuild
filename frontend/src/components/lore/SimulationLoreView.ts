@@ -3,6 +3,7 @@ import { effect } from '@preact/signals-core';
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
+import { seoService } from '../../services/SeoService.js';
 import { getLoreSectionsForSlug } from './lore-content.js';
 
 import '../platform/LoreScroll.js';
@@ -43,14 +44,34 @@ export class VelgSimulationLoreView extends LitElement {
     window.scrollTo(0, 0);
     // Re-render when currentSimulation signal changes (needed for page reload)
     this._disposeEffect = effect(() => {
-      appState.currentSimulation.value;
+      const sim = appState.currentSimulation.value;
+      if (sim) {
+        this._injectProfileSchema(sim);
+      }
       this.requestUpdate();
     });
   }
 
   disconnectedCallback(): void {
     this._disposeEffect?.();
+    seoService.removeStructuredData();
     super.disconnectedCallback();
+  }
+
+  private _injectProfileSchema(sim: {
+    name: string;
+    description: string;
+    slug: string;
+    banner_url?: string;
+  }): void {
+    seoService.setStructuredData({
+      '@context': 'https://schema.org',
+      '@type': 'Thing',
+      name: sim.name,
+      description: sim.description,
+      url: `https://metaverse.center/simulations/${sim.slug}/lore`,
+      ...(sim.banner_url ? { image: sim.banner_url } : {}),
+    });
   }
 
   private _getSlug(): string {

@@ -1,7 +1,8 @@
 # 22 - Epochs & Competitive Layer
 
-**Version:** 1.2
-**Date:** 2026-02-28
+**Version:** 1.3
+**Date:** 2026-03-01
+**Change v1.3:** Balance patch v2.1 — guardian penalty 0.20→0.08/unit (cap 0.20), spy intel reveal (zone security + guardian count to battle log), saboteur zone downgrade (security −1 tier), scoring rebalance (propagandist +3→+5, detection −3→−2, spy influence +1/+2, guardian sovereignty +4), betrayal −20%→−25%, alliance 10%→15%. Cartographer's Map: game instance visualization (phase rings, health arcs, sparklines, operative trails, battle feed, leaderboard panel, minimap, 30s refresh).
 **Change v1.2:** EpochCommandCenter decomposed from monolithic 3364-line file into orchestrator (1934 lines) + 5 child components: EpochOpsBoard (ops board + COMMS sidebar), EpochOverviewTab, EpochOperationsTab, EpochAlliancesTab, EpochLobbyActions. Data flows via Lit properties, mutations via CustomEvent bubbling. ~60 hardcoded hex colors replaced with CSS custom property tokens across all epoch components.
 
 ---
@@ -179,20 +180,20 @@ RP is the action economy currency. Each simulation receives RP at the start of e
 
 | Type | Cost | Deploy Time | Duration | Effect |
 |------|------|-------------|----------|--------|
-| **Spy** | 3 RP | Instant | 3 cycles | Reveals target's health metrics, zone stability, active operatives |
-| **Saboteur** | 5 RP | 1 cycle | Single action | Degrades one target building's condition by one step |
+| **Spy** | 3 RP | Instant | 3 cycles | Reveals target zone security levels and guardian count (intel report in battle log). +2 Influence, +1 Diplomatic, −2 Sovereignty. |
+| **Saboteur** | 5 RP | 1 cycle | Single action | Downgrades random zone security −1 tier + building condition −1. −5 Stability, −8 Sovereignty. |
 | **Propagandist** | 4 RP | 1 cycle | 2 cycles | Generates a destabilizing event (impact 6-8) in target zone |
 | **Assassin** | 8 RP | 2 cycles | Single action | Wounds target agent — reduces relationships by 2, removes ambassador status for 3 cycles |
-| **Guardian** | 3 RP | Instant | Permanent | +20% enemy detection probability per guardian in zone. Deploys to OWN simulation only. |
+| **Guardian** | 3 RP | Instant | Permanent | −8% enemy success per guardian (max −20%). Deploys to OWN simulation only. |
 | **Infiltrator** | 6 RP | 2 cycles | 3 cycles | Reduces target embassy effectiveness by 50% |
 
 ### Success Probability
 
 ```
-base_probability = 0.5
+base_probability = 0.55
 + operative_qualification × 0.05  (0-10 scale → +0 to +0.50)
 - target_zone_security × 0.05    (mapped 0-10 → -0 to -0.50)
-- guardian_presence × 0.20        (per guardian in zone)
+- min(0.20, guardian_presence × 0.08)  (−0.08 each, cap 0.20)
 + embassy_effectiveness × 0.15   (0-1 → +0 to +0.15)
 
 Final: clamped to [0.05, 0.95]
@@ -221,7 +222,7 @@ Final: clamped to [0.05, 0.95]
 - Teams form during lobby/foundation. Max team size configurable (default 3).
 - Alliances lock when competition phase begins (no new teams).
 - If `allow_betrayal = true`: allied simulations can covertly attack each other.
-  - **Detected betrayal** → alliance immediately dissolves, betrayer gets -20% Diplomatic Score.
+  - **Detected betrayal** → alliance immediately dissolves, betrayer gets -25% Diplomatic Score.
   - **Undetected betrayal** → normal operative effects, alliance intact.
 
 ### Embassy Requirement
