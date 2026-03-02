@@ -21,7 +21,7 @@ CREATE TABLE bot_players (
 CREATE TRIGGER set_updated_at_bot_players
     BEFORE UPDATE ON bot_players
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at();
+    EXECUTE FUNCTION set_updated_at();
 
 -- Indexes
 CREATE INDEX idx_bot_players_created_by ON bot_players(created_by_id);
