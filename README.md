@@ -26,6 +26,10 @@ The entire platform is bilingual (English/German), fully themed per-simulation w
 
 ## Screenshots
 
+**Draft Roster** — Pre-match deckbuilding phase. Players select agents from a fanned card hand into deployment slots. The stats bar tracks cumulative aptitude totals across all six operative types (SPY, GRD, SAB, PRP, INF, ASN), strongest/weakest analysis, and team synergy. Pip counter shows 2/6 slots filled. "Lock In Roster" commits the selection.
+
+![Draft Roster panel showing 2 deployed agents in slots, team aptitude stats bar, 2/6 drafted counter, and a fanned hand of 7 available agent cards](docs/screenshots/draft-roster-card-hand-speranza.png)
+
 *Speranza — post-apocalyptic survival simulation (warm parchment theme)*
 
 **Buildings** — TCG card grid with AI-generated art, capacity stat gems, security dot indicators, type/condition badges, and embassy markers. Each card is a tactile 5:7 collectible with 3D tilt and light reflection on hover.
