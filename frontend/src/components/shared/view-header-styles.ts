@@ -9,6 +9,8 @@ export const viewHeaderStyles = css`
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .view__header {
