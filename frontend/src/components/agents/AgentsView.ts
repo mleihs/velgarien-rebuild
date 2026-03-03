@@ -3,7 +3,7 @@ import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { agentsApi } from '../../services/api/index.js';
-import type { Agent } from '../../types/index.js';
+import type { Agent, AgentAptitude, AptitudeSet, OperativeType } from '../../types/index.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import { gridLayoutStyles } from '../shared/grid-layout-styles.js';
 import type { FilterChangeDetail, FilterConfig } from '../shared/SharedFilterBar.js';
@@ -15,6 +15,8 @@ import '../shared/Pagination.js';
 import '../shared/LoadingState.js';
 import '../shared/ErrorState.js';
 import '../shared/EmptyState.js';
+import '../shared/VelgAptitudeBars.js';
+import '../shared/VelgAvatar.js';
 import './AgentCard.js';
 import './AgentEditModal.js';
 import './AgentDetailsPanel.js';
@@ -33,6 +35,90 @@ export class VelgAgentsView extends LitElement {
     .entity-grid {
       gap: var(--space-5);
     }
+
+    /* Lineup Overview Strip */
+    .lineup {
+      margin-bottom: var(--space-5);
+      border: var(--border-width-thin) solid var(--color-border-light);
+      background: var(--color-surface-sunken);
+    }
+
+    .lineup__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-3);
+      border-bottom: var(--border-width-thin) solid var(--color-border-light);
+    }
+
+    .lineup__title {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-muted);
+    }
+
+    .lineup__scroll {
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-border) transparent;
+    }
+
+    .lineup__card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1-5);
+      padding: var(--space-2);
+      min-width: 100px;
+      max-width: 100px;
+      cursor: pointer;
+      border: var(--border-width-thin) solid transparent;
+      transition: all var(--transition-fast);
+      opacity: 0;
+      animation: lineup-enter 300ms var(--ease-dramatic) forwards;
+      animation-delay: calc(var(--i, 0) * 40ms);
+    }
+
+    @keyframes lineup-enter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .lineup__card:hover {
+      background: var(--color-surface-header);
+      border-color: var(--color-border);
+    }
+
+    .lineup__name {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-secondary);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .lineup__bars {
+      width: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .lineup__card {
+        animation: none;
+        opacity: 1;
+      }
+    }
   `,
   ];
 
@@ -50,6 +136,7 @@ export class VelgAgentsView extends LitElement {
   @state() private _editAgent: Agent | null = null;
   @state() private _showEditModal = false;
   @state() private _showDetails = false;
+  @state() private _aptitudeMap: Map<string, AptitudeSet> = new Map();
 
   private get _canEdit(): boolean {
     return appState.canEdit.value;
@@ -123,6 +210,7 @@ export class VelgAgentsView extends LitElement {
         this._agents = Array.isArray(response.data) ? response.data : [];
         this._total = response.meta?.total ?? this._agents.length;
         this._checkDeepLink();
+        this._loadAllAptitudes();
       } else {
         this._error = response.error?.message ?? msg('Failed to load agents');
       }
@@ -143,6 +231,76 @@ export class VelgAgentsView extends LitElement {
       this._selectedAgent = agent;
       this._showDetails = true;
     }
+  }
+
+  private async _loadAllAptitudes(): Promise<void> {
+    if (!this.simulationId) return;
+
+    try {
+      const response = await agentsApi.getAllAptitudes(this.simulationId);
+      if (response.success && response.data) {
+        const map = new Map<string, AptitudeSet>();
+        for (const row of response.data as AgentAptitude[]) {
+          if (!map.has(row.agent_id)) {
+            map.set(row.agent_id, {
+              spy: 6,
+              guardian: 6,
+              saboteur: 6,
+              propagandist: 6,
+              infiltrator: 6,
+              assassin: 6,
+            });
+          }
+          const set = map.get(row.agent_id);
+          if (set) set[row.operative_type as OperativeType] = row.aptitude_level;
+        }
+        this._aptitudeMap = map;
+      }
+    } catch {
+      // Non-critical
+    }
+  }
+
+  private _renderLineup() {
+    if (this._agents.length === 0 || this._aptitudeMap.size === 0) return nothing;
+
+    return html`
+      <div class="lineup">
+        <div class="lineup__header">
+          <span class="lineup__title">${msg('Lineup Overview')}</span>
+        </div>
+        <div class="lineup__scroll">
+          ${this._agents.map((agent, i) => {
+            const aptitudes = this._aptitudeMap.get(agent.id);
+            if (!aptitudes) return nothing;
+
+            return html`
+              <div
+                class="lineup__card"
+                style="--i: ${i}"
+                @click=${() => {
+                  this._selectedAgent = agent;
+                  this._showDetails = true;
+                }}
+              >
+                <velg-avatar
+                  .src=${agent.portrait_image_url ?? ''}
+                  .name=${agent.name}
+                  size="sm"
+                ></velg-avatar>
+                <span class="lineup__name">${agent.name}</span>
+                <div class="lineup__bars">
+                  <velg-aptitude-bars
+                    .aptitudes=${aptitudes}
+                    size="sm"
+                  ></velg-aptitude-bars>
+                </div>
+              </div>
+            `;
+          })}
+        </div>
+      </div>
+    `;
   }
 
   private _handleFilterChange(e: CustomEvent<FilterChangeDetail>): void {
@@ -311,6 +469,7 @@ export class VelgAgentsView extends LitElement {
 
     return html`
       <span class="view__count">${msg(str`${this._total} Agent${this._total !== 1 ? 's' : ''}`)}</span>
+      ${this._renderLineup()}
       <div class="entity-grid">
         ${this._agents.map(
           (agent, i) => html`

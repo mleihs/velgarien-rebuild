@@ -14,8 +14,10 @@ from supabase import Client, create_client
 
 logger = logging.getLogger(__name__)
 
-# Platform admin — email allowlist (single admin for now)
-PLATFORM_ADMIN_EMAILS: set[str] = {"admin@velgarien.dev"}
+# Platform admin — configurable via PLATFORM_ADMIN_EMAILS env var (comma-separated)
+PLATFORM_ADMIN_EMAILS: set[str] = {
+    e.strip() for e in settings.platform_admin_emails.split(",") if e.strip()
+}
 
 # Role hierarchy: higher index = more privileges
 ROLE_HIERARCHY: dict[str, int] = {

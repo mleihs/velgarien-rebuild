@@ -124,6 +124,7 @@ class ResolvedImageModel:
         """Build params dict for ReplicateService.generate_image()."""
         if self.is_flux:
             params: dict = {
+                "megapixels": "1",
                 "guidance": self.guidance_scale,
                 "num_inference_steps": self.num_inference_steps,
                 "output_format": self.output_format,

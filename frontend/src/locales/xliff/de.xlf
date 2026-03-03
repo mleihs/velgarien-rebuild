@@ -255,12 +255,12 @@
   <target>Agent löschen</target>
 </trans-unit>
 <trans-unit id="s02f08b8f4c49b948">
-  <source>Are you sure you want to delete "<x id="0" equiv-text="${agent.name}"/>"? This action cannot be undone.</source>
-  <target>Bist du sicher, dass du "<x id="0" equiv-text="${agent.name}"/>" löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.</target>
+  <source>Are you sure you want to delete "<x id="0" equiv-text="${agent.name}" />"? This action cannot be undone.</source>
+  <target>Bist du sicher, dass du "<x id="0" equiv-text="${agent.name}" />" löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.</target>
 </trans-unit>
 <trans-unit id="s7b1cbc0600f84568">
-  <source>Agent "<x id="0" equiv-text="${agent.name}"/>" deleted successfully.</source>
-  <target>Agent "<x id="0" equiv-text="${agent.name}"/>" erfolgreich gelöscht.</target>
+  <source>Agent "<x id="0" equiv-text="${agent.name}" />" deleted successfully.</source>
+  <target>Agent "<x id="0" equiv-text="${agent.name}" />" erfolgreich gelöscht.</target>
 </trans-unit>
 <trans-unit id="s3f6ddd7fde652c49">
   <source>Failed to delete agent.</source>
@@ -299,8 +299,8 @@
   <target>Ersten Agenten erstellen</target>
 </trans-unit>
 <trans-unit id="s9a75aea85d85be7a">
-  <source><x id="0" equiv-text="${this._total}"/> Agent<x id="1" equiv-text="${this._total !== 1 ? 's' : ''}"/></source>
-  <target><x id="0" equiv-text="${this._total}"/> Agent<x id="1" equiv-text="${this._total !== 1 ? 's' : ''}"/></target>
+  <source><x id="0" equiv-text="${this._total}" /> Agent<x id="1" equiv-text="${this._total !== 1 ? 's' : ''}" /></source>
+  <target><x id="0" equiv-text="${this._total}" /> Agent<x id="1" equiv-text="${this._total !== 1 ? 's' : ''}" /></target>
 </trans-unit>
 <trans-unit id="see08734dfee6e873">
   <source>An unexpected error occurred. Please try again.</source>
@@ -355,8 +355,8 @@
   <target>Bereits ein Konto?</target>
 </trans-unit>
 <trans-unit id="s59149d52748a3ed5">
-  <source>Cap: <x id="0" equiv-text="${b.population_capacity}"/></source>
-  <target>Kap.: <x id="0" equiv-text="${b.population_capacity}"/></target>
+  <source>Cap: <x id="0" equiv-text="${b.population_capacity}" /></source>
+  <target>Kap.: <x id="0" equiv-text="${b.population_capacity}" /></target>
 </trans-unit>
 <trans-unit id="scb249e1a0bc04d37">
   <source>Edit building</source>
@@ -371,8 +371,8 @@
   <target>Keine Agenten diesem Gebäude zugewiesen.</target>
 </trans-unit>
 <trans-unit id="sf628c218795d33ba">
-  <source>Agent <x id="0" equiv-text="${rel.agent_id.slice(0, 8)}"/>...</source>
-  <target>Agent <x id="0" equiv-text="${rel.agent_id.slice(0, 8)}"/>...</target>
+  <source>Agent <x id="0" equiv-text="${rel.agent_id.slice(0, 8)}" />...</source>
+  <target>Agent <x id="0" equiv-text="${rel.agent_id.slice(0, 8)}" />...</target>
 </trans-unit>
 <trans-unit id="s4334827f0cc60a87">
   <source>Building Details</source>
@@ -595,8 +595,8 @@
   <target>Gebäude löschen</target>
 </trans-unit>
 <trans-unit id="s05d059c94d5c3d4c">
-  <source>"<x id="0" equiv-text="${building.name}"/>" has been deleted</source>
-  <target>"<x id="0" equiv-text="${building.name}"/>" wurde gelöscht</target>
+  <source>"<x id="0" equiv-text="${building.name}" />" has been deleted</source>
+  <target>"<x id="0" equiv-text="${building.name}" />" wurde gelöscht</target>
 </trans-unit>
 <trans-unit id="s5cd6e615c956bbe4">
   <source>Failed to delete building</source>
@@ -623,12 +623,12 @@
   <target>Keine Gebäude gefunden. Erstelle eines, um loszulegen.</target>
 </trans-unit>
 <trans-unit id="s0b7e8f388caf2b36">
-  <source><x id="0" equiv-text="${this._total}"/> buildings total</source>
-  <target><x id="0" equiv-text="${this._total}"/> Gebäude insgesamt</target>
+  <source><x id="0" equiv-text="${this._total}" /> buildings total</source>
+  <target><x id="0" equiv-text="${this._total}" /> Gebäude insgesamt</target>
 </trans-unit>
 <trans-unit id="s9289a1008fa7df3d">
-  <source><x id="0" equiv-text="${this._total}"/> building total</source>
-  <target><x id="0" equiv-text="${this._total}"/> Gebäude insgesamt</target>
+  <source><x id="0" equiv-text="${this._total}" /> building total</source>
+  <target><x id="0" equiv-text="${this._total}" /> Gebäude insgesamt</target>
 </trans-unit>
 <trans-unit id="se6ce9f50ddd15633">
   <source>Failed to load agents.</source>
@@ -667,12 +667,12 @@
   <target>Ein unerwarteter Fehler beim Archivieren der Konversation.</target>
 </trans-unit>
 <trans-unit id="s0a552e96950fee13">
-  <source>Chat with <x id="0" equiv-text="${names[0]}"/></source>
-  <target>Chat mit <x id="0" equiv-text="${agent.name}"/></target>
+  <source>Chat with <x id="0" equiv-text="${names[0]}" /></source>
+  <target>Chat mit <x id="0" equiv-text="${agent.name}" /></target>
 </trans-unit>
 <trans-unit id="s8d746648f3712457">
-  <source>Conversation started with <x id="0" equiv-text="${names[0]}"/>.</source>
-  <target>Konversation gestartet mit <x id="0" equiv-text="${agent.name}"/>.</target>
+  <source>Conversation started with <x id="0" equiv-text="${names[0]}" />.</source>
+  <target>Konversation gestartet mit <x id="0" equiv-text="${agent.name}" />.</target>
 </trans-unit>
 <trans-unit id="sd372b232ee1d8588">
   <source>Failed to create conversation.</source>
@@ -719,8 +719,8 @@
   <target>Wähle eine Konversation aus der Liste oder starte eine neue, indem du einen Agenten auswählst.</target>
 </trans-unit>
 <trans-unit id="sd94e4de48e8973cb">
-  <source><x id="0" equiv-text="${this.conversation.message_count}"/> messages</source>
-  <target><x id="0" equiv-text="${this.conversation.message_count}"/> Nachrichten</target>
+  <source><x id="0" equiv-text="${this.conversation.message_count}" /> messages</source>
+  <target><x id="0" equiv-text="${this.conversation.message_count}" /> Nachrichten</target>
 </trans-unit>
 <trans-unit id="se3b62a22fe3df419">
   <source>Loading messages...</source>
@@ -763,16 +763,16 @@
   <target>Gerade eben</target>
 </trans-unit>
 <trans-unit id="s8c1837e74a81ad0d">
-  <source><x id="0" equiv-text="${diffMins}"/>m ago</source>
-  <target>vor <x id="0" equiv-text="${diffMins}"/>m</target>
+  <source><x id="0" equiv-text="${diffMins}" />m ago</source>
+  <target>vor <x id="0" equiv-text="${diffMins}" />m</target>
 </trans-unit>
 <trans-unit id="sa86ea054ad5277ce">
-  <source><x id="0" equiv-text="${diffHours}"/>h ago</source>
-  <target>vor <x id="0" equiv-text="${diffHours}"/>h</target>
+  <source><x id="0" equiv-text="${diffHours}" />h ago</source>
+  <target>vor <x id="0" equiv-text="${diffHours}" />h</target>
 </trans-unit>
 <trans-unit id="s4abcddbf0c24a4e2">
-  <source><x id="0" equiv-text="${diffDays}"/>d ago</source>
-  <target>vor <x id="0" equiv-text="${diffDays}"/>d</target>
+  <source><x id="0" equiv-text="${diffDays}" />d ago</source>
+  <target>vor <x id="0" equiv-text="${diffDays}" />d</target>
 </trans-unit>
 <trans-unit id="scb6a9c1a1757adbc">
   <source>You</source>
@@ -783,8 +783,8 @@
   <target>Noch keine Nachrichten. Starte die Konversation.</target>
 </trans-unit>
 <trans-unit id="sdad9a8331eaf87b9">
-  <source><x id="0" equiv-text="${reactionCount}"/> Reactions</source>
-  <target><x id="0" equiv-text="${reactionCount}"/> Reaktionen</target>
+  <source><x id="0" equiv-text="${reactionCount}" /> Reactions</source>
+  <target><x id="0" equiv-text="${reactionCount}" /> Reaktionen</target>
 </trans-unit>
 <trans-unit id="se44a1146a7e00fd1">
   <source>Edit event</source>
@@ -811,8 +811,8 @@
   <target>Auswirkungsstufe</target>
 </trans-unit>
 <trans-unit id="s0abfa55578dfaa92">
-  <source>Reactions (<x id="0" equiv-text="${this._reactions.length}"/>)</source>
-  <target>Reaktionen (<x id="0" equiv-text="${this._reactions.length}"/>)</target>
+  <source>Reactions (<x id="0" equiv-text="${this._reactions.length}" />)</source>
+  <target>Reaktionen (<x id="0" equiv-text="${this._reactions.length}" />)</target>
 </trans-unit>
 <trans-unit id="s0852c030839ee3db">
   <source>No event selected.</source>
@@ -875,8 +875,8 @@
   <target>Optionaler Ort</target>
 </trans-unit>
 <trans-unit id="s73de114e5f85f526">
-  <source>Impact Level (<x id="0" equiv-text="${this._impactLevel}"/>/10)</source>
-  <target>Auswirkungsstufe (<x id="0" equiv-text="${this._impactLevel}"/>/10)</target>
+  <source>Impact Level (<x id="0" equiv-text="${this._impactLevel}" />/10)</source>
+  <target>Auswirkungsstufe (<x id="0" equiv-text="${this._impactLevel}" />/10)</target>
 </trans-unit>
 <trans-unit id="s03aa3cfb08dff960">
   <source>Tags</source>
@@ -939,32 +939,32 @@
   <target>Einstellungen</target>
 </trans-unit>
 <trans-unit id="sc8f1cc9b4bbf0a02">
-  <source>Population: <x id="0" equiv-text="${city.population.toLocaleString()}"/></source>
-  <target>Bevölkerung: <x id="0" equiv-text="${city.population.toLocaleString()}"/></target>
+  <source>Population: <x id="0" equiv-text="${city.population.toLocaleString()}" /></source>
+  <target>Bevölkerung: <x id="0" equiv-text="${city.population.toLocaleString()}" /></target>
 </trans-unit>
 <trans-unit id="s9914f7f7bed983b3">
-  <source><x id="0" equiv-text="${this._typeLabel}"/> updated successfully</source>
-  <target><x id="0" equiv-text="${this._typeLabel}"/> erfolgreich aktualisiert</target>
+  <source><x id="0" equiv-text="${this._typeLabel}" /> updated successfully</source>
+  <target><x id="0" equiv-text="${this._typeLabel}" /> erfolgreich aktualisiert</target>
 </trans-unit>
 <trans-unit id="sa73b997642f65846">
-  <source><x id="0" equiv-text="${this._typeLabel}"/> created successfully</source>
-  <target><x id="0" equiv-text="${this._typeLabel}"/> erfolgreich erstellt</target>
+  <source><x id="0" equiv-text="${this._typeLabel}" /> created successfully</source>
+  <target><x id="0" equiv-text="${this._typeLabel}" /> erfolgreich erstellt</target>
 </trans-unit>
 <trans-unit id="sa80933980d6bd0c7">
-  <source>Edit <x id="0" equiv-text="${this._typeLabel}"/></source>
-  <target><x id="0" equiv-text="${this._typeLabel}"/> bearbeiten</target>
+  <source>Edit <x id="0" equiv-text="${this._typeLabel}" /></source>
+  <target><x id="0" equiv-text="${this._typeLabel}" /> bearbeiten</target>
 </trans-unit>
 <trans-unit id="s5d6af4c100ad321b">
-  <source>Create <x id="0" equiv-text="${this._typeLabel}"/></source>
-  <target><x id="0" equiv-text="${this._typeLabel}"/> erstellen</target>
+  <source>Create <x id="0" equiv-text="${this._typeLabel}" /></source>
+  <target><x id="0" equiv-text="${this._typeLabel}" /> erstellen</target>
 </trans-unit>
 <trans-unit id="s1148def0112d096a">
-  <source>Enter <x id="0" equiv-text="${this.type}"/> name</source>
-  <target>Name <x id="0" equiv-text="${this.type}"/> eingeben</target>
+  <source>Enter <x id="0" equiv-text="${this.type}" /> name</source>
+  <target>Name <x id="0" equiv-text="${this.type}" /> eingeben</target>
 </trans-unit>
 <trans-unit id="s57b9a8cb0c1fd049">
-  <source>Describe the <x id="0" equiv-text="${this.type}"/>...</source>
-  <target>Beschreibe <x id="0" equiv-text="${this.type}"/>...</target>
+  <source>Describe the <x id="0" equiv-text="${this.type}" />...</source>
+  <target>Beschreibe <x id="0" equiv-text="${this.type}" />...</target>
 </trans-unit>
 <trans-unit id="s697d9f0a4d8350d2">
   <source>Failed to load cities</source>
@@ -1023,24 +1023,24 @@
   <target>Straße erstellen</target>
 </trans-unit>
 <trans-unit id="s763db5db763a5f30">
-  <source>+ Create <x id="0" equiv-text="${levelLabels[this._level]}"/></source>
-  <target>+ <x id="0" equiv-text="${levelLabels[this._level]}"/> erstellen</target>
+  <source>+ Create <x id="0" equiv-text="${levelLabels[this._level]}" /></source>
+  <target>+ <x id="0" equiv-text="${levelLabels[this._level]}" /> erstellen</target>
 </trans-unit>
 <trans-unit id="s1acd3fb8f42de406">
   <source>Unnamed Street</source>
   <target>Unbenannte Straße</target>
 </trans-unit>
 <trans-unit id="sd6a7f6d64037f1ae">
-  <source>Est. Population: <x id="0" equiv-text="${zone.population_estimate.toLocaleString()}"/></source>
-  <target>Geschätzte Bevölkerung: <x id="0" equiv-text="${zone.population_estimate.toLocaleString()}"/></target>
+  <source>Est. Population: <x id="0" equiv-text="${zone.population_estimate.toLocaleString()}" /></source>
+  <target>Geschätzte Bevölkerung: <x id="0" equiv-text="${zone.population_estimate.toLocaleString()}" /></target>
 </trans-unit>
 <trans-unit id="s35396e2f40c21cb3">
   <source>Slug is required</source>
   <target>Slug ist erforderlich</target>
 </trans-unit>
 <trans-unit id="s0c7dffd240ca1092">
-  <source>Simulation "<x id="0" equiv-text="${response.data.name}"/>" created.</source>
-  <target>Simulation "<x id="0" equiv-text="${response.data.name}"/>" erstellt.</target>
+  <source>Simulation "<x id="0" equiv-text="${response.data.name}" />" created.</source>
+  <target>Simulation "<x id="0" equiv-text="${response.data.name}" />" erstellt.</target>
 </trans-unit>
 <trans-unit id="s6a1b50bed7ff39b8">
   <source>Failed to create simulation.</source>
@@ -1251,8 +1251,8 @@
   <target>Du bist noch kein Mitglied einer Simulation.</target>
 </trans-unit>
 <trans-unit id="s0561bb86953cba6a">
-  <source>Joined <x id="0" equiv-text="${this._formatDate(m.joined_at)}"/></source>
-  <target>Beigetreten <x id="0" equiv-text="${this._formatDate(m.joined_at)}"/></target>
+  <source>Joined <x id="0" equiv-text="${this._formatDate(m.joined_at)}" /></source>
+  <target>Beigetreten <x id="0" equiv-text="${this._formatDate(m.joined_at)}" /></target>
 </trans-unit>
 <trans-unit id="sb061ff5a347a296e">
   <source>Profile</source>
@@ -1267,8 +1267,8 @@
   <target>Zugangs-Einstellungen erfolgreich gespeichert.</target>
 </trans-unit>
 <trans-unit id="s784363bffc053c01">
-  <source>Role updated to <x id="0" equiv-text="${newRole}"/>.</source>
-  <target>Rolle aktualisiert auf <x id="0" equiv-text="${newRole}"/>.</target>
+  <source>Role updated to <x id="0" equiv-text="${newRole}" />.</source>
+  <target>Rolle aktualisiert auf <x id="0" equiv-text="${newRole}" />.</target>
 </trans-unit>
 <trans-unit id="s79268a5304465029">
   <source>Failed to change role.</source>
@@ -1283,16 +1283,16 @@
   <target>Mitglied entfernen</target>
 </trans-unit>
 <trans-unit id="sd0996bc3a8b5df93">
-  <source>Are you sure you want to remove <x id="0" equiv-text="${displayName}"/> from this simulation?</source>
-  <target>Bist du sicher, dass du <x id="0" equiv-text="${displayName}"/> aus dieser Simulation entfernen möchtest?</target>
+  <source>Are you sure you want to remove <x id="0" equiv-text="${displayName}" /> from this simulation?</source>
+  <target>Bist du sicher, dass du <x id="0" equiv-text="${displayName}" /> aus dieser Simulation entfernen möchtest?</target>
 </trans-unit>
 <trans-unit id="sea4f08110bb8f15d">
   <source>Remove</source>
   <target>Entfernen</target>
 </trans-unit>
 <trans-unit id="s0bcd877483a23da5">
-  <source><x id="0" equiv-text="${displayName}"/> has been removed.</source>
-  <target><x id="0" equiv-text="${displayName}"/> wurde entfernt.</target>
+  <source><x id="0" equiv-text="${displayName}" /> has been removed.</source>
+  <target><x id="0" equiv-text="${displayName}" /> wurde entfernt.</target>
 </trans-unit>
 <trans-unit id="s58791d830f346d4b">
   <source>Failed to remove member.</source>
@@ -1583,8 +1583,8 @@
   <target>Fehler beim Laden der Design-Einstellungen</target>
 </trans-unit>
 <trans-unit id="scd0bfa2bff811826">
-  <source>Custom CSS exceeds maximum of <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}"/>KB.</source>
-  <target>Benutzerdefiniertes CSS überschreitet das Maximum von <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}"/>KB.</target>
+  <source>Custom CSS exceeds maximum of <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}" />KB.</source>
+  <target>Benutzerdefiniertes CSS überschreitet das Maximum von <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}" />KB.</target>
 </trans-unit>
 <trans-unit id="s9419de2e7561341a">
   <source>Design settings saved successfully.</source>
@@ -1611,12 +1611,12 @@
   <target>Zusätzliche Stile</target>
 </trans-unit>
 <trans-unit id="s6496d792d13b37bc">
-  <source>Max <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}"/>KB.</source>
-  <target>Max. <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}"/>KB.</target>
+  <source>Max <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}" />KB.</source>
+  <target>Max. <x id="0" equiv-text="${MAX_CUSTOM_CSS_LENGTH / 1024}" />KB.</target>
 </trans-unit>
 <trans-unit id="sf12516a6ba47b093">
-  <source>Current: <x id="0" equiv-text="${((this._values.custom_css ?? '').length / 1024).toFixed(1)}"/>KB</source>
-  <target>Aktuell: <x id="0" equiv-text="${((this._values.custom_css ?? '').length / 1024).toFixed(1)}"/>KB</target>
+  <source>Current: <x id="0" equiv-text="${((this._values.custom_css ?? '').length / 1024).toFixed(1)}" />KB</source>
+  <target>Aktuell: <x id="0" equiv-text="${((this._values.custom_css ?? '').length / 1024).toFixed(1)}" />KB</target>
 </trans-unit>
 <trans-unit id="sfd45ce497f1d354f">
   <source>Live Preview</source>
@@ -1671,8 +1671,8 @@
   <target>Fehler beim Laden der Einstellungen</target>
 </trans-unit>
 <trans-unit id="sabca4cadd0e18910">
-  <source>Failed to save <x id="0" equiv-text="${key}"/></source>
-  <target>Fehler beim Speichern von <x id="0" equiv-text="${field.key}"/></target>
+  <source>Failed to save <x id="0" equiv-text="${key}" /></source>
+  <target>Fehler beim Speichern von <x id="0" equiv-text="${field.key}" /></target>
 </trans-unit>
 <trans-unit id="sa97c26fbad888226">
   <source>General settings saved successfully.</source>
@@ -1783,8 +1783,8 @@
   <target>Fehler beim Laden der Integrations-Einstellungen</target>
 </trans-unit>
 <trans-unit id="sd02a9432614df2f5">
-  <source><x id="0" equiv-text="${section.title}"/> settings saved.</source>
-  <target><x id="0" equiv-text="${section.title}"/> Einstellungen gespeichert.</target>
+  <source><x id="0" equiv-text="${section.title}" /> settings saved.</source>
+  <target><x id="0" equiv-text="${section.title}" /> Einstellungen gespeichert.</target>
 </trans-unit>
 <trans-unit id="s33994aa90c1bad30">
   <source>Values are encrypted at rest</source>
@@ -1911,8 +1911,8 @@
   <target>Vorlage deaktivieren</target>
 </trans-unit>
 <trans-unit id="s69d0d905cda1e7aa">
-  <source>Are you sure you want to deactivate "<x id="0" equiv-text="${template.template_name}"/>"?</source>
-  <target>Bist du sicher, dass du "<x id="0" equiv-text="${template.template_name}"/>" deaktivieren möchtest?</target>
+  <source>Are you sure you want to deactivate "<x id="0" equiv-text="${template.template_name}" />"?</source>
+  <target>Bist du sicher, dass du "<x id="0" equiv-text="${template.template_name}" />" deaktivieren möchtest?</target>
 </trans-unit>
 <trans-unit id="s1a9c6b9c8cb6bbf1">
   <source>Template deactivated</source>
@@ -2007,8 +2007,8 @@
   <target>z.B. meta-llama/llama-3.1-8b-instruct</target>
 </trans-unit>
 <trans-unit id="s820f8a6f13d4e378">
-  <source>Temperature (<x id="0" equiv-text="${this._temperature}"/>)</source>
-  <target>Temperatur (<x id="0" equiv-text="${this._temperature}"/>)</target>
+  <source>Temperature (<x id="0" equiv-text="${this._temperature}" />)</source>
+  <target>Temperatur (<x id="0" equiv-text="${this._temperature}" />)</target>
 </trans-unit>
 <trans-unit id="sa3a2de5eef189c11">
   <source>Max Tokens</source>
@@ -2199,8 +2199,8 @@
   <target>Aktivieren</target>
 </trans-unit>
 <trans-unit id="sfb73892965d2b361">
-  <source>Add New <x id="0" equiv-text="${this._selectedType.replace(/_/g, ' ')}"/> Value</source>
-  <target>Neuen <x id="0" equiv-text="${this._selectedType.replace(/_/g, ' ')}"/>-Wert hinzufügen</target>
+  <source>Add New <x id="0" equiv-text="${this._selectedType.replace(/_/g, ' ')}" /> Value</source>
+  <target>Neuen <x id="0" equiv-text="${this._selectedType.replace(/_/g, ' ')}" />-Wert hinzufügen</target>
 </trans-unit>
 <trans-unit id="scef70ed367a87332">
   <source>Value (code)</source>
@@ -2263,8 +2263,8 @@
   <target>Laden...</target>
 </trans-unit>
 <trans-unit id="s1e983dceeed1e078">
-  <source>Showing <x id="0" equiv-text="${this._showingStart}"/>-<x id="1" equiv-text="${this._showingEnd}"/> of <x id="2" equiv-text="${this.total}"/></source>
-  <target>Zeige <x id="0" equiv-text="${this._showingStart}"/>-<x id="1" equiv-text="${this._showingEnd}"/> von <x id="2" equiv-text="${this.total}"/></target>
+  <source>Showing <x id="0" equiv-text="${this._showingStart}" />-<x id="1" equiv-text="${this._showingEnd}" /> of <x id="2" equiv-text="${this.total}" /></source>
+  <target>Zeige <x id="0" equiv-text="${this._showingStart}" />-<x id="1" equiv-text="${this._showingEnd}" /> von <x id="2" equiv-text="${this.total}" /></target>
 </trans-unit>
 <trans-unit id="safec7f1a369755f0">
   <source>Prev</source>
@@ -2423,8 +2423,8 @@
   <target>Transformiert</target>
 </trans-unit>
 <trans-unit id="se5be05dac1218eba">
-  <source>Model: <x id="0" equiv-text="${this._modelUsed}"/></source>
-  <target>Modell: <x id="0" equiv-text="${this._modelUsed}"/></target>
+  <source>Model: <x id="0" equiv-text="${this._modelUsed}" /></source>
+  <target>Modell: <x id="0" equiv-text="${this._modelUsed}" /></target>
 </trans-unit>
 <trans-unit id="s2b631bf5b4abd6e1">
   <source>Event Title</source>
@@ -2479,12 +2479,12 @@
   <target>Verarbeitet</target>
 </trans-unit>
 <trans-unit id="s092f5d61ee596839">
-  <source>Volume: <x id="0" equiv-text="${t.volume}"/></source>
-  <target>Volumen: <x id="0" equiv-text="${t.volume}"/></target>
+  <source>Volume: <x id="0" equiv-text="${t.volume}" /></source>
+  <target>Volumen: <x id="0" equiv-text="${t.volume}" /></target>
 </trans-unit>
 <trans-unit id="sdf9fac68c991ff20">
-  <source>Relevance: <x id="0" equiv-text="${t.relevance_score}"/>/10</source>
-  <target>Relevanz: <x id="0" equiv-text="${t.relevance_score}"/>/10</target>
+  <source>Relevance: <x id="0" equiv-text="${t.relevance_score}" />/10</source>
+  <target>Relevanz: <x id="0" equiv-text="${t.relevance_score}" />/10</target>
 </trans-unit>
 <trans-unit id="sc1fff4f356dfb2fb">
   <source>Transform</source>
@@ -2555,12 +2555,12 @@
   <target>Reaktionen werden verarbeitet...</target>
 </trans-unit>
 <trans-unit id="s6d936d8dcc053ab0">
-  <source><x id="0" equiv-text="${response.data.length}"/> reactions generated</source>
-  <target><x id="0" equiv-text="${response.data.length}"/> Reaktionen generiert</target>
+  <source><x id="0" equiv-text="${response.data.length}" /> reactions generated</source>
+  <target><x id="0" equiv-text="${response.data.length}" /> Reaktionen generiert</target>
 </trans-unit>
 <trans-unit id="s7dcfa30133c26319">
-  <source><x id="0" equiv-text="${response.data.length}"/> agent reactions generated</source>
-  <target><x id="0" equiv-text="${response.data.length}"/> Agentenreaktionen generiert</target>
+  <source><x id="0" equiv-text="${response.data.length}" /> agent reactions generated</source>
+  <target><x id="0" equiv-text="${response.data.length}" /> Agentenreaktionen generiert</target>
 </trans-unit>
 <trans-unit id="sc02725662448fb75">
   <source>Reaction generation failed</source>
@@ -2595,8 +2595,8 @@
   <target>Reaktion löschen</target>
 </trans-unit>
 <trans-unit id="s7e3cbbae942c94dc">
-  <source>Delete reaction of <x id="0" equiv-text="${this.agent.name}"/> to "<x id="1" equiv-text="${eventTitle}"/>"?</source>
-  <target>Reaktion von <x id="0" equiv-text="${this.agent.name}"/> auf „<x id="1" equiv-text="${eventTitle}"/>" löschen?</target>
+  <source>Delete reaction of <x id="0" equiv-text="${this.agent.name}" /> to "<x id="1" equiv-text="${eventTitle}" />"?</source>
+  <target>Reaktion von <x id="0" equiv-text="${this.agent.name}" /> auf „<x id="1" equiv-text="${eventTitle}" />" löschen?</target>
 </trans-unit>
 <trans-unit id="s8fd49ef6054b1197">
   <source>Reaction deleted</source>
@@ -2607,8 +2607,8 @@
   <target>Reaktion konnte nicht gelöscht werden</target>
 </trans-unit>
 <trans-unit id="sef72ba000d7f7124">
-  <source><x id="0" equiv-text="${displayName}"/> is typing...</source>
-  <target><x id="0" equiv-text="${displayName}"/> tippt...</target>
+  <source><x id="0" equiv-text="${displayName}" /> is typing...</source>
+  <target><x id="0" equiv-text="${displayName}" /> tippt...</target>
 </trans-unit>
 <trans-unit id="s10361832e7a4e3e2">
   <source>Shift+Enter for line break</source>
@@ -2627,8 +2627,8 @@
   <target>Konversation löschen</target>
 </trans-unit>
 <trans-unit id="s7841bb6037c4563e">
-  <source>Are you sure you want to permanently delete the conversation with <x id="0" equiv-text="${agentName}"/>? All messages will be lost.</source>
-  <target>Möchtest du die Konversation mit <x id="0" equiv-text="${agentName}"/> wirklich endgültig löschen? Alle Nachrichten gehen verloren.</target>
+  <source>Are you sure you want to permanently delete the conversation with <x id="0" equiv-text="${agentName}" />? All messages will be lost.</source>
+  <target>Möchtest du die Konversation mit <x id="0" equiv-text="${agentName}" /> wirklich endgültig löschen? Alle Nachrichten gehen verloren.</target>
 </trans-unit>
 <trans-unit id="s40fc621a022dc51f">
   <source>Conversation deleted.</source>
@@ -2643,8 +2643,8 @@
   <target>Ein unerwarteter Fehler beim Löschen der Konversation.</target>
 </trans-unit>
 <trans-unit id="se407983ffa8cd99d">
-  <source>Selected (<x id="0" equiv-text="${selected.length}"/>)</source>
-  <target>Ausgewählt (<x id="0" equiv-text="${selected.length}"/>)</target>
+  <source>Selected (<x id="0" equiv-text="${selected.length}" />)</source>
+  <target>Ausgewählt (<x id="0" equiv-text="${selected.length}" />)</target>
 </trans-unit>
 <trans-unit id="sda972e1524e96cb2">
   <source>Add Agents</source>
@@ -2655,32 +2655,32 @@
   <target>Agenten auswählen</target>
 </trans-unit>
 <trans-unit id="s76402dc74efa459d">
-  <source>Add (<x id="0" equiv-text="${this._selectedIds.size}"/>)</source>
-  <target>Hinzufügen (<x id="0" equiv-text="${this._selectedIds.size}"/>)</target>
+  <source>Add (<x id="0" equiv-text="${this._selectedIds.size}" />)</source>
+  <target>Hinzufügen (<x id="0" equiv-text="${this._selectedIds.size}" />)</target>
 </trans-unit>
 <trans-unit id="s780d47c5d94eaca5">
-  <source>Start Conversation (<x id="0" equiv-text="${this._selectedIds.size}"/> Agents)</source>
-  <target>Gespräch starten (<x id="0" equiv-text="${this._selectedIds.size}"/> Agenten)</target>
+  <source>Start Conversation (<x id="0" equiv-text="${this._selectedIds.size}" /> Agents)</source>
+  <target>Gespräch starten (<x id="0" equiv-text="${this._selectedIds.size}" /> Agenten)</target>
 </trans-unit>
 <trans-unit id="s2e1246a8a0f9f582">
-  <source>Group: <x id="0" equiv-text="${names.slice(0, 3).join(', ')}${names.length &gt; 3 ? ` +${names.length - 3}` : ''}"/></source>
-  <target>Gruppe: <x id="0" equiv-text="${names.slice(0, 3).join(', ')}${names.length &gt; 3 ? ` +${names.length - 3}` : ''}"/></target>
+  <source>Group: <x id="0" equiv-text="${names.slice(0, 3).join(', ')}${names.length &gt; 3 ? ` +${names.length - 3}` : ''}" /></source>
+  <target>Gruppe: <x id="0" equiv-text="${names.slice(0, 3).join(', ')}${names.length &gt; 3 ? ` +${names.length - 3}` : ''}" /></target>
 </trans-unit>
 <trans-unit id="sce4b0b13cd896498">
-  <source>Group conversation started with <x id="0" equiv-text="${names.length}"/> agents.</source>
-  <target>Gruppengespräch mit <x id="0" equiv-text="${names.length}"/> Agenten gestartet.</target>
+  <source>Group conversation started with <x id="0" equiv-text="${names.length}" /> agents.</source>
+  <target>Gruppengespräch mit <x id="0" equiv-text="${names.length}" /> Agenten gestartet.</target>
 </trans-unit>
 <trans-unit id="s138591852cc6d90a">
-  <source>Failed to add <x id="0" equiv-text="${agent.name}"/>.</source>
-  <target>Fehler beim Hinzufügen von <x id="0" equiv-text="${agent.name}"/>.</target>
+  <source>Failed to add <x id="0" equiv-text="${agent.name}" />.</source>
+  <target>Fehler beim Hinzufügen von <x id="0" equiv-text="${agent.name}" />.</target>
 </trans-unit>
 <trans-unit id="s1feb2c0afcc4660c">
-  <source><x id="0" equiv-text="${agents.length}"/> agent(s) added.</source>
-  <target><x id="0" equiv-text="${agents.length}"/> Agent(en) hinzugefügt.</target>
+  <source><x id="0" equiv-text="${agents.length}" /> agent(s) added.</source>
+  <target><x id="0" equiv-text="${agents.length}" /> Agent(en) hinzugefügt.</target>
 </trans-unit>
 <trans-unit id="s4095b60011d6e4ae">
-  <source>Event "<x id="0" equiv-text="${event.title}"/>" referenced.</source>
-  <target>Event "<x id="0" equiv-text="${event.title}"/>" referenziert.</target>
+  <source>Event "<x id="0" equiv-text="${event.title}" />" referenced.</source>
+  <target>Event "<x id="0" equiv-text="${event.title}" />" referenziert.</target>
 </trans-unit>
 <trans-unit id="s588ec63806be19a6">
   <source>Failed to reference event.</source>
@@ -2695,12 +2695,12 @@
   <target>Event hinzufügen</target>
 </trans-unit>
 <trans-unit id="sabc6f5601ffed38c">
-  <source><x id="0" equiv-text="${agentCount}"/> agents are responding...</source>
-  <target><x id="0" equiv-text="${agentCount}"/> Agenten antworten...</target>
+  <source><x id="0" equiv-text="${agentCount}" /> agents are responding...</source>
+  <target><x id="0" equiv-text="${agentCount}" /> Agenten antworten...</target>
 </trans-unit>
 <trans-unit id="s61b59619104804be">
-  <source><x id="0" equiv-text="${agentCount}"/> agents · <x id="1" equiv-text="${this.conversation.message_count}"/> messages</source>
-  <target><x id="0" equiv-text="${agentCount}"/> Agenten · <x id="1" equiv-text="${this.conversation.message_count}"/> Nachrichten</target>
+  <source><x id="0" equiv-text="${agentCount}" /> agents · <x id="1" equiv-text="${this.conversation.message_count}" /> messages</source>
+  <target><x id="0" equiv-text="${agentCount}" /> Agenten · <x id="1" equiv-text="${this.conversation.message_count}" /> Nachrichten</target>
 </trans-unit>
 <trans-unit id="s2a9a0cbeb976d3f5">
   <source>Add Agent</source>
@@ -2779,8 +2779,8 @@
   <target>Keine Artikel gefunden</target>
 </trans-unit>
 <trans-unit id="s0f51454f932e2e46">
-  <source>Event created with <x id="0" equiv-text="${result.reactions_count}"/> agent reactions</source>
-  <target>Event erstellt mit <x id="0" equiv-text="${result.reactions_count}"/> Agenten-Reaktionen</target>
+  <source>Event created with <x id="0" equiv-text="${result.reactions_count}" /> agent reactions</source>
+  <target>Event erstellt mit <x id="0" equiv-text="${result.reactions_count}" /> Agenten-Reaktionen</target>
 </trans-unit>
 <trans-unit id="s6d90940f8abe4a87">
   <source>Generate agent reactions</source>
@@ -4544,11 +4544,11 @@ Es gibt keine Distanz mehr.
   <source>Arc Raiders</source>
 <target>Arc Raiders</target></trans-unit>
 <trans-unit id="s2ae949567899b630">
-  <source><x id="0" equiv-text="${this.relationshipCount}"/> connections</source>
-<target><x id="0" equiv-text="${this.relationshipCount}"/> Verbindungen</target></trans-unit>
+  <source><x id="0" equiv-text="${this.relationshipCount}" /> connections</source>
+<target><x id="0" equiv-text="${this.relationshipCount}" /> Verbindungen</target></trans-unit>
 <trans-unit id="s8b7fe0de5711e3b3">
-  <source>Delete relationship with <x id="0" equiv-text="${otherName}"/>?</source>
-<target>Beziehung zu <x id="0" equiv-text="${otherName}"/> löschen?</target></trans-unit>
+  <source>Delete relationship with <x id="0" equiv-text="${otherName}" />?</source>
+<target>Beziehung zu <x id="0" equiv-text="${otherName}" /> löschen?</target></trans-unit>
 <trans-unit id="sb09760df3317fa96">
   <source>Relationship deleted</source>
 <target>Beziehung gelöscht</target></trans-unit>
@@ -4613,11 +4613,11 @@ Es gibt keine Distanz mehr.
   <source>Describe the nature of this relationship...</source>
 <target>Beschreiben Sie die Art dieser Beziehung...</target></trans-unit>
 <trans-unit id="s4a9040f690f32f4b">
-  <source>Strength: <x id="0" equiv-text="${strengthPercent}"/>%</source>
-<target>Stärke: <x id="0" equiv-text="${strengthPercent}"/>%</target></trans-unit>
+  <source>Strength: <x id="0" equiv-text="${strengthPercent}" />%</source>
+<target>Stärke: <x id="0" equiv-text="${strengthPercent}" />%</target></trans-unit>
 <trans-unit id="s4735a3d8edbe6a6a">
-  <source>Depth <x id="0" equiv-text="${echo.echo_depth}"/>/3</source>
-<target>Tiefe <x id="0" equiv-text="${echo.echo_depth}"/>/3</target></trans-unit>
+  <source>Depth <x id="0" equiv-text="${echo.echo_depth}" />/3</source>
+<target>Tiefe <x id="0" equiv-text="${echo.echo_depth}" />/3</target></trans-unit>
 <trans-unit id="sed9fa982ea6c6f9a">
   <source>Target simulation is required</source>
 <target>Zielsimulation ist erforderlich</target></trans-unit>
@@ -4664,8 +4664,8 @@ Es gibt keine Distanz mehr.
   <source>-- Select Vector --</source>
 <target>-- Vektor auswählen --</target></trans-unit>
 <trans-unit id="s5ef81dc86d97e0d4">
-  <source>Strength Override (<x id="0" equiv-text="${strengthPercent}"/>%)</source>
-<target>Stärke überschreiben (<x id="0" equiv-text="${strengthPercent}"/>%)</target></trans-unit>
+  <source>Strength Override (<x id="0" equiv-text="${strengthPercent}" />%)</source>
+<target>Stärke überschreiben (<x id="0" equiv-text="${strengthPercent}" />%)</target></trans-unit>
 <trans-unit id="sf5e1db1a2e189b29">
   <source>Triggering...</source>
 <target>Auslösen...</target></trans-unit>
@@ -4679,11 +4679,11 @@ Es gibt keine Distanz mehr.
   <source>Bleed Origin</source>
 <target>Bleed-Ursprung</target></trans-unit>
 <trans-unit id="s792c6e5dfb1db352">
-  <source>Originated in <x id="0" equiv-text="${sourceName}${echoVector ? ` via ${echoVector}` : ''}"/></source>
-<target>Entstanden in <x id="0" equiv-text="${sourceName}${echoVector ? ` via ${echoVector}` : ''}"/></target></trans-unit>
+  <source>Originated in <x id="0" equiv-text="${sourceName}${echoVector ? ` via ${echoVector}` : ''}" /></source>
+<target>Entstanden in <x id="0" equiv-text="${sourceName}${echoVector ? ` via ${echoVector}` : ''}" /></target></trans-unit>
 <trans-unit id="sb0c67156cc5c5f81">
-  <source>Echoes (<x id="0" equiv-text="${this._echoes.length}"/>)</source>
-<target>Echos (<x id="0" equiv-text="${this._echoes.length}"/>)</target></trans-unit>
+  <source>Echoes (<x id="0" equiv-text="${this._echoes.length}" />)</source>
+<target>Echos (<x id="0" equiv-text="${this._echoes.length}" />)</target></trans-unit>
 <trans-unit id="saf512757f366bf25">
   <source>No echoes yet</source>
 <target>Noch keine Echos</target></trans-unit>
@@ -5252,14 +5252,14 @@ Es gibt keine Distanz mehr.
   <source>Duration</source>
 <target>Dauer</target></trans-unit>
 <trans-unit id="seae40374c70dff85">
-  <source>Foundation <x id="0" equiv-text="${foundationDays}"/>d · Competition <x id="1" equiv-text="${competitionDays}"/>d · Reckoning <x id="2" equiv-text="${reckoningDays}"/>d</source>
-<target>Gründung <x id="0" equiv-text="${foundationDays}"/>d · Wettbewerb <x id="1" equiv-text="${competitionDays}"/>d · Abrechnung <x id="2" equiv-text="${reckoningDays}"/>d</target></trans-unit>
+  <source>Foundation <x id="0" equiv-text="${foundationDays}" />d · Competition <x id="1" equiv-text="${competitionDays}" />d · Reckoning <x id="2" equiv-text="${reckoningDays}" />d</source>
+<target>Gründung <x id="0" equiv-text="${foundationDays}" />d · Wettbewerb <x id="1" equiv-text="${competitionDays}" />d · Abrechnung <x id="2" equiv-text="${reckoningDays}" />d</target></trans-unit>
 <trans-unit id="s2130cc649867ca4a">
   <source>Cycle Interval</source>
 <target>Zyklus-Intervall</target></trans-unit>
 <trans-unit id="s567a3193a6ad8025">
-  <source><x id="0" equiv-text="${cyclesPerDay}"/> cycles per day</source>
-<target><x id="0" equiv-text="${cyclesPerDay}"/> Zyklen pro Tag</target></trans-unit>
+  <source><x id="0" equiv-text="${cyclesPerDay}" /> cycles per day</source>
+<target><x id="0" equiv-text="${cyclesPerDay}" /> Zyklen pro Tag</target></trans-unit>
 <trans-unit id="s4d2d7498eb8ea64a">
   <source>RP per Cycle</source>
 <target>RP pro Zyklus</target></trans-unit>
@@ -5357,8 +5357,8 @@ Es gibt keine Distanz mehr.
             <target>Ziel</target>
 </trans-unit>
 <trans-unit id="s28c479d90d98669f">
-  <source>Operative deployed. Mission <x id="0" equiv-text="${(resp.data as OperativeMission).operative_type}"/> initiated.</source>
-            <target>Agent eingesetzt. Mission <x id="0" equiv-text="${(resp.data as OperativeMission).operative_type}"/> eingeleitet.</target>
+  <source>Operative deployed. Mission <x id="0" equiv-text="${(resp.data as OperativeMission).operative_type}" /> initiated.</source>
+            <target>Agent eingesetzt. Mission <x id="0" equiv-text="${(resp.data as OperativeMission).operative_type}" /> eingeleitet.</target>
 </trans-unit>
 <trans-unit id="s24b066f426d2451f">
   <source>Deployment failed.</source>
@@ -5379,10 +5379,6 @@ Es gibt keine Distanz mehr.
 <trans-unit id="s5dd26507cbc01743">
   <source>Mission Type</source>
             <target>Auftragstyp</target>
-</trans-unit>
-<trans-unit id="s95c4166fcefe3f32">
-  <source>Deploy via Embassy</source>
-            <target>Einsatz über Botschaft</target>
 </trans-unit>
 <trans-unit id="sd10ca21b3711769a">
   <source>-- Select embassy route --</source>
@@ -5436,10 +5432,6 @@ Es gibt keine Distanz mehr.
   <source>Base probability</source>
             <target>Basis-Wahrscheinlichkeit</target>
 </trans-unit>
-<trans-unit id="s077f3823e08ad557">
-  <source>Agent qualification</source>
-            <target>Agentenqualifikation</target>
-</trans-unit>
 <trans-unit id="s1230fc50d04322bb">
   <source>Zone security</source>
             <target>Zonensicherheit</target>
@@ -5468,8 +5460,8 @@ Es gibt keine Distanz mehr.
   <source>Recall</source>
 <target>Zurückrufen</target></trans-unit>
 <trans-unit id="sc7917496fcdac3c1">
-  <source>Join as <x id="0" equiv-text="${sim.name}"/></source>
-<target>Beitreten als <x id="0" equiv-text="${sim.name}"/></target></trans-unit>
+  <source>Join as <x id="0" equiv-text="${sim.name}" /></source>
+<target>Beitreten als <x id="0" equiv-text="${sim.name}" /></target></trans-unit>
 <trans-unit id="s05f002f9b4d51185">
   <source>Leave Epoch</source>
 <target>Epoche verlassen</target></trans-unit>
@@ -5480,8 +5472,8 @@ Es gibt keine Distanz mehr.
   <source>Admin Controls</source>
 <target>Admin-Kontrollen</target></trans-unit>
 <trans-unit id="s37126756ae8cd2b8">
-  <source>Advance to <x id="0" equiv-text="${nextPhase}"/></source>
-<target>Vorrücken zu <x id="0" equiv-text="${nextPhase}"/></target></trans-unit>
+  <source>Advance to <x id="0" equiv-text="${nextPhase}" /></source>
+<target>Vorrücken zu <x id="0" equiv-text="${nextPhase}" /></target></trans-unit>
 <trans-unit id="s4a7e72a40252ae9d">
   <source>Resolve Cycle</source>
 <target>Zyklus auflösen</target></trans-unit>
@@ -5489,8 +5481,8 @@ Es gibt keine Distanz mehr.
   <source>Cancel Epoch</source>
 <target>Epoche abbrechen</target></trans-unit>
 <trans-unit id="s3f1c5eba029d4e0b">
-  <source>Sweep complete: <x id="0" equiv-text="${detected.length}"/> threats detected</source>
-<target>Sweep abgeschlossen: <x id="0" equiv-text="${detected.length}"/> Bedrohungen erkannt</target></trans-unit>
+  <source>Sweep complete: <x id="0" equiv-text="${detected.length}" /> threats detected</source>
+<target>Sweep abgeschlossen: <x id="0" equiv-text="${detected.length}" /> Bedrohungen erkannt</target></trans-unit>
 <trans-unit id="s6b0bbc26e964a513">
   <source>Counter-intel sweep failed.</source>
 <target>Gegenspionage-Sweep fehlgeschlagen.</target></trans-unit>
@@ -5579,8 +5571,8 @@ Es gibt keine Distanz mehr.
   <source>Cycles</source>
 <target>Zyklen</target></trans-unit>
 <trans-unit id="s9a8758a0c98cfb49">
-  <source><x id="0" equiv-text="${this._suggestions.length}"/> suggestions generated</source>
-<target><x id="0" equiv-text="${this._suggestions.length}"/> Vorschläge generiert</target></trans-unit>
+  <source><x id="0" equiv-text="${this._suggestions.length}" /> suggestions generated</source>
+<target><x id="0" equiv-text="${this._suggestions.length}" /> Vorschläge generiert</target></trans-unit>
 <trans-unit id="sea8f4c8095b57166">
   <source>No suggestions generated</source>
 <target>Keine Vorschläge generiert</target></trans-unit>
@@ -5588,8 +5580,8 @@ Es gibt keine Distanz mehr.
   <source>Generation failed</source>
 <target>Generierung fehlgeschlagen</target></trans-unit>
 <trans-unit id="sc2a2ef3edfd49261">
-  <source><x id="0" equiv-text="${saved}"/> relationships saved</source>
-<target><x id="0" equiv-text="${saved}"/> Beziehungen gespeichert</target></trans-unit>
+  <source><x id="0" equiv-text="${saved}" /> relationships saved</source>
+<target><x id="0" equiv-text="${saved}" /> Beziehungen gespeichert</target></trans-unit>
 <trans-unit id="s2dc335265b16339d">
   <source>Failed to save relationships</source>
 <target>Beziehungen konnten nicht gespeichert werden</target></trans-unit>
@@ -5660,11 +5652,11 @@ Es gibt keine Distanz mehr.
   <source>Instant</source>
 <target>Sofort</target></trans-unit>
 <trans-unit id="s8959726a6f1a181b">
-  <source><x id="0" equiv-text="${op.deployCycles}"/> cycle</source>
-<target><x id="0" equiv-text="${op.deployCycles}"/> Zyklus</target></trans-unit>
+  <source><x id="0" equiv-text="${op.deployCycles}" /> cycle</source>
+<target><x id="0" equiv-text="${op.deployCycles}" /> Zyklus</target></trans-unit>
 <trans-unit id="s7d15d2dac95778b8">
-  <source><x id="0" equiv-text="${op.missionCycles}"/> cycles</source>
-<target><x id="0" equiv-text="${op.missionCycles}"/> Zyklen</target></trans-unit>
+  <source><x id="0" equiv-text="${op.missionCycles}" /> cycles</source>
+<target><x id="0" equiv-text="${op.missionCycles}" /> Zyklen</target></trans-unit>
 <trans-unit id="sf0b1ea194defb1c3">
   <source>Scores are computed across 5 dimensions, normalized against other participants, then weighted by the epoch preset to produce a composite score. Highest composite wins.</source>
 <target>Die Punkte werden in 5 Dimensionen berechnet, im Vergleich zu den anderen Teilnehmern normalisiert und dann mit der Epochenvorgabe gewichtet, um eine zusammengesetzte Punktzahl zu erhalten. Die höchste zusammengesetzte Punktzahl gewinnt.</target></trans-unit>
@@ -5678,8 +5670,8 @@ Es gibt keine Distanz mehr.
   <source>Alliance Bonus</source>
 <target>Allianz-Bonus</target></trans-unit>
 <trans-unit id="s087d1c07b52aa3e3">
-  <source><x id="0" equiv-text="${match.players.length}"/>P</source>
-<target><x id="0" equiv-text="${match.players.length}"/>P</target></trans-unit>
+  <source><x id="0" equiv-text="${match.players.length}" />P</source>
+<target><x id="0" equiv-text="${match.players.length}" />P</target></trans-unit>
 <trans-unit id="s3f0abb6b668a1747">
   <source>Special Rules</source>
 <target>Besondere Regeln</target></trans-unit>
@@ -5947,9 +5939,6 @@ Es gibt keine Distanz mehr.
 <trans-unit id="se1dec2c72bcbb693">
   <source>Lobby</source>
 <target>Lobby</target></trans-unit>
-<trans-unit id="s7d646833f0a6909d">
-  <source>Simulations join and teams form. No operations allowed.</source>
-<target>Simulationen treten zusammen und Teams bilden sich. Keine Operationen erlaubt.</target></trans-unit>
 <trans-unit id="s4805f66a0398ef8f">
   <source>+50% RP generation. Only guardians can deploy. Build your defenses.</source>
 <target>+50% RP-Generierung. Nur Wächter können eingesetzt werden. Bauen Sie Ihre Verteidigung auf.</target></trans-unit>
@@ -6385,8 +6374,8 @@ Es gibt keine Distanz mehr.
           <target>Authentifizieren</target>
 </trans-unit>
 <trans-unit id="sf36d476b4ff68301">
-  <source>Summons dispatched to <x id="0" equiv-text="${this._email}"/></source>
-          <target>Einberufung gesendet an <x id="0" equiv-text="${this._email}"/></target>
+  <source>Summons dispatched to <x id="0" equiv-text="${this._email}" /></source>
+          <target>Einberufung gesendet an <x id="0" equiv-text="${this._email}" /></target>
 </trans-unit>
 <trans-unit id="sade3c823832adef6">
   <source>Failed to send invitation.</source>
@@ -7054,29 +7043,26 @@ Es gibt keine Distanz mehr.
   <source>HTTP Cache-Control max-age for the public connections endpoint.</source>
 <target>HTTP Cache-Control max-age für den öffentlichen Verbindungen-Endpunkt.</target></trans-unit>
 <trans-unit id="s9db7104817361c0e">
-  <source>Invalid value for <x id="0" equiv-text="${s.setting_key}"/>.</source>
-<target>Ungültiger Wert für <x id="0" equiv-text="${s.setting_key}"/>.</target></trans-unit>
+  <source>Invalid value for <x id="0" equiv-text="${s.setting_key}" />.</source>
+<target>Ungültiger Wert für <x id="0" equiv-text="${s.setting_key}" />.</target></trans-unit>
 <trans-unit id="sf023069cdf630239">
   <source>Save failed.</source>
 <target>Speichern fehlgeschlagen.</target></trans-unit>
 <trans-unit id="s98271ceaf8dc97b9">
-  <source><x id="0" equiv-text="${errorCount}"/> settings failed to save.</source>
-<target><x id="0" equiv-text="${errorCount}"/> Einstellungen konnten nicht gespeichert werden.</target></trans-unit>
+  <source><x id="0" equiv-text="${errorCount}" /> settings failed to save.</source>
+<target><x id="0" equiv-text="${errorCount}" /> Einstellungen konnten nicht gespeichert werden.</target></trans-unit>
 <trans-unit id="s1c171f24624e11de">
   <source>Loading settings...</source>
 <target>Einstellungen werden geladen...</target></trans-unit>
 <trans-unit id="sf21761e7f8e0550e">
-  <source>Default: <x id="0" equiv-text="${defaultVal}"/></source>
-<target>Standard: <x id="0" equiv-text="${defaultVal}"/></target></trans-unit>
+  <source>Default: <x id="0" equiv-text="${defaultVal}" /></source>
+<target>Standard: <x id="0" equiv-text="${defaultVal}" /></target></trans-unit>
 <trans-unit id="s76c11f3845111b1d">
   <source>Reset to Defaults</source>
 <target>Auf Standardwerte zurücksetzen</target></trans-unit>
 <trans-unit id="sa73989a664309975">
   <source>Platform Admin</source>
 <target>Plattform-Administration</target></trans-unit>
-<trans-unit id="s17a3347a4ec04f86">
-  <source>Manage users, memberships, and platform settings.</source>
-<target>Benutzer, Mitgliedschaften und Plattform-Einstellungen verwalten.</target></trans-unit>
 <trans-unit id="s586d6bd2eca2da93">
   <source>Users</source>
 <target>Benutzer</target></trans-unit>
@@ -7114,8 +7100,8 @@ Es gibt keine Distanz mehr.
   <source>Search users by email...</source>
 <target>Benutzer nach E-Mail suchen...</target></trans-unit>
 <trans-unit id="s279b9e6f821888b9">
-  <source><x id="0" equiv-text="${users.length}"/> users</source>
-<target><x id="0" equiv-text="${users.length}"/> Benutzer</target></trans-unit>
+  <source><x id="0" equiv-text="${users.length}" /> users</source>
+<target><x id="0" equiv-text="${users.length}" /> Benutzer</target></trans-unit>
 <trans-unit id="sf91abb3323905dc0">
   <source>No users found.</source>
 <target>Keine Benutzer gefunden.</target></trans-unit>
@@ -7123,8 +7109,8 @@ Es gibt keine Distanz mehr.
   <source>Previous</source>
 <target>Zurück</target></trans-unit>
 <trans-unit id="sc2b31c8d71636c74">
-  <source>Page <x id="0" equiv-text="${this._page}"/></source>
-<target>Seite <x id="0" equiv-text="${this._page}"/></target></trans-unit>
+  <source>Page <x id="0" equiv-text="${this._page}" /></source>
+<target>Seite <x id="0" equiv-text="${this._page}" /></target></trans-unit>
 <trans-unit id="sded98bf152dbfab1">
   <source>Delete User</source>
 <target>Benutzer löschen</target></trans-unit>
@@ -7135,8 +7121,8 @@ Es gibt keine Distanz mehr.
   <source>Never</source>
 <target>Nie</target></trans-unit>
 <trans-unit id="s14dc9e6060d8add3">
-  <source>Last sign in: <x id="0" equiv-text="${lastSign}"/></source>
-<target>Letzte Anmeldung: <x id="0" equiv-text="${lastSign}"/></target></trans-unit>
+  <source>Last sign in: <x id="0" equiv-text="${lastSign}" /></source>
+<target>Letzte Anmeldung: <x id="0" equiv-text="${lastSign}" /></target></trans-unit>
 <trans-unit id="s7e466b2f459f80a7">
   <source>No memberships.</source>
 <target>Keine Mitgliedschaften.</target></trans-unit>
@@ -7523,8 +7509,8 @@ Es gibt keine Distanz mehr.
   <source>View source on GitHub</source>
 <target>Quellcode auf GitHub ansehen</target></trans-unit>
 <trans-unit id="s92b3a297a0e16e07">
-  <source>Lvl <x id="0" equiv-text="${p.qualification_level}"/></source>
-<target>Stufe <x id="0" equiv-text="${p.qualification_level}"/></target>
+  <source>Lvl <x id="0" equiv-text="${p.qualification_level}" /></source>
+<target>Stufe <x id="0" equiv-text="${p.qualification_level}" /></target>
 </trans-unit>
 <trans-unit id="s20baecbbf1953c2e">
   <source>Defensive specialist. Deploys guardians and spies. Seeks alliances early, never betrays. Wins by outlasting.</source>
@@ -7542,8 +7528,8 @@ Es gibt keine Distanz mehr.
   <source>Unpredictable wildcard. Random strategies each cycle. Forms and breaks alliances on a whim.</source>
 <target>Unberechenbarer Joker. Zufällige Strategien pro Zyklus. Schließt und bricht Allianzen nach Laune.</target></trans-unit>
 <trans-unit id="s1e13e26fd436c05c">
-  <source>Unit "<x id="0" equiv-text="${created.name}"/>" forged.</source>
-<target>Einheit „<x id="0" equiv-text="${created.name}"/>“ geschmiedet.</target>
+  <source>Unit "<x id="0" equiv-text="${created.name}" />" forged.</source>
+<target>Einheit „<x id="0" equiv-text="${created.name}" />“ geschmiedet.</target>
 </trans-unit>
 <trans-unit id="s7a8a577a24e77100">
   <source>Failed to create bot.</source>
@@ -7552,8 +7538,8 @@ Es gibt keine Distanz mehr.
   <source>Bot removed from deck.</source>
 <target>Bot aus dem Deck entfernt.</target></trans-unit>
 <trans-unit id="s30c1f52c02507415">
-  <source><x id="0" equiv-text="${preset.name}"/> deployed.</source>
-<target><x id="0" equiv-text="${preset.name}"/> eingesetzt.</target>
+  <source><x id="0" equiv-text="${preset.name}" /> deployed.</source>
+<target><x id="0" equiv-text="${preset.name}" /> eingesetzt.</target>
 </trans-unit>
 <trans-unit id="s2efb15f5e22f958d">
   <source>Failed to deploy bot.</source>
@@ -7613,8 +7599,8 @@ Es gibt keine Distanz mehr.
   <source>Assign Simulation</source>
 <target>Simulation zuweisen</target></trans-unit>
 <trans-unit id="s8aa134cdee0317ac">
-  <source>Deploy <x id="0" equiv-text="${preset.name}"/></source>
-<target><x id="0" equiv-text="${preset.name}"/> einsetzen</target>
+  <source>Deploy <x id="0" equiv-text="${preset.name}" /></source>
+<target><x id="0" equiv-text="${preset.name}" /> einsetzen</target>
 </trans-unit>
 <trans-unit id="s2a24b018d7e50427">
   <source>All simulations are already in the epoch.</source>
@@ -7635,8 +7621,8 @@ Es gibt keine Distanz mehr.
   <source>BOT</source>
 <target>BOT</target></trans-unit>
 <trans-unit id="s5362f1ecc6a1354b">
-  <source>Remove tag <x id="0" equiv-text="${tag}"/></source>
-<target>Tag <x id="0" equiv-text="${tag}"/> entfernen</target>
+  <source>Remove tag <x id="0" equiv-text="${tag}" /></source>
+<target>Tag <x id="0" equiv-text="${tag}" /> entfernen</target>
 </trans-unit>
 <trans-unit id="s6921dc2c70d691c8">
   <source>Simulation navigation</source>
@@ -9557,6 +9543,624 @@ Fünf Welten. Eine Fraktur. Die Karte liegt offen. Welche Welt betreten Sie zuer
   <source>Zones</source>
   <target>Zonen</target>
 </trans-unit>
+<trans-unit id="s4a358cbf90acc2db">
+  <source>Aptitudes saved</source>
+<target>Eignungen gespeichert</target></trans-unit>
+<trans-unit id="s1afdaa0c94721db1">
+  <source>Failed to save aptitudes</source>
+<target>Eignungen konnten nicht gespeichert werden</target></trans-unit>
+<trans-unit id="s4e42e6cc22e62f76">
+  <source>Loading aptitudes...</source>
+<target>Eignungen werden geladen...</target></trans-unit>
+<trans-unit id="s1f553a6fe5b3946f">
+  <source>No aptitudes configured.</source>
+<target>Keine Eignungen konfiguriert.</target></trans-unit>
+<trans-unit id="s3f4a4439190d6b80">
+  <source>Aptitudes</source>
+<target>Eignungen</target></trans-unit>
+<trans-unit id="scfa6e8a623a17335">
+  <source>Lineup Overview</source>
+<target>Aufstellungsübersicht</target></trans-unit>
+<trans-unit id="sf2a69a199c808e4c">
+  <source>Fit</source>
+<target>Eignung</target></trans-unit>
+<trans-unit id="se5aa55f5c944cfc5">
+  <source>Agents Drafted</source>
+<target>Agenten aufgestellt</target></trans-unit>
+<trans-unit id="sf718f688ae47658b">
+  <source>Available Roster</source>
+<target>Verfügbarer Kader</target></trans-unit>
+<trans-unit id="sa0b24fa796b43e67">
+  <source>Best</source>
+<target>Beste</target></trans-unit>
+<trans-unit id="sed666242a9291de5">
+  <source>Deployment Lineup</source>
+<target>Einsatzaufstellung</target></trans-unit>
+<trans-unit id="sf22445b813ef0767">
+  <source>Slot <x id="0" equiv-text="${i + 1}" /></source>
+<target>Platz <x id="0" equiv-text="${i + 1}" /></target></trans-unit>
+<trans-unit id="s2fa05f91c1baa29b">
+  <source>Remove <x id="0" equiv-text="${agent.name}" /></source>
+<target>Entfernen: <x id="0" equiv-text="${agent.name}" /></target></trans-unit>
+<trans-unit id="s592d3177bd1108ca">
+  <source>Strongest</source>
+<target>Stärkste</target></trans-unit>
+<trans-unit id="sbdcb7d1bc6c844f3">
+  <source>Weakest</source>
+<target>Schwächste</target></trans-unit>
+<trans-unit id="s2e9d487db1169161">
+  <source>Avg Total</source>
+<target>Ø Gesamt</target></trans-unit>
+<trans-unit id="s50e6fd0edf644228">
+  <source>Lock In Roster</source>
+<target>Kader festlegen</target></trans-unit>
+<trans-unit id="sbfeab663b91b2a7f">
+  <source>Failed to load agents for draft.</source>
+<target>Agenten für die Aufstellung konnten nicht geladen werden.</target></trans-unit>
+<trans-unit id="sbf821d685243d77b">
+  <source>Roster locked in.</source>
+<target>Kader festgelegt.</target></trans-unit>
+<trans-unit id="s7fa7f46de7853849">
+  <source>Failed to save draft.</source>
+<target>Aufstellung konnte nicht gespeichert werden.</target></trans-unit>
+<trans-unit id="s339a64e8e8af273f">
+  <source>Max Agents per Player</source>
+<target>Max. Agenten pro Spieler</target></trans-unit>
+<trans-unit id="sfd8b9578246af6d7">
+  <source>How many agents each player drafts into the match. Players with more agents in their simulation can choose their best lineup.</source>
+<target>Wie viele Agenten jeder Spieler für das Match aufstellt. Spieler mit mehr Agenten in ihrer Simulation können die beste Aufstellung wählen.</target></trans-unit>
+<trans-unit id="s5f5885990ee7818e">
+  <source>Roster Locked (<x id="0" equiv-text="${this.myParticipant.drafted_agent_ids?.length ?? 0}" />/<x id="1" equiv-text="${this.epoch?.config?.max_agents_per_player ?? 6}" />)</source>
+<target>Kader festgelegt (<x id="0" equiv-text="${this.myParticipant.drafted_agent_ids?.length ?? 0}" />/<x id="1" equiv-text="${this.epoch?.config?.max_agents_per_player ?? 6}" />)</target></trans-unit>
+<trans-unit id="s6bb1380c4b3cdcbf">
+  <source>Draft Roster</source>
+<target>Kader aufstellen</target></trans-unit>
+<trans-unit id="s9869b619faba503d">
+  <source>Spy</source>
+<target>Spion</target></trans-unit>
+<trans-unit id="sa9454d7c3fca37ee">
+  <source>Saboteur</source>
+<target>Saboteur</target></trans-unit>
+<trans-unit id="s79d88ea8dc925fc3">
+  <source>Propagandist</source>
+<target>Propagandist</target></trans-unit>
+<trans-unit id="sfad41766739972c3">
+  <source>Infiltrator</source>
+<target>Infiltrator</target></trans-unit>
+<trans-unit id="sc00337a27e3585c4">
+  <source>Assassin</source>
+<target>Attentäter</target></trans-unit>
+<trans-unit id="s8ed838100e84da13">
+  <source>aptitude</source>
+<target>Eignung</target></trans-unit>
+<trans-unit id="s661db6f3d2081e88">
+  <source>Budget</source>
+<target>Budget</target></trans-unit>
+<trans-unit id="s343f0419454a4243">
+  <source>remaining</source>
+<target>übrig</target></trans-unit>
+<trans-unit id="s370aeafdaa238590">
+  <source>Simulations join, players draft their agent roster, and teams form. No operations allowed.</source>
+<target>Simulationen treten bei, Spieler stellen ihren Agentenroster zusammen, Teams formieren sich. Keine Operationen erlaubt.</target></trans-unit>
+<trans-unit id="sd34f4a7e97f6067f">
+  <source>Agent Aptitudes &amp; Draft Phase</source>
+<target>Agenten-Eignung &amp; Draft-Phase</target></trans-unit>
+<trans-unit id="sc3624546f8a76b49">
+  <source>Agent aptitudes: per-operative-type skill scores (3–9, budget 36)</source>
+<target>Agenten-Eignung: Fähigkeitswerte pro Operativstyp (3–9, Budget 36)</target></trans-unit>
+<trans-unit id="sa23492eb2eef4301">
+  <source>Draft phase: select your roster before the epoch starts</source>
+<target>Draft-Phase: Wähle deinen Roster vor Epochen-Start</target></trans-unit>
+<trans-unit id="s73adb217e1e9d045">
+  <source>Success formula: qualification × 0.05 → aptitude × 0.03</source>
+<target>Erfolgsformel: Qualifikation × 0,05 → Eignung × 0,03</target></trans-unit>
+<trans-unit id="se60d115dedfc7ffc">
+  <source>Lineup overview and fit indicators in deploy modal</source>
+<target>Kaderübersicht und Eignungsanzeigen im Einsatz-Dialog</target></trans-unit>
+<trans-unit id="s20261a2a2e5e0695">
+  <source>Agent Aptitudes</source>
+<target>Agenten-Eignung</target></trans-unit>
+<trans-unit id="s9e1aca450e3f34cd">
+  <source>Each agent has 6 aptitude scores: spy, guardian, saboteur, propagandist, infiltrator, assassin</source>
+<target>Jeder Agent hat 6 Eignungswerte: Spion, Wächter, Saboteur, Propagandist, Infiltrator, Assassine</target></trans-unit>
+<trans-unit id="s97aba4b9b82a85f4">
+  <source>Scores range from 3 (poor) to 9 (best), budget of 36 points per agent</source>
+<target>Werte reichen von 3 (schlecht) bis 9 (best), Budget von 36 Punkten pro Agent</target></trans-unit>
+<trans-unit id="s3008f4353554ffdb">
+  <source>Set in the simulation template via AgentDetailsPanel</source>
+<target>Im Simulationstemplate über das AgentDetailsPanel einstellbar</target></trans-unit>
+<trans-unit id="scea0e3567d8f08ea">
+  <source>Aptitude replaces uniform qualification in the success formula</source>
+<target>Eignung ersetzt die einheitliche Qualifikation in der Erfolgsformel</target></trans-unit>
+<trans-unit id="s7cface4c90dacc5f">
+  <source>Aptitude 3 = +9%, aptitude 6 = +18%, aptitude 9 = +27% (18pp swing)</source>
+<target>Eignung 3 = +9%, Eignung 6 = +18%, Eignung 9 = +27% (18pp Schwankung)</target></trans-unit>
+<trans-unit id="sa719610c7f82971b">
+  <source>Draft Phase</source>
+<target>Draft-Phase</target></trans-unit>
+<trans-unit id="scf8a6b3153c43332">
+  <source>After joining an epoch, players draft their agent roster</source>
+<target>Nach dem Beitritt wählen Spieler ihren Agentenroster</target></trans-unit>
+<trans-unit id="s0c5bf4c383c60b58">
+  <source>Select up to N agents from your template (N = max_agents_per_player, default 6)</source>
+<target>Wähle bis zu N Agenten aus deinem Template (N = max_agents_per_player, Standard 6)</target></trans-unit>
+<trans-unit id="s7ecb3bd0faf94ae5">
+  <source>Full-screen draft overlay with aptitude bars and team stats</source>
+<target>Vollbild-Draft-Overlay mit Eignungsbalken und Teamstatistiken</target></trans-unit>
+<trans-unit id="s9b410807f438ad8d">
+  <source>All human players must lock in before the epoch can start</source>
+<target>Alle menschlichen Spieler müssen bestätigen, bevor die Epoche starten kann</target></trans-unit>
+<trans-unit id="s92611dd118f5680b">
+  <source>Bots auto-draft based on their personality archetype</source>
+<target>Bots wählen automatisch basierend auf ihrem Persönlichkeitsarchetyp</target></trans-unit>
+<trans-unit id="s531d735eee90d273">
+  <source>Deploy Modal</source>
+<target>Einsatz-Dialog</target></trans-unit>
+<trans-unit id="s1802c9bfcd9450c6">
+  <source>Agent dropdown sorted by aptitude for selected operative type</source>
+<target>Agenten-Dropdown nach Eignung für gewählten Operativstyp sortiert</target></trans-unit>
+<trans-unit id="s723d72a6c88b1cba">
+  <source>Fit indicator: Good (≥7), Fair (≥5), Poor (&lt;5)</source>
+<target>Eignungsanzeige: Gut (≥7), Mittel (≥5), Schlecht (&lt;5)</target></trans-unit>
+<trans-unit id="s4b74babfe1087e86">
+  <source>Aptitude bars with operative-type highlight in agent dossier</source>
+<target>Eignungsbalken mit Operativstyp-Hervorhebung im Agenten-Dossier</target></trans-unit>
+<trans-unit id="sf7dabcf9170856ae">
+  <source>There was something before the Shards, and it was whole, and it is gone.</source>
+<target>Es gab etwas vor den Scherben, und es war ganz, und es ist fort.</target></trans-unit>
+<trans-unit id="s673b851b08042a74">
+  <source>You cannot pour the wine back into the grape.</source>
+<target>Man kann den Wein nicht zurück in die Traube gießen.</target></trans-unit>
+<trans-unit id="se1740873005cec03">
+  <source>The propaganda posters are beautiful. I want to be clear about this.</source>
+<target>Die Propagandaplakate sind wunderschön. Ich möchte das unmissverständlich festhalten.</target></trans-unit>
+<trans-unit id="sd55203f85c4e9050">
+  <source>— Field Report, Velgarien</source>
+<target>— Feldbericht, Velgarien</target></trans-unit>
+<trans-unit id="s44eef7e525d70d18">
+  <source>Crew complement: 6 of 200. All systems nominal.</source>
+<target>Besatzungsstärke: 6 von 200. Alle Systeme im Normbereich.</target></trans-unit>
+<trans-unit id="sa12f5313b6aa57e9">
+  <source>It knows. It knows it knows. It knows it knows it knows.</source>
+<target>Es weiß. Es weiß, dass es weiß. Es weiß, dass es weiß, dass es weiß.</target></trans-unit>
+<trans-unit id="s271d06abce0210e1">
+  <source>— Field Report, Speranza</source>
+<target>— Feldbericht, Speranza</target></trans-unit>
+<trans-unit id="s350b201769853278">
+  <source>You cannot unread a book.</source>
+<target>Man kann ein Buch nicht ungelesen machen.</target></trans-unit>
+<trans-unit id="s40c785d553881e9c">
+  <source>The Fracture was not a catastrophe. It was a vote.</source>
+<target>Die Fraktur war keine Katastrophe. Sie war eine Abstimmung.</target></trans-unit>
+<trans-unit id="s1e8b0f23f9bd0481">
+  <source>You are performing an act of Cartography.</source>
+<target>Sie vollziehen einen Akt der Kartographie.</target></trans-unit>
+<trans-unit id="s502c29322bdc4fd6">
+  <source>Scroll to top</source>
+<target>Nach oben scrollen</target></trans-unit>
+<trans-unit id="se7a9aafed2d1ce88">
+  <source>Scroll to bottom</source>
+<target>Nach unten scrollen</target></trans-unit>
+<trans-unit id="sd600892f7fabe04c">
+  <source>Draft</source>
+<target>Entwurf</target></trans-unit>
+<trans-unit id="s1a9cc86e1c2198bf">
+  <source>A complete epoch walkthrough from creation to final standings. Follow along to see every phase, decision point, and outcome in a real 2-player match: Velgarien (human) vs. The Gaslit Reach (Strategist bot).</source>
+<target>Ein vollständiger Epochen-Durchlauf von der Erstellung bis zu den Endwertungen. Verfolgen Sie jede Phase, Entscheidung und jedes Ergebnis in einem echten 2-Spieler-Match: Velgarien (Mensch) vs. The Gaslit Reach (Stratege-Bot).</target></trans-unit>
+<trans-unit id="s2ae54ab3577de729">
+  <source>Tactical Tip</source>
+<target>Taktischer Hinweis</target></trans-unit>
+<trans-unit id="s34be76c6b1eadbef">
+  <source>Warning</source>
+<target>Warnung</target></trans-unit>
+<trans-unit id="s3e49c84f9f5c938f">
+  <source>Create the Epoch</source>
+<target>Epoche erstellen</target></trans-unit>
+<trans-unit id="scc01775cfcbadb04">
+  <source>From the Epoch Command Center, create a new epoch. Name it, choose a scoring preset (Balanced works for learning), and set the cycle interval. The wizard walks you through Economy, Doctrine, and Confirmation.</source>
+<target>Erstellen Sie im Epochen-Kommandozentrum eine neue Epoche. Benennen Sie sie, wählen Sie ein Wertungsprofil (Ausgewogen eignet sich zum Lernen) und legen Sie das Zyklusintervall fest. Der Assistent führt Sie durch Wirtschaft, Doktrin und Bestätigung.</target></trans-unit>
+<trans-unit id="s9f96ddcf96b41ee5">
+  <source>Operation Nightfall</source>
+<target>Operation Nightfall</target></trans-unit>
+<trans-unit id="sc9d50a26117c6a2c">
+  <source>RP / Cycle</source>
+<target>RP / Zyklus</target></trans-unit>
+<trans-unit id="s024a6c121c8a4325">
+  <source>The Balanced preset (25/20/20/15/20) rewards well-rounded play. Start here before experimenting with Builder, Warmonger, or Diplomat presets.</source>
+<target>Das Profil Ausgewogen (25/20/20/15/20) belohnt vielseitiges Spiel. Beginnen Sie hier, bevor Sie mit Erbauer-, Kriegstreiber- oder Diplomatenprofilen experimentieren.</target></trans-unit>
+<trans-unit id="s54773f93afcb8090">
+  <source>Join &amp; Invite</source>
+<target>Beitreten &amp; Einladen</target></trans-unit>
+<trans-unit id="s137a615348a2eafe">
+  <source>Join the epoch with your simulation. Invite opponents via email or add AI bots from the Bot Deployment Console. Each bot has a personality archetype (Sentinel, Warlord, Diplomat, Strategist, Chaos) that shapes its strategy.</source>
+<target>Treten Sie der Epoche mit Ihrer Simulation bei. Laden Sie Gegner per E-Mail ein oder fügen Sie KI-Bots über die Bot-Einsatzkonsole hinzu. Jeder Bot hat einen Persönlichkeitsarchetyp (Wächter, Kriegsherr, Diplomat, Stratege, Chaos), der seine Strategie prägt.</target></trans-unit>
+<trans-unit id="s3817fd31d1f7a5c3">
+  <source>Player 1</source>
+<target>Spieler 1</target></trans-unit>
+<trans-unit id="s908d66f8ea661722">
+  <source>Velgarien (Human)</source>
+<target>Velgarien (Mensch)</target></trans-unit>
+<trans-unit id="s3817fe31d1f7a776">
+  <source>Player 2</source>
+<target>Spieler 2</target></trans-unit>
+<trans-unit id="s4b1b0a02410a57e9">
+  <source>The Gaslit Reach (Strategist Bot)</source>
+<target>The Gaslit Reach (Stratege-Bot)</target></trans-unit>
+<trans-unit id="sec95d120bc1b5b5a">
+  <source>Draft Your Roster</source>
+<target>Kader zusammenstellen</target></trans-unit>
+<trans-unit id="s744af0800424053e">
+  <source>Before the epoch starts, draft your agent lineup. The full-screen draft overlay shows all your template agents with their aptitude profiles. Pick specialists who match the operative types you plan to deploy.</source>
+<target>Stellen Sie vor Epochenbeginn Ihren Agentenkader zusammen. Das Vollbild-Entwurfs-Overlay zeigt alle Ihre Vorlagen-Agenten mit ihren Eignungsprofilen. Wählen Sie Spezialisten, die zu den Operativtypen passen, die Sie einsetzen möchten.</target></trans-unit>
+<trans-unit id="s44be56ff9d8d380d">
+  <source>Each agent has 6 aptitude scores (3–9) totaling 36 points. A spy aptitude of 9 gives +27% success, while 3 gives only +9%. Choose wisely — the wrong agent on the wrong mission costs you 18 percentage points.</source>
+<target>Jeder Agent hat 6 Eignungswerte (3–9) mit insgesamt 36 Punkten. Eine Spionage-Eignung von 9 gibt +27% Erfolg, während 3 nur +9% gibt. Wählen Sie weise — der falsche Agent bei der falschen Mission kostet Sie 18 Prozentpunkte.</target></trans-unit>
+<trans-unit id="s11c14d4cd15dcdaf">
+  <source>Doktor Fenn</source>
+<target>Doktor Fenn</target></trans-unit>
+<trans-unit id="se7f3b81c7a384e80">
+  <source>Infiltrator 9</source>
+<target>Infiltrator 9</target></trans-unit>
+<trans-unit id="s5005d5302810e85b">
+  <source>Elena Voss</source>
+<target>Elena Voss</target></trans-unit>
+<trans-unit id="sbdddedf0fd1ae91a">
+  <source>Spy 9</source>
+<target>Spion 9</target></trans-unit>
+<trans-unit id="s1276fc8b4a28eed5">
+  <source>General Wolf</source>
+<target>General Wolf</target></trans-unit>
+<trans-unit id="sfb134b1d7ca848b1">
+  <source>Guardian 9</source>
+<target>Wächter 9</target></trans-unit>
+<trans-unit id="scab88f86e9d3d7a6">
+  <source>Lena Kray</source>
+<target>Lena Kray</target></trans-unit>
+<trans-unit id="s646d520af67adfa9">
+  <source>Saboteur 9</source>
+<target>Saboteur 9</target></trans-unit>
+<trans-unit id="s85b52c5fd3272a12">
+  <source>Mira Steinfeld</source>
+<target>Mira Steinfeld</target></trans-unit>
+<trans-unit id="s195d86c5de3d4380">
+  <source>Propagandist 9</source>
+<target>Propagandist 9</target></trans-unit>
+<trans-unit id="s80f05531904d8e31">
+  <source>Viktor Harken</source>
+<target>Viktor Harken</target></trans-unit>
+<trans-unit id="sef22bc5ab813766f">
+  <source>Assassin 9</source>
+<target>Assassine 9</target></trans-unit>
+<trans-unit id="sc0e6b65bbfd257b6">
+  <source>Draft one specialist per operative type for maximum coverage. A generalist team (all 6s) is safer but will never hit the +27% aptitude ceiling on any mission.</source>
+<target>Wählen Sie einen Spezialisten pro Operativtyp für maximale Abdeckung. Ein Generalisten-Team (alle 6er) ist sicherer, wird aber nie die +27%-Eignungsobergrenze bei irgendeiner Mission erreichen.</target></trans-unit>
+<trans-unit id="s681935400028a609">
+  <source>Lock In</source>
+<target>Festlegen</target></trans-unit>
+<trans-unit id="s8f48b3967dbd396f">
+  <source>Once you have selected your agents, lock in your roster. All human players must lock in before the epoch can start. Bots auto-draft based on their personality archetype.</source>
+<target>Sobald Sie Ihre Agenten ausgewählt haben, legen Sie Ihren Kader fest. Alle menschlichen Spieler müssen festlegen, bevor die Epoche starten kann. Bots wählen automatisch basierend auf ihrem Persönlichkeitsarchetyp.</target></trans-unit>
+<trans-unit id="s0a4103cad4ce2422">
+  <source>Roster</source>
+<target>Kader</target></trans-unit>
+<trans-unit id="s075ff2c609960414">
+  <source>6/6 Agents Drafted</source>
+<target>6/6 Agenten eingezogen</target></trans-unit>
+<trans-unit id="s34d94212c9758944">
+  <source>Strategy</source>
+<target>Strategie</target></trans-unit>
+<trans-unit id="s343ffc8443c820d9">
+  <source>One specialist per type</source>
+<target>Ein Spezialist pro Typ</target></trans-unit>
+<trans-unit id="sf7a756de18c31b12">
+  <source>Full 9-aptitude coverage</source>
+<target>Volle 9er-Eignungsabdeckung</target></trans-unit>
+<trans-unit id="sfbb9be7a87a9b7ce">
+  <source>Deploy Guardians</source>
+<target>Wächter einsetzen</target></trans-unit>
+<trans-unit id="s06abcbeac4a4e2d8">
+  <source>The epoch starts in Foundation phase with +50% RP generation (18 RP/cycle). Only guardians can deploy during Foundation. Each guardian costs 4 RP and reduces enemy success probability by 6% (capped at 15% total).</source>
+<target>Die Epoche startet in der Aufbauphase mit +50% RP-Erzeugung (18 RP/Zyklus). Nur Wächter können während der Aufbauphase eingesetzt werden. Jeder Wächter kostet 4 RP und verringert die feindliche Erfolgswahrscheinlichkeit um 6% (max. 15% gesamt).</target></trans-unit>
+<trans-unit id="sc16b08d46c586fec">
+  <source>General Aldric Wolf (guardian aptitude 9) deploys as your first guardian. The 3-step wizard shows Agent → Mission → Confirmation with a classified dossier summary.</source>
+<target>General Aldric Wolf (Wächter-Eignung 9) wird als Ihr erster Wächter eingesetzt. Der 3-Schritte-Assistent zeigt Agent → Mission → Bestätigung mit einer klassifizierten Dossier-Zusammenfassung.</target></trans-unit>
+<trans-unit id="sed0451840a288702">
+  <source>General Aldric Wolf</source>
+<target>General Aldric Wolf</target></trans-unit>
+<trans-unit id="seb89cae5a60426f3">
+  <source>Aptitude</source>
+<target>Eignung</target></trans-unit>
+<trans-unit id="sb757c1d843ba9e53">
+  <source>4 RP</source>
+<target>4 RP</target></trans-unit>
+<trans-unit id="s606023ac4c33a8ff">
+  <source>−6% enemy success (passive)</source>
+<target>−6% feindlicher Erfolg (passiv)</target></trans-unit>
+<trans-unit id="sfc4852f7c814148b">
+  <source>RP remaining</source>
+<target>RP verbleibend</target></trans-unit>
+<trans-unit id="sc4a0be2e270ac6af">
+  <source>Deploy 1–2 guardians during Foundation, then save the rest of your RP for Competition. Three guardians reach the 15% cap — more is wasted.</source>
+<target>Setzen Sie 1–2 Wächter während der Aufbauphase ein, dann sparen Sie den Rest Ihrer RP für den Wettbewerb. Drei Wächter erreichen die 15%-Obergrenze — mehr ist verschwendet.</target></trans-unit>
+<trans-unit id="sbb50667cc668ae4b">
+  <source>Deploy a Spy</source>
+<target>Spion einsetzen</target></trans-unit>
+<trans-unit id="sf8e650a55963c01d">
+  <source>Competition unlocks all 6 operative types. Deploy Elena Voss (spy aptitude 9) against The Gaslit Reach. Spies cost only 3 RP, deploy instantly, and resolve after 3 cycles with valuable intelligence.</source>
+<target>Der Wettbewerb schaltet alle 6 Operativtypen frei. Setzen Sie Elena Voss (Spionage-Eignung 9) gegen The Gaslit Reach ein. Spione kosten nur 3 RP, werden sofort eingesetzt und liefern nach 3 Zyklen wertvolle Aufklärung.</target></trans-unit>
+<trans-unit id="s35b1cf55b5eac844">
+  <source>The success formula accounts for agent aptitude, target zone security, your guardian count, and embassy effectiveness. Elena’s spy aptitude of 9 gives her a 66% success probability — significantly better than a generalist agent at aptitude 6 (48%).</source>
+<target>Die Erfolgsformel berücksichtigt Agenteneignung, Zonensicherheit des Ziels, Ihre Wächteranzahl und Botschaftseffektivität. Elena Voss' Spionage-Eignung von 9 gibt ihr eine 66% Erfolgswahrscheinlichkeit — deutlich besser als ein Generalist mit Eignung 6 (48%).</target></trans-unit>
+<trans-unit id="s6ea67c585f2d7c69">
+  <source>Spy 9 → +27%</source>
+<target>Spion 9 → +27%</target></trans-unit>
+<trans-unit id="s303cd8b88c1b4bd4">
+  <source>Espionage → The Gaslit Reach</source>
+<target>Spionage → The Gaslit Reach</target></trans-unit>
+<trans-unit id="scde40c7df2a2e1f2">
+  <source>Success rate</source>
+<target>Erfolgsrate</target></trans-unit>
+<trans-unit id="sd94f4601f489ba24">
+  <source>3 RP</source>
+<target>3 RP</target></trans-unit>
+<trans-unit id="sefa831f16108a950">
+  <source>Resolves</source>
+<target>Auflösung</target></trans-unit>
+<trans-unit id="s697c9bc728b37b81">
+  <source>Cycle 5 (3 cycles)</source>
+<target>Zyklus 5 (3 Zyklen)</target></trans-unit>
+<trans-unit id="s1dceea1307bd2c36">
+  <source>If detected, you lose 3 military points and the mission fails. High-aptitude agents reduce this risk but never eliminate it.</source>
+<target>Bei Entdeckung verlieren Sie 3 Militärpunkte und die Mission scheitert. Agenten mit hoher Eignung reduzieren dieses Risiko, eliminieren es aber nie.</target></trans-unit>
+<trans-unit id="s89038543abb8b157">
+  <source>Wait for Resolution</source>
+<target>Auf Auflösung warten</target></trans-unit>
+<trans-unit id="s9e1f82692415700a">
+  <source>Spy missions take 3 cycles to resolve. During this time, continue deploying other operatives or saving RP. Each cycle grants 12 RP (up to the 40 cap). The bot opponent is also making moves — you cannot see their deployments until the battle log reveals outcomes.</source>
+<target>Spionagemissionen brauchen 3 Zyklen zur Auflösung. Setzen Sie in dieser Zeit weitere Operative ein oder sparen Sie RP. Jeder Zyklus gewährt 12 RP (bis zur 40er-Obergrenze). Der Bot-Gegner handelt ebenfalls — Sie sehen seine Einsätze erst, wenn das Gefechtsprotokoll die Ergebnisse enthüllt.</target></trans-unit>
+<trans-unit id="s509363f9e296d69b">
+  <source>Use the waiting cycles to deploy a propagandist (4 RP, 2 cycles) or save for an expensive assassin (7 RP, 2-cycle deploy). Timing is everything.</source>
+<target>Nutzen Sie die Wartezyklen, um einen Propagandisten einzusetzen (4 RP, 2 Zyklen) oder für einen teuren Assassinen zu sparen (7 RP, 2 Zyklen Einsatzzeit). Timing ist alles.</target></trans-unit>
+<trans-unit id="scbec2796a6a12f8d">
+  <source>Spy Intel Report</source>
+<target>Spionage-Aufklärungsbericht</target></trans-unit>
+<trans-unit id="sad153393a05019a6">
+  <source>After 3 cycles, the spy mission resolves. On success, the battle log reveals the target’s zone security levels and guardian count — critical intelligence for planning your next strike.</source>
+<target>Nach 3 Zyklen wird die Spionagemission aufgelöst. Bei Erfolg enthüllt das Gefechtsprotokoll die Zonensicherheitsstufen und Wächteranzahl des Ziels — kritische Aufklärung für die Planung Ihres nächsten Schlags.</target></trans-unit>
+<trans-unit id="sbaaad9f5b58864b7">
+  <source>Intel</source>
+<target>Aufklärung</target></trans-unit>
+<trans-unit id="sfe6f87a5072b418f">
+  <source>0 guardians, zones: high / medium / medium / low</source>
+<target>0 Wächter, Zonen: hoch / mittel / mittel / niedrig</target></trans-unit>
+<trans-unit id="se295952b28e8de6a">
+  <source>+3 points (spy score value)</source>
+<target>+3 Punkte (Spionage-Wertung)</target></trans-unit>
+<trans-unit id="sf1a90a9f90519396">
+  <source>+2 points (espionage bonus)</source>
+<target>+2 Punkte (Spionagebonus)</target></trans-unit>
+<trans-unit id="s1d8a64c1c6f48265">
+  <source>The intel reveals no guardians protecting The Gaslit Reach — a wide-open target. A saboteur aimed at the low-security zone would have near-maximum success. This is the spy→saboteur combo in action.</source>
+<target>Die Aufklärung enthüllt keine Wächter, die The Gaslit Reach schützen — ein offenes Ziel. Ein Saboteur in der Zone mit niedriger Sicherheit hätte nahezu maximalen Erfolg. Das ist die Spion→Saboteur-Kombination in Aktion.</target></trans-unit>
+<trans-unit id="se4df85d20b41e5ad">
+  <source>Final Push</source>
+<target>Letzter Vorstoß</target></trans-unit>
+<trans-unit id="sc1fc4aebec2b22f4">
+  <source>Reckoning is the endgame. Bleed threshold drops by 2 and cascade depth increases by 1 — events that wouldn’t bleed during Competition suddenly punch through. Sovereignty scores can shift dramatically. Deploy your remaining operatives for maximum impact before scores freeze.</source>
+<target>Die Abrechnung ist das Endspiel. Der Bleed-Schwellenwert sinkt um 2 und die Kaskadentiefe steigt um 1 — Ereignisse, die während des Wettbewerbs nicht durchgedrungen wären, schlagen plötzlich durch. Souveränitätswertungen können sich dramatisch verschieben. Setzen Sie Ihre verbleibenden Operative für maximale Wirkung ein, bevor die Wertungen eingefroren werden.</target></trans-unit>
+<trans-unit id="s6220e5c299ee9a57">
+  <source>Reckoning is short. Operatives with 2+ cycle deploy times may not resolve before the epoch ends. Prioritize fast-deploying types: spies (instant), propagandists (1 cycle), guardians (instant).</source>
+<target>Die Abrechnung ist kurz. Operative mit 2+ Zyklen Einsatzzeit werden möglicherweise nicht aufgelöst, bevor die Epoche endet. Bevorzugen Sie schnelle Typen: Spione (sofort), Propagandisten (1 Zyklus), Wächter (sofort).</target></trans-unit>
+<trans-unit id="s3fbda3747919678d">
+  <source>When the epoch ends, scores freeze across all 5 dimensions. The composite score determines your final ranking. Titles are awarded based on your strongest dimension: The Unshaken (stability), The Resonant (influence), The Sovereign (sovereignty), The Architect (diplomatic), The Shadow (military).</source>
+<target>Wenn die Epoche endet, werden die Wertungen in allen 5 Dimensionen eingefroren. Die Gesamtwertung bestimmt Ihre Endplatzierung. Titel werden basierend auf Ihrer stärksten Dimension vergeben: Der Unerschütterliche (Stabilität), Der Resonante (Einfluss), Der Souverän (Souveränität), Der Architekt (Diplomatie), Der Schatten (Militär).</target></trans-unit>
+<trans-unit id="s53952a001416f800">
+  <source>1st Place</source>
+<target>1. Platz</target></trans-unit>
+<trans-unit id="sc56b1ee17dfab832">
+  <source>Velgarien — 100.0 pts</source>
+<target>Velgarien — 100,0 Pkt.</target></trans-unit>
+<trans-unit id="s2d2d57a44969b0e4">
+  <source>2nd Place</source>
+<target>2. Platz</target></trans-unit>
+<trans-unit id="s920e70cb388c483d">
+  <source>The Gaslit Reach — 57.3 pts</source>
+<target>The Gaslit Reach — 57,3 Pkt.</target></trans-unit>
+<trans-unit id="s4e386c206c599851">
+  <source>Key move</source>
+<target>Entscheidender Zug</target></trans-unit>
+<trans-unit id="s0a541cb4ad17d91e">
+  <source>Spy intel → exposed weak zones</source>
+<target>Spionageaufklärung → Schwachstellen aufgedeckt</target></trans-unit>
+<trans-unit id="s312a78762d9ad9a4">
+  <source>Game time</source>
+<target>Spielzeit</target></trans-unit>
+<trans-unit id="sd6791c2ad651d233">
+  <source>5 cycles across 3 phases</source>
+<target>5 Zyklen über 3 Phasen</target></trans-unit>
+<trans-unit id="sc3dba0480f3624bf">
+  <source>One successful spy mission swung this match by 43 points. Intelligence is the foundation of every winning strategy — always deploy a spy early.</source>
+<target>Eine erfolgreiche Spionagemission entschied dieses Match um 43 Punkte. Aufklärung ist die Grundlage jeder Siegstrategie — setzen Sie immer frühzeitig einen Spion ein.</target></trans-unit>
+<trans-unit id="sb468b0b17563b1c3">
+  <source>Demo Run</source>
+<target>Demo-Durchlauf</target></trans-unit>
+<trans-unit id="s09da8c4193139203">
+  <source>Enlarge screenshot</source>
+<target>Screenshot vergrößern</target></trans-unit>
+<trans-unit id="sed48aabac8f04616">
+  <source>EXHIBIT</source>
+<target>BEWEISSTÜCK</target></trans-unit>
+<trans-unit id="s2ec51a503fa66f95">
+  <source>ENLARGE</source>
+<target>VERGRÖẞERN</target></trans-unit>
+<trans-unit id="se217a6508447e243">
+  <source>Epoch creation wizard confirmation step</source>
+<target>Bestätigungsschritt des Epochen-Erstellungsassistenten</target></trans-unit>
+<trans-unit id="s5fe78f145299c278">
+  <source>Epoch lobby with human player and strategist bot</source>
+<target>Epochen-Lobby mit menschlichem Spieler und Strategen-Bot</target></trans-unit>
+<trans-unit id="sa1557cc13683d6ab">
+  <source>Draft roster panel showing agent aptitude profiles</source>
+<target>Kader-Auswahlpanel mit Agenten-Eignungsprofilen</target></trans-unit>
+<trans-unit id="s778f43e947ff2722">
+  <source>Six agents drafted and locked into deployment lineup</source>
+<target>Sechs Agenten ausgewählt und in Einsatzaufstellung gesperrt</target></trans-unit>
+<trans-unit id="s181f268aebac7227">
+  <source>Guardian deployment confirmation with dossier summary</source>
+<target>Wächter-Einsatzbestätigung mit Dossier-Zusammenfassung</target></trans-unit>
+<trans-unit id="s6710f86690be775f">
+  <source>Spy mission deployment targeting The Gaslit Reach</source>
+<target>Spionagemission gegen The Gaslit Reach</target></trans-unit>
+<trans-unit id="s6b9555a984571dc3">
+  <source>Active spy mission awaiting resolution</source>
+<target>Aktive Spionagemission wartet auf Auflösung</target></trans-unit>
+<trans-unit id="s210c7d457f1c3866">
+  <source>Battle log showing spy intel report with zone security data</source>
+<target>Gefechtsprotokoll mit Spionage-Bericht und Zonensicherheitsdaten</target></trans-unit>
+<trans-unit id="s81498b7ef5c83fe7">
+  <source>Reckoning phase with final operative deployments</source>
+<target>Abrechnung mit letzten Agenteneinsätzen</target></trans-unit>
+<trans-unit id="s143f2c9616402e87">
+  <source>Final epoch standings with composite scores and titles</source>
+<target>Endstand der Epoche mit Gesamtwertungen und Titeln</target></trans-unit>
+<trans-unit id="sfd65edbf3fbb7c2f">
+  <source>Route through Embassy</source>
+<target>Über Botschaft leiten</target></trans-unit>
+<trans-unit id="sb6b7b06570771fea">
+  <source>Select which embassy connection to use for deploying your operative to the target simulation.</source>
+<target>Wählen Sie die Botschaftsverbindung, über die Ihr Operativ in die Zielsimulation entsandt wird.</target></trans-unit>
+<trans-unit id="s309b4533d0418324">
+  <source>Propagandists target an entire zone, generating a destabilizing event that affects all buildings within it.</source>
+<target>Propagandisten zielen auf eine gesamte Zone ab und erzeugen ein destabilisierendes Ereignis, das alle Gebäude darin betrifft.</target></trans-unit>
+<trans-unit id="s2adbdde5979ee1c4">
+  <source>Agent aptitude</source>
+<target>Agenten-Eignung</target></trans-unit>
+<trans-unit id="s02815586ca8e2755">
+  <source>Building</source>
+<target>Gebäude</target></trans-unit>
+<trans-unit id="s5c2cf3480b45d780">
+  <source>Alliance team name</source>
+<target>Name des Allianzteams</target></trans-unit>
+<trans-unit id="sf45f5d4f04ef6b54">
+  <source>Team channel message</source>
+<target>Teamkanal-Nachricht</target></trans-unit>
+<trans-unit id="sfffebd09c49607db">
+  <source>Broadcast message</source>
+<target>Rundfunknachricht</target></trans-unit>
+<trans-unit id="s613a4907f686c82a">
+  <source>Betrayal requires a team size of at least 3.</source>
+<target>Verrat erfordert eine Teamgröße von mindestens 3.</target></trans-unit>
+<trans-unit id="s3bb9a4d5cbf75cc4">
+  <source>Email address for epoch invitation</source>
+<target>E-Mail-Adresse für Epochen-Einladung</target></trans-unit>
+<trans-unit id="scf4f2d432dcfbd04">
+  <source>Completed Epochs</source>
+<target>Abgeschlossene Epochen</target></trans-unit>
+<trans-unit id="sb4979bcf0b7c3765">
+  <source>Finished epoch matches and all associated data: teams, participants, missions, scores, battle log, chat messages, invitations, bot decisions, and cloned game instances.</source>
+<target>Abgeschlossene Epoch-Matches und alle zugehörigen Daten: Teams, Teilnehmer, Missionen, Punkte, Kampfprotokoll, Chatnachrichten, Einladungen, Bot-Entscheidungen und geklonte Spielinstanzen.</target></trans-unit>
+<trans-unit id="s50d2e8f3ad0cca46">
+  <source>Cancelled Epochs</source>
+<target>Abgebrochene Epochen</target></trans-unit>
+<trans-unit id="s38ae4294c9545f97">
+  <source>Aborted epoch matches and their cascade data. Game instances are normally deleted on cancellation, but orphans may remain.</source>
+<target>Abgebrochene Epoch-Matches und deren Kaskadendaten. Spielinstanzen werden normalerweise beim Abbruch gelöscht, aber verwaiste Einträge sind möglich.</target></trans-unit>
+<trans-unit id="s78cdced4ef96615a">
+  <source>Stale Lobbies</source>
+<target>Verwaiste Lobbys</target></trans-unit>
+<trans-unit id="se7ab0641093ab320">
+  <source>Epoch lobbies that never started. Removes participants, invitations, and team assignments. No game instances exist for lobbies.</source>
+<target>Epoch-Lobbys, die nie gestartet wurden. Entfernt Teilnehmer, Einladungen und Teamzuweisungen. Für Lobbys existieren keine Spielinstanzen.</target></trans-unit>
+<trans-unit id="s63f9fb1bbde58b1f">
+  <source>Archived Instances</source>
+<target>Archivierte Instanzen</target></trans-unit>
+<trans-unit id="s070fb77f5f954848">
+  <source>Simulation copies from completed epochs. These are frozen snapshots and can be safely removed after analysis.</source>
+<target>Simulationskopien aus abgeschlossenen Epochen. Dies sind eingefrorene Momentaufnahmen, die nach der Analyse sicher entfernt werden können.</target></trans-unit>
+<trans-unit id="s15c84f11ebb108aa">
+  <source>Audit Log</source>
+<target>Prüfprotokoll</target></trans-unit>
+<trans-unit id="sc870ad5bc6014224">
+  <source>CRUD operation audit trail entries. Older entries are typically no longer needed for debugging.</source>
+<target>CRUD-Prüfprotokolleinträge. Ältere Einträge werden für die Fehlersuche in der Regel nicht mehr benötigt.</target></trans-unit>
+<trans-unit id="s03d42ca2f6585c62">
+  <source>Bot Decision Log</source>
+<target>Bot-Entscheidungsprotokoll</target></trans-unit>
+<trans-unit id="s0e6099fa25c953ad">
+  <source>AI bot cycle-by-cycle decision records. Useful for tuning but grows quickly during playtesting.</source>
+<target>KI-Bot-Entscheidungsprotokolle pro Zyklus. Nützlich für die Feinabstimmung, wächst aber bei Spieltests schnell an.</target></trans-unit>
+<trans-unit id="s8e0ec16123cb5a79">
+  <source>Scan failed.</source>
+<target>Scan fehlgeschlagen.</target></trans-unit>
+<trans-unit id="s1445ad768e9f271c">
+  <source>Purge complete: <x id="0" equiv-text="${count}" /> records deleted.</source>
+<target>Bereinigung abgeschlossen: </target></trans-unit>
+<trans-unit id="sed4191f51a738abd">
+  <source>Purge failed.</source>
+<target>Bereinigung fehlgeschlagen.</target></trans-unit>
+<trans-unit id="sb7fc641af6188f3c">
+  <source>&lt; 1d</source>
+<target>&lt; 1T</target></trans-unit>
+<trans-unit id="s087d3007b52ac5df">
+  <source><x id="0" equiv-text="${days}" />d</source>
+<target><x id="0" equiv-text="${days}" />T</target></trans-unit>
+<trans-unit id="s97962d18d7c24591">
+  <source><x id="0" equiv-text="${months}" />mo</source>
+<target><x id="0" equiv-text="${months}" />Mo.</target></trans-unit>
+<trans-unit id="s201bd6cdc5dfa9d8">
+  <source>Data Overview</source>
+<target>Datenübersicht</target></trans-unit>
+<trans-unit id="s9b4e8257b52ea91e">
+  <source>oldest: <x id="0" equiv-text="${this._formatAge(cat.oldest_at)}" /></source>
+<target>Ältester: <x id="0" equiv-text="${this._formatAge(cat.oldest_at)}" /></target></trans-unit>
+<trans-unit id="sd89d04d8623b9f5d">
+  <source>TOTAL</source>
+<target>GESAMT</target></trans-unit>
+<trans-unit id="sa281d6f1b14296ed">
+  <source>records</source>
+<target>Einträge</target></trans-unit>
+<trans-unit id="seed5bec1139d42ef">
+  <source>No records match the criteria.</source>
+<target>Keine Einträge entsprechen den Kriterien.</target></trans-unit>
+<trans-unit id="s3a49e30281399a10">
+  <source>eligible</source>
+<target>betroffen</target></trans-unit>
+<trans-unit id="sf4b13b74e551e9eb">
+  <source>Cleanup Operations</source>
+<target>Bereinigungsoperationen</target></trans-unit>
+<trans-unit id="sc7c760454bc4900c">
+  <source>Min age</source>
+<target>Mindestalter</target></trans-unit>
+<trans-unit id="s8587736730c8b7ea">
+  <source>days</source>
+<target>Tage</target></trans-unit>
+<trans-unit id="s694956184ca7596c">
+  <source>Scanning...</source>
+<target>Scanne...</target></trans-unit>
+<trans-unit id="s21ea0624b6865748">
+  <source>Scan</source>
+<target>Scannen</target></trans-unit>
+<trans-unit id="sd016af94e75aee7f">
+  <source>Executing...</source>
+<target>Wird ausgeführt...</target></trans-unit>
+<trans-unit id="s106657c0be077a27">
+  <source>Execute Purge</source>
+<target>Bereinigung starten</target></trans-unit>
+<trans-unit id="sc3f9ca2180b66c6d">
+  <source>Loading cleanup data...</source>
+<target>Lade Bereinigungsdaten...</target></trans-unit>
+<trans-unit id="s3378f13303dd8cec">
+  <source>Confirm Purge</source>
+<target>Bereinigung bestätigen</target></trans-unit>
+<trans-unit id="s5d957098064456d3">
+  <source>Permanently delete <x id="0" equiv-text="${purgePreview.primary_count} ${meta.label.toLowerCase()}" /> older than <x id="1" equiv-text="${this._thresholds[purgeType]}" /> days? This cannot be undone.</source>
+<target><x id="0" equiv-text="${purgePreview.primary_count} ${meta.label.toLowerCase()}" /> älter als <x id="1" equiv-text="${this._thresholds[purgeType]}" /> Tage endgültig löschen? Dies kann nicht rückgängig gemacht werden.</target></trans-unit>
+<trans-unit id="s9aec5b508ac6ce64">
+  <source>Manage users, memberships, platform settings, and data cleanup.</source>
+<target>Benutzer, Mitgliedschaften, Plattformeinstellungen und Datenbereinigung verwalten.</target></trans-unit>
+<trans-unit id="sa042ace5c01b0109">
+  <source>Data Cleanup</source>
+<target>Datenbereinigung</target></trans-unit>
 
 </body>
 </file>

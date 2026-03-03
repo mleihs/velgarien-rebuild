@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     # Email (legacy — Resend API, deprecated)
     resend_api_key: str = ""
 
+    # Platform admin
+    platform_admin_emails: str = Field(default="admin@velgarien.dev", alias="PLATFORM_ADMIN_EMAILS")
+    indexnow_key: str = ""
+
     # App
     app_title: str = "Velgarien Platform"
     debug: bool = False

@@ -191,8 +191,8 @@ class TestLifecycleTransitions:
         assert update_call["status"] == "reckoning"
 
     @pytest.mark.asyncio
-    @patch("backend.dependencies.get_admin_supabase", new_callable=AsyncMock)
-    @patch("backend.services.game_instance_service.GameInstanceService")
+    @patch("backend.services.epoch_service.get_admin_supabase", new_callable=AsyncMock)
+    @patch("backend.services.epoch_service.GameInstanceService")
     async def test_advance_reckoning_to_completed_archives_instances(self, mock_gis, mock_admin):
         mock_admin.return_value = MagicMock()
         mock_gis.archive_instances = AsyncMock()
@@ -269,8 +269,8 @@ class TestCancelEpoch:
         assert update_call["status"] == "cancelled"
 
     @pytest.mark.asyncio
-    @patch("backend.dependencies.get_admin_supabase", new_callable=AsyncMock)
-    @patch("backend.services.game_instance_service.GameInstanceService")
+    @patch("backend.services.epoch_service.get_admin_supabase", new_callable=AsyncMock)
+    @patch("backend.services.epoch_service.GameInstanceService")
     async def test_cancel_active_epoch_deletes_instances(self, mock_gis, mock_admin):
         mock_admin.return_value = MagicMock()
         mock_gis.delete_instances = AsyncMock()

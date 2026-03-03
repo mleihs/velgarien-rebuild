@@ -37,6 +37,7 @@ class EpochConfig(BaseModel):
     foundation_pct: int = Field(20, ge=10, le=30)
     reckoning_pct: int = Field(15, ge=10, le=25)
     max_team_size: int = Field(3, ge=2, le=8)
+    max_agents_per_player: int = Field(6, ge=4, le=8)
     allow_betrayal: bool = True
     score_weights: EpochScoreWeights = Field(default_factory=EpochScoreWeights)
     referee_mode: bool = False
@@ -104,6 +105,8 @@ class ParticipantResponse(BaseModel):
     current_rp: int
     last_rp_grant_at: datetime | None = None
     final_scores: dict | None = None
+    drafted_agent_ids: list[UUID] | None = None
+    draft_completed_at: datetime | None = None
     simulations: dict | None = None
 
 

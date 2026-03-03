@@ -1,7 +1,8 @@
 # 03 - Database Schema New: Neues Schema mit Simulation-Kontext
 
-**Version:** 2.8
+**Version:** 2.9
 **Datum:** 2026-03-03
+**Aenderung v2.9:** 1 neue Tabelle (agent_aptitudes). 2 neue Spalten auf epoch_participants (drafted_agent_ids, draft_completed_at). `max_agents_per_player` in game_epochs.config JSONB. **46 Tabellen gesamt**, ~184 RLS-Policies. Migration 046. Agent Aptitude System (operative_type-specific aptitude levels 3-9 per agent) + Draft Phase (player agent selection during epoch lobby).
 **Aenderung v2.8:** 1 neue Tabelle (notification_preferences). 1 neue SECURITY DEFINER Function (get_user_emails_batch). **45 Tabellen gesamt**, ~179 RLS-Policies. Migration 044. Per-User Email-Benachrichtigungspraeferenzen fuer Epoch-Events (cycle_resolved, phase_changed, epoch_completed, email_locale). RLS: authenticated users can read/insert/update own row only.
 **Aenderung v2.7:** 2 neue Tabellen (bot_players, bot_decision_log). 3 neue Spalten auf epoch_participants (is_bot, bot_player_id). 1 neue Spalte auf epoch_chat_messages (sender_type). **44 Tabellen gesamt**, ~176 RLS-Policies. Migration 041.
 **Aenderung v2.6:** 1 neue Tabelle (platform_settings). 42 Tabellen gesamt, 170 RLS-Policies, ~41 unique Triggers (64 Trigger-Eintraege), 8 Views, 4 materialisierte Views, 21 Functions. Migration 040. Platform Admin: key-value store fuer runtime-konfigurierbare Cache-TTLs (map data, SEO metadata, HTTP Cache-Control). RLS service_role only (kein anon/authenticated Zugriff). updated_at Trigger.
@@ -1423,6 +1424,7 @@ CREATE POLICY agents_delete ON agents FOR DELETE
 | `epoch_invitations` | Creator/Anon(token) | Creator | Creator | Creator |
 | `epoch_chat_messages` | Anon(epoch)/Participant(epoch+team) | Participant | - | - |
 | `notification_preferences` | Own (auth) | Own (auth) | Own (auth) | - |
+| `agent_aptitudes` | Anon/Member | Editor+ | Editor+ | Admin+ |
 | `audit_log` | Admin+ | Service only | - | - |
 
 ---
@@ -1492,7 +1494,7 @@ CREATE POLICY simulation_assets_insert ON storage.objects FOR INSERT
 
 | Metrik | Wert |
 |--------|------|
-| Tabellen | 44 (+ bot_players, bot_decision_log gegenueber v2.6) |
+| Tabellen | 46 (+ agent_aptitudes gegenueber v2.8) |
 | Trigger Functions | 10 (set_updated_at, update_conversation_stats, enforce_single_primary_profession, validate_simulation_status_transition, immutable_slug, prevent_last_owner_removal, notify_game_metrics_stale, validate_epoch_status_transition, broadcast_epoch_chat, broadcast_ready_signal) |
 | Utility Functions | 7 (role_meets_minimum, generate_slug, validate_taxonomy_value, game_weight_fallback, refresh_all_game_metrics, refresh_building_readiness, refresh_embassy_effectiveness, refresh_zone_stability) |
 | RLS Functions | 3 |
@@ -1500,7 +1502,7 @@ CREATE POLICY simulation_assets_insert ON storage.objects FOR INSERT
 | Triggers | ~42 unique (~66 Eintraege inkl. updated_at auf allen Tabellen + business logic + broadcast) |
 | Regular Views | 8 (4x active_* + simulation_dashboard + conversation_summaries + agent_statistics + campaign_performance) |
 | Materialized Views | 4 (mv_building_readiness + mv_zone_stability + mv_embassy_effectiveness + mv_simulation_health) |
-| RLS-Policies | ~176 (inkl. anon SELECT + Phase-6 + Embassy + Competitive Layer + Epoch Chat + Epoch Invitations + Bot Players) |
+| RLS-Policies | ~184 (inkl. anon SELECT + Phase-6 + Embassy + Competitive Layer + Epoch Chat + Epoch Invitations + Bot Players + Agent Aptitudes) |
 | Indexes | ~80 (inkl. partial, GIN, unique) |
 | Storage Buckets | 4 |
 
@@ -1896,6 +1898,10 @@ Zeitlich begrenzte Wettbewerbs-Epochen mit Status-State-Machine.
 **Foreign Keys:**
 - `created_by_id` → `auth.users(id)`
 
+**Config JSONB Felder:**
+- `cycle_duration_hours`, `max_participants`, `rp_per_cycle`, `rp_cap`, `foundation_pct`, `reckoning_pct`, `max_team_size`, `allow_betrayal`, `score_weights`, `referee_mode`, `invitation_lore`
+- `max_agents_per_player` — Maximale Anzahl Agenten pro Spieler fuer den Draft (Default: 3). Steuert wie viele Agenten jeder Teilnehmer waehrend der Draft-Phase auswaehlen darf.
+
 **RLS:** 4 Policies (anon_select, select, insert, update).
 
 **Status-Transitions:** `lobby` → `foundation` → `competition` → `reckoning` → `completed`, jeder Status → `cancelled`. Durchgesetzt via `validate_epoch_status_transition()` Trigger.
@@ -1937,6 +1943,8 @@ Simulationen, die an einer Epoche teilnehmen. Trackt Resource Points (RP) und op
 | `is_bot` | boolean | NO | `false` |
 | `bot_player_id` | uuid | YES | |
 | `cycle_ready` | boolean | NO | `false` |
+| `drafted_agent_ids` | uuid[] | YES | |
+| `draft_completed_at` | timestamptz | YES | |
 
 **Foreign Keys:**
 - `epoch_id` → `game_epochs(id) ON DELETE CASCADE`
@@ -1946,6 +1954,10 @@ Simulationen, die an einer Epoche teilnehmen. Trackt Resource Points (RP) und op
 
 **CHECK Constraints:**
 - `chk_bot_consistency` — `(is_bot = FALSE AND bot_player_id IS NULL) OR (is_bot = TRUE AND bot_player_id IS NOT NULL)`
+
+**Draft-Spalten:**
+- `drafted_agent_ids` — Array der ausgewaehlten Agent-UUIDs fuer diese Epoch-Teilnahme. Gesetzt waehrend der Draft-Phase im Lobby.
+- `draft_completed_at` — Zeitstempel wann der Draft abgeschlossen wurde. `NULL` = Draft noch offen.
 
 **RLS:** 4 Policies (anon_select, select, insert, update).
 
@@ -2343,3 +2355,41 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 Wird von `CycleNotificationService` fuer Batch-Email-Lookup verwendet. Nur service_role darf diese Funktion aufrufen.
+
+---
+
+## Agent Aptitudes (Migration 046)
+
+Operative-Type-spezifische Eignungswerte pro Agent. Jeder Agent hat pro `operative_type` einen `aptitude_level` (3-9), der die Erfolgswahrscheinlichkeit und Effektivitaet bei Missionen beeinflusst. Wird im Draft-System zur Teamzusammenstellung verwendet.
+
+### `agent_aptitudes`
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `agent_id` | uuid | NO | |
+| `simulation_id` | uuid | NO | |
+| `operative_type` | text | NO | |
+| `aptitude_level` | integer | NO | |
+| `created_at` | timestamptz | NO | `now()` |
+| `updated_at` | timestamptz | NO | `now()` |
+
+**Foreign Keys:**
+- `agent_id` → `agents(id) ON DELETE CASCADE`
+- `simulation_id` → `simulations(id) ON DELETE CASCADE`
+
+**CHECK Constraints:**
+- `operative_type IN ('spy', 'saboteur', 'propagandist', 'assassin', 'guardian', 'infiltrator')`
+- `aptitude_level BETWEEN 3 AND 9`
+
+**UNIQUE Constraint:**
+- `UNIQUE(agent_id, operative_type)` — ein Agent hat pro Operative-Typ maximal einen Eignungswert
+
+**Trigger:** `set_updated_at` — automatisches `updated_at` bei UPDATE.
+
+**RLS:** 5 Policies:
+- `agent_aptitudes_anon_select` — SELECT fuer anon: aktive Simulationen (anon RLS)
+- `agent_aptitudes_select` — SELECT fuer Mitglieder via `user_has_simulation_access(simulation_id)`
+- `agent_aptitudes_insert` — INSERT fuer Editor+ via `user_has_simulation_role(simulation_id, 'editor')`
+- `agent_aptitudes_update` — UPDATE fuer Editor+ via `user_has_simulation_role(simulation_id, 'editor')`
+- `agent_aptitudes_delete` — DELETE fuer Admin+ via `user_has_simulation_role(simulation_id, 'admin')`

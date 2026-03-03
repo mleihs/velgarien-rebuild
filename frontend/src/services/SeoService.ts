@@ -4,7 +4,7 @@ const DEFAULT_DESCRIPTION =
   'Build and explore simulated worlds. Create agents, buildings, events, and social dynamics in interconnected shards of reality.';
 const BASE_URL = 'https://metaverse.center';
 const DEFAULT_OG_IMAGE =
-  'https://bffjoupddfjaljqrwqck.supabase.co/storage/v1/object/public/simulation.assets/platform/dashboard-hero.webp';
+  'https://bffjoupddfjaljqrwqck.supabase.co/storage/v1/object/public/simulation.assets/platform/dashboard-hero.avif';
 
 class SeoService {
   /** Set page title from parts: ['Agents', 'Station Null'] → "Agents — Station Null | metaverse.center" */

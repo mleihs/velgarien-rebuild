@@ -111,6 +111,35 @@ export class VelgEpochLobbyActions extends LitElement {
       fill: currentColor;
     }
 
+    .lobby-btn--draft {
+      color: var(--color-epoch-accent, #f59e0b);
+      border-color: var(--color-epoch-accent, #f59e0b);
+      background: transparent;
+    }
+
+    .lobby-btn--draft:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--color-epoch-accent, #f59e0b) 15%, transparent);
+      box-shadow: 0 0 10px color-mix(in srgb, var(--color-epoch-accent, #f59e0b) 20%, transparent);
+    }
+
+    .draft-status {
+      font-family: var(--font-mono, monospace);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      padding: var(--space-2) var(--space-4);
+      border: 2px solid var(--color-success);
+      color: var(--color-success);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .draft-status--pending {
+      border-color: var(--color-gray-600);
+      color: var(--color-gray-400);
+    }
+
     /* ── Admin Controls ────────────────────── */
 
     .admin-panel {
@@ -186,7 +215,7 @@ export class VelgEpochLobbyActions extends LitElement {
     }
 
     .admin-btn--advance:hover:not(:disabled) {
-      background: rgba(74 222 128 / 0.15);
+      background: color-mix(in srgb, var(--color-success) 15%, transparent);
     }
 
     .admin-btn--resolve {
@@ -196,7 +225,7 @@ export class VelgEpochLobbyActions extends LitElement {
     }
 
     .admin-btn--resolve:hover:not(:disabled) {
-      background: rgba(245 158 11 / 0.15);
+      background: color-mix(in srgb, var(--color-warning) 15%, transparent);
     }
 
     .admin-btn--cancel {
@@ -206,7 +235,7 @@ export class VelgEpochLobbyActions extends LitElement {
     }
 
     .admin-btn--cancel:hover:not(:disabled) {
-      background: rgba(239 68 68 / 0.15);
+      background: color-mix(in srgb, var(--color-danger) 15%, transparent);
     }
   `;
 
@@ -255,6 +284,21 @@ export class VelgEpochLobbyActions extends LitElement {
               ?disabled=${this.actionLoading}
               @click=${this._onLeaveEpoch}
             >${msg('Leave Epoch')}</button>
+            ${
+              this.myParticipant.draft_completed_at
+                ? html`
+                  <span class="draft-status">
+                    ${msg(str`Roster Locked (${this.myParticipant.drafted_agent_ids?.length ?? 0}/${this.epoch?.config?.max_agents_per_player ?? 6})`)}
+                  </span>
+                `
+                : html`
+                  <button
+                    class="lobby-btn lobby-btn--draft"
+                    ?disabled=${this.actionLoading}
+                    @click=${this._onDraftRoster}
+                  >${msg('Draft Roster')}</button>
+                `
+            }
           `
               : nothing
           }
@@ -281,17 +325,7 @@ export class VelgEpochLobbyActions extends LitElement {
       `
           : nothing
       }
-      ${
-        !isLobby
-          ? html`
-        <div class="lobby-actions">
-          <button class="lobby-btn lobby-btn--join" @click=${this._onCreateEpoch}>
-            + ${msg('Create New Epoch')}
-          </button>
-        </div>
-      `
-          : nothing
-      }
+      ${nothing /* Create button is on the ops board, not inside epoch detail */}
       ${isActive && isCreator ? this._renderAdminControls() : nothing}
     `;
   }
@@ -380,18 +414,18 @@ export class VelgEpochLobbyActions extends LitElement {
     );
   }
 
-  private _onAddBots() {
+  private _onDraftRoster() {
     this.dispatchEvent(
-      new CustomEvent('add-bots', {
+      new CustomEvent('draft-roster', {
         bubbles: true,
         composed: true,
       }),
     );
   }
 
-  private _onCreateEpoch() {
+  private _onAddBots() {
     this.dispatchEvent(
-      new CustomEvent('create-epoch', {
+      new CustomEvent('add-bots', {
         bubbles: true,
         composed: true,
       }),

@@ -124,6 +124,7 @@ export class VelgApp extends LitElement {
         enter: async () => {
           await this._authReady;
           seoService.reset();
+          seoService.setCanonical('/dashboard');
           analyticsService.trackPageView('/dashboard', document.title);
           return true;
         },
@@ -134,6 +135,7 @@ export class VelgApp extends LitElement {
         enter: async () => {
           await this._authReady;
           seoService.setTitle(['Multiverse Map']);
+          seoService.setCanonical('/multiverse');
           analyticsService.trackPageView('/multiverse', document.title);
           return true;
         },
@@ -144,6 +146,7 @@ export class VelgApp extends LitElement {
         enter: async () => {
           await this._authReady;
           seoService.setTitle(['Epoch Command Center']);
+          seoService.setCanonical('/epoch');
           analyticsService.trackPageView('/epoch', document.title);
           return true;
         },
@@ -164,6 +167,7 @@ export class VelgApp extends LitElement {
         enter: async () => {
           await this._authReady;
           seoService.setTitle(['How to Play']);
+          seoService.setCanonical('/how-to-play');
           analyticsService.trackPageView('/how-to-play', document.title);
           return true;
         },
@@ -186,6 +190,7 @@ export class VelgApp extends LitElement {
           const ok = await this._guardAuth();
           if (ok) {
             seoService.setTitle(['Profile']);
+            seoService.setCanonical('/profile');
             analyticsService.trackPageView('/profile', document.title);
           }
           return ok;
@@ -198,6 +203,7 @@ export class VelgApp extends LitElement {
           const ok = await this._guardAuth();
           if (ok) {
             seoService.setTitle(['New Simulation']);
+            seoService.setCanonical('/new-simulation');
             analyticsService.trackPageView('/new-simulation', document.title);
           }
           return ok;
@@ -214,6 +220,7 @@ export class VelgApp extends LitElement {
             return false;
           }
           seoService.setTitle(['Admin']);
+          seoService.setCanonical('/admin');
           analyticsService.trackPageView('/admin', document.title);
           return true;
         },
@@ -266,6 +273,16 @@ export class VelgApp extends LitElement {
           const ok = await this._guardAuth();
           if (!ok) return false;
           return this._enterSimulationRoute(id);
+        },
+      },
+      {
+        path: '/simulations/:id/epoch',
+        render: () => html``,
+        enter: async () => {
+          await this._authReady;
+          window.history.replaceState(null, '', '/epoch');
+          this._router.goto('/epoch');
+          return false;
         },
       },
       {

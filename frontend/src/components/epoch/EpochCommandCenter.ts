@@ -15,18 +15,24 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
+import { agentsApi } from '../../services/api/AgentsApiService.js';
 import { epochsApi } from '../../services/api/EpochsApiService.js';
 import { simulationsApi } from '../../services/api/SimulationsApiService.js';
 import { realtimeService } from '../../services/realtime/RealtimeService.js';
 import { seoService } from '../../services/SeoService.js';
 import type {
+  Agent,
+  AgentAptitude,
+  AptitudeSet,
   BattleLogEntry,
   Epoch,
   EpochParticipant,
   EpochTeam,
   LeaderboardEntry,
   OperativeMission,
+  OperativeType,
 } from '../../types/index.js';
+import { computeTotalCycles } from '../../utils/epoch.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
 import { VelgToast } from '../shared/Toast.js';
 import '../shared/LoadingState.js';
@@ -45,6 +51,7 @@ import './EpochOperationsTab.js';
 import './EpochAlliancesTab.js';
 import './EpochLobbyActions.js';
 import './BotConfigPanel.js';
+import './DraftRosterPanel.js';
 
 type TabId = 'overview' | 'leaderboard' | 'operations' | 'battle-log' | 'alliances' | 'chat';
 
@@ -145,7 +152,7 @@ export class VelgEpochCommandCenter extends LitElement {
     }
     .banner__phase--cancelled {
       border-color: var(--color-gray-700);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       text-decoration: line-through;
     }
 
@@ -229,7 +236,7 @@ export class VelgEpochCommandCenter extends LitElement {
     }
 
     .stepper__label--upcoming {
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
     }
 
     /* ── Progress connector (replaces flat line) ── */
@@ -373,7 +380,7 @@ export class VelgEpochCommandCenter extends LitElement {
     .stat__label {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-xs);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
     }
@@ -427,7 +434,7 @@ export class VelgEpochCommandCenter extends LitElement {
       font-size: var(--text-xs);
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       background: none;
       border: none;
       border-bottom: 2px solid transparent;
@@ -569,7 +576,7 @@ export class VelgEpochCommandCenter extends LitElement {
     .mission__detail {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-xs);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .mission__status {
@@ -595,8 +602,8 @@ export class VelgEpochCommandCenter extends LitElement {
     }
 
     .mission__status--failed {
-      border-color: var(--color-gray-600);
-      color: var(--color-gray-500);
+      border-color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .mission__status--detected {
@@ -652,7 +659,7 @@ export class VelgEpochCommandCenter extends LitElement {
     .no-auth__text {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-sm);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     /* ── Alliance Card ────────────────────────── */
@@ -684,7 +691,7 @@ export class VelgEpochCommandCenter extends LitElement {
     .empty-hint {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-sm);
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       text-align: center;
       padding: var(--space-4);
     }
@@ -947,7 +954,7 @@ export class VelgEpochCommandCenter extends LitElement {
     }
 
     .team-form__input::placeholder {
-      color: var(--color-gray-600);
+      color: var(--color-gray-500);
     }
 
     .alliance__actions {
@@ -995,7 +1002,7 @@ export class VelgEpochCommandCenter extends LitElement {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       background: none;
       border: none;
       cursor: pointer;
@@ -1091,6 +1098,9 @@ export class VelgEpochCommandCenter extends LitElement {
   @state() private _showDeployModal = false;
   @state() private _showInvitePanel = false;
   @state() private _showBotPanel = false;
+  @state() private _showDraftPanel = false;
+  @state() private _draftAgents: Agent[] = [];
+  @state() private _draftAptitudeMap: Map<string, AptitudeSet> = new Map();
   @state() private _actionLoading = false;
   @state() private _commsEpoch: Epoch | null = null;
   @state() private _commsParticipant: EpochParticipant | null = null;
@@ -1342,7 +1352,7 @@ export class VelgEpochCommandCenter extends LitElement {
   private _getTotalCycles(): number {
     const cfg = this._epoch?.config;
     if (!cfg) return 0;
-    return Math.floor((cfg.duration_days * 24) / cfg.cycle_hours);
+    return computeTotalCycles(cfg);
   }
 
   private _getPhaseCycleCounts(): { foundation: number; competition: number; reckoning: number } {
@@ -1486,13 +1496,14 @@ export class VelgEpochCommandCenter extends LitElement {
           @add-bots=${() => {
             this._showBotPanel = true;
           }}
+          @draft-roster=${() => this._onOpenDraftPanel()}
           @create-epoch=${() => this._createEpoch()}
           @advance-phase=${() => this._onAdvancePhase()}
           @resolve-cycle=${() => this._onResolveCycle()}
           @cancel-epoch=${() => this._onCancelEpoch()}
         ></velg-epoch-lobby-actions>
         ${this._renderTabs()}
-        <div class="content">
+        <div class="content" id="epoch-tabpanel" role="tabpanel">
           ${this._renderActiveTab()}
         </div>
       `;
@@ -1535,6 +1546,16 @@ export class VelgEpochCommandCenter extends LitElement {
           if (this._epoch) this._loadEpochDetails(this._epoch.id);
         }}
       ></velg-bot-config-panel>
+      <velg-draft-roster-panel
+        .open=${this._showDraftPanel}
+        .agents=${this._draftAgents}
+        .maxSlots=${this._epoch?.config?.max_agents_per_player ?? 6}
+        .aptitudeMap=${this._draftAptitudeMap}
+        @draft-cancel=${() => {
+          this._showDraftPanel = false;
+        }}
+        @draft-complete=${(e: CustomEvent) => this._onDraftComplete(e.detail.agentIds)}
+      ></velg-draft-roster-panel>
     `;
   }
 
@@ -1595,7 +1616,7 @@ export class VelgEpochCommandCenter extends LitElement {
     if (!this._epoch) return nothing;
 
     const rpCurrent = this._myParticipant?.current_rp ?? 0;
-    const rpCap = this._epoch.config?.rp_cap ?? 30;
+    const rpCap = this._epoch.config?.rp_cap ?? 40;
     const rpFill = Math.min(rpCurrent / rpCap, 1);
 
     return html`
@@ -1669,6 +1690,7 @@ export class VelgEpochCommandCenter extends LitElement {
             <button
               role="tab"
               aria-selected=${this._activeTab === t.id}
+              aria-controls="epoch-tabpanel"
               class="tab ${this._activeTab === t.id ? 'tab--active' : ''}"
               @click=${() => this._switchTab(t.id)}
             >
@@ -1799,6 +1821,72 @@ export class VelgEpochCommandCenter extends LitElement {
     this._showDeployModal = false;
     if (this._epoch) {
       this._loadEpochDetails(this._epoch.id);
+    }
+  }
+
+  private async _onOpenDraftPanel() {
+    if (!this._myParticipant) return;
+
+    const simId = this._myParticipant.simulation_id;
+    try {
+      // Load agents and aptitudes for the participant's simulation
+      const [agentsResp, aptResp] = await Promise.all([
+        agentsApi.list(simId, { limit: '100' }),
+        agentsApi.getAllAptitudes(simId),
+      ]);
+
+      if (agentsResp.success && agentsResp.data) {
+        this._draftAgents = agentsResp.data;
+      }
+
+      if (aptResp.success && aptResp.data) {
+        const map = new Map<string, AptitudeSet>();
+        for (const row of aptResp.data as AgentAptitude[]) {
+          if (!map.has(row.agent_id)) {
+            map.set(row.agent_id, {
+              spy: 6,
+              guardian: 6,
+              saboteur: 6,
+              propagandist: 6,
+              infiltrator: 6,
+              assassin: 6,
+            });
+          }
+          const set = map.get(row.agent_id);
+          if (set) set[row.operative_type as OperativeType] = row.aptitude_level;
+        }
+        this._draftAptitudeMap = map;
+      }
+
+      this._showDraftPanel = true;
+    } catch (err) {
+      console.error('[Draft] Failed to load agents:', err);
+      VelgToast.error(msg('Failed to load agents for draft.'));
+    }
+  }
+
+  private async _onDraftComplete(agentIds: string[]) {
+    if (!this._epoch || !this._myParticipant) return;
+
+    this._showDraftPanel = false;
+    this._actionLoading = true;
+
+    try {
+      const result = await epochsApi.draftAgents(
+        this._epoch.id,
+        this._myParticipant.simulation_id,
+        agentIds,
+      );
+      if (result.success) {
+        VelgToast.success(msg('Roster locked in.'));
+        await this._loadEpochDetails(this._epoch.id);
+      } else {
+        VelgToast.error(result.error?.message ?? msg('Failed to save draft.'));
+      }
+    } catch {
+      VelgToast.error(msg('Failed to save draft.'));
+    } finally {
+      this._actionLoading = false;
     }
   }
 

@@ -570,7 +570,7 @@ export class VelgSimulationHealthView extends LitElement {
     return html`
       <div class="health-hero">
         <div class="health-hero__meter">
-          <svg viewBox="0 0 100 100">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
             <circle class="health-hero__meter-bg" cx="50" cy="50" r="40" />
             <circle
               class="health-hero__meter-fill"

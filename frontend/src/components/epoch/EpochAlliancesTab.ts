@@ -168,7 +168,7 @@ export class VelgEpochAlliancesTab extends LitElement {
     }
 
     .team-form__input::placeholder {
-      color: var(--color-gray-600);
+      color: var(--color-gray-500);
     }
 
     /* ── Lobby button (for Create Alliance) ── */
@@ -209,7 +209,7 @@ export class VelgEpochAlliancesTab extends LitElement {
     .empty-hint {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-sm);
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       text-align: center;
       padding: var(--space-4);
     }
@@ -251,6 +251,7 @@ export class VelgEpochAlliancesTab extends LitElement {
                     <input
                       class="team-form__input"
                       type="text"
+                      aria-label=${msg('Alliance team name')}
                       placeholder=${msg('Alliance name...')}
                       .value=${this._teamName}
                       @input=${(e: Event) => {
@@ -350,7 +351,7 @@ export class VelgEpochAlliancesTab extends LitElement {
               <div class="alliance__member">
                 <velg-epoch-presence .simulationId=${p.simulation_id}></velg-epoch-presence>
                 ${(p.simulations as { name: string } | undefined)?.name ?? p.simulation_id}
-                ${p.team_id ? '' : html` <span style="color: var(--color-gray-600)">(${msg('unaligned')})</span>`}
+                ${p.team_id ? '' : html` <span style="color: var(--color-gray-400)">(${msg('unaligned')})</span>`}
               </div>
             `,
             )}

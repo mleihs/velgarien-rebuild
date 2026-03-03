@@ -2,6 +2,10 @@ import type {
   AdminUser,
   AdminUserDetail,
   ApiResponse,
+  CleanupExecuteResult,
+  CleanupPreviewResult,
+  CleanupStats,
+  CleanupType,
   PlatformSetting,
 } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
@@ -51,6 +55,30 @@ export class AdminApiService extends BaseApiService {
 
   async removeMembership(userId: string, simulationId: string): Promise<ApiResponse<unknown>> {
     return this.delete(`/admin/users/${userId}/memberships/${simulationId}`);
+  }
+
+  async getCleanupStats(): Promise<ApiResponse<CleanupStats>> {
+    return this.get('/admin/cleanup/stats');
+  }
+
+  async previewCleanup(
+    cleanupType: CleanupType,
+    minAgeDays: number,
+  ): Promise<ApiResponse<CleanupPreviewResult>> {
+    return this.post('/admin/cleanup/preview', {
+      cleanup_type: cleanupType,
+      min_age_days: minAgeDays,
+    });
+  }
+
+  async executeCleanup(
+    cleanupType: CleanupType,
+    minAgeDays: number,
+  ): Promise<ApiResponse<CleanupExecuteResult>> {
+    return this.post('/admin/cleanup/execute', {
+      cleanup_type: cleanupType,
+      min_age_days: minAgeDays,
+    });
   }
 }
 

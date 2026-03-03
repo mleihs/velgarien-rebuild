@@ -202,7 +202,14 @@ export class VelgEmbassyLink extends LitElement {
           <velg-badge variant=${statusVariant}>${this.embassy.status}</velg-badge>
         </div>
 
-        <div class="embassy__partner" @click=${this._handlePartnerClick}>
+        <div class="embassy__partner" role="button" tabindex="0" @click=${this._handlePartnerClick} @keydown=${(
+          e: KeyboardEvent,
+        ) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this._handlePartnerClick();
+          }
+        }}>
           ${
             partner.building.image_url
               ? html`<img

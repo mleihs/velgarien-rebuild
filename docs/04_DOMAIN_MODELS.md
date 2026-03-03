@@ -1,7 +1,8 @@
 # 04 - Domain Models: Entitaeten mit Simulation-Scope
 
-**Version:** 2.8
+**Version:** 2.9
 **Datum:** 2026-03-03
+**Aenderung v2.9:** AgentAptitude interface + AptitudeSet type. `aptitudes?: AgentAptitude[]` auf Agent. `drafted_agent_ids` + `draft_completed_at` auf EpochParticipant. `max_agents_per_player` auf EpochConfig.
 **Aenderung v2.8:** NotificationPreferences interface. SettingCategory + `'notifications'`.
 **Aenderung v2.7:** Bot Player types (BotPlayer, BotPersonality, BotDifficulty). is_bot/bot_player_id/bot_players auf EpochParticipant. sender_type auf EpochChatMessage.
 **Aenderung v2.6:** Platform Admin types (PlatformSetting, AdminUser, AdminUserDetail, AdminMembership) fuer Admin-Panel User-Management und Cache-TTL-Konfiguration.
@@ -158,6 +159,7 @@ interface Agent {
   professions?: AgentProfession[];
   reactions?: EventReaction[];
   building_relations?: BuildingAgentRelation[];
+  aptitudes?: AgentAptitude[];
 }
 ```
 
@@ -193,6 +195,27 @@ interface AgentProfession {
   agent?: Agent;
   profession_label?: string;        // Lokalisiertes Label
 }
+```
+
+---
+
+## 3b. AgentAptitude
+
+**Operative-Type-spezifische Eignungswerte pro Agent.** Jeder Agent kann fuer jeden `operative_type` einen `aptitude_level` (3-9) haben, der die Erfolgswahrscheinlichkeit bei Missionen beeinflusst.
+
+```typescript
+interface AgentAptitude {
+  id: UUID;
+  agent_id: UUID;
+  simulation_id: UUID;
+  operative_type: OperativeType;         // 'spy' | 'saboteur' | 'propagandist' | 'assassin' | 'guardian' | 'infiltrator'
+  aptitude_level: number;                // 3-9, Eignungsstufe
+  created_at: string;
+  updated_at: string;
+}
+
+// Convenience type for aptitude display/editing (maps operative type → level)
+type AptitudeSet = Record<OperativeType, number>;
 ```
 
 ---
@@ -1005,6 +1028,7 @@ interface EpochConfig {
   foundation_pct: number;
   reckoning_pct: number;
   max_team_size: number;
+  max_agents_per_player?: number;        // Max agents per player in draft (default: 3)
   allow_betrayal: boolean;
   score_weights: EpochScoreWeights;
   referee_mode: boolean;
@@ -1037,6 +1061,8 @@ interface EpochParticipant {
   bot_player_id?: UUID;
   bot_players?: BotPlayer;  // Joined via PostgREST select
   cycle_ready: boolean;
+  drafted_agent_ids?: string[];          // UUID[] of agents selected during draft phase
+  draft_completed_at?: string;           // ISO 8601 timestamp when draft was locked in
   simulations?: { name: string; slug: string };
 }
 

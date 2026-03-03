@@ -1,7 +1,8 @@
-import { localized, msg } from '@lit/localize';
+import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { icons } from '../../utils/icons.js';
+import { getFullResUrl } from '../../utils/image.js';
 
 import '../shared/Lightbox.js';
 
@@ -14,6 +15,13 @@ export interface LoreSection {
   body: string;
   imageSlug?: string;
   imageCaption?: string;
+}
+
+export interface PullQuote {
+  afterSectionId: string;
+  text: string;
+  attribution?: string;
+  variant: 'cosmic' | 'signal' | 'character';
 }
 
 /**
@@ -507,6 +515,67 @@ Five worlds. One fracture. The map is open. Which world do you enter first?`),
   ];
 }
 
+/**
+ * Returns curated pull-quotes for the platform LoreScroll.
+ * Rendered between accordion sections for editorial rhythm.
+ */
+export function getPlatformPullQuotes(): PullQuote[] {
+  return [
+    {
+      afterSectionId: 'the-unnamed',
+      text: msg('There was something before the Shards, and it was whole, and it is gone.'),
+      variant: 'cosmic',
+    },
+    {
+      afterSectionId: 'the-first-cartographer',
+      text: msg('An unobserved catastrophe is merely weather.'),
+      variant: 'signal',
+    },
+    {
+      afterSectionId: 'the-mother-of-shards',
+      text: msg('You cannot pour the wine back into the grape.'),
+      variant: 'cosmic',
+    },
+    {
+      afterSectionId: 'field-report-velgarien',
+      text: msg('The propaganda posters are beautiful. I want to be clear about this.'),
+      attribution: msg(str`— Field Report, Velgarien`),
+      variant: 'character',
+    },
+    {
+      afterSectionId: 'dossier-station-null',
+      text: msg('Crew complement: 6 of 200. All systems nominal.'),
+      variant: 'signal',
+    },
+    {
+      afterSectionId: 'field-report-station-null',
+      text: msg('It knows. It knows it knows. It knows it knows it knows.'),
+      variant: 'signal',
+    },
+    {
+      afterSectionId: 'field-report-speranza',
+      text: msg('Nothing has affected me like the risotto.'),
+      attribution: msg(str`— Field Report, Speranza`),
+      variant: 'character',
+    },
+    {
+      afterSectionId: 'what-crosses-over',
+      text: msg('You cannot unread a book.'),
+      variant: 'signal',
+    },
+    {
+      afterSectionId: 'what-the-bureau-wont-tell',
+      text: msg('The Fracture was not a catastrophe. It was a vote.'),
+      variant: 'cosmic',
+    },
+    {
+      afterSectionId: 'the-map-is-also-a-door',
+      text: msg('You are performing an act of Cartography.'),
+      variant: 'signal',
+    },
+  ];
+}
+
 @localized()
 @customElement('velg-lore-scroll')
 export class VelgLoreScroll extends LitElement {
@@ -784,6 +853,177 @@ export class VelgLoreScroll extends LitElement {
       color: var(--lore-text);
     }
 
+    /* ── Pull-Quotes ── */
+
+    .pullquote {
+      margin: var(--space-10) auto;
+      max-width: 700px;
+      opacity: 0;
+      transform: scale(0.97);
+      animation: lore-pullquote-enter 0.8s ease forwards;
+    }
+
+    /* Pull-quote inside section body — appears only when expanded */
+    .section__body > .pullquote {
+      margin: var(--space-8) auto var(--space-2);
+    }
+
+    .pullquote blockquote {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ·· Cosmic — The Broadside ··
+       Vast, atmospheric. Oversized serif commands the full width.
+       Warm glow beneath like light bleeding through old paper. */
+    .pullquote--cosmic {
+      text-align: center;
+      padding: var(--space-10) var(--space-8);
+      max-width: 800px;
+      position: relative;
+    }
+
+    .pullquote--cosmic::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse 70% 50% at 50% 50%,
+        color-mix(in srgb, var(--lore-accent) 8%, transparent),
+        transparent
+      );
+      pointer-events: none;
+      border-radius: var(--border-radius);
+    }
+
+    .pullquote--cosmic blockquote {
+      position: relative;
+      font-family: var(--font-bureau);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--lore-heading);
+      letter-spacing: 0.015em;
+    }
+
+    .pullquote--cosmic blockquote::before,
+    .pullquote--cosmic blockquote::after {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent 5%,
+        var(--lore-accent) 35%,
+        var(--lore-accent) 65%,
+        transparent 95%
+      );
+      opacity: 0.35;
+    }
+
+    .pullquote--cosmic blockquote::before {
+      margin-bottom: var(--space-6);
+    }
+
+    .pullquote--cosmic blockquote::after {
+      margin-top: var(--space-6);
+    }
+
+    /* ·· Signal — The Intercepted Cable ··
+       Hard-bordered container, scanline aesthetic.
+       Feels like a redacted document or cable printout. */
+    .pullquote--signal {
+      text-align: center;
+      padding: var(--space-5) var(--space-6);
+      border: 1px solid var(--lore-divider);
+      position: relative;
+      overflow: hidden;
+      max-width: 600px;
+    }
+
+    .pullquote--signal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        color-mix(in srgb, var(--lore-accent) 3%, transparent) 3px,
+        color-mix(in srgb, var(--lore-accent) 3%, transparent) 4px
+      );
+      pointer-events: none;
+    }
+
+    .pullquote--signal::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 1px;
+      background: var(--lore-accent-strong);
+      opacity: 0.5;
+      animation: lore-signal-scan 4s linear infinite;
+    }
+
+    .pullquote--signal blockquote {
+      position: relative;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--lore-accent-strong);
+      line-height: 1.8;
+    }
+
+    /* ·· Character — The Marginalia ··
+       Indented like a handwritten note in a margin.
+       Bold vertical stroke, generous serif italic. */
+    .pullquote--character {
+      padding: var(--space-6) var(--space-6) var(--space-6) var(--space-8);
+      margin-left: 8%;
+      max-width: 640px;
+      border-left: 3px solid var(--lore-accent);
+      position: relative;
+    }
+
+    .pullquote--character::before {
+      content: '\\201C';
+      position: absolute;
+      top: var(--space-3);
+      left: var(--space-3);
+      font-family: var(--font-bureau);
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--lore-accent);
+      opacity: 0.3;
+    }
+
+    .pullquote--character blockquote {
+      font-family: var(--font-bureau);
+      font-size: var(--text-xl);
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--lore-heading);
+    }
+
+    .pullquote__attribution {
+      display: block;
+      margin-top: var(--space-4);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--lore-divider);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-style: normal;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      color: var(--lore-muted);
+    }
+
     /* ── Descend Button ── */
 
     .descend {
@@ -891,6 +1131,18 @@ export class VelgLoreScroll extends LitElement {
       50% { transform: translateY(4px); }
     }
 
+    @keyframes lore-pullquote-enter {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes lore-signal-scan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
     /* ── Responsive ── */
 
     @media (max-width: 640px) {
@@ -907,11 +1159,40 @@ export class VelgLoreScroll extends LitElement {
       .section__title {
         font-size: var(--text-base);
       }
+
+      .pullquote--cosmic {
+        padding: var(--space-6) var(--space-4);
+      }
+
+      .pullquote--signal {
+        padding: var(--space-4) var(--space-4);
+      }
+
+      .pullquote--signal blockquote {
+        letter-spacing: 0.12em;
+      }
+
+      .pullquote--character {
+        margin-left: 0;
+        padding: var(--space-4) var(--space-4) var(--space-4) var(--space-6);
+      }
+
+      .pullquote--character blockquote {
+        font-size: var(--text-lg);
+      }
+
+      .pullquote--character::before {
+        font-size: 2rem;
+        left: var(--space-1);
+      }
     }
   `;
 
   /** External sections to render (if not provided, uses platform lore) */
   @property({ type: Array }) sections?: LoreSection[];
+
+  /** Pull-quotes rendered between sections as interstitial elements */
+  @property({ type: Array }) pullQuotes?: PullQuote[];
 
   /** Base path for images in Supabase storage */
   @property({ type: String }) basePath = 'platform/lore';
@@ -974,10 +1255,27 @@ export class VelgLoreScroll extends LitElement {
     return `${supabaseUrl}/storage/v1/object/public/simulation.assets/${this.basePath}/${slug}.avif`;
   }
 
+  private _renderPullQuote(quote: PullQuote, delay: number) {
+    return html`
+      <div class="pullquote pullquote--${quote.variant}" style="animation-delay: ${delay}s">
+        <blockquote>${quote.text}</blockquote>
+        ${quote.attribution ? html`<cite class="pullquote__attribution">${quote.attribution}</cite>` : nothing}
+      </div>
+    `;
+  }
+
   protected render() {
     const sections = this.sections ?? getLoreSections();
     const visibleSections = this._revealedAll ? sections : sections.slice(0, this._initialCount);
     const hasMore = !this._revealedAll && sections.length > this._initialCount;
+
+    // Build O(1) lookup for pull-quotes by section ID
+    const quoteMap = new Map<string, PullQuote>();
+    if (this.pullQuotes) {
+      for (const q of this.pullQuotes) {
+        quoteMap.set(q.afterSectionId, q);
+      }
+    }
 
     let currentChapter = '';
 
@@ -992,6 +1290,7 @@ export class VelgLoreScroll extends LitElement {
         const caption = section.imageCaption ?? '';
         const delay = sectionIndex * 0.06;
         sectionIndex++;
+        const quote = quoteMap.get(section.id);
 
         return html`
           ${
@@ -1058,6 +1357,7 @@ export class VelgLoreScroll extends LitElement {
                   : nothing
               }
               <div class="section__text">${section.body}</div>
+              ${quote ? this._renderPullQuote(quote, delay + 0.08) : nothing}
             </div>
           </div>
         `;
@@ -1079,6 +1379,7 @@ export class VelgLoreScroll extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .fullSrc=${getFullResUrl(this._lightboxSrc)}
         .alt=${this._lightboxAlt}
         .caption=${this._lightboxCaption}
         @lightbox-close=${this._closeLightbox}

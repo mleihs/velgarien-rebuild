@@ -26,6 +26,7 @@ export class VelgAgentCard extends LitElement {
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      height: 100%;
     }
 
     .card__body {
@@ -129,7 +130,14 @@ export class VelgAgentCard extends LitElement {
     if (!agent) return html``;
 
     return html`
-      <div class="card ${agent.is_ambassador ? 'card--embassy' : ''}" @click=${this._handleClick}>
+      <div class="card ${agent.is_ambassador ? 'card--embassy' : ''}" role="button" tabindex="0" @click=${this._handleClick} @keydown=${(
+        e: KeyboardEvent,
+      ) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._handleClick();
+        }
+      }}>
         <velg-avatar
           .src=${agent.portrait_image_url ?? ''}
           .name=${agent.name}

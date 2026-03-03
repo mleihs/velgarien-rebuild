@@ -121,6 +121,32 @@ class EpochInvitationService:
         return response.data[0]
 
     @staticmethod
+    async def validate_token(supabase: Client, token: str) -> dict:
+        """Validate an invitation token and return structured epoch + expiry info."""
+        invitation = await EpochInvitationService.get_by_token(supabase, token)
+        epoch_data = invitation.get("game_epochs") or {}
+
+        expires_at_str = invitation.get("expires_at", "")
+        is_expired = False
+        if expires_at_str:
+            try:
+                expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))
+                is_expired = expires_at < datetime.now(UTC)
+            except (ValueError, TypeError):
+                pass
+
+        config = epoch_data.get("config") or {}
+        return {
+            "epoch_name": epoch_data.get("name", "Unknown"),
+            "epoch_description": epoch_data.get("description"),
+            "epoch_status": epoch_data.get("status", "unknown"),
+            "lore_text": config.get("invitation_lore"),
+            "expires_at": invitation.get("expires_at"),
+            "is_expired": is_expired or invitation.get("status") == "expired",
+            "is_accepted": invitation.get("status") == "accepted",
+        }
+
+    @staticmethod
     async def revoke_invitation(
         supabase: Client, invitation_id: UUID,
     ) -> dict:

@@ -144,7 +144,7 @@ export class VelgEpochBattleLog extends LitElement {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     /* ── Cycle tag ────────────────────────── */
@@ -152,7 +152,7 @@ export class VelgEpochBattleLog extends LitElement {
     .entry__cycle {
       font-family: var(--font-mono, monospace);
       font-size: 10px;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       white-space: nowrap;
       align-self: start;
       padding-top: 2px;
@@ -197,7 +197,7 @@ export class VelgEpochBattleLog extends LitElement {
     .empty {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-sm);
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       text-align: center;
       padding: var(--space-4);
     }

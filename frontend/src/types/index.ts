@@ -165,6 +165,7 @@ export interface Agent {
   is_ambassador?: boolean;
   ambassador_blocked_until?: string;
   professions?: AgentProfession[];
+  aptitudes?: AgentAptitude[];
   reactions?: EventReaction[];
   building_relations?: BuildingAgentRelation[];
 }
@@ -184,6 +185,18 @@ export interface AgentProfession {
   agent?: Agent;
   profession_label?: string;
 }
+
+export interface AgentAptitude {
+  id: UUID;
+  agent_id: UUID;
+  simulation_id: UUID;
+  operative_type: OperativeType;
+  aptitude_level: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type AptitudeSet = Record<OperativeType, number>;
 
 // --- Building ---
 
@@ -877,6 +890,7 @@ export interface EpochConfig {
   foundation_pct: number;
   reckoning_pct: number;
   max_team_size: number;
+  max_agents_per_player: number;
   allow_betrayal: boolean;
   score_weights: EpochScoreWeights;
   referee_mode: boolean;
@@ -945,6 +959,8 @@ export interface EpochParticipant {
   last_rp_grant_at?: string;
   final_scores?: Record<string, number>;
   betrayal_penalty?: number;
+  drafted_agent_ids?: UUID[];
+  draft_completed_at?: string;
   cycle_ready?: boolean;
   is_bot: boolean;
   bot_player_id?: UUID;
@@ -1115,4 +1131,42 @@ export interface NotificationPreferences {
   phase_changed: boolean;
   epoch_completed: boolean;
   email_locale: string;
+}
+
+// --- Admin Data Cleanup ---
+
+export type CleanupType =
+  | 'completed_epochs'
+  | 'cancelled_epochs'
+  | 'stale_lobbies'
+  | 'archived_instances'
+  | 'audit_log'
+  | 'bot_decision_log';
+
+export interface CleanupCategoryStats {
+  count: number;
+  oldest_at: string | null;
+}
+
+export interface CleanupStats {
+  completed_epochs: CleanupCategoryStats;
+  cancelled_epochs: CleanupCategoryStats;
+  stale_lobbies: CleanupCategoryStats;
+  archived_instances: CleanupCategoryStats;
+  audit_log_entries: CleanupCategoryStats;
+  bot_decision_entries: CleanupCategoryStats;
+}
+
+export interface CleanupPreviewResult {
+  cleanup_type: CleanupType;
+  min_age_days: number;
+  primary_count: number;
+  cascade_counts: Record<string, number>;
+}
+
+export interface CleanupExecuteResult {
+  cleanup_type: CleanupType;
+  min_age_days: number;
+  deleted_count: number;
+  cascade_counts: Record<string, number>;
 }

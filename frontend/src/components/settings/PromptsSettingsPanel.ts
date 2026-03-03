@@ -359,7 +359,14 @@ export class VelgPromptsSettingsPanel extends LitElement {
       <div class="templates">
         ${this._templates.map(
           (t) => html`
-            <div class="template" @click=${() => this._openEdit(t)}>
+            <div class="template" role="button" tabindex="0" @click=${() => this._openEdit(t)} @keydown=${(
+              e: KeyboardEvent,
+            ) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this._openEdit(t);
+              }
+            }}>
               <div class="template__info">
                 <div class="template__name">${t.template_name}</div>
                 <div class="template__meta">

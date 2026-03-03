@@ -10,9 +10,11 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field
 
 from backend.dependencies import get_admin_supabase, require_platform_admin
+from backend.models.cleanup import CleanupExecuteRequest, CleanupPreviewRequest
 from backend.models.common import CurrentUser
 from backend.services.admin_user_service import AdminUserService
 from backend.services.cache_config import invalidate as invalidate_cache_config
+from backend.services.cleanup_service import CleanupService
 from backend.services.platform_settings_service import PlatformSettingsService
 from supabase import Client
 
@@ -144,6 +146,43 @@ async def remove_membership(
     """Remove a user from a simulation."""
     data = await AdminUserService.remove_membership(admin_supabase, user_id, simulation_id)
     return {"success": True, "data": data}
+
+
+# --- Data Cleanup Endpoints ---
+
+
+@router.get("/cleanup/stats")
+async def get_cleanup_stats(
+    _user: CurrentUser = Depends(require_platform_admin()),
+    admin_supabase: Client = Depends(get_admin_supabase),
+) -> dict:
+    """Get record counts per cleanup category."""
+    data = await CleanupService.get_stats(admin_supabase)
+    return {"success": True, "data": data.model_dump(mode="json")}
+
+
+@router.post("/cleanup/preview")
+async def preview_cleanup(
+    body: CleanupPreviewRequest,
+    _user: CurrentUser = Depends(require_platform_admin()),
+    admin_supabase: Client = Depends(get_admin_supabase),
+) -> dict:
+    """Preview what would be deleted without actually deleting."""
+    data = await CleanupService.preview(admin_supabase, body.cleanup_type, body.min_age_days)
+    return {"success": True, "data": data.model_dump(mode="json")}
+
+
+@router.post("/cleanup/execute")
+async def execute_cleanup(
+    body: CleanupExecuteRequest,
+    user: CurrentUser = Depends(require_platform_admin()),
+    admin_supabase: Client = Depends(get_admin_supabase),
+) -> dict:
+    """Execute data cleanup. Requires prior preview for safety."""
+    data = await CleanupService.execute(
+        admin_supabase, body.cleanup_type, body.min_age_days, user.id,
+    )
+    return {"success": True, "data": data.model_dump(mode="json")}
 
 
 def _invalidate_caches(key: str) -> None:

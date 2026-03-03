@@ -4,12 +4,11 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from fastapi import APIRouter, Depends, Response
 from fastapi.responses import PlainTextResponse
 
+from backend.config import settings
 from backend.dependencies import get_anon_supabase
 from supabase import Client
 
 router = APIRouter(tags=["seo"])
-
-INDEXNOW_KEY = "299fb48f40654304a83169241a35900a"
 
 ROBOTS_TXT = """User-agent: *
 Allow: /
@@ -82,9 +81,9 @@ async def sitemap_xml(supabase: Client = Depends(get_anon_supabase)) -> Response
     )
 
 
-@router.get(f"/{INDEXNOW_KEY}.txt", response_class=PlainTextResponse)
+@router.get(f"/{settings.indexnow_key}.txt", response_class=PlainTextResponse)
 async def indexnow_key() -> PlainTextResponse:
-    return PlainTextResponse(content=INDEXNOW_KEY)
+    return PlainTextResponse(content=settings.indexnow_key)
 
 
 def _add_url(parent: Element, loc: str, lastmod: str, priority: str, changefreq: str) -> None:

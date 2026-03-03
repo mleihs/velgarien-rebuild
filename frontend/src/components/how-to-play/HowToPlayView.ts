@@ -16,6 +16,8 @@ import { customElement, state } from 'lit/decorators.js';
 import { analyticsService } from '../../services/AnalyticsService.js';
 import { seoService } from '../../services/SeoService.js';
 import '../shared/EchartsChart.js';
+import '../shared/Lightbox.js';
+import { getDemoSteps } from './htp-content-demo.js';
 import { getMatches } from './htp-content-matches.js';
 import {
   getBalanceInsights,
@@ -45,6 +47,7 @@ import type {
   BleedVector,
   ChangelogEntry,
   CycleData,
+  DemoStep,
   FinalStanding,
   MatchConfig,
   OperativeCard,
@@ -66,6 +69,9 @@ export class VelgHowToPlay extends LitElement {
   @state() private _activeSection = 'epochs';
   @state() private _expandedMatches = new Set<number>();
   @state() private _expandedUpdates = new Set<number>();
+  @state() private _lightboxSrc: string | null = null;
+  @state() private _lightboxAlt = '';
+  @state() private _lightboxCaption = '';
 
   private _observer: IntersectionObserver | null = null;
   private _chartObserver: IntersectionObserver | null = null;
@@ -235,12 +241,31 @@ export class VelgHowToPlay extends LitElement {
           ${this._renderAlliances()}
           ${this._renderBleed()}
           ${this._renderTactics()}
+          ${this._renderDemoRun()}
           ${this._renderMatches()}
           ${this._renderUpdates()}
           ${this._renderAnalytics()}
         </main>
       </div>
+
+      <velg-lightbox
+        .src=${this._lightboxSrc}
+        .alt=${this._lightboxAlt}
+        .caption=${this._lightboxCaption}
+        @lightbox-close=${this._closeLightbox}
+      ></velg-lightbox>
     `;
+  }
+
+  private _openLightbox(src: string, alt: string, caption: string) {
+    this._lightboxSrc = src;
+    this._lightboxAlt = alt;
+    this._lightboxCaption = caption;
+  }
+
+  private _closeLightbox() {
+    this._lightboxSrc = null;
+    this._lightboxCaption = '';
   }
 
   /* ── Hero ────────────────────────────────────────── */
@@ -755,13 +780,142 @@ export class VelgHowToPlay extends LitElement {
     `;
   }
 
-  /* ── Section 11: Matches ─────────────────────────── */
+  /* ── Section 11: Demo Run ────────────────────────── */
+
+  private _renderDemoRun() {
+    const steps = getDemoSteps();
+    const phases: DemoStep['phase'][] = [
+      'lobby',
+      'draft',
+      'foundation',
+      'competition',
+      'reckoning',
+      'completed',
+    ];
+    const phaseLabels: Record<string, string> = {
+      lobby: msg('Lobby'),
+      draft: msg('Draft'),
+      foundation: msg('Foundation'),
+      competition: msg('Competition'),
+      reckoning: msg('Reckoning'),
+      completed: msg('Completed'),
+    };
+
+    return html`
+      <section class="section" id="demo-run">
+        ${this._renderSectionHeader('11', msg('Demo Run'))}
+        <p class="section__text">
+          ${msg('A complete epoch walkthrough from creation to final standings. Follow along to see every phase, decision point, and outcome in a real 2-player match: Velgarien (human) vs. The Gaslit Reach (Strategist bot).')}
+        </p>
+
+        <!-- Phase timeline -->
+        <div class="demo-timeline">
+          ${phases.map(
+            (p) => html`
+              <div class="demo-timeline__node demo-timeline__node--${p}">
+                <div class="demo-timeline__pip"></div>
+                <span class="demo-timeline__label">${phaseLabels[p]}</span>
+              </div>
+            `,
+          )}
+          <div class="demo-timeline__track"></div>
+        </div>
+
+        <!-- Steps -->
+        <div class="demo-steps">
+          ${steps.map((step, i) => this._renderDemoStep(step, i))}
+        </div>
+      </section>
+    `;
+  }
+
+  private _renderDemoStep(step: DemoStep, index: number) {
+    return html`
+      <div class="demo-step" style="--i: ${index}">
+        <div class="demo-step__gutter">
+          <span class="demo-step__index">${String(index + 1).padStart(2, '0')}</span>
+          <span class="demo-step__phase demo-step__phase--${step.phase}">${step.phase}</span>
+        </div>
+
+        <div class="demo-step__body">
+          <h3 class="demo-step__title">${step.title}</h3>
+
+          ${
+            step.image
+              ? html`
+                <button
+                  class="demo-evidence"
+                  @click=${() => this._openLightbox(step.image ?? '', step.imageAlt ?? step.title, step.title)}
+                  aria-label=${msg('Enlarge screenshot')}
+                >
+                  <img
+                    class="demo-evidence__img"
+                    src=${step.image}
+                    alt=${step.imageAlt ?? step.title}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="demo-evidence__stamp">${msg('EXHIBIT')}</span>
+                  <span class="demo-evidence__enlarge">${msg('ENLARGE')}</span>
+                </button>
+              `
+              : nothing
+          }
+
+          <p class="demo-step__narration">${step.narration}</p>
+
+          ${step.detail ? html`<p class="demo-step__detail">${step.detail}</p>` : nothing}
+
+          ${
+            step.readout
+              ? html`
+                <div class="demo-readout">
+                  ${step.readout.map(
+                    (r) => html`
+                      <div class="demo-readout__cell">
+                        <span class="demo-readout__label">${r.label}</span>
+                        <span class="demo-readout__value">${r.value}</span>
+                      </div>
+                    `,
+                  )}
+                </div>
+              `
+              : nothing
+          }
+
+          ${
+            step.tip
+              ? html`
+                <div class="callout callout--tip" style="margin-top: var(--space-3)">
+                  <div class="callout__label">${msg('Tactical Tip')}</div>
+                  <div class="callout__text">${step.tip}</div>
+                </div>
+              `
+              : nothing
+          }
+
+          ${
+            step.warning
+              ? html`
+                <div class="callout callout--warn" style="margin-top: var(--space-3)">
+                  <div class="callout__label">${msg('Warning')}</div>
+                  <div class="callout__text">${step.warning}</div>
+                </div>
+              `
+              : nothing
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  /* ── Section 12: Matches ─────────────────────────── */
 
   private _renderMatches() {
     const matches = getMatches();
     return html`
       <section class="section" id="matches">
-        ${this._renderSectionHeader('11', msg('Example Matches'))}
+        ${this._renderSectionHeader('12', msg('Example Matches'))}
         <p class="section__text">
           ${msg('Five fully worked-out matches showing different strategies, presets, and mechanics in action. Expand each match to see cycle-by-cycle replays.')}
         </p>
@@ -947,13 +1101,13 @@ export class VelgHowToPlay extends LitElement {
     `;
   }
 
-  /* -- Section 12: Updates & Changelog -------------- */
+  /* -- Section 13: Updates & Changelog -------------- */
 
   private _renderUpdates() {
     const entries = getChangelog();
     return html`
       <section class="section" id="updates">
-        ${this._renderSectionHeader('12', msg('Updates & Changelog'))}
+        ${this._renderSectionHeader('13', msg('Updates & Changelog'))}
         <p class="section__text">
           ${msg('Balance patches and game mechanic changes are documented here. Each update includes detailed change notes and the reasoning behind adjustments.')}
         </p>
@@ -1014,7 +1168,7 @@ export class VelgHowToPlay extends LitElement {
       </div>
     `;
   }
-  /* ── Section 13: Intelligence Report ─────────────── */
+  /* ── Section 14: Intelligence Report ─────────────── */
 
   private _renderAnalytics() {
     const elo = getEloRatings();
@@ -1025,7 +1179,7 @@ export class VelgHowToPlay extends LitElement {
 
     return html`
       <section class="section" id="analytics">
-        ${this._renderSectionHeader('13', msg('Intelligence Report'))}
+        ${this._renderSectionHeader('14', msg('Intelligence Report'))}
         <p class="section__text">
           ${msg('Compiled from 200 simulated epoch games (50 per player count, 2P through 5P) using v2.1 balance tuning. All data drawn from automated Monte Carlo simulation against the live game engine. 188 games produced valid results (12 empty leaderboards excluded).')}
         </p>

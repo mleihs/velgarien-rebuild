@@ -127,18 +127,24 @@ DELETE FROM simulations WHERE simulation_type IN ('game_instance', 'archived')
 
 ## 3. Match Execution Sequence
 
-### Phase 1: Setup (Screenshots 01-10)
+### Phase 1: Setup (Screenshots 01-12)
 
 1. **Dashboard** — Verify all 5 simulation cards render correctly
-2. **Enter simulation** — Click simulation card, navigate to Epoch tab
-3. **Create Epoch** — Walk through 4-step wizard:
+2. **Enter simulation** — Click simulation card, navigate to Agents tab
+3. **Review aptitudes** — Open agent details panel, verify aptitude bars visible (editable for editors)
+4. **Epoch tab** — Navigate to Epoch Command Center
+5. **Create Epoch** — Walk through 4-step wizard:
    - Step 1: Name, duration
    - Step 2: Economy (RP/cycle, RP cap, team size, betrayal toggle)
    - Step 3: Doctrine (scoring dimension weights)
    - Step 4: Review & launch
-4. **Lobby** — Verify epoch card appears with "LOBBY" badge
-5. **Add bot** — Open Bot Config Panel, select personality + difficulty
-6. **Start epoch** — Click "Start Epoch" (requires 2+ participants)
+6. **Lobby** — Verify epoch card appears with "LOBBY" badge
+7. **Draft Roster** — Open Draft Roster panel:
+   - Verify all template agents shown with aptitude bars
+   - Select agents strategically (drag to deployment slots)
+   - Lock in roster (6/6 or fewer as configured)
+8. **Add bot** — Open Bot Config Panel, select personality + difficulty
+9. **Start epoch** — Click "Start Epoch" (requires 2+ participants, all drafts complete)
 
 ### Phase 2: Foundation (Screenshots 11-18)
 
@@ -431,8 +437,10 @@ mkdir -p /tmp/epoch-demo-$(date +%Y%m%d)
 
 ### What to Look For
 
+- **Aptitude impact** — Does agent aptitude visibly affect success probability? Are high-aptitude agents better picks?
+- **Draft flow** — Can players draft agents from template? Does the panel show aptitude bars? Does lock-in persist?
 - **Scoring accuracy** — Do dimension scores match expectations from operative outcomes?
-- **Bot behavior** — Does the bot make reasonable decisions? Does it chat coherently?
+- **Bot behavior** — Does the bot make reasonable decisions? Does it chat coherently? Does it auto-draft appropriately?
 - **RLS gaps** — Can players see data they shouldn't? Can they modify others' data?
 - **UI state consistency** — Does the UI reflect DB state after each resolution?
 - **Mobile layout** — Do epoch components work at narrow viewports?

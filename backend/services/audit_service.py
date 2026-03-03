@@ -1,12 +1,33 @@
 """Audit logging service for tracking entity changes."""
 
+import logging
 from uuid import UUID
 
 from supabase import Client
 
+logger = logging.getLogger(__name__)
+
 
 class AuditService:
     """Service for recording audit trail entries in the audit_log table."""
+
+    @staticmethod
+    async def safe_log(
+        supabase: Client,
+        simulation_id: UUID | None,
+        user_id: UUID,
+        entity_type: str,
+        entity_id: UUID | str | None,
+        action: str,
+        details: dict | None = None,
+    ) -> None:
+        """Best-effort audit log — swallows exceptions (for RLS-constrained contexts)."""
+        try:
+            await AuditService.log_action(
+                supabase, simulation_id, user_id, entity_type, entity_id, action, details,
+            )
+        except Exception:
+            logger.debug("Audit log skipped (RLS): %s %s %s", entity_type, action, entity_id)
 
     @staticmethod
     async def log_action(

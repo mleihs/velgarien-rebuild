@@ -46,7 +46,7 @@ export class VelgEpochLeaderboard extends LitElement {
       font-size: var(--text-xs);
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       text-align: left;
       padding: var(--space-2) var(--space-2);
       border-bottom: 2px solid var(--color-gray-800);
@@ -139,7 +139,7 @@ export class VelgEpochLeaderboard extends LitElement {
     .sim__team {
       font-family: var(--font-mono, monospace);
       font-size: 10px;
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .sim__title {
@@ -257,7 +257,7 @@ export class VelgEpochLeaderboard extends LitElement {
     .dim-label {
       font-family: var(--font-mono, monospace);
       font-size: 9px;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       margin-top: 2px;
       display: flex;
       justify-content: space-between;
@@ -321,12 +321,18 @@ export class VelgEpochLeaderboard extends LitElement {
   @state() private _sortAsc = true;
 
   private _animated = false;
+  private _rafId = 0;
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this._rafId) cancelAnimationFrame(this._rafId);
+  }
 
   protected updated(changed: PropertyValues) {
     super.updated(changed);
     if (changed.has('entries') && this.entries.length > 0 && !this._animated) {
       // Trigger bar animation after first paint
-      requestAnimationFrame(() => {
+      this._rafId = requestAnimationFrame(() => {
         this.setAttribute('animated', '');
         this._animated = true;
       });
@@ -384,7 +390,7 @@ export class VelgEpochLeaderboard extends LitElement {
       return html`<p style="
         font-family: var(--font-mono, monospace);
         font-size: var(--text-sm);
-        color: var(--color-gray-600);
+        color: var(--color-gray-400);
         text-align: center;
         padding: var(--space-4);
       ">${msg('No scores recorded yet.')}</p>`;
@@ -402,28 +408,84 @@ export class VelgEpochLeaderboard extends LitElement {
             : html`
             <thead>
               <tr>
-                <th class="rank-col" @click=${() => this._sort('rank')}>
+                <th class="rank-col" role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'rank' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('rank')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('rank');
+                  }
+                }}>
                   #${this._renderSortArrow('rank')}
                 </th>
-                <th @click=${() => this._sort('rank')}>
+                <th role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'rank' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('rank')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('rank');
+                  }
+                }}>
                   ${msg('Simulation')}
                 </th>
-                <th class="score-col" @click=${() => this._sort('composite')}>
+                <th class="score-col" role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'composite' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('composite')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('composite');
+                  }
+                }}>
                   ${msg('Score')}${this._renderSortArrow('composite')}
                 </th>
-                <th class="bar-col" @click=${() => this._sort('stability')}>
+                <th class="bar-col" role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'stability' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('stability')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('stability');
+                  }
+                }}>
                   ${msg('Stab')}${this._renderSortArrow('stability')}
                 </th>
-                <th class="bar-col" @click=${() => this._sort('influence')}>
+                <th class="bar-col" role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'influence' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('influence')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('influence');
+                  }
+                }}>
                   ${msg('Infl')}${this._renderSortArrow('influence')}
                 </th>
-                <th class="bar-col" @click=${() => this._sort('sovereignty')}>
+                <th class="bar-col" role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'sovereignty' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('sovereignty')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('sovereignty');
+                  }
+                }}>
                   ${msg('Sovr')}${this._renderSortArrow('sovereignty')}
                 </th>
-                <th class="bar-col" @click=${() => this._sort('diplomatic')}>
+                <th class="bar-col" role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'diplomatic' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('diplomatic')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('diplomatic');
+                  }
+                }}>
                   ${msg('Dipl')}${this._renderSortArrow('diplomatic')}
                 </th>
-                <th class="bar-col" @click=${() => this._sort('military')}>
+                <th class="bar-col" role="columnheader" tabindex="0" aria-sort=${this._sortKey === 'military' ? (this._sortAsc ? 'ascending' : 'descending') : 'none'} @click=${() => this._sort('military')} @keydown=${(
+                  e: KeyboardEvent,
+                ) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._sort('military');
+                  }
+                }}>
                   ${msg('Milt')}${this._renderSortArrow('military')}
                 </th>
               </tr>

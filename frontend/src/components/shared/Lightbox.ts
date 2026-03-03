@@ -1,6 +1,6 @@
 import { msg } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 /**
  * Shared lightbox component for displaying images in a fullscreen overlay.
@@ -86,8 +86,11 @@ export class VelgLightbox extends LitElement {
   `;
 
   @property({ type: String }) src: string | null = null;
+  @property({ type: String }) fullSrc: string | null = null;
   @property({ type: String }) alt = '';
   @property({ type: String }) caption = '';
+
+  @state() private _displaySrc: string | null = null;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -97,6 +100,8 @@ export class VelgLightbox extends LitElement {
   protected updated(changed: Map<PropertyKey, unknown>): void {
     if (changed.has('src')) {
       if (this.src) {
+        this._displaySrc = this.src;
+        this._preloadFullRes();
         document.addEventListener('keydown', this._onKeyDown);
         this.dispatchEvent(
           new CustomEvent('lightbox-open', {
@@ -106,9 +111,25 @@ export class VelgLightbox extends LitElement {
           }),
         );
       } else {
+        this._displaySrc = null;
         document.removeEventListener('keydown', this._onKeyDown);
       }
     }
+  }
+
+  /** Preload full-res image in background; swap on success, ignore 404s (old images). */
+  private _preloadFullRes(): void {
+    if (!this.fullSrc) return;
+    const img = new Image();
+    const targetSrc = this.fullSrc;
+    img.onload = () => {
+      // Only swap if lightbox is still showing the same image
+      if (this.src && this._displaySrc === this.src) {
+        this._displaySrc = targetSrc;
+      }
+    };
+    // On error (404 for old images without .full.avif), keep showing thumbnail
+    img.src = targetSrc;
   }
 
   disconnectedCallback(): void {
@@ -133,7 +154,7 @@ export class VelgLightbox extends LitElement {
       <div class="lightbox" role="dialog" aria-modal="true" @click=${this._close}>
         <img
           class="lightbox__img"
-          src=${this.src}
+          src=${this._displaySrc ?? this.src}
           alt=${this.alt}
           @click=${(e: Event) => e.stopPropagation()}
         />

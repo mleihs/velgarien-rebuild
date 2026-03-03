@@ -16,6 +16,7 @@ from backend.routers import (
     admin,
     agent_professions,
     agents,
+    aptitudes,
     bot_players,
     buildings,
     campaigns,
@@ -98,6 +99,7 @@ app.include_router(agents.router)
 app.include_router(buildings.router)
 app.include_router(events.router)
 app.include_router(agent_professions.router)
+app.include_router(aptitudes.router)
 app.include_router(locations.router)
 app.include_router(taxonomies.router)
 app.include_router(settings.router)

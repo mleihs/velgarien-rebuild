@@ -288,8 +288,11 @@ class TestPublicSettings:
         )
         assert r.status_code == 200
         body = r.json()
-        # Velgarien has only ai/integration settings — should get empty result
-        assert body["data"] == []
+        # No ai or integration settings should be exposed — only design is allowed
+        for setting in body["data"]:
+            assert setting["category"] == "design", (
+                f"Public settings returned non-design category: {setting['category']}"
+            )
 
 
 # ── Social ───────────────────────────────────────────────────────────────

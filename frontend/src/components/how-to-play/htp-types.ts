@@ -149,3 +149,25 @@ export interface BalanceInsight {
   value: string;
   description: string;
 }
+
+/* ── Demo Run types ───────────────────────────────── */
+
+export type DemoPhase =
+  | 'lobby'
+  | 'draft'
+  | 'foundation'
+  | 'competition'
+  | 'reckoning'
+  | 'completed';
+
+export interface DemoStep {
+  phase: DemoPhase;
+  title: string;
+  narration: string;
+  detail?: string;
+  readout?: { label: string; value: string }[];
+  tip?: string;
+  warning?: string;
+  image?: string;
+  imageAlt?: string;
+}

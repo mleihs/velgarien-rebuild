@@ -6,7 +6,9 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 
+from backend.dependencies import get_admin_supabase
 from backend.models.epoch import EpochConfig
+from backend.services.game_instance_service import GameInstanceService
 from supabase import Client
 
 logger = logging.getLogger(__name__)
@@ -118,7 +120,9 @@ class EpochService:
             .eq("id", str(epoch_id))
             .execute()
         )
-        return resp.data[0] if resp.data else epoch
+        if not resp.data:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Failed to update epoch.")
+        return resp.data[0]
 
     # ── Lifecycle Transitions ────────────────────────────────
 
@@ -132,9 +136,6 @@ class EpochService:
         3. Transition epoch to foundation phase
         4. Grant initial RP
         """
-        from backend.dependencies import get_admin_supabase
-        from backend.services.game_instance_service import GameInstanceService
-
         epoch = await cls.get(supabase, epoch_id)
         if epoch["status"] != "lobby":
             raise HTTPException(
@@ -149,6 +150,28 @@ class EpochService:
                 status.HTTP_400_BAD_REQUEST,
                 "Need at least 2 participants to start an epoch.",
             )
+
+        # Auto-complete drafts for participants who haven't drafted
+        # (backwards compatibility: select first N agents by created_at)
+        config = {**DEFAULT_CONFIG, **epoch.get("config", {})}
+        max_agents = config.get("max_agents_per_player", 6)
+        for p in participants:
+            if not p.get("drafted_agent_ids"):
+                agent_resp = (
+                    supabase.table("agents")
+                    .select("id")
+                    .eq("simulation_id", str(p["simulation_id"]))
+                    .is_("deleted_at", "null")
+                    .order("created_at")
+                    .limit(max_agents)
+                    .execute()
+                )
+                auto_ids = [a["id"] for a in (agent_resp.data or [])]
+                if auto_ids:
+                    supabase.table("epoch_participants").update({
+                        "drafted_agent_ids": auto_ids,
+                        "draft_completed_at": datetime.now(UTC).isoformat(),
+                    }).eq("id", str(p["id"])).execute()
 
         # Clone simulations into game instances (atomic batch operation)
         admin = await get_admin_supabase()
@@ -181,7 +204,9 @@ class EpochService:
         foundation_rp = int(config["rp_per_cycle"] * 1.5)
         await cls._grant_rp_batch(supabase, epoch_id, foundation_rp, config["rp_cap"])
 
-        return resp.data[0] if resp.data else epoch
+        if not resp.data:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Failed to start epoch.")
+        return resp.data[0]
 
     @classmethod
     async def advance_phase(cls, supabase: Client, epoch_id: UUID) -> dict:
@@ -211,13 +236,12 @@ class EpochService:
 
         # Archive game instances when epoch completes
         if next_status == "completed":
-            from backend.dependencies import get_admin_supabase
-            from backend.services.game_instance_service import GameInstanceService
-
             admin = await get_admin_supabase()
             await GameInstanceService.archive_instances(admin, epoch_id)
 
-        return resp.data[0] if resp.data else epoch
+        if not resp.data:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Failed to advance phase.")
+        return resp.data[0]
 
     @classmethod
     async def cancel_epoch(cls, supabase: Client, epoch_id: UUID) -> dict:
@@ -241,13 +265,12 @@ class EpochService:
 
         # Delete game instances (only exist if epoch was started)
         if epoch["status"] != "lobby":
-            from backend.dependencies import get_admin_supabase
-            from backend.services.game_instance_service import GameInstanceService
-
             admin = await get_admin_supabase()
             await GameInstanceService.delete_instances(admin, epoch_id)
 
-        return resp.data[0] if resp.data else epoch
+        if not resp.data:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Failed to cancel epoch.")
+        return resp.data[0]
 
     # ── Participants ─────────────────────────────────────────
 
@@ -347,6 +370,67 @@ class EpochService:
         supabase.table("epoch_participants").delete().eq(
             "epoch_id", str(epoch_id)
         ).eq("simulation_id", str(simulation_id)).execute()
+
+    # ── Draft ────────────────────────────────────────────────
+
+    @classmethod
+    async def draft_agents(
+        cls,
+        supabase: Client,
+        epoch_id: UUID,
+        simulation_id: UUID,
+        agent_ids: list[UUID],
+    ) -> dict:
+        """Lock in a draft roster for a participant."""
+        epoch = await cls.get(supabase, epoch_id)
+        if epoch["status"] != "lobby":
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                "Can only draft agents during lobby phase.",
+            )
+
+        # Check max_agents_per_player
+        config = {**DEFAULT_CONFIG, **epoch.get("config", {})}
+        max_agents = config.get("max_agents_per_player", 6)
+        if len(agent_ids) > max_agents:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                f"Cannot draft more than {max_agents} agents.",
+            )
+
+        # Verify all agents belong to the participant's simulation
+        for aid in agent_ids:
+            agent_resp = (
+                supabase.table("agents")
+                .select("id")
+                .eq("id", str(aid))
+                .eq("simulation_id", str(simulation_id))
+                .is_("deleted_at", "null")
+                .execute()
+            )
+            if not agent_resp.data:
+                raise HTTPException(
+                    status.HTTP_400_BAD_REQUEST,
+                    f"Agent {aid} not found in simulation {simulation_id}.",
+                )
+
+        # Update participant row
+        resp = (
+            supabase.table("epoch_participants")
+            .update({
+                "drafted_agent_ids": [str(a) for a in agent_ids],
+                "draft_completed_at": datetime.now(UTC).isoformat(),
+            })
+            .eq("epoch_id", str(epoch_id))
+            .eq("simulation_id", str(simulation_id))
+            .execute()
+        )
+        if not resp.data:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND,
+                "Participant not found for this epoch/simulation.",
+            )
+        return resp.data[0]
 
     # ── Teams / Alliances ────────────────────────────────────
 
@@ -500,6 +584,43 @@ class EpochService:
                 "This simulation is already in the epoch.",
             )
 
+        # Auto-draft agents based on bot personality
+        from backend.services.bot_personality import auto_draft
+
+        config = {**DEFAULT_CONFIG, **epoch.get("config", {})}
+        max_agents = config.get("max_agents_per_player", 6)
+
+        # Load agents with aptitudes for draft selection
+        agents_resp = (
+            supabase.table("agents")
+            .select("id, name")
+            .eq("simulation_id", str(simulation_id))
+            .is_("deleted_at", "null")
+            .order("created_at")
+            .execute()
+        )
+        agents = agents_resp.data or []
+
+        # Load aptitudes for all agents in this sim
+        aptitudes_resp = (
+            supabase.table("agent_aptitudes")
+            .select("agent_id, operative_type, aptitude_level")
+            .eq("simulation_id", str(simulation_id))
+            .execute()
+        )
+        apt_map: dict[str, dict[str, int]] = {}
+        for row in aptitudes_resp.data or []:
+            aid = row["agent_id"]
+            if aid not in apt_map:
+                apt_map[aid] = {}
+            apt_map[aid][row["operative_type"]] = row["aptitude_level"]
+        for agent in agents:
+            agent["aptitudes"] = apt_map.get(agent["id"], {})
+
+        drafted_ids = auto_draft(
+            bot_resp.data["personality"], agents, max_agents
+        )
+
         resp = (
             supabase.table("epoch_participants")
             .insert({
@@ -507,6 +628,8 @@ class EpochService:
                 "simulation_id": str(simulation_id),
                 "is_bot": True,
                 "bot_player_id": str(bot_player_id),
+                "drafted_agent_ids": drafted_ids,
+                "draft_completed_at": datetime.now(UTC).isoformat(),
             })
             .execute()
         )
@@ -681,12 +804,17 @@ class EpochService:
             .neq("operative_type", "guardian")
             .execute()
         )
+        # Batch: group by resolves_at, compute new value, update per-group
+        from collections import defaultdict
+        by_new_resolve: defaultdict[str, list[str]] = defaultdict(list)
         for m in active_missions.data or []:
             old_resolves = datetime.fromisoformat(m["resolves_at"])
             new_resolves = old_resolves - timedelta(hours=cycle_hours)
+            by_new_resolve[new_resolves.isoformat()].append(m["id"])
+        for new_ts, ids in by_new_resolve.items():
             db.table("operative_missions").update(
-                {"resolves_at": new_resolves.isoformat()}
-            ).eq("id", m["id"]).execute()
+                {"resolves_at": new_ts}
+            ).in_("id", ids).execute()
 
         # Increment cycle
         resp = (
@@ -696,4 +824,6 @@ class EpochService:
             .execute()
         )
 
-        return resp.data[0] if resp.data else epoch
+        if not resp.data:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Failed to resolve cycle.")
+        return resp.data[0]

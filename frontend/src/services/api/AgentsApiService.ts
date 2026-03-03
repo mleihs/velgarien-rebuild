@@ -1,4 +1,10 @@
-import type { Agent, ApiResponse, EventReaction } from '../../types/index.js';
+import type {
+  Agent,
+  AgentAptitude,
+  ApiResponse,
+  AptitudeSet,
+  EventReaction,
+} from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class AgentsApiService extends BaseApiService {
@@ -36,6 +42,22 @@ export class AgentsApiService extends BaseApiService {
 
   listPublic(simulationId: string, params?: Record<string, string>): Promise<ApiResponse<Agent[]>> {
     return this.getPublic(`/simulations/${simulationId}/agents`, params);
+  }
+
+  getAptitudes(simulationId: string, agentId: string): Promise<ApiResponse<AgentAptitude[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/agents/${agentId}/aptitudes`);
+  }
+
+  setAptitudes(
+    simulationId: string,
+    agentId: string,
+    aptitudes: AptitudeSet,
+  ): Promise<ApiResponse<AgentAptitude[]>> {
+    return this.put(`/simulations/${simulationId}/agents/${agentId}/aptitudes`, aptitudes);
+  }
+
+  getAllAptitudes(simulationId: string): Promise<ApiResponse<AgentAptitude[]>> {
+    return this.getSimulationData(`/simulations/${simulationId}/aptitudes`);
   }
 }
 

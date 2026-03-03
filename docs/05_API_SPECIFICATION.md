@@ -1,7 +1,9 @@
 # 05 - API Specification: Alle Endpoints (Simulation-Scoped)
 
-**Version:** 1.8
+**Version:** 2.0
 **Datum:** 2026-03-03
+**Aenderung v2.0:** **255 Endpoints total (32 Router).** Admin-Router erweitert um 3 Data-Cleanup-Endpoints (`GET /api/v1/admin/cleanup/stats`, `POST /api/v1/admin/cleanup/preview`, `POST /api/v1/admin/cleanup/execute`). 6 Cleanup-Typen: completed_epochs, cancelled_epochs, stale_lobbies, archived_instances, audit_log, bot_decision_log. Preview-before-delete Sicherheit. Epoch-Loeschungen kaskadieren ueber 8 Kind-Tabellen + Spielinstanzen.
+**Aenderung v1.9:** **252 Endpoints total (32 Router).** Agent Aptitudes: 2 neue Endpoints auf Agents-Router (`GET/PUT /api/v1/simulations/:simId/agents/:agentId/aptitudes`), 1 neuer Endpoint fuer Simulations-Aptitudes (`GET /api/v1/simulations/:simId/aptitudes`), 2 neue Public-Endpoints. Draft Phase: 1 neuer Endpoint auf Epochs-Router (`POST /api/v1/epochs/:epochId/participants/:simId/draft`).
 **Aenderung v1.8:** **246 Endpoints total (32 Router).** 2 neue Notification-Preferences-Endpoints auf Users-Router (`GET/POST /api/v1/users/me/notification-preferences`).
 **Aenderung v1.7:** **244 Endpoints total (32 Router).** Neuer bot_players Router (`/api/v1/bot-players`, 4 Endpoints): CRUD fuer Bot-Presets. Epochs-Router erweitert um add-bot/remove-bot (2 Endpoints).
 **Aenderung v1.6:** 236 Endpoints total (31 Router). Neuer Admin-Router (`/api/v1/admin`, 8 Endpoints): Platform-Settings CRUD (list, update), User-Management (list, detail, delete), Membership-Management (add, change role, remove). Alle Admin-Endpoints erfordern `require_platform_admin()` (Email-Allowlist). Verwendet `get_admin_supabase()` (service_role) fuer auth.admin API und platform_settings Zugriff.
@@ -262,6 +264,43 @@ Portrait generieren (AI).
 
 ### `GET /api/v1/simulations/:simId/agents/:agentId/reactions`
 Alle Reaktionen eines Agenten.
+
+### `GET /api/v1/simulations/:simId/agents/:agentId/aptitudes`
+Aptitude-Werte eines Agenten fuer alle Operative-Typen.
+
+**Auth:** Simulation-Mitglied (oder anon via Public-Endpoint)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    { "id": "uuid", "agent_id": "uuid", "operative_type": "spy", "aptitude_level": 7 },
+    { "id": "uuid", "agent_id": "uuid", "operative_type": "guardian", "aptitude_level": 5 }
+  ]
+}
+```
+
+### `PUT /api/v1/simulations/:simId/agents/:agentId/aptitudes`
+Aptitude-Werte eines Agenten setzen/aktualisieren (Upsert pro operative_type).
+
+**Auth:** Editor+
+
+**Body:**
+```json
+{
+  "aptitudes": [
+    { "operative_type": "spy", "aptitude_level": 7 },
+    { "operative_type": "guardian", "aptitude_level": 5 },
+    { "operative_type": "saboteur", "aptitude_level": 4 }
+  ]
+}
+```
+
+### `GET /api/v1/simulations/:simId/aptitudes`
+Alle Aptitude-Werte aller Agenten einer Simulation (fuer Lineup-Uebersicht).
+
+**Auth:** Simulation-Mitglied (oder anon via Public-Endpoint)
 
 ---
 
@@ -1169,6 +1208,34 @@ Epoche verlassen (nur in `lobby`-Phase).
 
 **Auth:** Authentifizierter Benutzer
 
+### `POST /api/v1/epochs/:epochId/participants/:simulationId/draft`
+Agenten-Draft fuer eine Epoch-Teilnahme abschliessen. Setzt `drafted_agent_ids` und `draft_completed_at` auf dem Participant-Record. Nur in `lobby`-Phase moeglich.
+
+**Auth:** Simulation-Editor+
+
+**Body:**
+```json
+{
+  "agent_ids": ["uuid-1", "uuid-2", "uuid-3"]
+}
+```
+
+**Validierung:**
+- `agent_ids` darf maximal `config.max_agents_per_player` Eintraege haben (Default: 3)
+- Alle Agent-UUIDs muessen zur angegebenen Simulation gehoeren
+- Draft kann nur einmal abgeschlossen werden (Idempotent: erneuter Aufruf ueberschreibt)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "drafted_agent_ids": ["uuid-1", "uuid-2", "uuid-3"],
+    "draft_completed_at": "2026-03-03T12:00:00Z"
+  }
+}
+```
+
 ### `GET /api/v1/epochs/:epochId/teams`
 Alle Teams/Allianzen einer Epoche auflisten.
 
@@ -1568,7 +1635,7 @@ Bot aus Epoche entfernen.
 
 ---
 
-## 30. Public Endpoints — Gesamt (46 Endpoints)
+## 30. Public Endpoints — Gesamt (48 Endpoints)
 
 Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter `/api/v1/public/`.
 
@@ -1598,50 +1665,52 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | 20 | GET | `/simulations/:simId/social-media` | Social Media Posts |
 | 21 | GET | `/simulations/:simId/campaigns` | Kampagnen |
 
-### Public Relationships, Echoes, Connections, Map-Data
+### Public Aptitudes, Relationships, Echoes, Connections, Map-Data
 
 | # | Method | Path | Beschreibung |
 |---|--------|------|-------------|
-| 22 | GET | `/simulations/:simId/agents/:agentId/relationships` | Beziehungen eines Agenten |
-| 23 | GET | `/simulations/:simId/relationships` | Alle Beziehungen einer Simulation |
-| 24 | GET | `/simulations/:simId/echoes` | Eingehende Echoes |
-| 25 | GET | `/simulations/:simId/events/:eventId/echoes` | Echoes eines Events |
-| 26 | GET | `/connections` | Alle Simulation-Connections |
-| 27 | GET | `/map-data` | Aggregierte Karten-Daten |
+| 22 | GET | `/simulations/:simId/agents/:agentId/aptitudes` | Aptitude-Werte eines Agenten |
+| 23 | GET | `/simulations/:simId/aptitudes` | Alle Aptitude-Werte einer Simulation |
+| 24 | GET | `/simulations/:simId/agents/:agentId/relationships` | Beziehungen eines Agenten |
+| 25 | GET | `/simulations/:simId/relationships` | Alle Beziehungen einer Simulation |
+| 26 | GET | `/simulations/:simId/echoes` | Eingehende Echoes |
+| 27 | GET | `/simulations/:simId/events/:eventId/echoes` | Echoes eines Events |
+| 28 | GET | `/connections` | Alle Simulation-Connections |
+| 29 | GET | `/map-data` | Aggregierte Karten-Daten |
 
 ### Public Embassies
 
 | # | Method | Path | Beschreibung |
 |---|--------|------|-------------|
-| 28 | GET | `/simulations/:simId/embassies` | Embassy-Liste |
-| 29 | GET | `/simulations/:simId/embassies/:embassyId` | Embassy-Details |
-| 30 | GET | `/simulations/:simId/buildings/:buildingId/embassy` | Embassy fuer ein Building |
-| 31 | GET | `/embassies` | Alle Embassies plattformweit |
+| 30 | GET | `/simulations/:simId/embassies` | Embassy-Liste |
+| 31 | GET | `/simulations/:simId/embassies/:embassyId` | Embassy-Details |
+| 32 | GET | `/simulations/:simId/buildings/:buildingId/embassy` | Embassy fuer ein Building |
+| 33 | GET | `/embassies` | Alle Embassies plattformweit |
 
 ### Public Game Health
 
 | # | Method | Path | Beschreibung |
 |---|--------|------|-------------|
-| 32 | GET | `/simulations/:simId/health` | Health-Dashboard |
-| 33 | GET | `/simulations/:simId/health/buildings` | Building-Readiness |
-| 34 | GET | `/simulations/:simId/health/zones` | Zone-Stability |
-| 35 | GET | `/simulations/:simId/health/embassies` | Embassy-Effectiveness |
-| 36 | GET | `/health/all` | Globale Health-Uebersicht |
+| 34 | GET | `/simulations/:simId/health` | Health-Dashboard |
+| 35 | GET | `/simulations/:simId/health/buildings` | Building-Readiness |
+| 36 | GET | `/simulations/:simId/health/zones` | Zone-Stability |
+| 37 | GET | `/simulations/:simId/health/embassies` | Embassy-Effectiveness |
+| 38 | GET | `/health/all` | Globale Health-Uebersicht |
 
 ### Public Epochs & Competitive Layer
 
 | # | Method | Path | Beschreibung |
 |---|--------|------|-------------|
-| 37 | GET | `/epochs` | Epochen-Liste |
-| 38 | GET | `/epochs/active` | Aktive Epoche |
-| 39 | GET | `/epochs/:epochId` | Epoch-Details |
-| 40 | GET | `/epochs/:epochId/participants` | Teilnehmer |
-| 41 | GET | `/epochs/:epochId/teams` | Teams/Allianzen |
-| 42 | GET | `/epochs/:epochId/leaderboard` | Bestenliste |
-| 43 | GET | `/epochs/:epochId/standings` | Endstaende |
-| 44 | GET | `/epochs/:epochId/battle-log` | Battle-Log (oeffentlicher Feed) |
-| 45 | GET | `/battle-feed?limit={1-50}` | Globaler oeffentlicher Battle-Feed (alle Epochen) |
-| 46 | GET | `/epoch-invitations/:token` | Epoch-Einladung per Token validieren |
+| 39 | GET | `/epochs` | Epochen-Liste |
+| 40 | GET | `/epochs/active` | Aktive Epoche |
+| 41 | GET | `/epochs/:epochId` | Epoch-Details |
+| 42 | GET | `/epochs/:epochId/participants` | Teilnehmer |
+| 43 | GET | `/epochs/:epochId/teams` | Teams/Allianzen |
+| 44 | GET | `/epochs/:epochId/leaderboard` | Bestenliste |
+| 45 | GET | `/epochs/:epochId/standings` | Endstaende |
+| 46 | GET | `/epochs/:epochId/battle-log` | Battle-Log (oeffentlicher Feed) |
+| 47 | GET | `/battle-feed?limit={1-50}` | Globaler oeffentlicher Battle-Feed (alle Epochen) |
+| 48 | GET | `/epoch-invitations/:token` | Epoch-Einladung per Token validieren |
 
 ---
 
@@ -1655,7 +1724,7 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | Members | 4 | CRUD |
 | Settings | 6 | List + ByCategory + Get + Create + Update + Delete |
 | Taxonomies | 5 | CRUD |
-| Agents | 7 | CRUD + Portrait + Reactions |
+| Agents | 10 | CRUD + Portrait + Reactions + Aptitudes (Get/Put/ListAll) |
 | Agent Professions | 4 | CRUD |
 | Buildings | 11 | CRUD + Image + Relations |
 | Events | 8 | CRUD + Reactions + Generate |
@@ -1672,12 +1741,13 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | Echoes | 5 | List (Sim/Event) + Trigger + Approve + Reject |
 | Connections | 4 | List + Create + Patch + Delete |
 | Embassies | 8 | List + Get + GetForBuilding + Create + Update + Activate + Suspend + Dissolve |
-| Epochs | 19 | CRUD + Lifecycle (Start/Advance/Cancel/ResolveCycle) + Participants + Teams + Ready + AddBot + RemoveBot |
+| Epochs | 20 | CRUD + Lifecycle (Start/Advance/Cancel/ResolveCycle) + Participants + Draft + Teams + Ready + AddBot + RemoveBot |
 | Epoch Chat | 3 | Send + List (Epoch-wide) + List (Team) |
 | Epoch Invitations | 4 | Create+Send + List + Revoke + RegenerateLore |
 | Operatives | 7 | Deploy + List + Threats + Get + Recall + Resolve + CounterIntel |
 | Scores | 4 | Leaderboard + Standings + History + Compute |
 | Game Mechanics | 8 | Health Dashboard + Sim/Buildings/Zones/Embassies + Refresh |
 | Bot Players | 4 | CRUD (List + Create + Update + Delete) |
-| Public | 45 | Anonymer Lesezugriff (alle GET-only) |
-| **Gesamt** | **246** | **32 Router** |
+| Admin | 11 | Settings (2) + Users (3) + Memberships (3) + Cleanup (3) |
+| Public | 48 | Anonymer Lesezugriff (alle GET-only) |
+| **Gesamt** | **255** | **32 Router** |

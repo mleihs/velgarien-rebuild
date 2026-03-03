@@ -33,6 +33,7 @@ def _make_chain(**kwargs):
     c.order.return_value = c
     c.range.return_value = c
     c.neq.return_value = c
+    c.is_.return_value = c
     for k, v in kwargs.items():
         setattr(c, k, v)
     return c
@@ -53,7 +54,7 @@ class TestResolveRecipients:
             {
                 "simulation_id": SIM_A,
                 "is_bot": False,
-                "simulations": {"name": "Velgarien", "source_template_id": TEMPLATE_A},
+                "simulations": {"name": "Velgarien", "slug": "velgarien", "source_template_id": TEMPLATE_A},
             },
         ])
 
@@ -70,17 +71,24 @@ class TestResolveRecipients:
         prefs_chain = _make_chain()
         prefs_chain.execute.return_value = MagicMock(data=[])
 
-        call_count = 0
+        # Slugs for template sims
+        slug_chain = _make_chain()
+        slug_chain.execute.return_value = MagicMock(data=[
+            {"id": TEMPLATE_A, "slug": "velgarien"},
+        ])
+
+        call_count = {"table": 0}
 
         def table_side_effect(name):
-            nonlocal call_count
-            call_count += 1
+            call_count["table"] += 1
             if name == "epoch_participants":
                 return participants_chain
             if name == "simulation_members":
                 return members_chain
             if name == "notification_preferences":
                 return prefs_chain
+            if name == "simulations":
+                return slug_chain
             return _make_chain()
 
         admin_sb.table.side_effect = table_side_effect
@@ -92,6 +100,7 @@ class TestResolveRecipients:
 
         assert len(recipients) == 1
         assert recipients[0]["email"] == "player@test.com"
+        assert recipients[0]["simulation_slug"] == "velgarien"
 
     @pytest.mark.asyncio
     async def test_respects_notification_preference_opt_out(self):
@@ -103,7 +112,7 @@ class TestResolveRecipients:
             {
                 "simulation_id": SIM_A,
                 "is_bot": False,
-                "simulations": {"name": "Velgarien", "source_template_id": TEMPLATE_A},
+                "simulations": {"name": "Velgarien", "slug": "velgarien", "source_template_id": TEMPLATE_A},
             },
         ])
 
@@ -122,6 +131,11 @@ class TestResolveRecipients:
             {"user_id": USER_A, "cycle_resolved": False, "phase_changed": True, "epoch_completed": True, "email_locale": "en"},
         ])
 
+        slug_chain = _make_chain()
+        slug_chain.execute.return_value = MagicMock(data=[
+            {"id": TEMPLATE_A, "slug": "velgarien"},
+        ])
+
         def table_side_effect(name):
             if name == "epoch_participants":
                 return participants_chain
@@ -129,6 +143,8 @@ class TestResolveRecipients:
                 return members_chain
             if name == "notification_preferences":
                 return prefs_chain
+            if name == "simulations":
+                return slug_chain
             return _make_chain()
 
         admin_sb.table.side_effect = table_side_effect
@@ -187,14 +203,28 @@ class TestBuildPlayerBriefing:
         # Operatives
         ops_chain = _make_chain()
         ops_chain.execute.return_value = MagicMock(data=[
-            {"operative_type": "spy", "status": "active"},
-            {"operative_type": "guardian", "status": "active"},
-            {"operative_type": "saboteur", "status": "success"},
+            {"operative_type": "spy", "status": "active", "target_simulation_id": SIM_B, "resolves_at": None},
+            {"operative_type": "guardian", "status": "active", "target_simulation_id": None, "resolves_at": None},
+            {"operative_type": "saboteur", "status": "success", "target_simulation_id": SIM_B, "resolves_at": None},
         ])
 
-        # RP
+        # Target sim names
+        names_chain = _make_chain()
+        names_chain.execute.return_value = MagicMock(data=[
+            {"id": SIM_B, "name": "The Gaslit Reach"},
+        ])
+
+        # RP + team_id
         rp_chain = _make_chain()
-        rp_chain.execute.return_value = MagicMock(data={"resource_points": 18})
+        rp_chain.execute.return_value = MagicMock(data={"resource_points": 18, "team_id": None})
+
+        # Threats (B1)
+        threat_chain = _make_chain()
+        threat_chain.execute.return_value = MagicMock(data=[])
+
+        # Spy intel (B2)
+        intel_chain = _make_chain()
+        intel_chain.execute.return_value = MagicMock(data=[])
 
         # Battle log
         log_chain = _make_chain()
@@ -202,7 +232,7 @@ class TestBuildPlayerBriefing:
             {"narrative": "An operative was detected.", "event_type": "detection"},
         ])
 
-        call_count = {"scores": 0}
+        call_count = {"scores": 0, "operative_missions": 0, "simulations": 0, "battle_log": 0}
 
         def table_side_effect(name):
             if name == "epoch_scores":
@@ -213,11 +243,21 @@ class TestBuildPlayerBriefing:
                     return current_chain
                 return prev_chain
             if name == "operative_missions":
-                return ops_chain
+                call_count["operative_missions"] += 1
+                if call_count["operative_missions"] == 1:
+                    return ops_chain  # Own missions
+                return threat_chain  # Threat detection
+            if name == "simulations":
+                return names_chain
             if name == "epoch_participants":
                 return rp_chain
             if name == "battle_log":
-                return log_chain
+                call_count["battle_log"] += 1
+                if call_count["battle_log"] == 1:
+                    return intel_chain  # Spy intel
+                return log_chain  # Public events
+            if name == "epoch_teams":
+                return _make_chain()
             return _make_chain()
 
         admin_sb.table.side_effect = table_side_effect
@@ -236,6 +276,151 @@ class TestBuildPlayerBriefing:
         assert briefing["guardians"] == 1
         assert briefing["rp_balance"] == 18
         assert len(briefing["public_events"]) == 1
+
+        # New enrichment fields
+        assert "threats" in briefing
+        assert "spy_intel" in briefing
+        assert "missions" in briefing
+        assert "rank_gap" in briefing
+        assert "alliance_name" in briefing
+        assert "next_cycle_missions" in briefing
+        assert "next_cycle_rp_projection" in briefing
+        assert "accent_color" in briefing
+
+    @pytest.mark.asyncio
+    async def test_mission_details_exclude_defensive_ops(self):
+        """B7: Guardian/counter_intel ops should not appear in per-mission log."""
+        admin_sb = MagicMock()
+
+        current_chain = _make_chain()
+        current_chain.execute.return_value = MagicMock(data=[
+            {
+                "simulation_id": SIM_A,
+                "composite_score": 50.0,
+                "stability_score": 50.0,
+                "influence_score": 50.0,
+                "sovereignty_score": 50.0,
+                "diplomatic_score": 50.0,
+                "military_score": 50.0,
+            },
+        ])
+
+        ops_chain = _make_chain()
+        ops_chain.execute.return_value = MagicMock(data=[
+            {"operative_type": "guardian", "status": "active", "target_simulation_id": None, "resolves_at": None},
+            {"operative_type": "spy", "status": "success", "target_simulation_id": SIM_B, "resolves_at": None},
+        ])
+
+        names_chain = _make_chain()
+        names_chain.execute.return_value = MagicMock(data=[{"id": SIM_B, "name": "Target"}])
+
+        rp_chain = _make_chain()
+        rp_chain.execute.return_value = MagicMock(data={"resource_points": 10, "team_id": None})
+
+        empty_chain = _make_chain()
+        empty_chain.execute.return_value = MagicMock(data=[])
+
+        call_count = {"operative_missions": 0, "battle_log": 0}
+
+        def table_side_effect(name):
+            if name == "epoch_scores":
+                return current_chain
+            if name == "operative_missions":
+                call_count["operative_missions"] += 1
+                if call_count["operative_missions"] == 1:
+                    return ops_chain
+                return empty_chain
+            if name == "simulations":
+                return names_chain
+            if name == "epoch_participants":
+                return rp_chain
+            if name == "battle_log":
+                call_count["battle_log"] += 1
+                return empty_chain
+            return _make_chain()
+
+        admin_sb.table.side_effect = table_side_effect
+
+        briefing = await CycleNotificationService._build_player_briefing(
+            admin_sb, EPOCH_ID, SIM_A, 1, "Test", "competition",
+        )
+
+        # Only spy should appear in missions, not guardian
+        assert len(briefing["missions"]) == 1
+        assert briefing["missions"][0]["type"] == "spy"
+
+
+# ── Standing Snapshot ─────────────────────────────────────────
+
+
+class TestBuildStandingSnapshot:
+    @pytest.mark.asyncio
+    async def test_returns_standing_data(self):
+        """C1: Standing snapshot returns rank and composite."""
+        admin_sb = MagicMock()
+
+        scores_chain = _make_chain()
+        scores_chain.execute.return_value = MagicMock(data=[
+            {"simulation_id": SIM_A, "composite_score": 80.0},
+            {"simulation_id": SIM_B, "composite_score": 60.0},
+        ])
+
+        admin_sb.table.return_value = scores_chain
+
+        result = await CycleNotificationService._build_standing_snapshot(
+            admin_sb, EPOCH_ID, SIM_A,
+        )
+
+        assert result is not None
+        assert result["rank"] == 1
+        assert result["total_players"] == 2
+        assert result["composite"] == 80.0
+
+    @pytest.mark.asyncio
+    async def test_returns_none_when_no_scores(self):
+        admin_sb = MagicMock()
+
+        scores_chain = _make_chain()
+        scores_chain.execute.return_value = MagicMock(data=[])
+
+        admin_sb.table.return_value = scores_chain
+
+        result = await CycleNotificationService._build_standing_snapshot(
+            admin_sb, EPOCH_ID, SIM_A,
+        )
+
+        assert result is None
+
+
+# ── Campaign Stats ────────────────────────────────────────────
+
+
+class TestBuildCampaignStats:
+    @pytest.mark.asyncio
+    async def test_computes_stats(self):
+        """D1: Campaign stats should compute totals and success rate."""
+        admin_sb = MagicMock()
+
+        ops_chain = _make_chain()
+        ops_chain.execute.return_value = MagicMock(data=[
+            {"operative_type": "spy", "status": "success"},
+            {"operative_type": "spy", "status": "failed"},
+            {"operative_type": "saboteur", "status": "success"},
+            {"operative_type": "guardian", "status": "active"},
+        ])
+
+        admin_sb.table.return_value = ops_chain
+
+        stats = await CycleNotificationService._build_campaign_stats(
+            admin_sb, EPOCH_ID, SIM_A,
+        )
+
+        assert stats["total_ops"] == 4
+        # 2 successes out of 3 resolved (spy success, spy failed, saboteur success)
+        assert abs(stats["success_rate"] - 66.7) < 0.1
+        assert stats["by_type"]["spy"] == 2
+        assert stats["by_type"]["saboteur"] == 1
+        assert stats["by_type"]["guardian"] == 1
 
 
 # ── Send Methods ──────────────────────────────────────────────

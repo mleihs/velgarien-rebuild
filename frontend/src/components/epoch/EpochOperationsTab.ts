@@ -87,7 +87,16 @@ export class VelgEpochOperationsTab extends LitElement {
       gap: var(--space-3);
       padding: var(--space-2) 0;
       border-bottom: 1px solid var(--color-gray-850, var(--color-gray-800));
+      border-left: 2px solid transparent;
       transition: all var(--transition-normal);
+    }
+
+    .mission--defensive {
+      border-left-color: var(--color-success);
+    }
+
+    .mission--offensive {
+      border-left-color: var(--color-warning);
     }
 
     .mission:hover {
@@ -133,7 +142,7 @@ export class VelgEpochOperationsTab extends LitElement {
     .mission__detail {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-xs);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .mission__status {
@@ -159,8 +168,8 @@ export class VelgEpochOperationsTab extends LitElement {
     }
 
     .mission__status--failed {
-      border-color: var(--color-gray-600);
-      color: var(--color-gray-500);
+      border-color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .mission__status--detected {
@@ -189,12 +198,20 @@ export class VelgEpochOperationsTab extends LitElement {
       cursor: not-allowed;
     }
 
+    .mission__narrative {
+      font-family: var(--font-mono, monospace);
+      font-size: 10px;
+      color: var(--color-gray-500);
+      font-style: italic;
+      margin-top: 2px;
+    }
+
     /* ── Empty / Threat ───────────────────────── */
 
     .empty-hint {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-sm);
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       text-align: center;
       padding: var(--space-4);
     }
@@ -282,8 +299,13 @@ export class VelgEpochOperationsTab extends LitElement {
 
   private _renderMission(m: OperativeMission) {
     const canRecall = ['deploying', 'active'].includes(m.status);
+    const isDefensive = m.operative_type === 'guardian';
+    const isCompleted = ['success', 'failed', 'detected', 'captured'].includes(m.status);
+    const narrative = (m as OperativeMission & { mission_result?: { narrative?: string } })
+      .mission_result?.narrative;
+
     return html`
-      <div class="mission">
+      <div class="mission ${isDefensive ? 'mission--defensive' : 'mission--offensive'}">
         <div class="mission__icon">${this._getOperativeIcon(m.operative_type)}</div>
         <div class="mission__info">
           <div class="mission__type">
@@ -292,12 +314,13 @@ export class VelgEpochOperationsTab extends LitElement {
           </div>
           <div class="mission__detail">
             ${
-              m.success_probability != null
+              m.success_probability != null && m.operative_type !== 'guardian'
                 ? html`${Math.round(m.success_probability * 100)}% ${msg('success')}`
                 : nothing
             }
             ${m.cost_rp ? html` &middot; ${m.cost_rp} RP` : nothing}
           </div>
+          ${isCompleted && narrative ? html`<div class="mission__narrative">${narrative}</div>` : nothing}
         </div>
         ${
           canRecall

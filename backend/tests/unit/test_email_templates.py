@@ -42,6 +42,26 @@ class TestRenderCycleBriefing:
             ],
             "simulation_name": "Velgarien",
             "command_center_url": "https://metaverse.center/epoch",
+            # New enrichment fields
+            "accent_color": "#ff6b2b",
+            "simulation_slug": "velgarien",
+            "missions": [
+                {"type": "spy", "target_name": "Station Null", "status": "success"},
+                {"type": "saboteur", "target_name": "Speranza", "status": "failed"},
+            ],
+            "threats": [
+                {"type": "spy", "status": "detected", "source_name": "Speranza"},
+            ],
+            "has_threat_data": True,
+            "spy_intel": [
+                {"narrative": "Intel report: Station Null zone security revealed."},
+            ],
+            "rank_gap": {"en": "5.2 points behind #1", "de": "5,2 Punkte hinter #1"},
+            "alliance_name": None,
+            "ally_names": [],
+            "alliance_bonus_active": False,
+            "next_cycle_missions": 2,
+            "next_cycle_rp_projection": "+12 → 30 / 40",
         }
 
     def test_contains_epoch_name(self):
@@ -75,8 +95,17 @@ class TestRenderCycleBriefing:
         assert "EINFLUSS" in html
         assert "DIPLOMATIE" in html
 
-    def test_contains_operative_status(self):
+    def test_contains_operative_status_mission_log(self):
+        """B7: When mission details are present, renders per-mission log."""
         html = render_cycle_briefing(self._sample_data())
+        assert "OPERATIVE DEPLOYMENT LOG" in html
+        assert "SPY" in html  # Operative type in mission table
+
+    def test_contains_operative_status_aggregate_fallback(self):
+        """Aggregate view when no mission details provided."""
+        data = self._sample_data()
+        data["missions"] = []  # Trigger aggregate fallback
+        html = render_cycle_briefing(data)
         assert "ACTIVE" in html
         assert "RESOLVED" in html
 
@@ -116,6 +145,95 @@ class TestRenderCycleBriefing:
         data["public_events"] = []
         html = render_cycle_briefing(data)
         assert "No public signals intercepted" in html
+
+    # ── New section tests (B1-B7 enrichment) ──
+
+    def test_contains_threat_assessment(self):
+        """B1: Threat assessment section shows detected inbound ops."""
+        html = render_cycle_briefing(self._sample_data())
+        assert "THREAT ASSESSMENT" in html
+        assert "Speranza" in html  # Source of the threat
+
+    def test_no_threats_shows_message(self):
+        data = self._sample_data()
+        data["threats"] = []
+        html = render_cycle_briefing(data)
+        assert "No inbound threats detected" in html
+
+    def test_contains_spy_intel(self):
+        """B2: Spy intel digest shows earned intelligence."""
+        html = render_cycle_briefing(self._sample_data())
+        assert "SPY INTEL DIGEST" in html
+        assert "zone security revealed" in html
+
+    def test_contains_rank_gap(self):
+        """B3: Rank gap indicator."""
+        html = render_cycle_briefing(self._sample_data())
+        assert "5.2 points behind #1" in html
+
+    def test_contains_next_cycle_preview(self):
+        """B4: Next cycle preview section."""
+        html = render_cycle_briefing(self._sample_data())
+        assert "NEXT CYCLE PREVIEW" in html
+        assert "12" in html  # RP projection
+
+    def test_contains_alliance_status_independent(self):
+        """B6: Alliance status when operating independently."""
+        data = self._sample_data()
+        data["alliance_name"] = None
+        html = render_cycle_briefing(data)
+        assert "ALLIANCE STATUS" in html
+        assert "Operating independently" in html
+
+    def test_contains_alliance_status_allied(self):
+        """B6: Alliance status when in an alliance."""
+        data = self._sample_data()
+        data["alliance_name"] = "Shadow Pact"
+        data["ally_names"] = ["The Gaslit Reach", "Speranza"]
+        data["alliance_bonus_active"] = True
+        html = render_cycle_briefing(data)
+        assert "Shadow Pact" in html
+        assert "DIPLOMATIC BONUS" in html
+
+    def test_contains_mission_log(self):
+        """B7: Per-mission breakdown."""
+        data = self._sample_data()
+        html = render_cycle_briefing(data)
+        assert "OPERATIVE DEPLOYMENT LOG" in html
+        assert "SPY" in html  # Operative type label
+
+    def test_per_simulation_accent_color(self):
+        """F1: Per-simulation accent color used in score bars."""
+        data = self._sample_data()
+        data["accent_color"] = "#ff6b2b"
+        html = render_cycle_briefing(data)
+        assert "#ff6b2b" in html
+
+    def test_per_simulation_narrative_voice(self):
+        """F2: Per-simulation narrative header."""
+        data = self._sample_data()
+        data["simulation_slug"] = "velgarien"
+        html = render_cycle_briefing(data)
+        assert "BUREAU DIRECTIVE" in html
+
+    def test_single_language_en(self):
+        """A1: Single-language rendering."""
+        html = render_cycle_briefing(self._sample_data(), email_locale="en")
+        assert "DEUTSCHE VERSION" not in html
+        assert "STABILITY" in html
+
+    def test_single_language_de(self):
+        """A1: Single-language German rendering."""
+        html = render_cycle_briefing(self._sample_data(), email_locale="de")
+        assert "DEUTSCHE VERSION" not in html
+        assert "STABILIT" in html  # STABILITÄT
+        # Should NOT contain English dimension names as primary
+        # (German is the first and only block)
+
+    def test_dark_mode_meta_tag(self):
+        """A4: Dark mode meta tag."""
+        html = render_cycle_briefing(self._sample_data())
+        assert 'name="color-scheme" content="dark"' in html
 
 
 # ── Phase Change ──────────────────────────────────────────────
@@ -174,6 +292,45 @@ class TestRenderPhaseChange:
             command_center_url="https://metaverse.center/epoch",
         )
         assert "DEUTSCHE VERSION" in html
+
+    # ── New phase change tests (C1, C2, A1) ──
+
+    def test_per_player_standing_data(self):
+        """C1: Phase change email includes player standing."""
+        html = render_phase_change(
+            epoch_name="Test",
+            old_phase="foundation",
+            new_phase="competition",
+            cycle_count=5,
+            command_center_url="https://metaverse.center/epoch",
+            standing_data={"rank": 2, "total_players": 5, "composite": 65.4},
+        )
+        assert "#2 / 5" in html
+        assert "65.4" in html
+
+    def test_accent_color(self):
+        """F1: Per-simulation accent color."""
+        html = render_phase_change(
+            epoch_name="Test",
+            old_phase="foundation",
+            new_phase="competition",
+            cycle_count=5,
+            command_center_url="https://metaverse.center/epoch",
+            accent_color="#0d7377",
+        )
+        assert "#0d7377" in html
+
+    def test_single_language_en(self):
+        """A1: Single-language rendering."""
+        html = render_phase_change(
+            epoch_name="Test",
+            old_phase="foundation",
+            new_phase="competition",
+            cycle_count=5,
+            command_center_url="https://metaverse.center/epoch",
+            email_locale="en",
+        )
+        assert "DEUTSCHE VERSION" not in html
 
 
 # ── Epoch Completed ───────────────────────────────────────────
@@ -288,6 +445,50 @@ class TestRenderEpochCompleted:
         )
         assert "15" in html
 
+    # ── New completed email tests (D1, D2, A1, F1) ──
+
+    def test_campaign_stats(self):
+        """D1: Personal campaign statistics."""
+        html = render_epoch_completed(
+            epoch_name="Test",
+            leaderboard=self._sample_leaderboard(),
+            player_simulation_id="sim-b",
+            cycle_count=15,
+            command_center_url="https://metaverse.center/epoch",
+            campaign_stats={
+                "total_ops": 12,
+                "success_rate": 66.7,
+                "by_type": {"spy": 4, "saboteur": 3, "guardian": 5},
+            },
+        )
+        assert ">12<" in html  # total ops (in <strong> tag)
+        assert "67%" in html  # success rate (:.0f rounds 66.7→67)
+        assert "SPY:4" in html or "SPY" in html  # type breakdown
+
+    def test_single_language_en(self):
+        """A1: Single-language rendering."""
+        html = render_epoch_completed(
+            epoch_name="Test",
+            leaderboard=self._sample_leaderboard(),
+            player_simulation_id="sim-b",
+            cycle_count=15,
+            command_center_url="https://metaverse.center/epoch",
+            email_locale="en",
+        )
+        assert "DEUTSCHE VERSION" not in html
+
+    def test_accent_color(self):
+        """F1: Per-simulation accent color."""
+        html = render_epoch_completed(
+            epoch_name="Test",
+            leaderboard=self._sample_leaderboard(),
+            player_simulation_id="sim-b",
+            cycle_count=15,
+            command_center_url="https://metaverse.center/epoch",
+            accent_color="#C08A10",
+        )
+        assert "#C08A10" in html
+
 
 # ── Existing Invitation (regression) ─────────────────────────
 
@@ -345,21 +546,24 @@ class TestRenderEpochInvitation:
         assert "The shadows gather" in html
 
     def test_contains_mission_parameters(self):
+        """Updated for v2.3 game mechanics."""
         html = self._render()
         assert "MISSION PARAMETERS" in html
         assert "MISSIONSPARAMETER" in html
-        assert "Deploy operatives" in html
+        assert "Draft your agents" in html
+        assert "Deploy 6 operative types" in html
         assert "Forge alliances" in html
         assert "8-hour cycles" in html
 
     def test_contains_rules_of_engagement(self):
+        """Updated for v2.3 game mechanics."""
         html = self._render()
         assert "RULES OF ENGAGEMENT" in html
         assert "EINSATZREGELN" in html
         assert "Each player commands one simulation" in html
         assert "5 dimensions" in html
-        assert "Resource Points" in html
-        assert "Fog of war" in html
+        assert "Agent aptitudes" in html
+        assert "Bot opponents" in html
 
     def test_contains_cta_buttons(self):
         html = self._render()
@@ -398,3 +602,32 @@ class TestRenderEpochInvitation:
         html = self._render()
         # Section headers use ── pattern (U+9472 horizontal box)
         assert "&#9472;&#9472;" in html
+
+    # ── New invitation tests (A1, F1, E1, E2) ──
+
+    def test_single_language_en(self):
+        """A1: Single-language rendering."""
+        html = self._render(email_locale="en")
+        assert "DEUTSCHE VERSION" not in html
+        assert "CLASSIFIED // EPOCH SUMMONS" in html
+
+    def test_single_language_de(self):
+        """A1: Single-language German rendering."""
+        html = self._render(email_locale="de")
+        assert "DEUTSCHE VERSION" not in html
+        assert "EPOCHEN-EINBERUFUNG" in html
+
+    def test_accent_color(self):
+        """F1: Per-simulation accent color on CTA button."""
+        html = self._render(accent_color="#0d7377")
+        assert "#0d7377" in html
+
+    def test_custom_cycle_hours(self):
+        """E1: Dynamic cycle_hours in mission parameters."""
+        html = self._render(cycle_hours=12)
+        assert "12-hour cycles" in html
+
+    def test_dark_mode_meta(self):
+        """A4: Dark mode meta tag."""
+        html = self._render()
+        assert 'name="color-scheme" content="dark"' in html

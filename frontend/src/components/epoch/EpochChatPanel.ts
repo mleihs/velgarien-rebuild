@@ -37,7 +37,7 @@ export class VelgEpochChatPanel extends LitElement {
       --border-dim: var(--color-gray-700);
       --text-bright: var(--color-gray-100);
       --text-mid: var(--color-gray-300);
-      --text-dim: var(--color-gray-500);
+      --text-dim: var(--color-gray-400);
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -596,6 +596,7 @@ export class VelgEpochChatPanel extends LitElement {
               <input
                 class="chat-input"
                 type="text"
+                aria-label=${this._activeChannel === 'team' ? msg('Team channel message') : msg('Broadcast message')}
                 placeholder=${this._activeChannel === 'team' ? msg('Encrypted team channel...') : msg('Broadcast to all players...')}
                 .value=${this._inputText}
                 @input=${(e: InputEvent) => {

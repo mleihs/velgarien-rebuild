@@ -17,6 +17,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { realtimeService } from '../../services/realtime/RealtimeService.js';
 import type { Epoch, EpochParticipant, Simulation } from '../../types/index.js';
+import { computeTotalCycles } from '../../utils/epoch.js';
 import './EpochChatPanel.js';
 
 @localized()
@@ -189,7 +190,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 8px;
       text-transform: uppercase;
       letter-spacing: 0.4em;
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .ops-board__title {
@@ -213,7 +214,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       margin-bottom: var(--space-5);
       padding: var(--space-2) 0;
       border-bottom: 1px solid var(--color-gray-800);
@@ -516,7 +517,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
     }
 
     /* ── Segmented progress bar ──────────── */
@@ -564,7 +565,7 @@ export class VelgEpochOpsBoard extends LitElement {
     .dossier-progress__text {
       font-family: var(--font-mono, monospace);
       font-size: 9px;
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       flex-shrink: 0;
       min-width: 24px;
       text-align: right;
@@ -611,7 +612,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       margin-left: auto;
       transition: color 0.2s;
     }
@@ -655,7 +656,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-family: var(--font-brutalist);
       font-weight: var(--font-black);
       font-size: var(--text-3xl);
-      color: var(--color-gray-600);
+      color: var(--color-gray-500);
       line-height: 1;
       transition: color 0.2s, transform 0.2s;
     }
@@ -670,7 +671,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       transition: color 0.2s;
     }
 
@@ -744,7 +745,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.35em;
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       position: relative;
       z-index: 1;
       animation: empty-pulse 3s ease-in-out infinite;
@@ -758,7 +759,7 @@ export class VelgEpochOpsBoard extends LitElement {
     .ops-board__empty-sub {
       font-family: var(--font-mono, monospace);
       font-size: 9px;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       margin-top: var(--space-2);
       position: relative;
       z-index: 1;
@@ -769,7 +770,7 @@ export class VelgEpochOpsBoard extends LitElement {
     .ops-board__no-auth {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-sm);
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       text-align: center;
       padding: var(--space-8);
       border: 1px dashed var(--color-gray-800);
@@ -782,7 +783,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       margin: var(--space-8) 0 var(--space-3);
       padding-bottom: var(--space-2);
       border-bottom: 1px solid var(--color-gray-800);
@@ -800,7 +801,7 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
       background: transparent;
       border: 1px solid var(--color-gray-700);
       cursor: pointer;
@@ -978,7 +979,7 @@ export class VelgEpochOpsBoard extends LitElement {
       justify-content: center;
       background: none;
       border: 1px solid transparent;
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       cursor: pointer;
       font-size: 10px;
       transition: all 0.2s;
@@ -1025,13 +1026,13 @@ export class VelgEpochOpsBoard extends LitElement {
       font-size: var(--text-xs);
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .comms-empty__desc {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-xs);
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       line-height: 1.5;
     }
 
@@ -1206,7 +1207,15 @@ export class VelgEpochOpsBoard extends LitElement {
                     ? html`
                   <div
                     class="dossier-card dossier-card--create"
+                    role="button"
+                    tabindex="0"
                     @click=${this._onCreateEpoch}
+                    @keydown=${(e: KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this._onCreateEpoch();
+                      }
+                    }}
                   >
                     <div class="dossier-create__inner">
                       <span class="dossier-create__plus">+</span>
@@ -1378,9 +1387,7 @@ export class VelgEpochOpsBoard extends LitElement {
   // ── Dossier Card ────────────────────────────────
 
   private _renderDossierCard(epoch: Epoch, mySims: Simulation[]) {
-    const totalCycles = epoch.config
-      ? Math.floor((epoch.config.duration_days * 24) / epoch.config.cycle_hours)
-      : 0;
+    const totalCycles = epoch.config ? computeTotalCycles(epoch.config) : 0;
     const progress = totalCycles > 0 ? epoch.current_cycle / totalCycles : 0;
     const pCount = this.participantCounts[epoch.id] ?? 0;
     const isCompleted = epoch.status === 'completed';
@@ -1393,7 +1400,15 @@ export class VelgEpochOpsBoard extends LitElement {
     return html`
       <div
         class="dossier-card dossier-card--${epoch.status}"
+        role="button"
+        tabindex="0"
         @click=${() => this._onSelectEpoch(epoch)}
+        @keydown=${(e: KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this._onSelectEpoch(epoch);
+          }
+        }}
       >
         <div class="dossier-card__header">
           <span class="dossier-card__name">${epoch.name}</span>

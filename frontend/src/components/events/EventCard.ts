@@ -26,6 +26,7 @@ export class VelgEventCard extends LitElement {
         border-color var(--duration-normal) var(--ease-out);
       display: flex;
       flex-direction: column;
+      height: 100%;
 
       opacity: 0;
       animation: card-enter var(--duration-entrance, 350ms) var(--ease-dramatic, cubic-bezier(0.22, 1, 0.36, 1)) forwards;
@@ -282,7 +283,14 @@ export class VelgEventCard extends LitElement {
     const reactionCount = this._getReactionCount();
 
     return html`
-      <div class="card" @click=${this._handleClick}>
+      <div class="card" role="button" tabindex="0" @click=${this._handleClick} @keydown=${(
+        e: KeyboardEvent,
+      ) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._handleClick();
+        }
+      }}>
         <div class="card__header">
           <h3 class="card__title">${evt.title}</h3>
           ${this._renderImpactBar()}

@@ -170,7 +170,14 @@ export class VelgZoneList extends LitElement {
       <div class="list">
         ${this.zones.map(
           (zone) => html`
-            <div class="item" @click=${() => this._handleSelect(zone)}>
+            <div class="item" role="button" tabindex="0" @click=${() => this._handleSelect(zone)} @keydown=${(
+              e: KeyboardEvent,
+            ) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this._handleSelect(zone);
+              }
+            }}>
               <h3 class="item__name">${zone.name}</h3>
               ${
                 zone.description

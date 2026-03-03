@@ -57,12 +57,21 @@ class Player:
         self.agents, self.embassies, self.buildings, self.zones = [], {}, [], []
         self.rp, self.guardians = 0, 0
         self.deployed_agents = set()
+        self.aptitudes = {}  # agent_id → {spy: int, guardian: int, ...}
 
     def headers(self):
         return {"Authorization": f"Bearer {self.token}", "Content-Type": "application/json"}
 
     def available_agents(self):
         return [a for a in self.agents if a["id"] not in self.deployed_agents]
+
+    def best_agent_for(self, op_type):
+        """Pick available agent with highest aptitude for the given operative type."""
+        avail = self.available_agents()
+        if not avail:
+            return None
+        # Sort by aptitude for this type (descending), default 6 if no aptitude data
+        return max(avail, key=lambda a: self.aptitudes.get(a["id"], {}).get(op_type, 6))
 
 
 # ── Global State (reset per game) ──
@@ -400,6 +409,18 @@ def ensure_nm_simulation():
                     INSERT INTO zones (simulation_id, city_id, name, security_level)
                     VALUES ('{nm_id}', '{city_id}', '{zone_names[j]}', '{levels[j]}');
                 """)
+    # Ensure all agents have aptitude data (needed for aptitude-aware deployment)
+    _psql(f"""
+        INSERT INTO agent_aptitudes (agent_id, simulation_id, operative_type, aptitude_level)
+        SELECT a.id, a.simulation_id, t.type, 6
+        FROM agents a
+        CROSS JOIN (VALUES ('spy'),('guardian'),('saboteur'),('propagandist'),('infiltrator'),('assassin')) t(type)
+        WHERE a.simulation_id = '{nm_id}'
+        AND NOT EXISTS (
+            SELECT 1 FROM agent_aptitudes aa
+            WHERE aa.agent_id = a.id AND aa.operative_type = t.type
+        );
+    """)
     print(f"  NM simulation ensured: {nm_id}")
 
 
@@ -415,16 +436,18 @@ def force_expire(epoch_id):
 def deploy(epoch_id, player, op_type, target_tag, players,
            target_entity_id=None, target_entity_type=None):
     global _current_cycle, _current_phase
-    avail = player.available_agents()
-    if not avail:
+    # Use aptitude-aware agent selection
+    agent = player.best_agent_for(op_type)
+    if not agent:
         action_log(_current_cycle, _current_phase, player.tag,
                    f"deploy_{op_type}", "No agents available", "SKIP")
         return None
-    agent_name = avail[0].get("name", "?")
-    body = {"agent_id": avail[0]["id"], "operative_type": op_type}
+    agent_name = agent.get("name", "?")
+    apt_level = player.aptitudes.get(agent["id"], {}).get(op_type, 6)
+    body = {"agent_id": agent["id"], "operative_type": op_type}
     if op_type == "guardian":
         body["target_simulation_id"] = None
-        detail = f"{agent_name} as guardian (RP:{player.rp})"
+        detail = f"{agent_name} (apt:{apt_level}) as guardian (RP:{player.rp})"
     else:
         target = players[target_tag]
         body["target_simulation_id"] = target.instance_id
@@ -437,13 +460,13 @@ def deploy(epoch_id, player, op_type, target_tag, players,
         if target_entity_id:
             body["target_entity_id"] = target_entity_id
             body["target_entity_type"] = target_entity_type
-        detail = f"{agent_name} → {target_tag} ({op_type}, RP:{player.rp})"
+        detail = f"{agent_name} (apt:{apt_level}) → {target_tag} ({op_type}, RP:{player.rp})"
 
     resp = api("POST", f"/api/v1/epochs/{epoch_id}/operatives?simulation_id={player.instance_id}",
                player, json=body)
     mission = resp.get("data")
     if mission:
-        player.deployed_agents.add(avail[0]["id"])
+        player.deployed_agents.add(agent["id"])
         cost = mission.get("cost_rp", 0)
         prob = mission.get("success_probability", "?")
         STATS["deployed"][player.tag] += 1
@@ -613,6 +636,13 @@ def setup_game(token, name, config, tags, alliances=None):
             log(f"  WARNING: Could not find instance for {tag}")
             continue
         p.agents = api("GET", f"/api/v1/simulations/{p.instance_id}/agents?limit=10", p).get("data", [])
+        # Load agent aptitudes (cloned from template during epoch start)
+        apt_data = api("GET", f"/api/v1/public/simulations/{p.instance_id}/aptitudes").get("data", [])
+        for row in apt_data:
+            aid = row.get("agent_id")
+            if aid not in p.aptitudes:
+                p.aptitudes[aid] = {}
+            p.aptitudes[aid][row.get("operative_type", "")] = row.get("aptitude_level", 6)
         p.buildings = api("GET", f"/api/v1/simulations/{p.instance_id}/buildings?limit=10", p).get("data", [])
         for e in api("GET", f"/api/v1/simulations/{p.instance_id}/embassies", p).get("data", []):
             sa, sb = e.get("simulation_a_id"), e.get("simulation_b_id")
@@ -626,8 +656,9 @@ def setup_game(token, name, config, tags, alliances=None):
 
     emb_counts = {t: len(p.embassies) for t, p in players.items()}
     agent_counts = {t: len(p.agents) for t, p in players.items()}
+    apt_counts = {t: len(p.aptitudes) for t, p in players.items()}
     log(f"  Setup: {name}")
-    log(f"    Embassies: {emb_counts} | Agents: {agent_counts}")
+    log(f"    Embassies: {emb_counts} | Agents: {agent_counts} | Aptitude profiles: {apt_counts}")
     return epoch_id, players, admin
 
 
@@ -733,7 +764,7 @@ def run_reckoning(epoch_id, players, admin, start_cycle, end_cycle, strategy_fn)
 # ── Parametric Game Generation ──
 
 # Operative costs
-OP_COSTS = {"spy": 3, "propagandist": 4, "saboteur": 5, "infiltrator": 6, "assassin": 8, "guardian": 0}
+OP_COSTS = {"spy": 3, "propagandist": 4, "saboteur": 5, "infiltrator": 5, "assassin": 7, "guardian": 4}
 
 # Strategy archetypes for random game generation
 STRATEGY_PRESETS = [
@@ -757,7 +788,7 @@ def pick_op_for_strategy(strategy, cycle, rp, target_player):
 
     if strategy == "balanced":
         ops = ["spy", "propagandist", "saboteur"]
-        if rp >= 8 and has_agents:
+        if rp >= 7 and has_agents:
             ops.append("assassin")
         return ops[cycle % len(ops)]
     elif strategy == "spy_heavy":
@@ -769,7 +800,7 @@ def pick_op_for_strategy(strategy, cycle, rp, target_player):
             return "saboteur"
         return "spy"
     elif strategy == "assassin_rush":
-        if rp >= 8 and has_agents:
+        if rp >= 7 and has_agents:
             return "assassin"
         if rp >= 5 and has_buildings:
             return "saboteur"
@@ -784,9 +815,9 @@ def pick_op_for_strategy(strategy, cycle, rp, target_player):
             return "saboteur"
         return "spy"
     elif strategy == "all_out":
-        if rp >= 8 and has_agents:
+        if rp >= 7 and has_agents:
             return "assassin"
-        if rp >= 6:
+        if rp >= 5:
             return "infiltrator"
         if rp >= 5 and has_buildings:
             return "saboteur"
@@ -794,13 +825,13 @@ def pick_op_for_strategy(strategy, cycle, rp, target_player):
             return "propagandist"
         return "spy"
     elif strategy == "infiltrator":
-        if rp >= 6:
+        if rp >= 5:
             return "infiltrator"
         return "spy"
     elif strategy == "econ_build":
         if cycle % 3 != 0:
             return None  # Skip — save RP
-        if rp >= 8 and has_agents:
+        if rp >= 7 and has_agents:
             return "assassin"
         if rp >= 5 and has_buildings:
             return "saboteur"
@@ -811,9 +842,9 @@ def pick_op_for_strategy(strategy, cycle, rp, target_player):
             candidates.append("propagandist")
         if rp >= 5 and has_buildings:
             candidates.append("saboteur")
-        if rp >= 6:
+        if rp >= 5:
             candidates.append("infiltrator")
-        if rp >= 8 and has_agents:
+        if rp >= 7 and has_agents:
             candidates.append("assassin")
         return random.choice(candidates)
     return "spy"

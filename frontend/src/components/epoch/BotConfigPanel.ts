@@ -144,7 +144,7 @@ export class VelgBotConfigPanel extends LitElement {
       --border-dim: var(--color-gray-700);
       --text-bright: var(--color-gray-100);
       --text-mid: var(--color-gray-300);
-      --text-dim: var(--color-gray-500);
+      --text-dim: var(--color-gray-400);
       --accent: #38bdf8;
     }
 

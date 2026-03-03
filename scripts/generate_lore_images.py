@@ -63,7 +63,7 @@ VELGARIEN_STYLE = (
     "concept art quality, NOT photorealistic, NOT bright, NOT colorful. "
 )
 
-CAPYBARA_STYLE = (
+GASLIT_REACH_STYLE = (
     "Dark fantasy underground scene, bioluminescent fungi and phosphorescent water, "
     "Victorian gothic architecture carved from stone, deep teal and warm amber palette, "
     "Sunless Sea aesthetic, oil painting style, concept art quality, "
@@ -145,7 +145,7 @@ SIMULATION_IMAGES: dict[str, list[dict]] = {
             "name": "The Unterzee — Vast Underground Sea",
             "filename": "nature-of-unterzee.avif",
             "prompt": (
-                CAPYBARA_STYLE
+                GASLIT_REACH_STYLE
                 + "Vast underground sea stretching into darkness, bioluminescent organisms "
                 "glowing beneath dark water surface, massive stalactites descending from "
                 "an invisible ceiling hundreds of metres above, a small Victorian-era "
@@ -159,7 +159,7 @@ SIMULATION_IMAGES: dict[str, list[dict]] = {
             "name": "Cartography of Darkness — Subterranean Waterways",
             "filename": "cartography-of-darkness.avif",
             "prompt": (
-                CAPYBARA_STYLE
+                GASLIT_REACH_STYLE
                 + "Subterranean waterway passage through carved stone arches, bioluminescent "
                 "fungi growing on wet stone walls casting teal and amber reflections on "
                 "the dark water, a narrow canal boat navigating between towering natural "
@@ -172,7 +172,7 @@ SIMULATION_IMAGES: dict[str, list[dict]] = {
             "name": "The Founding Compact — Chamber of Accord",
             "filename": "founding-of-glimhaven.avif",
             "prompt": (
-                CAPYBARA_STYLE
+                GASLIT_REACH_STYLE
                 + "Grand underground parliament chamber carved from natural cavern, "
                 "concentric rings of stone seating descending toward a central platform, "
                 "ambiguously non-human figures in Victorian-era formal attire seated throughout, "
@@ -464,14 +464,27 @@ PLATFORM_IMAGES = [
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 
-def convert_to_avif(image_bytes: bytes, width: int, height: int) -> bytes:
-    """Convert raw image bytes to AVIF, resizing to target dimensions."""
+AVIF_QUALITY_THUMB = 80
+
+
+def convert_to_avif(
+    image_bytes: bytes,
+    width: int | None = None,
+    height: int | None = None,
+    quality: int = AVIF_QUALITY,
+) -> bytes:
+    """Convert raw image bytes to AVIF.
+
+    If width and height are provided, resize to those dimensions (thumbnail mode).
+    If omitted, preserve native resolution (full-res mode).
+    """
     img = Image.open(io.BytesIO(image_bytes))
     if img.mode not in ("RGB", "L"):
         img = img.convert("RGB")
-    img = img.resize((width, height), Image.LANCZOS)
+    if width is not None and height is not None:
+        img = img.resize((width, height), Image.LANCZOS)
     output = io.BytesIO()
-    img.save(output, format="AVIF", quality=AVIF_QUALITY)
+    img.save(output, format="AVIF", quality=quality)
     return output.getvalue()
 
 
@@ -511,20 +524,27 @@ def generate_image(prompt: str, guidance: float = 3.5) -> bytes:
 
 
 def process_image(name: str, storage_path: str, prompt: str, guidance: float = 3.5) -> None:
-    """Generate, convert, and upload a single image."""
+    """Generate, convert, and upload dual-resolution images (full-res + thumbnail)."""
     print(f"--- {name} ---")
     print(f"  Prompt: {prompt[:100]}...")
-    print(f"  Target: {IMAGE_WIDTH}x{IMAGE_HEIGHT}")
+    print(f"  Thumbnail: {IMAGE_WIDTH}x{IMAGE_HEIGHT}")
 
     print("  Generating via Flux Dev...")
     raw_bytes = generate_image(prompt, guidance)
     print(f"  Raw output: {len(raw_bytes):,} bytes")
 
-    avif_bytes = convert_to_avif(raw_bytes, IMAGE_WIDTH, IMAGE_HEIGHT)
-    print(f"  AVIF: {len(avif_bytes):,} bytes")
+    # Full-res: native resolution, quality 85
+    full_avif = convert_to_avif(raw_bytes, quality=AVIF_QUALITY)
+    full_path = storage_path.replace(".avif", ".full.avif")
+    print(f"  Full-res AVIF: {len(full_avif):,} bytes")
+    upload_to_storage(full_path, full_avif)
+    print(f"  Uploaded full-res: {BUCKET}/{full_path}")
 
-    print(f"  Uploading to {BUCKET}/{storage_path}...")
-    public_url = upload_to_storage(storage_path, avif_bytes)
+    # Thumbnail: resized, quality 80
+    thumb_avif = convert_to_avif(raw_bytes, IMAGE_WIDTH, IMAGE_HEIGHT, quality=AVIF_QUALITY_THUMB)
+    print(f"  Thumbnail AVIF: {len(thumb_avif):,} bytes")
+    print(f"  Uploading thumbnail to {BUCKET}/{storage_path}...")
+    public_url = upload_to_storage(storage_path, thumb_avif)
     print(f"  URL: {public_url}")
     print()
 

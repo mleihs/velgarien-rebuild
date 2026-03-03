@@ -98,6 +98,16 @@ export class EpochsApiService extends BaseApiService {
     return this.delete(`/epochs/${epochId}/participants/${simulationId}`);
   }
 
+  draftAgents(
+    epochId: string,
+    simulationId: string,
+    agentIds: string[],
+  ): Promise<ApiResponse<EpochParticipant>> {
+    return this.post(`/epochs/${epochId}/participants/${simulationId}/draft`, {
+      agent_ids: agentIds,
+    });
+  }
+
   // ── Teams ───────────────────────────────────────────
 
   listTeams(epochId: string): Promise<ApiResponse<EpochTeam[]>> {

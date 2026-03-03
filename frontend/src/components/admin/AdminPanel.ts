@@ -4,8 +4,9 @@ import { customElement, state } from 'lit/decorators.js';
 
 import './AdminUsersTab.js';
 import './AdminCachingTab.js';
+import './AdminCleanupTab.js';
 
-type AdminTab = 'users' | 'caching';
+type AdminTab = 'users' | 'caching' | 'cleanup';
 
 @localized()
 @customElement('velg-admin-panel')
@@ -166,7 +167,7 @@ export class VelgAdminPanel extends LitElement {
         <div class="admin-hero__inner">
           <div class="admin-hero__classification">${msg('Restricted Access')}</div>
           <h1 class="admin-hero__title">${msg('Platform Admin')}</h1>
-          <p class="admin-hero__subtitle">${msg('Manage users, memberships, and platform settings.')}</p>
+          <p class="admin-hero__subtitle">${msg('Manage users, memberships, platform settings, and data cleanup.')}</p>
         </div>
       </div>
 
@@ -175,21 +176,32 @@ export class VelgAdminPanel extends LitElement {
           class="admin-tabs__tab ${this._activeTab === 'users' ? 'admin-tabs__tab--active' : ''}"
           role="tab"
           aria-selected=${this._activeTab === 'users'}
+          aria-controls="admin-tabpanel"
           @click=${() => this._setTab('users')}
         >${msg('Users')}</button>
         <button
           class="admin-tabs__tab ${this._activeTab === 'caching' ? 'admin-tabs__tab--active' : ''}"
           role="tab"
           aria-selected=${this._activeTab === 'caching'}
+          aria-controls="admin-tabpanel"
           @click=${() => this._setTab('caching')}
         >${msg('Caching')}</button>
+        <button
+          class="admin-tabs__tab ${this._activeTab === 'cleanup' ? 'admin-tabs__tab--active' : ''}"
+          role="tab"
+          aria-selected=${this._activeTab === 'cleanup'}
+          aria-controls="admin-tabpanel"
+          @click=${() => this._setTab('cleanup')}
+        >${msg('Data Cleanup')}</button>
       </div>
 
-      <div class="admin-content">
+      <div class="admin-content" id="admin-tabpanel" role="tabpanel">
         ${
           this._activeTab === 'users'
             ? html`<velg-admin-users-tab></velg-admin-users-tab>`
-            : html`<velg-admin-caching-tab></velg-admin-caching-tab>`
+            : this._activeTab === 'caching'
+              ? html`<velg-admin-caching-tab></velg-admin-caching-tab>`
+              : html`<velg-admin-cleanup-tab></velg-admin-cleanup-tab>`
         }
       </div>
     `;

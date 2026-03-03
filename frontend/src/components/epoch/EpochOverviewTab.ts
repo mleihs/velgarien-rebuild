@@ -183,7 +183,7 @@ export class VelgEpochOverviewTab extends LitElement {
     .mission__detail {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-xs);
-      color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .mission__status {
@@ -209,8 +209,8 @@ export class VelgEpochOverviewTab extends LitElement {
     }
 
     .mission__status--failed {
-      border-color: var(--color-gray-600);
-      color: var(--color-gray-500);
+      border-color: var(--color-gray-500);
+      color: var(--color-gray-400);
     }
 
     .mission__status--detected {
@@ -244,7 +244,7 @@ export class VelgEpochOverviewTab extends LitElement {
     .empty-hint {
       font-family: var(--font-mono, monospace);
       font-size: var(--text-sm);
-      color: var(--color-gray-600);
+      color: var(--color-gray-400);
       text-align: center;
       padding: var(--space-4);
     }

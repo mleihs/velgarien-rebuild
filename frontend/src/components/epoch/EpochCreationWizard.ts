@@ -17,6 +17,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { epochsApi } from '../../services/api/EpochsApiService.js';
 import type { EpochScoreWeights } from '../../types/index.js';
 import '../shared/BaseModal.js';
+import { DEFAULT_FOUNDATION_PCT, DEFAULT_RECKONING_PCT } from '../../utils/epoch.js';
 import { formStyles } from '../shared/form-styles.js';
 import { infoBubbleStyles, renderInfoBubble } from '../shared/info-bubble-styles.js';
 import { VelgToast } from '../shared/Toast.js';
@@ -65,7 +66,7 @@ export class VelgEpochCreationWizard extends LitElement {
         --color-surface-raised: var(--color-gray-900, #111);
         --color-surface-header: var(--color-gray-950, #0a0a0a);
         --color-text-primary: var(--color-gray-100, #f3f4f6);
-        --color-text-muted: var(--color-gray-500, #6b7280);
+        --color-text-muted: var(--color-gray-400, #9ca3af);
         --color-border: var(--color-gray-700, #374151);
         --color-surface: var(--color-gray-800, #1f2937);
       }
@@ -88,7 +89,7 @@ export class VelgEpochCreationWizard extends LitElement {
         text-transform: uppercase;
         letter-spacing: 0.1em;
         text-align: center;
-        color: var(--color-gray-600);
+        color: var(--color-gray-400);
         background: var(--color-gray-900);
         border-right: 1px solid var(--color-gray-700);
         position: relative;
@@ -167,7 +168,7 @@ export class VelgEpochCreationWizard extends LitElement {
       }
 
       .field__input::placeholder {
-        color: var(--color-gray-600);
+        color: var(--color-gray-500);
       }
 
       .field__textarea {
@@ -191,7 +192,7 @@ export class VelgEpochCreationWizard extends LitElement {
       .field__hint {
         font-family: var(--font-mono, monospace);
         font-size: 10px;
-        color: var(--color-gray-600);
+        color: var(--color-gray-400);
       }
 
       /* ── Range Slider ────────────────────── */
@@ -319,6 +320,18 @@ export class VelgEpochCreationWizard extends LitElement {
       .toggle--on .toggle__thumb {
         left: 22px;
         background: var(--color-success);
+      }
+
+      .toggle--disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .toggle-hint {
+        font-family: var(--font-mono, monospace);
+        font-size: 10px;
+        color: var(--color-gray-500);
+        margin: var(--space-1) 0 0;
       }
 
       /* ── Doctrine (Score Weights) ────────── */
@@ -457,7 +470,7 @@ export class VelgEpochCreationWizard extends LitElement {
       }
 
       .summary__key {
-        color: var(--color-gray-500);
+        color: var(--color-gray-400);
       }
 
       .summary__val {
@@ -598,6 +611,7 @@ export class VelgEpochCreationWizard extends LitElement {
   @state() private _rpPerCycle = 12;
   @state() private _rpCap = 40;
   @state() private _maxTeamSize = 3;
+  @state() private _maxAgentsPerPlayer = 6;
   @state() private _allowBetrayal = true;
 
   // Step 3: Doctrine (score weights, percentages that sum to 100)
@@ -619,6 +633,7 @@ export class VelgEpochCreationWizard extends LitElement {
       this._rpPerCycle = 12;
       this._rpCap = 40;
       this._maxTeamSize = 3;
+      this._maxAgentsPerPlayer = 6;
       this._allowBetrayal = true;
       this._wStability = 25;
       this._wInfluence = 20;
@@ -713,17 +728,15 @@ export class VelgEpochCreationWizard extends LitElement {
     this._loading = true;
     this._error = '';
 
-    const foundationPct = 20;
-    const reckoningPct = 15;
-
     const config: Record<string, unknown> = {
       duration_days: this._durationDays,
       cycle_hours: this._cycleHours,
       rp_per_cycle: this._rpPerCycle,
       rp_cap: this._rpCap,
-      foundation_pct: foundationPct,
-      reckoning_pct: reckoningPct,
+      foundation_pct: DEFAULT_FOUNDATION_PCT,
+      reckoning_pct: DEFAULT_RECKONING_PCT,
       max_team_size: this._maxTeamSize,
+      max_agents_per_player: this._maxAgentsPerPlayer,
       allow_betrayal: this._allowBetrayal,
       score_weights: {
         stability: this._wStability,
@@ -804,9 +817,11 @@ export class VelgEpochCreationWizard extends LitElement {
   // ── Step 1: Designation ─────────────────────────────
 
   private _renderDesignation() {
-    const foundationDays = Math.round(this._durationDays * 0.2 * 10) / 10;
-    const competitionDays = Math.round(this._durationDays * 0.65 * 10) / 10;
-    const reckoningDays = Math.round(this._durationDays * 0.15 * 10) / 10;
+    const foundationDays =
+      Math.round(this._durationDays * (DEFAULT_FOUNDATION_PCT / 100) * 10) / 10;
+    const reckoningDays = Math.round(this._durationDays * (DEFAULT_RECKONING_PCT / 100) * 10) / 10;
+    const competitionDays =
+      Math.round((this._durationDays - foundationDays - reckoningDays) * 10) / 10;
 
     return html`
       <div class="console-form">
@@ -956,6 +971,27 @@ export class VelgEpochCreationWizard extends LitElement {
             .value=${String(this._maxTeamSize)}
             @input=${(e: Event) => {
               this._maxTeamSize = Number((e.target as HTMLInputElement).value);
+              if (this._maxTeamSize <= 2) this._allowBetrayal = false;
+            }}
+          />
+        </div>
+
+        <div class="range-field">
+          <div class="range-field__header">
+            <span class="range-field__label">
+              ${msg('Max Agents per Player')}
+              ${renderInfoBubble(msg('How many agents each player drafts into the match. Players with more agents in their simulation can choose their best lineup.'))}
+            </span>
+            <span class="range-field__readout">${this._maxAgentsPerPlayer}</span>
+          </div>
+          <input
+            type="range"
+            aria-label=${msg('Max Agents per Player')}
+            min="4"
+            max="8"
+            .value=${String(this._maxAgentsPerPlayer)}
+            @input=${(e: Event) => {
+              this._maxAgentsPerPlayer = Number((e.target as HTMLInputElement).value);
             }}
           />
         </div>
@@ -966,16 +1002,17 @@ export class VelgEpochCreationWizard extends LitElement {
             ${renderInfoBubble(msg('When enabled, alliance members can leave and attack former allies. Betrayal incurs a -20% diplomatic penalty and marks the traitor publicly.'))}
           </span>
           <div
-            class="toggle ${this._allowBetrayal ? 'toggle--on' : ''}"
+            class="toggle ${this._allowBetrayal ? 'toggle--on' : ''} ${this._maxTeamSize <= 2 ? 'toggle--disabled' : ''}"
             role="switch"
-            tabindex="0"
+            tabindex=${this._maxTeamSize <= 2 ? -1 : 0}
             aria-checked=${this._allowBetrayal}
+            aria-disabled=${this._maxTeamSize <= 2}
             aria-label=${msg('Allow Betrayal')}
             @click=${() => {
-              this._allowBetrayal = !this._allowBetrayal;
+              if (this._maxTeamSize > 2) this._allowBetrayal = !this._allowBetrayal;
             }}
             @keydown=${(e: KeyboardEvent) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+              if ((e.key === 'Enter' || e.key === ' ') && this._maxTeamSize > 2) {
                 e.preventDefault();
                 this._allowBetrayal = !this._allowBetrayal;
               }
@@ -984,6 +1021,7 @@ export class VelgEpochCreationWizard extends LitElement {
             <div class="toggle__thumb"></div>
           </div>
         </div>
+        ${this._maxTeamSize <= 2 ? html`<p class="toggle-hint">${msg('Betrayal requires a team size of at least 3.')}</p>` : nothing}
       </div>
     `;
   }
@@ -1110,8 +1148,9 @@ export class VelgEpochCreationWizard extends LitElement {
   // ── Step 4: Confirm ─────────────────────────────────
 
   private _renderConfirm() {
-    const foundationDays = Math.round(this._durationDays * 0.2 * 10) / 10;
-    const reckoningDays = Math.round(this._durationDays * 0.15 * 10) / 10;
+    const foundationDays =
+      Math.round(this._durationDays * (DEFAULT_FOUNDATION_PCT / 100) * 10) / 10;
+    const reckoningDays = Math.round(this._durationDays * (DEFAULT_RECKONING_PCT / 100) * 10) / 10;
 
     return html`
       <div class="summary">
@@ -1152,6 +1191,10 @@ export class VelgEpochCreationWizard extends LitElement {
           <div class="summary__row">
             <span class="summary__key">${msg('Max Team Size')}</span>
             <span class="summary__val">${this._maxTeamSize}</span>
+          </div>
+          <div class="summary__row">
+            <span class="summary__key">${msg('Max Agents per Player')}</span>
+            <span class="summary__val">${this._maxAgentsPerPlayer}</span>
           </div>
           <div class="summary__row">
             <span class="summary__key">${msg('Betrayal')}</span>

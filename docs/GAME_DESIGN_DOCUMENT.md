@@ -1,7 +1,7 @@
 # metaverse.center — Game Design Document
 
-**Version:** 1.0
-**Date:** 2026-02-27
+**Version:** 1.1
+**Date:** 2026-03-03
 **Author:** Senior Game Design Analysis
 **Audience:** Game designers, system designers, and creative directors evaluating the platform for feedback and further development
 
@@ -14,17 +14,18 @@
 3. [Core Design Philosophy](#iii-core-design-philosophy)
 4. [Platform Architecture Overview](#iv-platform-architecture-overview)
 5. [The Eight Systems — Deep Dive](#v-the-eight-systems--deep-dive)
-6. [Cross-System Interaction Design](#vi-cross-system-interaction-design)
-7. [Player Archetypes & Session Flow](#vii-player-archetypes--session-flow)
-8. [Economy Design & Balancing](#viii-economy-design--balancing)
-9. [Competitive Tension Design](#ix-competitive-tension-design)
-10. [Design Pattern Analysis](#x-design-pattern-analysis)
-11. [Comparative Analysis — Similar Games](#xi-comparative-analysis--similar-games)
-12. [What Makes This Interesting](#xii-what-makes-this-interesting)
-13. [What Could Go Wrong — Honest Critique](#xiii-what-could-go-wrong--honest-critique)
-14. [Technical Implementation Reality](#xiv-technical-implementation-reality)
-15. [Extensibility Roadmap](#xv-extensibility-roadmap)
-16. [Open Questions for Designers](#xvi-open-questions-for-designers)
+6. [Agent Aptitudes & Draft Phase](#vi-agent-aptitudes--draft-phase)
+7. [Cross-System Interaction Design](#vii-cross-system-interaction-design)
+8. [Player Archetypes & Session Flow](#viii-player-archetypes--session-flow)
+9. [Economy Design & Balancing](#ix-economy-design--balancing)
+10. [Competitive Tension Design](#x-competitive-tension-design)
+11. [Design Pattern Analysis](#xi-design-pattern-analysis)
+12. [Comparative Analysis — Similar Games](#xii-comparative-analysis--similar-games)
+13. [What Makes This Interesting](#xiii-what-makes-this-interesting)
+14. [What Could Go Wrong — Honest Critique](#xiv-what-could-go-wrong--honest-critique)
+15. [Technical Implementation Reality](#xv-technical-implementation-reality)
+16. [Extensibility Roadmap](#xvi-extensibility-roadmap)
+17. [Open Questions for Designers](#xvii-open-questions-for-designers)
 
 ---
 
@@ -38,7 +39,7 @@ metaverse.center is a **multiplayer worldbuilding platform** where each player o
 
 The game sits at an unusual intersection: it's part **city builder** (staffing, infrastructure), part **diplomatic strategy** (embassies, alliances, bleed), part **espionage game** (operatives, counter-intelligence), and part **collaborative fiction engine** (AI-generated narratives, worldbuilding). The competitive layer is built entirely on top of the creative tools — there are no "game-only" entities. Every operative is a real agent, every sabotaged building is a real building, every propaganda event is a real event.
 
-**Current state:** 4 active simulations (Velgarien, The Gaslit Reach, Station Null, Speranza), each with distinct themes and ~25 entities. Full competitive layer implemented (backend services, frontend UI, database schema). Not yet deployed to production. No live competitive play has occurred yet.
+**Current state:** 5 active simulations (Velgarien, The Gaslit Reach, Station Null, Speranza, Cite des Dames), each with distinct themes and ~25 entities. Full competitive layer implemented (backend services, frontend UI, database schema) with agent aptitude system and draft phase designed (Section VI). Production deployed. Bot players available for solo/low-player epochs.
 
 ---
 
@@ -113,9 +114,10 @@ Every advantage has a cost. Every defensive choice is an offensive opportunity m
 
 ```
 Platform Level
-├── Simulations (4 active: Velgarien, The Gaslit Reach, Station Null, Speranza)
+├── Simulations (5 active: Velgarien, The Gaslit Reach, Station Null, Speranza, Cité des Dames)
 │   ├── Agents (~6 per sim, unlimited)
 │   │   ├── Professions (qualification_level 1-10, specialization)
+│   │   ├── Aptitudes (6 scores: spy/guardian/saboteur/propagandist/infiltrator/assassin, 3-9 each, budget 36)
 │   │   └── Relationships (typed, weighted, directional graph)
 │   ├── Buildings (~7 per sim, unlimited)
 │   │   ├── Assigned Agents (staffing)
@@ -336,10 +338,12 @@ Each vector creates a different narrative experience when events echo between si
 
 **Lifecycle:**
 ```
-LOBBY → FOUNDATION (20%) → COMPETITION (65%) → RECKONING (15%) → COMPLETED
+LOBBY → DRAFT → FOUNDATION (20%) → COMPETITION (65%) → RECKONING (15%) → COMPLETED
 ```
 
 **Phase design rationale:**
+
+- **Draft:** Players select which agents from their template to bring into the match (up to `max_agents_per_player`, default 6). This roster selection locks in strategic posture before the first cycle. See Section VI for full draft mechanics.
 
 - **Foundation (first ~20%):** +50% RP income, no offensive operatives. This is the "arms race" phase — everyone builds infrastructure, establishes embassies, forms alliances. It prevents early rushes from overwhelming players who haven't prepared.
 
@@ -353,13 +357,13 @@ Without phases, the game would be a pure arms race from turn 1. The Foundation p
 
 **Resonance Points (RP) — The Action Economy:**
 
-- Default: 10 RP/cycle, cap 30 RP (foundation: 15 RP/cycle)
-- Costs: Spy 3, Guardian 3, Propagandist 4, Saboteur 5, Infiltrator 6, Assassin 8
-- Counter-intelligence sweep: 3 RP
+- Default: 12 RP/cycle, cap 40 RP (foundation: 18 RP/cycle)
+- Costs: Spy 3, Guardian 4, Propagandist 4, Saboteur 5, Infiltrator 5, Assassin 7
+- Counter-intelligence sweep: 4 RP
 
-The RP cap (default 30 = 3 cycles of income) prevents hoarding and forces regular spending. A player who saves for 5 cycles loses 2 cycles worth of RP. This creates a "spend it or lose it" pressure that keeps the game dynamic.
+The RP cap (default 40 = ~3.3 cycles of income) prevents hoarding and forces regular spending. A player who saves for 4+ cycles loses accumulated RP. This creates a "spend it or lose it" pressure that keeps the game dynamic.
 
-The RP costs are deliberately varied to create **opportunity cost decisions**. 8 RP for an assassin means you can do almost nothing else that cycle. 3 RP for a spy means you can still afford a guardian and a counter-intel sweep. The pricing creates natural build diversity — you can't just spam the most powerful unit.
+The RP costs are deliberately varied to create **opportunity cost decisions**. 7 RP for an assassin means you can do little else that cycle. 3 RP for a spy means you can still afford a guardian and a counter-intel sweep. The pricing creates natural build diversity — you can't just spam the most powerful unit.
 
 ### System 7: Operatives — Covert Warfare
 
@@ -370,17 +374,17 @@ The RP costs are deliberately varied to create **opportunity cost decisions**. 8
 | Type | RP | Deploy | Duration | Effect | Score Value |
 |------|-----|--------|----------|--------|-------------|
 | **Spy** | 3 | Instant | 3 cycles | Reveals zone security + guardian count (battle log intel). +2 Inf, +1 Dip, −2 Sov | +2 |
-| **Saboteur** | 5 | 1 cycle | Single | Zone security −1 tier + building −1 step. −5 Sta, −8 Sov | +5 |
-| **Propagandist** | 4 | 1 cycle | 2 cycles | Generates destabilizing event (impact 6-8) | +5 |
-| **Assassin** | 8 | 2 cycles | Single | Wounds agent (relationships -2, ambassador removed) | +8 |
-| **Guardian** | 3 | Instant | Permanent | −8% enemy success per guardian, max −20% (self-deploy) | — |
-| **Infiltrator** | 6 | 2 cycles | 3 cycles | Embassy effectiveness -50% | +4 |
+| **Saboteur** | 5 | 1 cycle | Single | Zone security −1 tier + building −1 step. −6 Sta, −8 Sov | +5 |
+| **Propagandist** | 4 | 1 cycle | 2 cycles | Generates destabilizing event (impact 6-8). −6 Sov | +5 |
+| **Assassin** | 7 | 2 cycles | Single | Wounds agent (relationships -2, ambassador removed). −5 Sta, −12 Sov | +8 |
+| **Guardian** | 4 | Instant | Permanent | −6% enemy success per guardian, max −15% (self-deploy) | — |
+| **Infiltrator** | 5 | 2 cycles | 3 cycles | Embassy effectiveness −65% | +6 |
 
 **Success Probability Formula:**
 ```
 P(success) = 0.55
-  + operative_qualification × 0.05     (+0.00 to +0.50)
-  - target_zone_security × 0.05        (-0.00 to -0.50)
+  + operative_aptitude × 0.03          (+0.09 to +0.27)
+  - target_zone_security × 0.05       (-0.00 to -0.50)
   - min(0.15, guardian_count × 0.06)   (-0.06 per guardian, cap 0.15)
   + embassy_effectiveness × 0.15       (+0.00 to +0.15)
 
@@ -389,10 +393,10 @@ Clamped to [0.05, 0.95]
 
 **Why the formula works:**
 
-The base 0.5 means an "average" operative against an "average" target has a coin flip. From there, each factor shifts the probability:
+The base 0.55 puts an average operative (aptitude 6, contributing +0.18) at ~0.73 against an undefended target — strong enough to encourage action, weak enough that defenses matter. From there, each factor shifts the probability:
 
-- **Agent qualification** (+0.50 max): The single biggest positive modifier. Investing in skilled agents pays off massively. A qualification-10 spy has 50% better odds than a qualification-0 spy.
-- **Zone security** (-0.50 max): The single biggest negative modifier. High-security zones are genuinely hard to infiltrate.
+- **Agent aptitude** (+0.27 max): The operative's typed skill score (see Section VI). An aptitude-9 specialist has an 18pp edge over an aptitude-3 generalist. Meaningful but bounded — aptitude alone can't overcome a well-defended zone.
+- **Zone security** (-0.50 max): The single biggest negative modifier. High-security zones are genuinely hard to infiltrate. This remains the primary defensive lever.
 - **Guardians** (-0.06 each, cap −0.15): Two guardians reduce by 0.12, three reach −0.15 (cap). Guardians cost 4 RP and don't attack — pure defense.
 - **Embassy effectiveness** (+0.15 max): A smaller bonus, but it rewards embassy maintenance.
 
@@ -454,7 +458,177 @@ A single composite score would make the game solvable — find the optimal strat
 
 ---
 
-## VI. Cross-System Interaction Design
+## VI. Agent Aptitudes & Draft Phase
+
+### The Problem with Qualification
+
+In v1.0, operative success probability used `qualification_level × 0.05` — the same profession quality score that drives building readiness. This created two design problems:
+
+1. **Flat agents.** An agent with qualification 10 was equally good at every operative type. There was no reason to prefer Agent A as a spy over Agent B — whoever had the highest qualification went. Agent identity was irrelevant beyond a single number.
+
+2. **Double duty without tension.** Qualification already matters for building readiness (staffing ratio × qualification match). Using the same number for operative success meant that the "best" agent for combat was also the "best" agent for staffing. The Guns vs. Butter tension existed (deploy vs. staff), but the CHOICE of which agent to deploy didn't. You always sent the highest-qualified agent because there was no reason not to.
+
+3. **Unbounded swing.** `qualification × 0.05` on a 1-10 scale meant up to +0.50 probability — a massive modifier that dominated zone security and guardians. A qualification-10 operative against a lawless zone had near-guaranteed success regardless of defenses.
+
+Agent aptitudes solve all three problems by making each agent a distinct strategic asset with typed strengths.
+
+### Aptitude Scores
+
+Each agent has **6 aptitude scores**, one per operative type:
+
+| Aptitude | Operative Type | What It Represents |
+|----------|---------------|-------------------|
+| `apt_spy` | Spy | Surveillance tradecraft, information extraction, cover maintenance |
+| `apt_guardian` | Guardian | Counter-intelligence instinct, threat recognition, zone defense discipline |
+| `apt_saboteur` | Saboteur | Technical demolition skill, infrastructure analysis, covert entry |
+| `apt_propagandist` | Propagandist | Rhetorical ability, cultural manipulation, narrative seeding |
+| `apt_infiltrator` | Infiltrator | Long-term cover, institutional subversion, diplomatic erosion |
+| `apt_assassin` | Assassin | Targeted disruption, high-value asset neutralization, clean extraction |
+
+**Score range:** 3-9 per aptitude. The floor of 3 ensures no agent is completely useless at any role. The ceiling of 9 prevents any single agent from being an unstoppable operative.
+
+**Budget constraint:** Each agent has a **total budget of 36 points** across all 6 aptitudes. The average score is exactly 6.0 (the midpoint of the 3-9 range). This forces a zero-sum allocation: raising one aptitude requires lowering another.
+
+**Aptitudes are set on the simulation template.** They are part of the pre-match strategic design — the world you build before an epoch begins. During game instance cloning, aptitude scores are copied unchanged from the template. This makes agent composition the central strategic decision of pre-match preparation.
+
+### The Specialist vs. Generalist Tradeoff
+
+The 36-point budget creates a fundamental design tension in agent composition:
+
+**The Specialist** (e.g., 9/3/3/9/3/9):
+- Three aptitudes at maximum, three at minimum
+- Devastating when deployed in their specialty (+0.27 probability from aptitude alone)
+- Crippled when forced into a non-specialty role (+0.09)
+- Predictable — opponents who identify the specialization can anticipate deployments
+- Vulnerable to draft pressure (if match rules force fewer agents, a hyper-specialist might not make the cut)
+
+**The Generalist** (e.g., 6/6/6/6/6/6):
+- All aptitudes at the average
+- Serviceable in any role (+0.18 probability from aptitude)
+- Never optimal, never terrible
+- Flexible — opponents can't predict deployment patterns
+- Safe draft pick (useful regardless of match meta)
+
+**The Hybrid** (e.g., 8/4/8/4/8/4):
+- Two "good at" categories and one "great at"
+- A balance between specialization depth and deployment flexibility
+- The most common optimal build for serious play
+
+In practice, the most interesting compositions will mix agent profiles. A roster of 6 agents might include 2 specialists (the assassin and the master spy), 2 hybrids (versatile operatives who can flex between roles), and 2 generalists (reliable building staff who can serve as emergency operatives). The composition decision is made during template design — long before any epoch begins — which means it reflects the player's strategic identity and game philosophy.
+
+### Formula Change: Qualification to Aptitude
+
+The operative success probability formula changes from:
+
+```
+v1.0: + qualification × 0.05     (+0.05 to +0.50, based on 1-10 scale)
+v1.1: + aptitude × 0.03          (+0.09 to +0.27, based on 3-9 scale)
+```
+
+**Updated formula:**
+```
+P(success) = clamp(0.05, 0.95,
+  0.55
+  + aptitude × 0.03               (+0.09 to +0.27)
+  - target_zone_security × 0.05   (-0.00 to -0.50)
+  - min(0.15, guardians × 0.06)   (-0.06 per guardian, cap 0.15)
+  + embassy_effectiveness × 0.15  (+0.00 to +0.15)
+)
+```
+
+**Why 0.03:**
+
+The aptitude contribution is bounded to an 18 percentage point swing (0.27 - 0.09 = 0.18). Compare this to the v1.0 qualification swing of 45pp (0.50 - 0.05). The reduced swing means aptitude is **meaningful but doesn't dominate**. A max-aptitude operative (9) against a fortress zone with 3 guardians can still fail. A min-aptitude operative (3) against a lawless zone with no guardians can still succeed. The other factors — zone security, guardians, embassy effectiveness — retain their strategic weight.
+
+The 0.03 coefficient also creates clean probability breakpoints:
+
+| Aptitude | Contribution | Interpretation |
+|----------|-------------|----------------|
+| 3 (minimum) | +0.09 | Barely trained — marginal advantage |
+| 5 (below average) | +0.15 | Competent but not reliable |
+| 6 (average) | +0.18 | Solid operative — the baseline |
+| 7 (above average) | +0.21 | Good operative — noticeable edge |
+| 9 (maximum) | +0.27 | Elite specialist — significant advantage |
+
+Each point of aptitude is worth exactly 3pp of success probability. This makes aptitude investment intuitive and calculable without requiring a spreadsheet.
+
+### The Draft Phase
+
+The Draft Phase is a new addition to the epoch lifecycle, inserted between the lobby and the first competitive cycle:
+
+```
+LOBBY → DRAFT → FOUNDATION (20%) → COMPETITION (65%) → RECKONING (15%) → COMPLETED
+```
+
+**Design intent:** A simulation template might have 10 agents, but a match might only allow 6. The draft phase forces players to choose which agents to bring — a roster selection decision that locks in their strategic posture for the entire epoch.
+
+**Epoch configuration:**
+
+The epoch creator sets `max_agents_per_player` in the epoch config:
+
+| Setting | Range | Default | Effect |
+|---------|-------|---------|--------|
+| `max_agents_per_player` | 4-8 | 6 | Maximum agents each player can draft from their template |
+
+**Draft mechanics:**
+
+During the Draft Phase, each participant sees their template's full agent roster — all agents with their aptitude scores, professions, and current building assignments. They select up to `max_agents_per_player` agents to include in their game instance.
+
+Non-drafted agents are **excluded from the game instance entirely**. They don't appear in the cloned simulation, can't staff buildings, can't serve as ambassadors, and can't be deployed as operatives. This is a hard cutoff, not a bench — there's no substitution during the epoch.
+
+**Why the draft matters:**
+
+The draft turns agent composition from a fixed property of the simulation into an active strategic decision. A template might contain:
+
+- 2 spy specialists (apt_spy 9)
+- 2 builder generalists (all aptitudes 6, high building qualifications)
+- 2 military hybrids (high saboteur + assassin)
+- 2 diplomatic agents (high propagandist + infiltrator)
+- 2 guardian specialists (apt_guardian 9)
+
+With `max_agents_per_player = 6`, the player must cut 4. Which 4? The answer depends on:
+
+1. **Score weights** — If the epoch emphasizes Military, draft the combat specialists. If Stability, draft the builders.
+2. **Opponent analysis** — If a rival is known for aggressive sabotage, draft guardian specialists. If they turtle, draft infiltrators and propagandists.
+3. **Alliance plans** — If you're planning to play diplomat, draft agents with high propagandist and infiltrator aptitudes for embassy-based influence.
+4. **Building coverage** — Drafted agents must also staff buildings. Cutting too many generalists leaves buildings understaffed, tanking stability.
+
+The draft creates a **commitment moment** — a point of no return where the player's strategy crystallizes. Post-draft, there's no going back. If you drafted wrong, you adapt or lose. This mirrors the draft phase in MOBAs (League of Legends ban/pick) and TCG deck construction (choosing which 60 of your 200 cards to play).
+
+**Bot auto-draft:**
+
+Bot players draft automatically based on their personality archetype:
+
+| Archetype | Draft Strategy |
+|-----------|---------------|
+| **Sentinel** | Prioritizes guardian aptitude + building qualifications. Drafts defensively. |
+| **Warlord** | Prioritizes saboteur + assassin aptitudes. Drafts offensively, accepts domestic gaps. |
+| **Diplomat** | Prioritizes propagandist + infiltrator aptitudes + ambassador quality. Balanced draft. |
+| **Strategist** | Analyzes epoch score weights and drafts to maximize composite. Adaptive. |
+| **Chaos** | Semi-random draft with bias toward extreme specialists. Unpredictable. |
+
+Bot draft strategies are deterministic given the epoch config and template roster, ensuring reproducible behavior for testing and balance analysis.
+
+**Draft timer:**
+
+The draft phase has a configurable duration (default: 24 hours). If a player doesn't submit their draft by the deadline, the system auto-drafts their top `max_agents_per_player` agents ranked by total aptitude sum — a reasonable default that doesn't punish inactivity too harshly but rewards active drafting.
+
+### Interaction with Existing Systems
+
+Agent aptitudes integrate with, but don't replace, existing mechanical attributes:
+
+| Attribute | Role | Affected By Aptitude? |
+|-----------|------|----------------------|
+| `qualification_level` | Building readiness (staffing quality) | No — unchanged |
+| `professions` | Building staffing match | No — unchanged |
+| `character_depth` | Ambassador quality | No — unchanged |
+| `aptitudes` (new) | Operative success probability | Yes — replaces qualification in formula |
+
+This separation is deliberate. An agent can be an excellent doctor (qualification 10 in medical) and a terrible spy (apt_spy 3). The building economy and the operative economy now pull from **different dimensions of agent quality**, deepening the Guns vs. Butter tension: your best building staffer might be your worst operative, and vice versa.
+
+---
+
+## VII. Cross-System Interaction Design
 
 ### Feedback Loops
 
@@ -505,7 +679,7 @@ Deploy operatives abroad → Agents leave domestic posts → YOUR readiness drop
 ```
 **This is the core tension of the competitive layer.** Every operative deployment has a domestic cost. Sending your best doctor as a spy means your hospital is understaffed. A player who goes "all in" on military spending cripples their own stability score.
 
-The trade-off is quantifiable: a qualification-10 agent adds ~0.05 to operative success probability but might reduce a critical building's readiness by 10-30%. Is that worth it? Depends on the epoch's score weights, the target's vulnerability, and how much your own stability can absorb the hit.
+The trade-off is quantifiable: deploying an agent with aptitude 8 adds +0.24 to operative success probability but removes them from a critical building post, potentially reducing readiness by 10-30%. Is that worth it? Depends on the epoch's score weights, the target's vulnerability, and how much your own stability can absorb the hit.
 
 **Loop 6: Embassy Paradox**
 ```
@@ -566,7 +740,7 @@ The densest interactions are between Operatives and the core economy systems. Th
 
 ---
 
-## VII. Player Archetypes & Session Flow
+## VIII. Player Archetypes & Session Flow
 
 ### Four Strategic Archetypes
 
@@ -648,7 +822,7 @@ When teams are enabled, the archetype interactions become richer:
 
 ---
 
-## VIII. Economy Design & Balancing
+## IX. Economy Design & Balancing
 
 ### Resource Flows
 
@@ -657,14 +831,14 @@ The game has **one explicit resource** (RP) and **multiple implicit resources** 
 #### Explicit: Resonance Points (RP)
 
 ```
-Income: 10 RP/cycle (foundation: 15)
-Cap: 30 RP
-Costs: 3-8 RP per operative, 1-3 RP for utility actions
+Income: 12 RP/cycle (foundation: 18)
+Cap: 40 RP
+Costs: 3-7 RP per operative, 1-4 RP for utility actions
 ```
 
-At default settings (10 RP/cycle, 8h cycles = 3 cycles/day), a player receives 30 RP/day and can store at most 30. This means:
+At default settings (12 RP/cycle, 8h cycles = 3 cycles/day), a player receives 36 RP/day and can store at most 40. This means:
 
-- **1 major operation per day** (8 RP assassin + something else)
+- **1-2 major operations per day** (7 RP assassin + spy or guardian)
 - **2-3 medium operations per day** (spy + saboteur + counter-intel)
 - **3-4 minor operations per day** (spies + guardians)
 
@@ -702,7 +876,7 @@ The military scoring dimension rewards successful operations (+2 to +8 per succe
 - Every deployed agent reduces domestic readiness (Stability cost)
 - Spy information is only valuable if you ACT on it (costing more RP)
 
-**Potential concern:** If a player has many highly qualified agents (qualification 8-10), their success probability is very high (base 0.55 + 0.40-0.50 from qualification). This could make spy spam a dominant strategy. The counter is guardians (−0.06 success per guardian, +4 sovereignty), but guardians cost 4 RP and don't score militarily.
+**Potential concern:** If a player drafts multiple high-aptitude spy specialists (apt_spy 8-9), their success probability is strong (base 0.55 + 0.24-0.27 from aptitude). However, the reduced coefficient (0.03 vs. the original 0.05) and the bounded 3-9 range cap the maximum aptitude contribution at +0.27 — meaningful but no longer dominating. The draft phase further constrains this: loading up on spy specialists means sacrificing agents with other aptitudes or high building qualifications.
 
 **Recommendation for tuning:** Monitor first real epoch. If spy spam dominates, consider: (a) diminishing returns on spy score after N successful missions in same target, (b) increasing spy RP cost to 4, or (c) adding a "counterintelligence fatigue" mechanic where repeated sweeps in the same zone have diminishing returns.
 
@@ -730,7 +904,7 @@ Detected betrayal = -25% Diplomatic Score + alliance dissolution. For a player w
 
 ---
 
-## IX. Competitive Tension Design
+## X. Competitive Tension Design
 
 ### The Three Tensions
 
@@ -770,7 +944,7 @@ The most dramatic moments in the game will emerge from:
 
 ---
 
-## X. Design Pattern Analysis
+## XI. Design Pattern Analysis
 
 ### Patterns Used
 
@@ -844,11 +1018,11 @@ A simulation that starts an epoch with better infrastructure (more agents, highe
 
 **Partially addressed by:** Normalization (scores relative to best player, not absolute), Reckoning phase chaos, and the Guns vs. Butter trade-off (strong simulations deploying operatives weakens them domestically).
 
-**Remaining concern:** If one player has 20 agents and another has 6, the player with 20 can deploy operatives AND maintain domestic readiness. The game doesn't scale challenges to simulation size.
+**Substantially addressed by:** The Draft Phase (Section VI). The `max_agents_per_player` cap ensures every participant enters the epoch with the same agent count regardless of template size. A simulation with 20 agents and one with 6 both draft to the same limit. The strategic advantage shifts from "who has more agents" to "who composed better agents and drafted more wisely."
 
 ---
 
-## XI. Comparative Analysis — Similar Games
+## XII. Comparative Analysis — Similar Games
 
 ### Direct Comparisons
 
@@ -913,7 +1087,7 @@ The closest concept is probably a **massively multiplayer play-by-mail game with
 
 ---
 
-## XII. What Makes This Interesting
+## XIII. What Makes This Interesting
 
 ### 1. The Creative-Competitive Fusion
 
@@ -945,7 +1119,7 @@ The idea that your offensive and diplomatic channels are the same physical infra
 
 ---
 
-## XIII. What Could Go Wrong — Honest Critique
+## XIV. What Could Go Wrong — Honest Critique
 
 ### 1. Complexity Barrier
 
@@ -1013,7 +1187,7 @@ The Bleed Cascade loop (unstable zone → lower threshold → more bleed → mor
 
 ---
 
-## XIV. Technical Implementation Reality
+## XV. Technical Implementation Reality
 
 ### What Exists (Implemented)
 
@@ -1037,7 +1211,8 @@ The Bleed Cascade loop (unstable zone → lower threshold → more bleed → mor
 | **Real-time notifications for cycle events** | High — players need to know when cycles resolve | Low — existing NotificationCenter + RealtimeService can be extended |
 | **Simulation Health Dashboard UI** | Medium — shows materialized view data | Medium — new route + components |
 | **Building Readiness badges on existing UI** | Medium — visual indicator on building cards | Low — CSS badge + computed property |
-| **Agent Operative Status in AgentDetailsPanel** | Medium — shows if agent is deployed + aptitude | Low — new section in existing component |
+| **Agent Aptitude UI in AgentDetailsPanel** | Medium — shows 6 aptitude scores + operative status | Low — new section in existing component |
+| **Draft Phase UI** | High — roster selection during lobby→draft transition | Medium — new component + epoch lifecycle change |
 | **Enhanced Cartographer's Map for epochs** | Low — competitive overlay during active epoch | Medium — new data layer + tooltip additions |
 | **AI integration (prompt context injection)** | Low (v1 can work without) — computed metrics in AI prompts | Medium — prompt template modifications |
 | **Automated balance testing** | Low (deferred to live play) | High — simulation framework needed |
@@ -1055,7 +1230,7 @@ The competitive layer uses **materialized views** (PostgreSQL) for expensive agg
 
 ---
 
-## XV. Extensibility Roadmap
+## XVI. Extensibility Roadmap
 
 ### Near-Term Extensions (Within Current Architecture)
 
@@ -1107,7 +1282,7 @@ Build a meta-narrative across multiple epochs. The winner of each epoch gains a 
 
 ---
 
-## XVI. Open Questions for Designers
+## XVII. Open Questions for Designers
 
 These are unresolved design questions where external feedback would be most valuable:
 
@@ -1204,11 +1379,24 @@ echo_probability = base × source_perm × target_perm × connection_strength
 strength_decay = bleed_strength_decay ^ depth
 ```
 
+### Agent Aptitudes
+```
+Each agent: 6 aptitude scores (apt_spy, apt_guardian, apt_saboteur,
+  apt_propagandist, apt_infiltrator, apt_assassin)
+
+Per-aptitude range: [3, 9]
+Total budget: sum(all_6_aptitudes) = 36
+Average per aptitude: 6.0
+
+Operative success uses: aptitude matching deployed operative type
+  e.g., spy mission uses apt_spy, saboteur mission uses apt_saboteur
+```
+
 ### Operative Success
 ```
 P(success) = clamp(0.05, 0.95,
-  0.5
-  + qualification × 0.05
+  0.55
+  + aptitude × 0.03
   - zone_security × 0.05
   - min(0.15, guardians × 0.06)
   + embassy_effectiveness × 0.15
@@ -1222,8 +1410,8 @@ influence = sum(completed_outbound_echo_strength)         [0-∞]
 sovereignty = 100 × (1 - inbound_echo_impact / total_event_impact)  [0-100]
 diplomatic = (sum(embassy_effectiveness × 10) + spy_bonus) × (1 + 0.15 × alliance_count) × (1 - betrayal_penalty) [0-∞]
 military = sum(success_values) - sum(detection_penalties)  [-∞ to +∞]
-  spy_success: +2, saboteur: +5, propagandist: +5, assassin: +8, infiltrator: +4
-  any_detection: -2
+  spy_success: +2, saboteur: +5, propagandist: +5, assassin: +8, infiltrator: +6
+  any_detection: -3
 
 composite = weighted_sum(normalized(dim_i) × weight_i)
   where normalized(dim) = dim / max(dim across all participants) × 100
@@ -1283,4 +1471,4 @@ frontend/src/components/buildings/      Embassy UI (EmbassyCreateModal, EmbassyL
 
 ---
 
-*This document is intended as a comprehensive reference for game designers evaluating the metaverse.center competitive system. It reflects the designed and implemented state as of 2026-02-27. All formulas and mechanics are subject to tuning based on live playtesting data.*
+*This document is intended as a comprehensive reference for game designers evaluating the metaverse.center competitive system. It reflects the designed and implemented state as of 2026-03-03. All formulas and mechanics are subject to tuning based on live playtesting data.*

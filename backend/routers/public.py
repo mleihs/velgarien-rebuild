@@ -5,7 +5,6 @@ Only GET endpoints for active simulation data.
 Delegates to existing service layer where possible (keeps query logic in sync).
 """
 
-from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
@@ -14,6 +13,7 @@ from backend.dependencies import get_anon_supabase
 from backend.middleware.rate_limit import RATE_LIMIT_STANDARD, limiter
 from backend.models.common import PaginatedResponse, PaginationMeta, SuccessResponse
 from backend.services.agent_service import AgentService
+from backend.services.aptitude_service import AptitudeService
 from backend.services.battle_log_service import BattleLogService
 from backend.services.building_service import BuildingService
 from backend.services.cache_config import get_ttl
@@ -480,6 +480,31 @@ async def list_agent_relationships(
     return {"success": True, "data": data}
 
 
+@router.get("/simulations/{simulation_id}/agents/{agent_id}/aptitudes", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_agent_aptitudes(
+    request: Request,
+    simulation_id: UUID,
+    agent_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get aptitude scores for a specific agent (public)."""
+    data = await AptitudeService.get_for_agent(supabase, simulation_id, agent_id)
+    return {"success": True, "data": data}
+
+
+@router.get("/simulations/{simulation_id}/aptitudes", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_simulation_aptitudes(
+    request: Request,
+    simulation_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get all aptitude scores for all agents in a simulation (public)."""
+    data = await AptitudeService.get_all_for_simulation(supabase, simulation_id)
+    return {"success": True, "data": data}
+
+
 @router.get("/simulations/{simulation_id}/relationships", response_model=PaginatedResponse)
 @limiter.limit(RATE_LIMIT_PUBLIC)
 async def list_simulation_relationships(
@@ -829,29 +854,5 @@ async def validate_epoch_invitation(
     supabase: Client = Depends(get_anon_supabase),
 ) -> dict:
     """Validate an epoch invitation token and return epoch info + lore."""
-    invitation = await EpochInvitationService.get_by_token(supabase, token)
-    epoch_data = invitation.get("game_epochs") or {}
-
-    expires_at_str = invitation.get("expires_at", "")
-    is_expired = False
-    if expires_at_str:
-        try:
-            expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))
-            is_expired = expires_at < datetime.now(UTC)
-        except (ValueError, TypeError):
-            pass
-
-    config = epoch_data.get("config") or {}
-
-    return {
-        "success": True,
-        "data": {
-            "epoch_name": epoch_data.get("name", "Unknown"),
-            "epoch_description": epoch_data.get("description"),
-            "epoch_status": epoch_data.get("status", "unknown"),
-            "lore_text": config.get("invitation_lore"),
-            "expires_at": invitation.get("expires_at"),
-            "is_expired": is_expired or invitation.get("status") == "expired",
-            "is_accepted": invitation.get("status") == "accepted",
-        },
-    }
+    data = await EpochInvitationService.validate_token(supabase, token)
+    return {"success": True, "data": data}

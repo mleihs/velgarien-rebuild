@@ -14,7 +14,8 @@ from supabase import Client
 logger = logging.getLogger(__name__)
 
 MAX_IMAGE_DIMENSION = 1024
-AVIF_QUALITY = 85
+AVIF_QUALITY = 85  # Full-resolution originals
+AVIF_QUALITY_THUMB = 80  # Display-optimized thumbnails
 
 
 class ImageService:
@@ -92,18 +93,15 @@ class ImageService:
             **image_model.to_replicate_params(),
         )
 
-        # 4. Convert to AVIF
-        avif_bytes = _convert_to_avif(raw_bytes)
-
-        # 5. Upload to Supabase Storage
+        # 4. Upload dual-resolution AVIF (full-res + thumbnail)
         filename = f"{self._simulation_id}/{agent_id}/{uuid4()}.avif"
-        url = await self._upload_to_storage(
+        url = await self._upload_dual_resolution(
             bucket="agent.portraits",
-            path=filename,
-            data=avif_bytes,
+            base_path=filename,
+            raw_bytes=raw_bytes,
         )
 
-        # 6. Update agent record
+        # 5. Update agent record
         self._supabase.table("agents").update(
             {"portrait_image_url": url},
         ).eq("id", str(agent_id)).execute()
@@ -171,18 +169,15 @@ class ImageService:
             **image_model.to_replicate_params(),
         )
 
-        # 4. Convert to AVIF
-        avif_bytes = _convert_to_avif(raw_bytes)
-
-        # 5. Upload
+        # 4. Upload dual-resolution AVIF (full-res + thumbnail)
         filename = f"{self._simulation_id}/{building_id}/{uuid4()}.avif"
-        url = await self._upload_to_storage(
+        url = await self._upload_dual_resolution(
             bucket="building.images",
-            path=filename,
-            data=avif_bytes,
+            base_path=filename,
+            raw_bytes=raw_bytes,
         )
 
-        # 6. Update building record
+        # 5. Update building record
         self._supabase.table("buildings").update(
             {"image_url": url},
         ).eq("id", str(building_id)).execute()
@@ -380,6 +375,34 @@ class ImageService:
             embassy_data=embassy,
         )
 
+    async def _upload_dual_resolution(
+        self,
+        bucket: str,
+        base_path: str,
+        raw_bytes: bytes,
+    ) -> str:
+        """Upload full-res + thumbnail AVIF. Returns thumbnail URL.
+
+        Full-res file: {uuid}.full.avif (native resolution, quality 85)
+        Thumbnail file: {uuid}.avif (max 1024px, quality 80)
+        """
+        full_avif = _convert_to_avif(
+            raw_bytes, max_dimension=None, quality=AVIF_QUALITY,
+        )
+        thumb_avif = _convert_to_avif(
+            raw_bytes, max_dimension=MAX_IMAGE_DIMENSION, quality=AVIF_QUALITY_THUMB,
+        )
+
+        full_path = base_path.replace(".avif", ".full.avif")
+        await self._upload_to_storage(bucket, full_path, full_avif)
+        thumb_url = await self._upload_to_storage(bucket, base_path, thumb_avif)
+
+        logger.info(
+            "Dual upload: thumb=%s (%d bytes), full=%s (%d bytes)",
+            base_path, len(thumb_avif), full_path, len(full_avif),
+        )
+        return thumb_url
+
     async def _upload_to_storage(
         self,
         bucket: str,
@@ -397,8 +420,19 @@ class ImageService:
         return result
 
 
-def _convert_to_avif(image_bytes: bytes) -> bytes:
-    """Convert image bytes to AVIF format, resizing if needed."""
+def _convert_to_avif(
+    image_bytes: bytes,
+    max_dimension: int | None = MAX_IMAGE_DIMENSION,
+    quality: int = AVIF_QUALITY,
+) -> bytes:
+    """Convert image bytes to AVIF format.
+
+    Args:
+        image_bytes: Raw image data.
+        max_dimension: If set, resize so the longest edge fits this limit.
+            Pass None to preserve native resolution (full-res mode).
+        quality: AVIF quality (0-100).
+    """
     try:
         from PIL import Image
     except ImportError:
@@ -407,14 +441,14 @@ def _convert_to_avif(image_bytes: bytes) -> bytes:
 
     img = Image.open(io.BytesIO(image_bytes))
 
-    # Resize if larger than max dimension
-    if max(img.size) > MAX_IMAGE_DIMENSION:
-        img.thumbnail((MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION))
+    # Resize if max_dimension is set and image exceeds it
+    if max_dimension is not None and max(img.size) > max_dimension:
+        img.thumbnail((max_dimension, max_dimension))
 
     # Convert to RGB if necessary (e.g. RGBA, palette)
     if img.mode not in ("RGB", "L"):
         img = img.convert("RGB")
 
     output = io.BytesIO()
-    img.save(output, format="AVIF", quality=AVIF_QUALITY)
+    img.save(output, format="AVIF", quality=quality)
     return output.getvalue()

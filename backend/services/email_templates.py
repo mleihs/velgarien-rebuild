@@ -2,14 +2,70 @@
 
 All templates use inline CSS and table layout for maximum email client compatibility.
 No external CSS, no images (better deliverability).
+
+Supports single-language (email_locale="en"/"de") or bilingual rendering.
+Per-simulation accent colors thread through all templates via accent_color parameter.
 """
+
+from __future__ import annotations
+
+from collections import Counter
+
+# ── Per-simulation accent colors ──────────────────────────────────────────
+
+_SIM_EMAIL_COLORS: dict[str, str] = {
+    "velgarien": "#ff6b2b",
+    "the-gaslit-reach": "#0d7377",
+    "station-null": "#00cc88",
+    "speranza": "#C08A10",
+    "cite-des-dames": "#1E3A8A",
+}
+
+# ── Per-simulation narrative voice ────────────────────────────────────────
+
+_SIM_HEADERS: dict[str, dict[str, str]] = {
+    "velgarien": {
+        "en": "BUREAU DIRECTIVE // CYCLE DEBRIEF",
+        "de": "BÜRODIREKTIVE // ZYKLUS-LAGEBERICHT",
+    },
+    "the-gaslit-reach": {
+        "en": "GLIMHAVEN DISPATCH // INTELLIGENCE PRÉCIS",
+        "de": "GLIMHAVEN-DEPESCHE // GEHEIMDIENSTÜBERSICHT",
+    },
+    "station-null": {
+        "en": "HAVEN SYSTEM // ANOMALY REPORT",
+        "de": "HAVEN-SYSTEM // ANOMALIEBERICHT",
+    },
+    "speranza": {
+        "en": "FRONTIER COMMAND // TACTICAL BRIEF",
+        "de": "GRENZKOMMANDO // TAKTISCHE KURZMELDUNG",
+    },
+    "cite-des-dames": {
+        "en": "COUNCIL OF THE CITY // SCHOLARLY RECORD",
+        "de": "RAT DER STADT // GELEHRTENPROTOKOLL",
+    },
+}
+
+
+def get_sim_accent(slug: str | None) -> str:
+    """Return accent color for a simulation slug, falling back to amber."""
+    return _SIM_EMAIL_COLORS.get(slug or "", _AMBER)
+
+
+def get_sim_header(slug: str | None, lang: str) -> str:
+    """Return per-simulation section header, falling back to default."""
+    headers = _SIM_HEADERS.get(slug or "", {})
+    if headers:
+        return headers.get(lang, headers.get("en", _nt("sitrep_header", lang)))
+    return _nt("sitrep_header", lang)
+
 
 # ── i18n strings (legacy — kept for backward compat) ─────────────────────
 
 
 def epoch_invitation_subject(epoch_name: str, locale: str = "en") -> str:
     """Return the localized email subject line."""
-    return f"{_nt('inv_subject', 'en')} \u2014 {epoch_name}"
+    return f"{_nt('inv_subject', locale)} \u2014 {epoch_name}"
 
 
 def render_epoch_invitation(
@@ -17,29 +73,40 @@ def render_epoch_invitation(
     lore_text: str,
     invite_url: str,
     locale: str = "en",
+    *,
+    email_locale: str | None = None,
+    accent_color: str | None = None,
+    cycle_hours: int = 8,
 ) -> str:
-    """Render the epoch invitation email as bilingual HTML (EN + DE).
+    """Render the epoch invitation email.
 
-    Military tactical dispatch aesthetic matching newer notification emails:
-    - Dark background, monospace font, amber accent
-    - Bilingual: English first, then German (same email)
-    - Reuses shared building blocks (_email_shell, _section_header, etc.)
+    Military tactical dispatch aesthetic:
+    - Dark background, monospace font, per-simulation accent color
     - Sections: intro, operation name, intel dossier, mission params, rules, CTA
+
+    If email_locale is "en" or "de", renders single-language.
+    Otherwise renders bilingual (EN first, then DE).
     """
     safe_name = _esc(epoch_name)
     safe_lore = _esc(lore_text)
+    langs = _resolve_langs(email_locale)
+    accent = accent_color or _AMBER
 
-    en_block = _render_invitation_block(safe_name, safe_lore, invite_url, "en")
-    en_cta = _cta_button(invite_url, _nt("inv_cta", "en"))
+    blocks: list[str] = []
+    for i, lang in enumerate(langs):
+        if i > 0:
+            blocks.append(_language_divider())
+        blocks.append(
+            _render_invitation_block(
+                safe_name, safe_lore, invite_url, lang,
+                is_primary=(i == 0), accent=accent, cycle_hours=cycle_hours,
+            )
+        )
+        blocks.append(_cta_button(invite_url, _nt("inv_cta", lang), accent=accent))
 
-    divider = _language_divider()
+    blocks.append(_footer_row(email_locale))
 
-    de_block = _render_invitation_block(safe_name, safe_lore, invite_url, "de")
-    de_cta = _cta_button(invite_url, _nt("inv_cta", "de"))
-
-    footer = _footer_row()
-
-    content = f"{en_block}\n{en_cta}\n{divider}\n{de_block}\n{de_cta}\n{footer}"
+    content = "\n".join(blocks)
     return _email_shell(f"CLASSIFIED // EPOCH SUMMONS \u2014 {safe_name}", content)
 
 
@@ -48,13 +115,18 @@ def _render_invitation_block(
     lore_text: str,
     invite_url: str,
     lang: str,
+    *,
+    is_primary: bool = True,
+    accent: str = "",
+    cycle_hours: int = 8,
 ) -> str:
     """Render a single language block for the epoch invitation email."""
-    is_primary = lang == "en"
+    if not accent:
+        accent = _AMBER
     heading_tag = "h1" if is_primary else "h2"
     heading_size = "22px" if is_primary else "20px"
 
-    # Header (only EN gets the top border)
+    # Header (only primary gets the top border)
     if is_primary:
         header = f"""\
           <tr>
@@ -94,7 +166,7 @@ def _render_invitation_block(
               <p style="margin:0 0 2px;font-size:10px;letter-spacing:3px;color:{_TEXT_DIM};text-transform:uppercase;">
                 {_nt('inv_operation', lang)}
               </p>
-              <{heading_tag} style="margin:0;font-size:{heading_size};font-weight:900;color:{_AMBER};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
+              <{heading_tag} style="margin:0;font-size:{heading_size};font-weight:900;color:{accent};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
                 {epoch_name}
               </{heading_tag}>
               <p style="margin:4px 0 0;font-size:11px;color:{_BORDER};letter-spacing:1px;">
@@ -103,9 +175,10 @@ def _render_invitation_block(
             </td>
           </tr>"""
 
-    # Intel dossier (AI-generated lore)
-    intel = _section_header(_nt("inv_intel", lang))
-    intel += f"""\
+    # Intel dossier (AI-generated lore — English only, skip in DE secondary block)
+    if is_primary or lang == "en":
+        intel = _section_header(_nt("inv_intel", lang))
+        intel += f"""\
           <tr>
             <td style="padding:0 32px 16px;">
               <div style="border:1px dashed {_BORDER};padding:20px;background-color:{_SURFACE};">
@@ -115,13 +188,24 @@ def _render_invitation_block(
               </div>
             </td>
           </tr>"""
+    else:
+        # DE secondary block: reference the English lore above
+        intel = _section_header(_nt("inv_intel", lang))
+        intel += f"""\
+          <tr>
+            <td style="padding:0 32px 16px;">
+              <p style="margin:0;font-size:12px;color:{_TEXT_DIM};font-style:italic;padding:0 4px;">
+                {_nt('inv_intel_see_above', lang)}
+              </p>
+            </td>
+          </tr>"""
 
-    # Mission parameters
+    # Mission parameters (updated for v2.3 game mechanics)
     mp_bullets = [
         _nt("inv_mp_1", lang),
         _nt("inv_mp_2", lang),
         _nt("inv_mp_3", lang),
-        _nt("inv_mp_4", lang),
+        _nt("inv_mp_4", lang, hours=cycle_hours),
     ]
     mp_items = ""
     for bullet in mp_bullets:
@@ -140,7 +224,7 @@ def _render_invitation_block(
             </td>
           </tr>"""
 
-    # Rules of engagement
+    # Rules of engagement (updated for v2.3 game mechanics)
     roe_bullets = [
         _nt("inv_roe_1", lang),
         _nt("inv_roe_2", lang),
@@ -167,6 +251,18 @@ def _render_invitation_block(
     return f"{header}\n{intro}\n{op_name}\n{intel}\n{mission}\n{rules}"
 
 
+def _resolve_langs(email_locale: str | None) -> list[str]:
+    """Resolve which language(s) to render based on user preference.
+
+    Returns ["en"] or ["de"] for single-language, ["en", "de"] for bilingual.
+    """
+    if email_locale == "en":
+        return ["en"]
+    if email_locale == "de":
+        return ["de"]
+    return ["en", "de"]
+
+
 def _esc(text: str) -> str:
     """Escape HTML special characters."""
     return (
@@ -185,8 +281,8 @@ _SURFACE = "#111"
 _BORDER = "#333"
 _BORDER_SUBTLE = "#222"
 _TEXT = "#ccc"
-_TEXT_DIM = "#666"
-_TEXT_DARK = "#444"
+_TEXT_DIM = "#888"
+_TEXT_DARK = "#666"
 _AMBER = "#f59e0b"
 _GREEN = "#4ade80"
 _RED = "#ef4444"
@@ -214,12 +310,12 @@ def _rank_arrow(current: int, previous: int) -> str:
     return f'<span style="color:{_GRAY};">&#9472;</span>'
 
 
-def _score_bar(value: float, max_val: float = 100.0) -> str:
+def _score_bar(value: float, max_val: float = 100.0, accent: str = _AMBER) -> str:
     """Render a 10-cell ASCII-style score bar as HTML table cells."""
     filled = min(10, max(0, round(value / max_val * 10))) if max_val > 0 else 0
     cells = ""
     for i in range(10):
-        bg = _AMBER if i < filled else "#1a1a1a"
+        bg = accent if i < filled else "#1a1a1a"
         cells += f'<td style="width:16px;height:12px;background-color:{bg};border:1px solid #222;padding:0;"></td>'
     return f'<table role="presentation" cellpadding="0" cellspacing="1" style="display:inline-table;vertical-align:middle;"><tr>{cells}</tr></table>'
 
@@ -232,6 +328,8 @@ def _email_shell(title: str, content: str) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
   <title>{title}</title>
 </head>
 <body style="margin:0;padding:0;background-color:{_BG};font-family:{_MONO};">
@@ -260,13 +358,13 @@ def _section_header(label: str) -> str:
           </tr>"""
 
 
-def _cta_button(url: str, label: str) -> str:
-    """Render the CTA button row."""
+def _cta_button(url: str, label: str, *, accent: str = _AMBER) -> str:
+    """Render the CTA button row with per-simulation accent color."""
     return f"""\
           <tr>
             <td align="center" style="padding:24px 32px 32px;">
               <a href="{_esc(url)}"
-                 style="display:inline-block;padding:14px 32px;background-color:{_AMBER};color:{_BG};font-family:{_MONO};font-size:13px;font-weight:900;letter-spacing:3px;text-transform:uppercase;text-decoration:none;border:2px solid {_AMBER};">
+                 style="display:inline-block;padding:14px 32px;background-color:{accent};color:{_BG};font-family:{_MONO};font-size:13px;font-weight:900;letter-spacing:3px;text-transform:uppercase;text-decoration:none;border:2px solid {accent};">
                 &#9608; {_esc(label)} &#9608;
               </a>
             </td>
@@ -291,21 +389,54 @@ def _language_divider() -> str:
           </tr>"""
 
 
-def _footer_row() -> str:
+def _footer_row(email_locale: str | None = None) -> str:
     """Render the standard footer with notification management link."""
+    if email_locale == "de":
+        manage_link = f'<a href="https://metaverse.center/settings" style="color:{_TEXT_DARK};text-decoration:underline;">Benachrichtigungen verwalten</a>'
+    elif email_locale == "en":
+        manage_link = f'<a href="https://metaverse.center/settings" style="color:{_TEXT_DARK};text-decoration:underline;">Manage notifications</a>'
+    else:
+        manage_link = (
+            f'<a href="https://metaverse.center/settings" style="color:{_TEXT_DARK};text-decoration:underline;">Manage notifications</a>'
+            f"&nbsp;&middot;&nbsp;"
+            f'<a href="https://metaverse.center/settings" style="color:{_TEXT_DARK};text-decoration:underline;">Benachrichtigungen verwalten</a>'
+        )
+
+    footer_lang = email_locale if email_locale in ("en", "de") else "en"
     return f"""\
           <tr>
             <td style="padding:16px 32px;border-top:1px solid {_BORDER_SUBTLE};">
               <p style="margin:0 0 4px;font-size:10px;color:{_TEXT_DARK};">
-                <a href="https://metaverse.center/settings" style="color:{_TEXT_DARK};text-decoration:underline;">Manage notifications</a>
-                &nbsp;&middot;&nbsp;
-                <a href="https://metaverse.center/settings" style="color:{_TEXT_DARK};text-decoration:underline;">Benachrichtigungen verwalten</a>
+                {manage_link}
               </p>
               <p style="margin:0;font-size:10px;letter-spacing:2px;color:{_TEXT_DARK};text-transform:uppercase;">
-                TRANSMISSION ORIGIN: metaverse.center
+                {_nt('footer_origin', footer_lang)}
               </p>
             </td>
           </tr>"""
+
+
+def _dashed_box(content_html: str) -> str:
+    """Wrap content in the standard dashed-border box."""
+    return f"""\
+          <tr>
+            <td style="padding:0 32px 16px;">
+              <div style="border:1px dashed {_BORDER};padding:12px 16px;background-color:{_SURFACE};">
+{content_html}
+              </div>
+            </td>
+          </tr>"""
+
+
+def _bullet_list(items: list[str]) -> str:
+    """Render a list of bullet items."""
+    html = ""
+    for item in items:
+        html += f"""\
+                <p style="margin:0 0 6px;font-size:13px;color:{_TEXT};line-height:1.6;">
+                  &#9656; {item}
+                </p>"""
+    return html
 
 
 # ── Bilingual strings for notification emails ────────────────────────────
@@ -364,8 +495,8 @@ _NOTIF_STRINGS: dict[str, dict[str, str]] = {
         "de": "MILIT\u00c4R",
     },
     "operative_status": {
-        "en": "OPERATIVE STATUS",
-        "de": "AGENTENSTATUS",
+        "en": "OPERATIVE DEPLOYMENT LOG",
+        "de": "AGENTEN-EINSATZPROTOKOLL",
     },
     "active": {
         "en": "ACTIVE",
@@ -394,6 +525,63 @@ _NOTIF_STRINGS: dict[str, dict[str, str]] = {
     "cta": {
         "en": "ENTER THE COMMAND CENTER",
         "de": "ZUR KOMMANDOZENTRALE",
+    },
+    # Briefing enrichment (B1-B7)
+    "threat_assessment": {
+        "en": "THREAT ASSESSMENT",
+        "de": "BEDROHUNGSANALYSE",
+    },
+    "no_threats": {
+        "en": "No inbound threats detected this cycle.",
+        "de": "Keine eingehenden Bedrohungen in diesem Zyklus erkannt.",
+    },
+    "spy_intel": {
+        "en": "SPY INTEL DIGEST",
+        "de": "SPIONAGE-NACHRICHTENÜBERSICHT",
+    },
+    "no_intel": {
+        "en": "No intelligence gathered this cycle.",
+        "de": "Keine Aufklärungsergebnisse in diesem Zyklus.",
+    },
+    "next_cycle": {
+        "en": "NEXT CYCLE PREVIEW",
+        "de": "VORSCHAU NÄCHSTER ZYKLUS",
+    },
+    "pending_missions": {
+        "en": "PENDING MISSIONS",
+        "de": "AUSSTEHENDE MISSIONEN",
+    },
+    "rp_projection": {
+        "en": "RP PROJECTION",
+        "de": "RP-PROGNOSE",
+    },
+    "alliance_status": {
+        "en": "ALLIANCE STATUS",
+        "de": "ALLIANZSTATUS",
+    },
+    "no_alliance": {
+        "en": "Operating independently \u2014 no active alliance.",
+        "de": "Unabhängig operierend \u2014 keine aktive Allianz.",
+    },
+    "alliance_bonus": {
+        "en": "+15% DIPLOMATIC BONUS ACTIVE",
+        "de": "+15% DIPLOMATIEBONUS AKTIV",
+    },
+    "rank_gap_leading": {
+        "en": "Leading by {gap} points",
+        "de": "Führt mit {gap} Punkten Vorsprung",
+    },
+    "rank_gap_trailing": {
+        "en": "{gap} points behind #{pos}",
+        "de": "{gap} Punkte hinter #{pos}",
+    },
+    "mission_target": {
+        "en": "TARGET",
+        "de": "ZIEL",
+    },
+    "mission_outcome": {
+        "en": "OUTCOME",
+        "de": "ERGEBNIS",
     },
     # Phase change strings
     "phase_change_header": {
@@ -457,6 +645,22 @@ _NOTIF_STRINGS: dict[str, dict[str, str]] = {
         "en": "TOTAL CYCLES",
         "de": "ZYKLEN GESAMT",
     },
+    "campaign_stats": {
+        "en": "YOUR CAMPAIGN STATISTICS",
+        "de": "DEINE KAMPAGNENSTATISTIK",
+    },
+    "ops_deployed": {
+        "en": "OPERATIVES DEPLOYED",
+        "de": "EINGESETZTE AGENTEN",
+    },
+    "success_rate": {
+        "en": "SUCCESS RATE",
+        "de": "ERFOLGSRATE",
+    },
+    "dimension_race": {
+        "en": "DIMENSION TITLE RACE",
+        "de": "DIMENSIONSTITEL-RENNEN",
+    },
     # Epoch invitation strings
     "inv_subject": {
         "en": "CLASSIFIED // EPOCH SUMMONS",
@@ -468,11 +672,11 @@ _NOTIF_STRINGS: dict[str, dict[str, str]] = {
     },
     "inv_intro_1": {
         "en": "You have been selected for a classified operation. The Bureau has identified you as a viable operative for the next competitive epoch on metaverse.center.",
-        "de": "Sie wurden für eine geheime Operation ausgewählt. Das Büro hat Sie als geeigneten Agenten für die nächste kompetitive Epoche auf metaverse.center identifiziert.",
+        "de": "Sie wurden f\u00fcr eine geheime Operation ausgew\u00e4hlt. Das B\u00fcro hat Sie als geeigneten Agenten f\u00fcr die n\u00e4chste kompetitive Epoche auf metaverse.center identifiziert.",
     },
     "inv_intro_2": {
         "en": "Each epoch pits simulation commanders against each other in a strategic contest across five dimensions. Your tactical decisions shape the multiverse.",
-        "de": "In jeder Epoche treten Simulationskommandanten in einem strategischen Wettbewerb über fünf Dimensionen gegeneinander an. Ihre taktischen Entscheidungen formen das Multiversum.",
+        "de": "In jeder Epoche treten Simulationskommandanten in einem strategischen Wettbewerb \u00fcber f\u00fcnf Dimensionen gegeneinander an. Ihre taktischen Entscheidungen formen das Multiversum.",
     },
     "inv_operation": {
         "en": "OPERATION",
@@ -487,44 +691,108 @@ _NOTIF_STRINGS: dict[str, dict[str, str]] = {
         "de": "MISSIONSPARAMETER",
     },
     "inv_mp_1": {
-        "en": "Deploy operatives across 5 strategic dimensions",
-        "de": "Entsenden Sie Agenten über 5 strategische Dimensionen",
+        "en": "Draft your agents from your simulation roster \u2014 each has unique aptitudes",
+        "de": "Rekrutieren Sie Agenten aus Ihrem Simulationskader \u2014 jeder hat einzigartige Eignungen",
     },
     "inv_mp_2": {
-        "en": "Forge alliances or betray your rivals",
-        "de": "Schmieden Sie Allianzen oder verraten Sie Ihre Rivalen",
+        "en": "Deploy 6 operative types: Spy, Guardian, Saboteur, Propagandist, Infiltrator, Assassin",
+        "de": "Entsenden Sie 6 Agententypen: Spion, W\u00e4chter, Saboteur, Propagandist, Infiltrator, Attent\u00e4ter",
     },
     "inv_mp_3": {
-        "en": "Score through diplomacy, espionage, and military strength",
-        "de": "Punkten Sie durch Diplomatie, Spionage und Militärstärke",
+        "en": "Forge alliances or betray your rivals for strategic advantage",
+        "de": "Schmieden Sie Allianzen oder verraten Sie Ihre Rivalen f\u00fcr strategischen Vorteil",
     },
     "inv_mp_4": {
-        "en": "Real-time decisions with 8-hour cycles",
-        "de": "Echtzeit-Entscheidungen in 8-Stunden-Zyklen",
+        "en": "Real-time decisions in {hours}-hour cycles with fog-of-war intelligence",
+        "de": "Echtzeit-Entscheidungen in {hours}-Stunden-Zyklen mit Kriegsnebel-Aufkl\u00e4rung",
     },
     "inv_rules": {
         "en": "RULES OF ENGAGEMENT",
         "de": "EINSATZREGELN",
     },
     "inv_roe_1": {
-        "en": "Each player commands one simulation",
-        "de": "Jeder Spieler kommandiert eine Simulation",
+        "en": "Each player commands one simulation's forces",
+        "de": "Jeder Spieler kommandiert die Streitkr\u00e4fte einer Simulation",
     },
     "inv_roe_2": {
-        "en": "5 dimensions: Stability, Influence, Sovereignty, Diplomatic, Military",
-        "de": "5 Dimensionen: Stabilität, Einfluss, Souveränität, Diplomatie, Militär",
+        "en": "Score across 5 dimensions: Stability, Influence, Sovereignty, Diplomatic, Military",
+        "de": "Punkten Sie in 5 Dimensionen: Stabilit\u00e4t, Einfluss, Souver\u00e4nit\u00e4t, Diplomatie, Milit\u00e4r",
     },
     "inv_roe_3": {
-        "en": "Resource Points fuel your operations",
-        "de": "Ressourcenpunkte treiben Ihre Operationen an",
+        "en": "Agent aptitudes determine operative success probability",
+        "de": "Agenteneignungen bestimmen die Erfolgswahrscheinlichkeit von Eins\u00e4tzen",
     },
     "inv_roe_4": {
-        "en": "Fog of war \u2014 your intel is limited",
-        "de": "Kriegsnebel \u2014 Ihre Aufklärung ist begrenzt",
+        "en": "Bot opponents with distinct AI personalities may fill open slots",
+        "de": "Bot-Gegner mit eigenen KI-Pers\u00f6nlichkeiten k\u00f6nnen offene Pl\u00e4tze f\u00fcllen",
     },
     "inv_cta": {
         "en": "ACCEPT THE SUMMONS",
         "de": "EINBERUFUNG ANNEHMEN",
+    },
+    "inv_intel_see_above": {
+        "en": "See intelligence dispatch above.",
+        "de": "Siehe Geheimdienstbericht oben.",
+    },
+    "mission_type_header": {
+        "en": "TYPE",
+        "de": "TYP",
+    },
+    "threat_from": {
+        "en": "from",
+        "de": "von",
+    },
+    "threat_status_detected": {
+        "en": "DETECTED",
+        "de": "ERKANNT",
+    },
+    "threat_status_captured": {
+        "en": "CAPTURED",
+        "de": "GEFASST",
+    },
+    "intel_zone_analysis": {
+        "en": "Zone security analysis: {target} \u2014 {breakdown}.",
+        "de": "Zonensicherheitsanalyse: {target} \u2014 {breakdown}.",
+    },
+    "intel_guardian_count": {
+        "en": "Guardian deployment: {target} has {count} active guardian(s).",
+        "de": "W\u00e4chtereinsatz: {target} hat {count} aktive(n) W\u00e4chter.",
+    },
+    "intel_zone_low": {
+        "en": "LOW",
+        "de": "NIEDRIG",
+    },
+    "intel_zone_medium": {
+        "en": "MEDIUM",
+        "de": "MITTEL",
+    },
+    "intel_zone_high": {
+        "en": "HIGH",
+        "de": "HOCH",
+    },
+    "leaderboard_sim": {
+        "en": "SIM",
+        "de": "SIM",
+    },
+    "you_label": {
+        "en": "You",
+        "de": "Du",
+    },
+    "footer_origin": {
+        "en": "TRANSMISSION ORIGIN: metaverse.center",
+        "de": "ÜBERTRAGUNGSURSPRUNG: metaverse.center",
+    },
+    "subject_urgent_final": {
+        "en": "URGENT // FINAL PHASE",
+        "de": "DRINGEND // LETZTE PHASE",
+    },
+    "subject_ops_commence": {
+        "en": "CLASSIFIED // OPERATIONS COMMENCE",
+        "de": "GEHEIM // OPERATIONEN BEGINNEN",
+    },
+    "subject_phase_transition": {
+        "en": "CLASSIFIED // PHASE TRANSITION",
+        "de": "GEHEIM // PHASENÜBERGANG",
     },
 }
 
@@ -535,6 +803,27 @@ def _nt(key: str, locale: str, **kwargs: str | int) -> str:
     if kwargs:
         return template.format(**kwargs)
     return template
+
+
+# ── Operative type labels ──────────────────────────────────────────────
+
+_OP_TYPE_LABELS: dict[str, dict[str, str]] = {
+    "spy": {"en": "SPY", "de": "SPION"},
+    "guardian": {"en": "GRD", "de": "WÄC"},
+    "saboteur": {"en": "SAB", "de": "SAB"},
+    "propagandist": {"en": "PRO", "de": "PRO"},
+    "infiltrator": {"en": "INF", "de": "INF"},
+    "assassin": {"en": "ASN", "de": "ATT"},
+    "counter_intel": {"en": "CI", "de": "SA"},
+}
+
+_OP_STATUS_LABELS: dict[str, dict[str, str]] = {
+    "success": {"en": "&#10003;", "de": "&#10003;"},
+    "failed": {"en": "&#10007;", "de": "&#10007;"},
+    "detected": {"en": "&#9888;", "de": "&#9888;"},
+    "captured": {"en": "&#9888;", "de": "&#9888;"},
+    "active": {"en": "&#8943;", "de": "&#8943;"},
+}
 
 
 # ── Phase descriptions ───────────────────────────────────────────────────
@@ -604,14 +893,35 @@ _TITLE_TRANSLATIONS: dict[str, dict[str, str]] = {
 # ── Cycle Briefing Template ─────────────────────────────────────────────
 
 
-def _render_briefing_block(data: dict, lang: str) -> str:
-    """Render a single language block for the cycle briefing."""
+def _render_briefing_block(data: dict, lang: str, *, accent: str = _AMBER) -> str:
+    """Render a single language block for the cycle briefing.
+
+    Sections: standing, rank gap, dimensions, mission log, threats,
+    spy intel, alliance status, next cycle preview, signal intercepts.
+    """
     dims = data.get("dimensions", [])
     events = data.get("public_events", [])
+    missions = data.get("missions", [])
+    threats = data.get("threats", [])
+    spy_intel = data.get("spy_intel", [])
 
-    # Standing box
+    # ── Standing box ──
     rank_str = f"#{data['rank']} / {data['total_players']}"
     rank_delta = _rank_arrow(data["rank"], data.get("prev_rank", 0))
+
+    # Rank gap indicator (B3)
+    rank_gap_html = ""
+    rank_gap = data.get("rank_gap")
+    if rank_gap:
+        gap_text = rank_gap.get(lang, rank_gap.get("en", ""))
+        if gap_text:
+            gap_color = _GREEN if data.get("rank") == 1 else _TEXT
+            rank_gap_html = f"""\
+                  <tr>
+                    <td colspan="2" style="font-size:11px;color:{gap_color};padding:2px 0 4px;text-align:right;font-style:italic;">
+                      {gap_text}
+                    </td>
+                  </tr>"""
 
     standing_html = f"""\
           <tr>
@@ -627,18 +937,19 @@ def _render_briefing_block(data: dict, lang: str) -> str:
                   </tr>
                   <tr>
                     <td style="font-size:12px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:4px 0;">{_nt('composite', lang)}</td>
-                    <td style="font-size:14px;color:{_AMBER};font-weight:bold;text-align:right;padding:4px 0;">{data['composite']:.1f} {_delta_arrow(data['composite_delta'])}</td>
+                    <td style="font-size:14px;color:{accent};font-weight:bold;text-align:right;padding:4px 0;">{data['composite']:.1f} {_delta_arrow(data['composite_delta'])}</td>
                   </tr>
                   <tr>
                     <td style="font-size:12px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:4px 0;">{_nt('rp_reserve', lang)}</td>
                     <td style="font-size:14px;color:{_TEXT};text-align:right;padding:4px 0;">{data['rp_balance']} / {data['rp_cap']}</td>
                   </tr>
+{rank_gap_html}
                 </table>
               </div>
             </td>
           </tr>"""
 
-    # Dimension bars
+    # ── Dimension bars ──
     dim_name_map = {
         "stability": _nt("stability", lang),
         "influence": _nt("influence", lang),
@@ -649,7 +960,7 @@ def _render_briefing_block(data: dict, lang: str) -> str:
     dim_rows = ""
     for d in dims:
         label = dim_name_map.get(d["name"], d["name"].upper())
-        bar = _score_bar(d["value"])
+        bar = _score_bar(d["value"], accent=accent)
         dim_rows += f"""\
                   <tr>
                     <td style="font-size:11px;color:{_TEXT_DIM};letter-spacing:1px;text-transform:uppercase;padding:5px 0;white-space:nowrap;width:100px;">{label}</td>
@@ -670,14 +981,53 @@ def _render_briefing_block(data: dict, lang: str) -> str:
             </td>
           </tr>"""
 
-    # Operative status
-    ops_html = f"""\
+    # ── Mission log (B7 — per-mission breakdown) ──
+    if missions:
+        mission_rows = ""
+        for m in missions:
+            op_label = _OP_TYPE_LABELS.get(m.get("type", ""), {}).get(lang, m.get("type", "?").upper()[:3])
+            target = _esc(m.get("target_name", "?"))
+            status = m.get("status", "active")
+            status_icon = _OP_STATUS_LABELS.get(status, {}).get(lang, "?")
+            status_color = _GREEN if status == "success" else (_RED if status in ("detected", "captured", "failed") else _TEXT_DIM)
+
+            mission_rows += f"""\
+                  <tr>
+                    <td style="font-size:11px;color:{accent};font-weight:bold;padding:4px 8px 4px 0;white-space:nowrap;">{op_label}</td>
+                    <td style="font-size:11px;color:{_TEXT};padding:4px 0;">{target}</td>
+                    <td style="font-size:13px;color:{status_color};text-align:right;padding:4px 0 4px 8px;">{status_icon}</td>
+                  </tr>"""
+
+        ops_html = f"""\
+{_section_header(_nt('operative_status', lang))}
+          <tr>
+            <td style="padding:0 32px 16px;">
+              <div style="border:1px dashed {_BORDER};padding:12px 16px;background-color:{_SURFACE};">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td style="font-size:9px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:0 8px 6px 0;border-bottom:1px solid {_BORDER_SUBTLE};">{_nt('mission_type_header', lang)}</td>
+                    <td style="font-size:9px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:0 0 6px;border-bottom:1px solid {_BORDER_SUBTLE};">{_nt('mission_target', lang)}</td>
+                    <td style="font-size:9px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:0 0 6px 8px;text-align:right;border-bottom:1px solid {_BORDER_SUBTLE};">{_nt('mission_outcome', lang)}</td>
+                  </tr>
+{mission_rows}
+                </table>
+                <p style="margin:8px 0 0;font-size:12px;color:{_TEXT_DIM};line-height:1.6;">
+                  {_nt('guardians', lang)}: <strong style="color:{_TEXT};">{data['guardians']}</strong>
+                  &nbsp;&middot;&nbsp;
+                  {_nt('counter_intel', lang)}: <strong style="color:{_TEXT};">{data['counter_intel']}</strong>
+                </p>
+              </div>
+            </td>
+          </tr>"""
+    else:
+        # Fallback: aggregate view (backward compat)
+        ops_html = f"""\
 {_section_header(_nt('operative_status', lang))}
           <tr>
             <td style="padding:0 32px 16px;">
               <div style="border:1px dashed {_BORDER};padding:12px 16px;background-color:{_SURFACE};">
                 <p style="margin:0;font-size:13px;color:{_TEXT};line-height:1.8;">
-                  {_nt('active', lang)}: <strong style="color:{_AMBER};">{data['active_ops']}</strong>
+                  {_nt('active', lang)}: <strong style="color:{accent};">{data['active_ops']}</strong>
                   &nbsp;&middot;&nbsp;
                   {_nt('resolved', lang)}: <strong>{data['resolved_ops']}</strong>
                   ({data['success_ops']}&#10003; {data['detected_ops']}&#10007;)
@@ -691,7 +1041,118 @@ def _render_briefing_block(data: dict, lang: str) -> str:
             </td>
           </tr>"""
 
-    # Signal intercepts (public events)
+    # ── Threat assessment (B1) ──
+    threat_html = ""
+    if threats:
+        threat_items = ""
+        for t in threats:
+            op_type = _OP_TYPE_LABELS.get(t.get("type", ""), {}).get(lang, "?")
+            source = _esc(t.get("source_name", "Unknown"))
+            raw_status = t.get("status", "detected")
+            status_key = f"threat_status_{raw_status}"
+            status_label = _nt(status_key, lang) if status_key in _NOTIF_STRINGS else raw_status.upper()
+            threat_items += f"""\
+                <p style="margin:0 0 6px;font-size:13px;color:{_RED};line-height:1.6;">
+                  &#9888; {op_type} {_nt('threat_from', lang)} {source} &mdash; {status_label}
+                </p>"""
+        threat_html = f"{_section_header(_nt('threat_assessment', lang))}\n{_dashed_box(threat_items)}"
+    elif data.get("has_threat_data"):
+        # Only show "no threats" if we actually queried for threats
+        threat_html = f"""\
+{_section_header(_nt('threat_assessment', lang))}
+          <tr>
+            <td style="padding:0 32px 16px;">
+              <p style="margin:0;font-size:12px;color:{_TEXT_DIM};font-style:italic;padding:0 4px;">
+                {_nt('no_threats', lang)}
+              </p>
+            </td>
+          </tr>"""
+
+    # ── Spy intel digest (B2) ──
+    intel_html = ""
+    if spy_intel:
+        intel_items = ""
+        for si in spy_intel[:5]:
+            meta = si.get("metadata") or {}
+            target_name = _esc(si.get("target_name", ""))
+            zone_sec = meta.get("zone_security", [])
+            guardian_ct = meta.get("guardian_count")
+            # Build localized intel lines from structured metadata
+            if zone_sec and target_name:
+                level_counts = Counter(str(lv).lower() for lv in zone_sec)
+                parts = []
+                for lv in ("low", "medium", "high"):
+                    if level_counts.get(lv):
+                        lv_label = _nt(f"intel_zone_{lv}", lang)
+                        zone_word = "zones" if lang == "en" else "Zonen"
+                        parts.append(f"{level_counts[lv]} {zone_word} {lv_label}")
+                breakdown = ", ".join(parts)
+                intel_items += f"""\
+                <p style="margin:0 0 6px;font-size:13px;color:{_TEXT};line-height:1.6;">
+                  &#9656; {_nt('intel_zone_analysis', lang, target=target_name, breakdown=breakdown)}
+                </p>"""
+            if guardian_ct is not None and target_name:
+                intel_items += f"""\
+                <p style="margin:0 0 6px;font-size:13px;color:{_TEXT};line-height:1.6;">
+                  &#9656; {_nt('intel_guardian_count', lang, target=target_name, count=str(guardian_ct))}
+                </p>"""
+            # Fallback: raw narrative if no structured metadata
+            if not zone_sec and guardian_ct is None:
+                intel_items += f"""\
+                <p style="margin:0 0 6px;font-size:13px;color:{_TEXT};line-height:1.6;">
+                  &#9656; {_esc(si.get('narrative', ''))}
+                </p>"""
+        intel_html = f"{_section_header(_nt('spy_intel', lang))}\n{_dashed_box(intel_items)}"
+
+    # ── Alliance status (B6) ──
+    alliance_name = data.get("alliance_name")
+    if alliance_name:
+        ally_names = ", ".join(_esc(n) for n in data.get("ally_names", []))
+        bonus_tag = f' <span style="color:{_GREEN};font-size:10px;">&#9679; {_nt("alliance_bonus", lang)}</span>' if data.get("alliance_bonus_active") else ""
+        alliance_html = f"""\
+{_section_header(_nt('alliance_status', lang))}
+          <tr>
+            <td style="padding:0 32px 16px;">
+              <div style="border:1px dashed {_BORDER};padding:12px 16px;background-color:{_SURFACE};">
+                <p style="margin:0;font-size:13px;color:{accent};font-weight:bold;line-height:1.6;">
+                  {_esc(alliance_name)}{bonus_tag}
+                </p>
+                <p style="margin:4px 0 0;font-size:12px;color:{_TEXT};line-height:1.6;">
+                  {ally_names}
+                </p>
+              </div>
+            </td>
+          </tr>"""
+    else:
+        alliance_html = f"""\
+{_section_header(_nt('alliance_status', lang))}
+          <tr>
+            <td style="padding:0 32px 16px;">
+              <p style="margin:0;font-size:12px;color:{_TEXT_DIM};font-style:italic;padding:0 4px;">
+                {_nt('no_alliance', lang)}
+              </p>
+            </td>
+          </tr>"""
+
+    # ── Next cycle preview (B4) ──
+    next_cycle_html = ""
+    next_missions = data.get("next_cycle_missions", 0)
+    rp_projection = data.get("next_cycle_rp_projection")
+    if next_missions or rp_projection:
+        preview_items = ""
+        if next_missions:
+            preview_items += f"""\
+                <p style="margin:0 0 4px;font-size:13px;color:{_TEXT};line-height:1.6;">
+                  {_nt('pending_missions', lang)}: <strong style="color:{accent};">{next_missions}</strong>
+                </p>"""
+        if rp_projection:
+            preview_items += f"""\
+                <p style="margin:0;font-size:13px;color:{_TEXT};line-height:1.6;">
+                  {_nt('rp_projection', lang)}: <strong>{rp_projection}</strong>
+                </p>"""
+        next_cycle_html = f"{_section_header(_nt('next_cycle', lang))}\n{_dashed_box(preview_items)}"
+
+    # ── Signal intercepts (public events) ──
     events_html = f"{_section_header(_nt('signal_intercepts', lang))}\n"
     if events:
         event_items = ""
@@ -700,14 +1161,7 @@ def _render_briefing_block(data: dict, lang: str) -> str:
                 <p style="margin:0 0 6px;font-size:13px;color:{_TEXT};line-height:1.6;">
                   &#9656; {_esc(ev['narrative'])}
                 </p>"""
-        events_html += f"""\
-          <tr>
-            <td style="padding:0 32px 16px;">
-              <div style="border:1px dashed {_BORDER};padding:12px 16px;background-color:{_SURFACE};">
-{event_items}
-              </div>
-            </td>
-          </tr>"""
+        events_html += _dashed_box(event_items)
     else:
         events_html += f"""\
           <tr>
@@ -718,70 +1172,96 @@ def _render_briefing_block(data: dict, lang: str) -> str:
             </td>
           </tr>"""
 
-    return f"{standing_html}\n{dims_html}\n{ops_html}\n{events_html}"
+    sections = [standing_html, dims_html, ops_html]
+    if threat_html:
+        sections.append(threat_html)
+    if intel_html:
+        sections.append(intel_html)
+    sections.append(alliance_html)
+    if next_cycle_html:
+        sections.append(next_cycle_html)
+    sections.append(events_html)
+
+    return "\n".join(sections)
 
 
-def render_cycle_briefing(data: dict) -> str:
-    """Render the cycle briefing email — bilingual (EN first, then DE).
+def render_cycle_briefing(data: dict, *, email_locale: str | None = None) -> str:
+    """Render the cycle briefing email.
+
+    If email_locale is "en" or "de", renders single-language.
+    Otherwise renders bilingual (EN first, then DE).
 
     data keys: epoch_name, epoch_status, cycle_number, rank, prev_rank,
     total_players, composite, composite_delta, dimensions, rp_balance,
     rp_cap, active_ops, resolved_ops, success_ops, detected_ops,
     guardians, counter_intel, public_events, simulation_name,
-    command_center_url
+    command_center_url, accent_color, simulation_slug,
+    threats, spy_intel, missions, rank_gap,
+    next_cycle_missions, next_cycle_rp_projection, alliance_name,
+    ally_names, alliance_bonus_active, has_threat_data
     """
     epoch_name = _esc(data.get("epoch_name", "Unknown"))
     cycle_number = data.get("cycle_number", 0)
-    status_display = data.get("epoch_status", "competition").upper()
+    raw_phase = data.get("epoch_status", "competition")
     cta_url = data.get("command_center_url", "https://metaverse.center/epoch")
+    accent = data.get("accent_color", _AMBER)
+    sim_slug = data.get("simulation_slug")
+    langs = _resolve_langs(email_locale)
 
-    # ── EN block ──
-    en_header = f"""\
+    # Phase name translation key mapping
+    _phase_key = f"phase_{raw_phase}"
+
+    blocks: list[str] = []
+    for i, lang in enumerate(langs):
+        is_primary = i == 0
+        heading_tag = "h1" if is_primary else "h2"
+        heading_size = "22px" if is_primary else "20px"
+        sim_header = get_sim_header(sim_slug, lang)
+        status_display = _nt(_phase_key, lang) if _phase_key in _NOTIF_STRINGS else raw_phase.upper()
+
+        if is_primary:
+            header = f"""\
           <tr>
             <td style="padding:24px 32px;border-bottom:2px solid {_BORDER};">
               <p style="margin:0;font-size:11px;letter-spacing:4px;color:{_TEXT_DIM};text-transform:uppercase;">
-                {_nt('sitrep_header', 'en')}
+                {sim_header}
               </p>
             </td>
           </tr>
           <tr>
             <td style="padding:24px 32px 8px;">
-              <h1 style="margin:0 0 4px;font-size:22px;font-weight:900;color:{_AMBER};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
+              <{heading_tag} style="margin:0 0 4px;font-size:{heading_size};font-weight:900;color:{accent};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
                 {epoch_name}
-              </h1>
+              </{heading_tag}>
               <p style="margin:0;font-size:12px;color:{_TEXT_DIM};letter-spacing:2px;">
-                {_nt('cycle_resolved', 'en', n=cycle_number)} &middot; {_nt('phase_label', 'en')}: {status_display}
+                {_nt('cycle_resolved', lang, n=cycle_number)} &middot; {_nt('phase_label', lang)}: {status_display}
               </p>
             </td>
           </tr>"""
-
-    en_block = _render_briefing_block(data, "en")
-    en_cta = _cta_button(cta_url, _nt("cta", "en"))
-
-    # ── DE block ──
-    divider = _language_divider()
-
-    de_header = f"""\
+        else:
+            blocks.append(_language_divider())
+            header = f"""\
           <tr>
             <td style="padding:24px 32px 8px;">
               <p style="margin:0 0 4px;font-size:11px;letter-spacing:4px;color:{_TEXT_DIM};text-transform:uppercase;">
-                {_nt('sitrep_header', 'de')}
+                {sim_header}
               </p>
-              <h2 style="margin:0 0 4px;font-size:20px;font-weight:900;color:{_AMBER};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
+              <{heading_tag} style="margin:0 0 4px;font-size:{heading_size};font-weight:900;color:{accent};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
                 {epoch_name}
-              </h2>
+              </{heading_tag}>
               <p style="margin:0;font-size:12px;color:{_TEXT_DIM};letter-spacing:2px;">
-                {_nt('cycle_resolved', 'de', n=cycle_number)} &middot; {_nt('phase_label', 'de')}: {status_display}
+                {_nt('cycle_resolved', lang, n=cycle_number)} &middot; {_nt('phase_label', lang)}: {status_display}
               </p>
             </td>
           </tr>"""
 
-    de_block = _render_briefing_block(data, "de")
-    de_cta = _cta_button(cta_url, _nt("cta", "de"))
+        blocks.append(header)
+        blocks.append(_render_briefing_block(data, lang, accent=accent))
+        blocks.append(_cta_button(cta_url, _nt("cta", lang), accent=accent))
 
-    footer = _footer_row()
+    blocks.append(_footer_row(email_locale))
 
-    content = f"{en_header}\n{en_block}\n{en_cta}\n{divider}\n{de_header}\n{de_block}\n{de_cta}\n{footer}"
+    content = "\n".join(blocks)
     return _email_shell(f"CLASSIFIED // SITREP \u2014 {epoch_name}", content)
 
 
@@ -794,6 +1274,9 @@ def _render_phase_block(
     new_phase: str,
     cycle_count: int,
     lang: str,
+    *,
+    accent: str = _AMBER,
+    standing_data: dict | None = None,
 ) -> str:
     """Render a single language block for the phase change email."""
     phase_names = {
@@ -816,6 +1299,18 @@ def _render_phase_block(
                   &#9656; {desc}
                 </p>"""
 
+    # Standing data (C1 — per-player)
+    standing_html = ""
+    if standing_data:
+        rank = standing_data.get("rank", 0)
+        total = standing_data.get("total_players", 0)
+        composite = standing_data.get("composite", 0)
+        standing_html = f"""\
+                  <tr>
+                    <td style="font-size:12px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:4px 0;">{_nt('your_standing', lang)}</td>
+                    <td style="font-size:14px;color:{accent};font-weight:bold;text-align:right;padding:4px 0;">#{rank} / {total} &middot; {composite:.1f}</td>
+                  </tr>"""
+
     return f"""\
           <tr>
             <td style="padding:0 32px 16px;">
@@ -823,12 +1318,13 @@ def _render_phase_block(
                 <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                   <tr>
                     <td style="font-size:12px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:4px 0;">{_nt('phase_transition', lang)}</td>
-                    <td style="font-size:14px;color:{_AMBER};font-weight:bold;text-align:right;padding:4px 0;">{old_name} &#10132; {new_name}</td>
+                    <td style="font-size:14px;color:{accent};font-weight:bold;text-align:right;padding:4px 0;">{old_name} &#10132; {new_name}</td>
                   </tr>
                   <tr>
                     <td style="font-size:12px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:4px 0;">{_nt('cycles_elapsed', lang)}</td>
                     <td style="font-size:14px;color:{_TEXT};text-align:right;padding:4px 0;">{cycle_count}</td>
                   </tr>
+{standing_html}
                 </table>
               </div>
             </td>
@@ -849,52 +1345,77 @@ def render_phase_change(
     new_phase: str,
     cycle_count: int,
     command_center_url: str,
+    *,
+    email_locale: str | None = None,
+    accent_color: str | None = None,
+    standing_data: dict | None = None,
 ) -> str:
-    """Render the phase change notification email — bilingual (EN first, then DE)."""
+    """Render the phase change notification email.
+
+    If email_locale is "en"/"de", renders single-language.
+    standing_data: optional {rank, total_players, composite} for per-player rendering.
+    """
     safe_name = _esc(epoch_name)
     cta_url = command_center_url
+    accent = accent_color or _AMBER
+    langs = _resolve_langs(email_locale)
 
-    # EN block
-    en_header = f"""\
+    # Phase-scaled subject urgency (C2) — use first lang for subject line
+    primary_lang = langs[0]
+    if new_phase == "reckoning":
+        subject_prefix = _nt("subject_urgent_final", primary_lang)
+    elif old_phase == "lobby":
+        subject_prefix = _nt("subject_ops_commence", primary_lang)
+    else:
+        subject_prefix = _nt("subject_phase_transition", primary_lang)
+
+    blocks: list[str] = []
+    for i, lang in enumerate(langs):
+        is_primary = i == 0
+        heading_tag = "h1" if is_primary else "h2"
+        heading_size = "22px" if is_primary else "20px"
+
+        if is_primary:
+            header = f"""\
           <tr>
             <td style="padding:24px 32px;border-bottom:2px solid {_BORDER};">
               <p style="margin:0;font-size:11px;letter-spacing:4px;color:{_TEXT_DIM};text-transform:uppercase;">
-                {_nt('phase_change_header', 'en')}
+                {_nt('phase_change_header', lang)}
               </p>
             </td>
           </tr>
           <tr>
             <td style="padding:24px 32px 16px;">
-              <h1 style="margin:0;font-size:22px;font-weight:900;color:{_AMBER};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
+              <{heading_tag} style="margin:0;font-size:{heading_size};font-weight:900;color:{accent};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
                 {safe_name}
-              </h1>
+              </{heading_tag}>
             </td>
           </tr>"""
-
-    en_block = _render_phase_block(safe_name, old_phase, new_phase, cycle_count, "en")
-    en_cta = _cta_button(cta_url, _nt("cta", "en"))
-
-    # DE block
-    divider = _language_divider()
-
-    de_header = f"""\
+        else:
+            blocks.append(_language_divider())
+            header = f"""\
           <tr>
             <td style="padding:24px 32px 16px;">
               <p style="margin:0 0 4px;font-size:11px;letter-spacing:4px;color:{_TEXT_DIM};text-transform:uppercase;">
-                {_nt('phase_change_header', 'de')}
+                {_nt('phase_change_header', lang)}
               </p>
-              <h2 style="margin:0;font-size:20px;font-weight:900;color:{_AMBER};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
+              <{heading_tag} style="margin:0;font-size:{heading_size};font-weight:900;color:{accent};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
                 {safe_name}
-              </h2>
+              </{heading_tag}>
             </td>
           </tr>"""
 
-    de_block = _render_phase_block(safe_name, old_phase, new_phase, cycle_count, "de")
-    de_cta = _cta_button(cta_url, _nt("cta", "de"))
+        blocks.append(header)
+        blocks.append(_render_phase_block(
+            safe_name, old_phase, new_phase, cycle_count, lang,
+            accent=accent, standing_data=standing_data,
+        ))
+        blocks.append(_cta_button(cta_url, _nt("cta", lang), accent=accent))
 
-    footer = _footer_row()
-    content = f"{en_header}\n{en_block}\n{en_cta}\n{divider}\n{de_header}\n{de_block}\n{de_cta}\n{footer}"
-    return _email_shell(f"CLASSIFIED // PHASE TRANSITION \u2014 {safe_name}", content)
+    blocks.append(_footer_row(email_locale))
+
+    content = "\n".join(blocks)
+    return _email_shell(f"{subject_prefix} \u2014 {safe_name}", content)
 
 
 # ── Epoch Completed Template ─────────────────────────────────────────────
@@ -906,6 +1427,9 @@ def _render_completed_block(
     player_simulation_id: str,
     cycle_count: int,
     lang: str,
+    *,
+    accent: str = _AMBER,
+    campaign_stats: dict | None = None,
 ) -> str:
     """Render a single language block for the epoch completed email."""
     # Winner
@@ -915,11 +1439,11 @@ def _render_completed_block(
     winner_html = f"""\
           <tr>
             <td style="padding:0 32px 16px;">
-              <div style="border:2px solid {_AMBER};padding:16px 20px;background-color:{_SURFACE};text-align:center;">
+              <div style="border:2px solid {accent};padding:16px 20px;background-color:{_SURFACE};text-align:center;">
                 <p style="margin:0 0 4px;font-size:10px;letter-spacing:3px;color:{_TEXT_DIM};text-transform:uppercase;">
                   {_nt('winner', lang)}
                 </p>
-                <p style="margin:0;font-size:20px;font-weight:900;color:{_AMBER};letter-spacing:2px;">
+                <p style="margin:0;font-size:20px;font-weight:900;color:{accent};letter-spacing:2px;">
                   &#128081; {winner_name}
                 </p>
                 <p style="margin:4px 0 0;font-size:14px;color:{_TEXT};">
@@ -934,14 +1458,14 @@ def _render_completed_block(
     for entry in leaderboard:
         is_player = entry.get("simulation_id") == player_simulation_id
         row_bg = "#1a1a00" if is_player else "transparent"
-        name_color = _AMBER if is_player else _TEXT
+        name_color = accent if is_player else _TEXT
         sim_name = _esc(entry.get("simulation_name", "Unknown"))
 
         lb_rows += f"""\
                   <tr style="background-color:{row_bg};">
                     <td style="font-size:13px;color:{_TEXT_DIM};padding:6px 4px;text-align:center;border-bottom:1px solid {_BORDER_SUBTLE};">#{entry['rank']}</td>
                     <td style="font-size:13px;color:{name_color};padding:6px 4px;border-bottom:1px solid {_BORDER_SUBTLE};font-weight:{'bold' if is_player else 'normal'};">{sim_name}</td>
-                    <td style="font-size:13px;color:{_AMBER};padding:6px 4px;text-align:right;border-bottom:1px solid {_BORDER_SUBTLE};font-weight:bold;">{entry['composite']:.1f}</td>
+                    <td style="font-size:13px;color:{accent};padding:6px 4px;text-align:right;border-bottom:1px solid {_BORDER_SUBTLE};font-weight:bold;">{entry['composite']:.1f}</td>
                   </tr>"""
 
     leaderboard_html = f"""\
@@ -951,7 +1475,7 @@ def _render_completed_block(
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:{_SURFACE};border:1px dashed {_BORDER};">
                 <tr>
                   <td style="font-size:10px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:8px 4px;text-align:center;border-bottom:1px solid {_BORDER};">#</td>
-                  <td style="font-size:10px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:8px 4px;border-bottom:1px solid {_BORDER};">SIM</td>
+                  <td style="font-size:10px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:8px 4px;border-bottom:1px solid {_BORDER};">{_nt('leaderboard_sim', lang)}</td>
                   <td style="font-size:10px;color:{_TEXT_DIM};letter-spacing:2px;text-transform:uppercase;padding:8px 4px;text-align:right;border-bottom:1px solid {_BORDER};">{_nt('composite', lang)}</td>
                 </tr>
 {lb_rows}
@@ -972,15 +1496,48 @@ def _render_completed_block(
             <td style="padding:0 32px 16px;">
               <div style="border:1px dashed {_BORDER};padding:12px 16px;background-color:{_SURFACE};">
                 <p style="margin:0;font-size:14px;color:{_TEXT};line-height:1.8;">
-                  {_nt('rank', lang)}: <strong style="color:{_AMBER};">#{player_entry['rank']}</strong> / {len(leaderboard)}
+                  {_nt('rank', lang)}: <strong style="color:{accent};">#{player_entry['rank']}</strong> / {len(leaderboard)}
                   &nbsp;&middot;&nbsp;
-                  {_nt('composite', lang)}: <strong style="color:{_AMBER};">{player_entry['composite']:.1f}</strong>
+                  {_nt('composite', lang)}: <strong style="color:{accent};">{player_entry['composite']:.1f}</strong>
                 </p>
               </div>
             </td>
           </tr>"""
 
-    # Dimension titles
+    # Campaign statistics (D1)
+    campaign_html = ""
+    if campaign_stats:
+        total_ops = campaign_stats.get("total_ops", 0)
+        success_rate = campaign_stats.get("success_rate", 0)
+        by_type = campaign_stats.get("by_type", {})
+
+        type_parts = []
+        for op_type in ["spy", "guardian", "saboteur", "propagandist", "infiltrator", "assassin"]:
+            count = by_type.get(op_type, 0)
+            if count > 0:
+                label = _OP_TYPE_LABELS.get(op_type, {}).get(lang, op_type[:3].upper())
+                type_parts.append(f"{label}:{count}")
+
+        type_breakdown = " &middot; ".join(type_parts) if type_parts else "\u2014"
+
+        campaign_html = f"""\
+{_section_header(_nt('campaign_stats', lang))}
+          <tr>
+            <td style="padding:0 32px 16px;">
+              <div style="border:1px dashed {_BORDER};padding:12px 16px;background-color:{_SURFACE};">
+                <p style="margin:0 0 4px;font-size:13px;color:{_TEXT};line-height:1.6;">
+                  {_nt('ops_deployed', lang)}: <strong style="color:{accent};">{total_ops}</strong>
+                  &nbsp;&middot;&nbsp;
+                  {_nt('success_rate', lang)}: <strong>{success_rate:.0f}%</strong>
+                </p>
+                <p style="margin:0;font-size:12px;color:{_TEXT_DIM};line-height:1.6;">
+                  {type_breakdown}
+                </p>
+              </div>
+            </td>
+          </tr>"""
+
+    # Dimension title race results (D2)
     dim_titles = {
         "stability_title": ("stability", _nt("stability", lang)),
         "influence_title": ("influence", _nt("influence", lang)),
@@ -989,15 +1546,24 @@ def _render_completed_block(
         "military_title": ("military", _nt("military", lang)),
     }
     title_items = ""
-    for title_key, (_dim_key, dim_label) in dim_titles.items():
+    for title_key, (dim_key, dim_label) in dim_titles.items():
         for entry in leaderboard:
             title = entry.get(title_key)
             if title:
                 translated_title = _TITLE_TRANSLATIONS.get(title, {}).get(lang, title)
                 sim_name = _esc(entry.get("simulation_name", "Unknown"))
+                is_player = entry.get("simulation_id") == player_simulation_id
+                # Show player's position for each dimension
+                player_pos = ""
+                if player_entry and not is_player:
+                    score_key = f"{dim_key}_score" if f"{dim_key}_score" in (player_entry or {}) else dim_key
+                    player_val = player_entry.get(score_key, player_entry.get(dim_key, 0))
+                    if player_val:
+                        player_pos = f' | {_nt("you_label", lang)}: {float(player_val):.1f}'
+                highlight = f"color:{accent};" if is_player else ""
                 title_items += f"""\
                 <p style="margin:0 0 4px;font-size:13px;color:{_TEXT};line-height:1.6;">
-                  &#9656; <strong style="color:{_AMBER};">{translated_title}</strong> ({dim_label}) &mdash; {sim_name}
+                  &#9656; <strong style="color:{accent};">{translated_title}</strong> ({dim_label}) &mdash; <span style="{highlight}">{sim_name}</span>{player_pos}
                 </p>"""
 
     titles_html = ""
@@ -1022,7 +1588,13 @@ def _render_completed_block(
             </td>
           </tr>"""
 
-    return f"{winner_html}\n{leaderboard_html}\n{player_result_html}\n{titles_html}\n{stats_html}"
+    sections = [winner_html, leaderboard_html, player_result_html]
+    if campaign_html:
+        sections.append(campaign_html)
+    sections.append(titles_html)
+    sections.append(stats_html)
+
+    return "\n".join(s for s in sections if s)
 
 
 def render_epoch_completed(
@@ -1031,49 +1603,65 @@ def render_epoch_completed(
     player_simulation_id: str,
     cycle_count: int,
     command_center_url: str,
+    *,
+    email_locale: str | None = None,
+    accent_color: str | None = None,
+    campaign_stats: dict | None = None,
 ) -> str:
-    """Render the epoch completed notification email — bilingual (EN first, then DE)."""
+    """Render the epoch completed notification email.
+
+    If email_locale is "en"/"de", renders single-language.
+    campaign_stats: optional {total_ops, success_rate, by_type} per player.
+    """
     safe_name = _esc(epoch_name)
     cta_url = command_center_url
+    accent = accent_color or _AMBER
+    langs = _resolve_langs(email_locale)
 
-    # EN block
-    en_header = f"""\
+    blocks: list[str] = []
+    for i, lang in enumerate(langs):
+        is_primary = i == 0
+        heading_tag = "h1" if is_primary else "h2"
+        heading_size = "22px" if is_primary else "20px"
+
+        if is_primary:
+            header = f"""\
           <tr>
-            <td style="padding:24px 32px;border-bottom:2px solid {_AMBER};">
+            <td style="padding:24px 32px;border-bottom:2px solid {accent};">
               <p style="margin:0;font-size:11px;letter-spacing:4px;color:{_TEXT_DIM};text-transform:uppercase;">
-                {_nt('epoch_complete_header', 'en')}
+                {_nt('epoch_complete_header', lang)}
               </p>
             </td>
           </tr>
           <tr>
             <td style="padding:24px 32px 16px;">
-              <h1 style="margin:0;font-size:22px;font-weight:900;color:{_AMBER};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
+              <{heading_tag} style="margin:0;font-size:{heading_size};font-weight:900;color:{accent};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
                 {safe_name}
-              </h1>
+              </{heading_tag}>
             </td>
           </tr>"""
-
-    en_block = _render_completed_block(safe_name, leaderboard, player_simulation_id, cycle_count, "en")
-    en_cta = _cta_button(cta_url, _nt("cta", "en"))
-
-    # DE block
-    divider = _language_divider()
-
-    de_header = f"""\
+        else:
+            blocks.append(_language_divider())
+            header = f"""\
           <tr>
             <td style="padding:24px 32px 16px;">
               <p style="margin:0 0 4px;font-size:11px;letter-spacing:4px;color:{_TEXT_DIM};text-transform:uppercase;">
-                {_nt('epoch_complete_header', 'de')}
+                {_nt('epoch_complete_header', lang)}
               </p>
-              <h2 style="margin:0;font-size:20px;font-weight:900;color:{_AMBER};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
+              <{heading_tag} style="margin:0;font-size:{heading_size};font-weight:900;color:{accent};letter-spacing:2px;text-transform:uppercase;font-family:{_MONO};">
                 {safe_name}
-              </h2>
+              </{heading_tag}>
             </td>
           </tr>"""
 
-    de_block = _render_completed_block(safe_name, leaderboard, player_simulation_id, cycle_count, "de")
-    de_cta = _cta_button(cta_url, _nt("cta", "de"))
+        blocks.append(header)
+        blocks.append(_render_completed_block(
+            safe_name, leaderboard, player_simulation_id, cycle_count, lang,
+            accent=accent, campaign_stats=campaign_stats,
+        ))
+        blocks.append(_cta_button(cta_url, _nt("cta", lang), accent=accent))
 
-    footer = _footer_row()
-    content = f"{en_header}\n{en_block}\n{en_cta}\n{divider}\n{de_header}\n{de_block}\n{de_cta}\n{footer}"
+    blocks.append(_footer_row(email_locale))
+
+    content = "\n".join(blocks)
     return _email_shell(f"CLASSIFIED // OPERATION COMPLETE \u2014 {safe_name}", content)

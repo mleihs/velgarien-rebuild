@@ -375,6 +375,14 @@ export class VelgChatWindow extends LitElement {
 
   private _typingTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this._typingTimeout) {
+      clearTimeout(this._typingTimeout);
+      this._typingTimeout = null;
+    }
+  }
+
   private async _handleSendMessage(e: CustomEvent<{ content: string }>): Promise<void> {
     if (!this.conversation || !this.simulationId || this._sending) return;
 

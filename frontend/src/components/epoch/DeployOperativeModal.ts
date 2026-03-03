@@ -23,6 +23,8 @@ import {
 } from '../../services/api/index.js';
 import type {
   Agent,
+  AgentAptitude,
+  AptitudeSet,
   Building,
   Embassy,
   OperativeMission,
@@ -31,6 +33,7 @@ import type {
 } from '../../types/index.js';
 import '../shared/BaseModal.js';
 import { formStyles } from '../shared/form-styles.js';
+import '../shared/VelgAptitudeBars.js';
 import '../shared/VelgAvatar.js';
 import { VelgToast } from '../shared/Toast.js';
 
@@ -102,11 +105,11 @@ function getOperativeTypes(): OperativeTypeInfo[] {
   ];
 }
 
-function getStepLabels(): Record<Step, string> {
+function getStepLabels(selectedType: OperativeType | ''): Record<Step, string> {
   return {
     asset: msg('Asset'),
     mission: msg('Mission'),
-    target: msg('Target'),
+    target: selectedType === 'guardian' ? msg('Deploy') : msg('Target'),
   };
 }
 
@@ -231,6 +234,14 @@ export class VelgDeployOperativeModal extends LitElement {
         color: var(--color-gray-400);
       }
 
+      .field__hint {
+        font-family: var(--font-mono, monospace);
+        font-size: 10px;
+        color: var(--color-gray-500);
+        margin: var(--space-1) 0 var(--space-2);
+        line-height: 1.4;
+      }
+
       .field__select {
         font-family: var(--font-mono, monospace);
         font-size: var(--text-sm);
@@ -322,6 +333,42 @@ export class VelgDeployOperativeModal extends LitElement {
         padding: var(--space-1) var(--space-2);
         border: 1px solid rgba(239 68 68 / 0.3);
         background: rgba(239 68 68 / 0.05);
+      }
+
+      .dossier__aptitudes {
+        margin-top: var(--space-2);
+      }
+
+      .dossier__fit {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        font-family: var(--font-mono, monospace);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: var(--space-0-5) var(--space-2);
+        border: 1px solid;
+        margin-top: var(--space-1);
+      }
+
+      .dossier__fit--good {
+        color: var(--color-success);
+        border-color: var(--color-success);
+        background: rgba(16 185 129 / 0.08);
+      }
+
+      .dossier__fit--fair {
+        color: var(--color-warning);
+        border-color: var(--color-warning);
+        background: rgba(245 158 11 / 0.08);
+      }
+
+      .dossier__fit--poor {
+        color: var(--color-danger);
+        border-color: var(--color-danger);
+        background: rgba(239 68 68 / 0.08);
       }
 
       /* ── Mission Type Cards ──────────────── */
@@ -777,6 +824,7 @@ export class VelgDeployOperativeModal extends LitElement {
   // Step 1: Asset
   @state() private _agents: Agent[] = [];
   @state() private _selectedAgentId = '';
+  @state() private _aptitudeMap: Map<string, AptitudeSet> = new Map();
 
   // Step 2: Mission
   @state() private _selectedType: OperativeType | '' = '';
@@ -808,6 +856,7 @@ export class VelgDeployOperativeModal extends LitElement {
       this._targetZones = [];
       this._targetBuildings = [];
       this._targetAgents = [];
+      this._aptitudeMap = new Map();
       this._loadAgents();
       this._loadEmbassies();
     }
@@ -818,12 +867,35 @@ export class VelgDeployOperativeModal extends LitElement {
   private async _loadAgents(): Promise<void> {
     if (!this.simulationId) return;
     try {
-      const resp = await agentsApi.list(this.simulationId, { limit: '100' });
-      if (resp.success && resp.data) {
-        const items = Array.isArray(resp.data)
-          ? resp.data
-          : ((resp.data as { data?: Agent[] }).data ?? []);
+      const [agentResp, aptResp] = await Promise.all([
+        agentsApi.list(this.simulationId, { limit: '100' }),
+        agentsApi.getAllAptitudes(this.simulationId),
+      ]);
+
+      if (agentResp.success && agentResp.data) {
+        const items = Array.isArray(agentResp.data)
+          ? agentResp.data
+          : ((agentResp.data as { data?: Agent[] }).data ?? []);
         this._agents = items;
+      }
+
+      if (aptResp.success && aptResp.data) {
+        const map = new Map<string, AptitudeSet>();
+        for (const row of aptResp.data as AgentAptitude[]) {
+          if (!map.has(row.agent_id)) {
+            map.set(row.agent_id, {
+              spy: 6,
+              guardian: 6,
+              saboteur: 6,
+              propagandist: 6,
+              infiltrator: 6,
+              assassin: 6,
+            });
+          }
+          const set = map.get(row.agent_id);
+          if (set) set[row.operative_type as OperativeType] = row.aptitude_level;
+        }
+        this._aptitudeMap = map;
       }
     } catch {
       this._agents = [];
@@ -910,9 +982,47 @@ export class VelgDeployOperativeModal extends LitElement {
     return embassy.simulation_a?.name ?? '';
   }
 
-  private _estimateSuccess(): number {
+  private _estimateSuccess(): {
+    total: number;
+    base: number;
+    aptBonus: number;
+    zonePenalty: number;
+    embBonus: number;
+  } {
     // Client-side estimate (real calculation happens server-side)
-    return 0.5;
+    const base = 0.55;
+    let aptBonus = 0;
+    let zonePenalty = 0;
+    let embBonus = 0;
+
+    // Aptitude bonus: aptitude * 0.03
+    if (this._selectedAgentId && this._selectedType) {
+      const apt = this._aptitudeMap.get(this._selectedAgentId);
+      if (apt) {
+        const val = apt[this._selectedType as keyof AptitudeSet] as number | undefined;
+        if (typeof val === 'number') {
+          aptBonus = (val - 5) * 0.03; // 5 is neutral; below penalizes, above boosts
+        }
+      }
+    }
+
+    // Zone security penalty
+    if (this._selectedZoneId) {
+      const zone = this._targetZones.find((z) => z.id === this._selectedZoneId);
+      if (zone) {
+        const secMap: Record<string, number> = { low: 1, medium: 2, high: 3 };
+        const secLevel = secMap[zone.security_level] ?? 2;
+        zonePenalty = secLevel * 0.05;
+      }
+    }
+
+    // Embassy effectiveness bonus
+    if (this._selectedEmbassyId) {
+      embBonus = 0.15;
+    }
+
+    const total = Math.max(0.05, Math.min(0.95, base + aptBonus - zonePenalty + embBonus));
+    return { total, base, aptBonus, zonePenalty, embBonus };
   }
 
   private _isGuardian(): boolean {
@@ -1082,7 +1192,7 @@ export class VelgDeployOperativeModal extends LitElement {
   // ── Phase Indicator ────────────────────────────────
 
   private _renderPhases() {
-    const labels = getStepLabels();
+    const labels = getStepLabels(this._selectedType);
     const currentIdx = STEPS.indexOf(this._step);
 
     return html`
@@ -1102,6 +1212,17 @@ export class VelgDeployOperativeModal extends LitElement {
 
   // ── Step 1: Asset ──────────────────────────────────
 
+  private _getSortedAgents(): Agent[] {
+    if (!this._selectedType || this._aptitudeMap.size === 0) return this._agents;
+
+    const type = this._selectedType as OperativeType;
+    return [...this._agents].sort((a, b) => {
+      const aptA = this._aptitudeMap.get(a.id)?.[type] ?? 6;
+      const aptB = this._aptitudeMap.get(b.id)?.[type] ?? 6;
+      return aptB - aptA; // Descending by aptitude
+    });
+  }
+
   private _renderAssetStep() {
     const selectedAgent = this._getSelectedAgent();
 
@@ -1118,9 +1239,12 @@ export class VelgDeployOperativeModal extends LitElement {
             }}
           >
             <option value="">${msg('-- Choose operative --')}</option>
-            ${this._agents.map((a) => {
+            ${this._getSortedAgents().map((a) => {
               const deployed = this.deployedAgentIds.includes(a.id);
-              return html`<option value=${a.id} ?disabled=${deployed}>${a.name}${deployed ? ` (${msg('deployed')})` : ''}</option>`;
+              const apt = this._aptitudeMap.get(a.id);
+              const typeApt =
+                apt && this._selectedType ? ` [${apt[this._selectedType as OperativeType]}]` : '';
+              return html`<option value=${a.id} ?disabled=${deployed}>${a.name}${typeApt}${deployed ? ` (${msg('deployed')})` : ''}</option>`;
             })}
           </select>
         </div>
@@ -1130,7 +1254,17 @@ export class VelgDeployOperativeModal extends LitElement {
     `;
   }
 
+  private _getFitLevel(aptitude: number): { label: string; css: string } {
+    if (aptitude >= 7) return { label: msg('Good'), css: 'good' };
+    if (aptitude >= 5) return { label: msg('Fair'), css: 'fair' };
+    return { label: msg('Poor'), css: 'poor' };
+  }
+
   private _renderAgentDossier(agent: Agent) {
+    const apt = this._aptitudeMap.get(agent.id);
+    const selectedType = this._selectedType as OperativeType | '';
+    const fitLevel = apt && selectedType ? this._getFitLevel(apt[selectedType]) : null;
+
     return html`
       <div class="dossier dossier--selected">
         <div class="dossier__portrait">
@@ -1154,6 +1288,26 @@ export class VelgDeployOperativeModal extends LitElement {
             agent.character
               ? html`<span class="dossier__meta" style="color: var(--color-gray-400); font-style: italic;">
                 "${agent.character.length > 100 ? `${agent.character.substring(0, 100)}...` : agent.character}"
+              </span>`
+              : nothing
+          }
+          ${
+            apt
+              ? html`
+                <div class="dossier__aptitudes">
+                  <velg-aptitude-bars
+                    .aptitudes=${apt}
+                    size="sm"
+                    .highlight=${selectedType || null}
+                  ></velg-aptitude-bars>
+                </div>
+              `
+              : nothing
+          }
+          ${
+            fitLevel
+              ? html`<span class="dossier__fit dossier__fit--${fitLevel.css}">
+                ${msg('Fit')}: ${fitLevel.label}
               </span>`
               : nothing
           }
@@ -1192,10 +1346,11 @@ export class VelgDeployOperativeModal extends LitElement {
           this._selectedType && !this._isGuardian()
             ? html`
               <div class="field">
-                <label class="field__label">${msg('Deploy via Embassy')}</label>
+                <label class="field__label">${msg('Route through Embassy')}</label>
+                <p class="field__hint">${msg('Select which embassy connection to use for deploying your operative to the target simulation.')}</p>
                 <select
                   class="field__select"
-                  aria-label=${msg('Deploy via Embassy')}
+                  aria-label=${msg('Route through Embassy')}
                   .value=${this._selectedEmbassyId}
                   @change=${this._handleEmbassyChange}
                 >
@@ -1206,7 +1361,7 @@ export class VelgDeployOperativeModal extends LitElement {
                         ? emb.simulation_b?.name
                         : emb.simulation_a?.name;
                     return html`<option value=${emb.id}>
-                      ${targetName ?? msg('Unknown')} (${emb.bleed_vector ?? '?'})
+                      ${targetName ?? msg('Unknown')}
                     </option>`;
                   })}
                 </select>
@@ -1242,8 +1397,17 @@ export class VelgDeployOperativeModal extends LitElement {
     return html`
       <div
         class="mission-card ${isSelected ? 'mission-card--selected' : ''} ${cantAfford ? 'mission-card--disabled' : ''}"
+        role="button"
+        tabindex=${cantAfford ? -1 : 0}
+        aria-pressed=${isSelected}
         @click=${() => {
           if (!cantAfford) this._selectedType = info.type;
+        }}
+        @keydown=${(e: KeyboardEvent) => {
+          if ((e.key === 'Enter' || e.key === ' ') && !cantAfford) {
+            e.preventDefault();
+            this._selectedType = info.type;
+          }
         }}
       >
         <span class="mission-card__icon">${info.icon}</span>
@@ -1281,6 +1445,7 @@ export class VelgDeployOperativeModal extends LitElement {
             ? html`
               <div class="field">
                 <label class="field__label">${msg('Target Zone')}</label>
+                ${missionInfo.needsTarget === 'zone' ? html`<p class="field__hint">${msg('Propagandists target an entire zone, generating a destabilizing event that affects all buildings within it.')}</p>` : nothing}
                 <select
                   class="field__select"
                   aria-label=${msg('Target Zone')}
@@ -1380,7 +1545,8 @@ export class VelgDeployOperativeModal extends LitElement {
   }
 
   private _renderTargetingSummary(agent: Agent, info: OperativeTypeInfo, targetSimName: string) {
-    const successPct = Math.round(this._estimateSuccess() * 100);
+    const estimate = this._estimateSuccess();
+    const successPct = Math.round(estimate.total * 100);
     const circumference = 2 * Math.PI * 34;
     const dashoffset = circumference * (1 - successPct / 100);
     const ringColor =
@@ -1396,10 +1562,17 @@ export class VelgDeployOperativeModal extends LitElement {
           ? 'summary__val--amber'
           : 'summary__val--red';
 
+    const fmtBonus = (v: number) => `${v >= 0 ? '+' : ''}${Math.round(v * 100)}%`;
+
+    // Resolve selected zone/building/agent names for briefing
+    const selectedZone = this._targetZones.find((z) => z.id === this._selectedZoneId);
+    const selectedBuilding = this._targetBuildings.find((b) => b.id === this._selectedBuildingId);
+    const selectedAgent = this._targetAgents.find((a) => a.id === this._selectedTargetAgentId);
+
     return html`
       <div class="targeting">
         <div class="targeting__ring">
-          <svg viewBox="0 0 80 80">
+          <svg viewBox="0 0 80 80" aria-hidden="true">
             <circle class="targeting__ring-bg" cx="40" cy="40" r="34" />
             <circle
               class="targeting__ring-fill"
@@ -1417,19 +1590,19 @@ export class VelgDeployOperativeModal extends LitElement {
           <span class="targeting__label">${msg('Mission Assessment')}</span>
           <div class="targeting__factor">
             <span>${msg('Base probability')}</span>
-            <span class="targeting__factor-val">50%</span>
+            <span class="targeting__factor-val">${Math.round(estimate.base * 100)}%</span>
           </div>
           <div class="targeting__factor">
-            <span>${msg('Agent qualification')}</span>
-            <span class="targeting__factor-val targeting__factor-val--positive">+?%</span>
+            <span>${msg('Agent aptitude')}</span>
+            <span class="targeting__factor-val ${estimate.aptBonus >= 0 ? 'targeting__factor-val--positive' : 'targeting__factor-val--negative'}">${fmtBonus(estimate.aptBonus)}</span>
           </div>
           <div class="targeting__factor">
             <span>${msg('Zone security')}</span>
-            <span class="targeting__factor-val targeting__factor-val--negative">-?%</span>
+            <span class="targeting__factor-val ${estimate.zonePenalty > 0 ? 'targeting__factor-val--negative' : ''}">${estimate.zonePenalty > 0 ? `-${Math.round(estimate.zonePenalty * 100)}%` : '0%'}</span>
           </div>
           <div class="targeting__factor">
             <span>${msg('Embassy effectiveness')}</span>
-            <span class="targeting__factor-val targeting__factor-val--positive">+?%</span>
+            <span class="targeting__factor-val ${estimate.embBonus > 0 ? 'targeting__factor-val--positive' : ''}">${fmtBonus(estimate.embBonus)}</span>
           </div>
         </div>
       </div>
@@ -1447,6 +1620,36 @@ export class VelgDeployOperativeModal extends LitElement {
           <span class="summary__key">${msg('Target')}</span>
           <span class="summary__val">${targetSimName}</span>
         </div>
+        ${
+          selectedZone
+            ? html`
+          <div class="summary__row">
+            <span class="summary__key">${msg('Zone')}</span>
+            <span class="summary__val">${selectedZone.name}</span>
+          </div>
+        `
+            : nothing
+        }
+        ${
+          selectedBuilding
+            ? html`
+          <div class="summary__row">
+            <span class="summary__key">${msg('Building')}</span>
+            <span class="summary__val">${selectedBuilding.name}</span>
+          </div>
+        `
+            : nothing
+        }
+        ${
+          selectedAgent
+            ? html`
+          <div class="summary__row">
+            <span class="summary__key">${msg('Agent')}</span>
+            <span class="summary__val">${selectedAgent.name}</span>
+          </div>
+        `
+            : nothing
+        }
         <div class="summary__row">
           <span class="summary__key">${msg('Cost')}</span>
           <span class="summary__val summary__val--amber">${info.cost} RP</span>

@@ -1,8 +1,10 @@
 # 22 - Epochs & Competitive Layer
 
-**Version:** 1.6
+**Version:** 1.8
 **Date:** 2026-03-03
-**Change v1.6:** Epoch Cycle Email Notifications — Migration 044: `notification_preferences` table + `get_user_emails_batch()` SECURITY DEFINER RPC. CycleNotificationService (recipient resolution, fog-of-war player briefings, Resend API). 3 email types: cycle briefing, phase change, epoch completed (bilingual EN/DE). 2 new API endpoints (GET/POST `/users/me/notification-preferences`). Frontend: NotificationsSettingsPanel in settings view.
+**Change v1.8:** Email Notification i18n & Template Enhancement — Full German translation coverage across all 4 email templates. 85+ bilingual string keys in `_NOTIF_STRINGS` dict (was ~40). Cycle briefing enriched: threat assessment (localized status ERKANNT/GEFASST), spy intel from structured metadata (zone security NIEDRIG/MITTEL/HOCH + Wächtereinsatz), per-mission log with translated headers (TYP/ZIEL/ERGEBNIS), phase name translation (WETTBEWERB/GRUNDSTEINLEGUNG/ABRECHNUNG), alliance status, rank gap, next cycle preview. Phase change: localized subject prefixes (DRINGEND // LETZTE PHASE, GEHEIM // OPERATIONEN BEGINNEN). Epoch completed: localized leaderboard columns, dimension title race "Du:" label. Invitation: DE block shows "Siehe Geheimdienstbericht oben" instead of duplicating English AI lore. All templates: footer ÜBERTRAGUNGSURSPRUNG localized. Contrast fix: `_TEXT_DIM` #666→#888, `_TEXT_DARK` #444→#666 (WCAG AA compliant). Per-simulation accent colors + narrative voice headers. SMTP delivery (replaced Resend API). Epoch start notification (G1: lobby→foundation fires phase change email). `cycle_notification_service.py` enriched: spy intel includes structured `metadata` + resolved `target_name`.
+**Change v1.7:** Agent Aptitude System + Draft Phase — Migration 047: `agent_aptitudes` table (6 operative types x score 3-9, budget=36 per agent, UNIQUE(agent_id, operative_type)), `drafted_agent_ids UUID[]` + `draft_completed_at` on epoch_participants. Success probability formula updated from `qualification x 0.05` to `aptitude x 0.03`. Backend: AptitudeService (get/set/query), aptitudes router (3 endpoints + 2 public), EpochService.draft_agents(), bot auto_draft() per personality archetype. Frontend: VelgAptitudeBars shared component (3 sizes, editable/readonly, budget tracking), DraftRosterPanel (full-screen overlay, two-column draft UI), AgentDetailsPanel aptitude editor (debounced 800ms auto-save), AgentsView lineup overview strip, DeployOperativeModal fit indicator (Good/Fair/Poor) + sorted agent dropdown, EpochCreationWizard `max_agents_per_player` slider (4-8), EpochLobbyActions draft button + locked status. Clone function reads `drafted_agent_ids` + clones aptitudes AS-IS (no normalization). 35 template agents seeded with lore-appropriate aptitude distributions.
+**Change v1.6:** Epoch Cycle Email Notifications — Migration 044: `notification_preferences` table + `get_user_emails_batch()` SECURITY DEFINER RPC. CycleNotificationService (recipient resolution, fog-of-war player briefings, SMTP delivery). 3 email types: cycle briefing, phase change, epoch completed (bilingual EN/DE with single-language opt-in). 2 new API endpoints (GET/POST `/users/me/notification-preferences`). Frontend: NotificationsSettingsPanel in settings view.
 **Change v1.5:** Bot Players — AI-controlled opponents for solo/low-player epochs. Migration 041: `bot_players` + `bot_decision_log` tables, `is_bot`/`bot_player_id` on `epoch_participants`. 5 personality archetypes (Sentinel/Warlord/Diplomat/Strategist/Chaos) × 3 difficulty levels. Backend: BotService (cycle orchestrator), BotGameState (fog-of-war compliant), BotPersonality (5 implementations), BotChatService (dual-mode: template + LLM). Frontend: BotConfigPanel (collectible card deck builder UI), bot indicators in leaderboard/battle log/chat/ready panel, AI Settings bot chat controls.
 **Change v1.4:** Balance patch v2.2 — guardian penalty 0.08→0.06/unit (cap 0.15), guardian cost 3→4 RP, infiltrator rework (cost 6→5, embassy reduction 50%→65%, +3 influence/success, sovereignty −6→−8, score 5→6), assassin cost 8→7 + stability −4→−5 + sovereignty −10→−12, saboteur stability −5→−6, propagandist sovereignty −5→−6, detection penalty 2→3, RP economy 10→12/cycle + cap 30→40, counter-intel sweep 3→4 RP.
 **Change v1.3:** Balance patch v2.1 — guardian penalty 0.20→0.08/unit (cap 0.20), spy intel reveal (zone security + guardian count to battle log), saboteur zone downgrade (security −1 tier), scoring rebalance (propagandist +3→+5, detection −3→−2, spy influence +1/+2, guardian sovereignty +4), betrayal −20%→−25%, alliance 10%→15%. Cartographer's Map: game instance visualization (phase rings, health arcs, sparklines, operative trails, battle feed, leaderboard panel, minimap, 30s refresh).
@@ -28,12 +30,13 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 
 ### Database Schema
 
-**10 tables** (migrations 032 + 037 + 041 + 044):
+**11 tables** (migrations 032 + 037 + 041 + 044 + 047):
 
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
 | `game_epochs` | Epoch definitions + lifecycle | `name`, `status` (lobby→foundation→competition→reckoning→completed), `config` (JSONB), `current_cycle` |
-| `epoch_participants` | Simulation enrollment per epoch | `epoch_id`, `simulation_id`, `team_id`, `current_rp`, `final_scores`, `is_bot`, `bot_player_id` |
+| `epoch_participants` | Simulation enrollment per epoch | `epoch_id`, `simulation_id`, `team_id`, `current_rp`, `final_scores`, `is_bot`, `bot_player_id`, `drafted_agent_ids`, `draft_completed_at` |
+| `agent_aptitudes` | Per-agent operative-type skill scores | `agent_id`, `simulation_id`, `operative_type`, `aptitude_level` (3-9), UNIQUE(agent_id, operative_type) |
 | `epoch_teams` | Alliance definitions | `name`, `epoch_id`, `created_by_simulation_id`, `dissolved_at`, `dissolved_reason` |
 | `operative_missions` | Deployed operatives + results | `agent_id`, `operative_type`, `source_simulation_id`, `target_simulation_id`, `embassy_id`, `status`, `success_probability`, `mission_result` |
 | `epoch_scores` | Score snapshots per cycle | `cycle_number`, 5 dimension scores + composite, unique per (epoch, simulation, cycle) |
@@ -56,13 +59,15 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| **Epoch Router** | `routers/epochs.py` (268 lines) | CRUD epochs, join/leave, team management, lifecycle transitions, add/remove bots |
+| **Epoch Router** | `routers/epochs.py` (268 lines) | CRUD epochs, join/leave, team management, lifecycle transitions, draft agents, add/remove bots |
+| **Aptitudes Router** | `routers/aptitudes.py` (~70 lines) | Get/set agent aptitude scores (simulation-scoped, editor+ for writes) |
 | **Operatives Router** | `routers/operatives.py` (145 lines) | Deploy, recall, list missions, counter-intelligence |
 | **Scores Router** | `routers/scores.py` (79 lines) | Leaderboard, score history, final standings |
 | **Game Mechanics Router** | `routers/game_mechanics.py` (171 lines) | Simulation health, building readiness, zone stability |
 | **Bot Players Router** | `routers/bot_players.py` (~120 lines) | CRUD bot presets (user-scoped) |
 | **Epoch Service** | `services/epoch_service.py` (501 lines) | Lifecycle (create → start → advance → resolve → complete), RP allocation, cycle resolution + bot execution |
-| **Operative Service** | `services/operative_service.py` (559 lines) | Deploy/recall/resolve missions, success probability calculation |
+| **Aptitude Service** | `services/aptitude_service.py` (~115 lines) | Get/set agent aptitudes, query single aptitude for operative deployment |
+| **Operative Service** | `services/operative_service.py` (559 lines) | Deploy/recall/resolve missions, success probability calculation (aptitude-based) |
 | **Scoring Service** | `services/scoring_service.py` (389 lines) | 5-dimension scoring, normalization, composite weighting |
 | **Battle Log Service** | `services/battle_log_service.py` (259 lines) | Record + query competitive event narratives |
 | **Game Mechanics Service** | `services/game_mechanics_service.py` (310 lines) | Read materialized views, compute live simulation metrics |
@@ -70,7 +75,7 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 | **Bot Game State** | `services/bot_game_state.py` (~200 lines) | Fog-of-war compliant game state builder for bot decision-making |
 | **Bot Personality** | `services/bot_personality.py` (~600 lines) | Abstract base + 5 personality implementations (Sentinel/Warlord/Diplomat/Strategist/Chaos) |
 | **Bot Chat Service** | `services/bot_chat_service.py` (~250 lines) | Dual-mode chat generation (template-based + LLM via OpenRouter) |
-| **Cycle Notification Service** | `services/cycle_notification_service.py` (~200 lines) | Recipient resolution, fog-of-war player briefings, email dispatch via Resend API |
+| **Cycle Notification Service** | `services/cycle_notification_service.py` (~740 lines) | Recipient resolution, fog-of-war player briefings (enriched: threats, spy intel from metadata, missions, alliance, rank gap, next cycle preview), email dispatch via SMTP |
 
 ### Frontend
 
@@ -83,11 +88,14 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 | **EpochAlliancesTab** | `components/epoch/EpochAlliancesTab.ts` | 400 | Alliances tab, dispatches create/join/leave-team events |
 | **EpochLobbyActions** | `components/epoch/EpochLobbyActions.ts` | ~420 | Lobby actions + admin controls + "Add Bots" button, dispatches epoch lifecycle events |
 | **BotConfigPanel** | `components/epoch/BotConfigPanel.ts` | ~900 | VelgSidePanel slide-out: bot preset CRUD, personality card grid with radar charts, difficulty toggle, deploy to epoch |
-| **EpochCreationWizard** | `components/epoch/EpochCreationWizard.ts` | 1245 | 3-step epoch setup (Parameters/Economy/Doctrine) |
-| **DeployOperativeModal** | `components/epoch/DeployOperativeModal.ts` | 1502 | 3-step operative deployment (Asset/Mission/Target) |
+| **DraftRosterPanel** | `components/epoch/DraftRosterPanel.ts` | ~738 | Full-screen agent draft overlay — two-column layout (available roster + deployment lineup), aptitude bars, team stats |
+| **EpochCreationWizard** | `components/epoch/EpochCreationWizard.ts` | 1245 | 3-step epoch setup (Parameters/Economy/Doctrine) + max_agents_per_player slider |
+| **DeployOperativeModal** | `components/epoch/DeployOperativeModal.ts` | 1502 | 3-step operative deployment with aptitude fit indicator + sorted agent dropdown |
 | **EpochLeaderboard** | `components/epoch/EpochLeaderboard.ts` | ~520 | Sortable score table with per-dimension bars + bot personality indicators |
 | **EpochBattleLog** | `components/epoch/EpochBattleLog.ts` | ~350 | Narrative event feed with filtering + bot [BOT] prefix tags |
-| **EpochsApiService** | `services/api/EpochsApiService.ts` | 203 | 27 API methods for epochs + operatives + scores |
+| **VelgAptitudeBars** | `components/shared/VelgAptitudeBars.ts` | ~329 | Shared component: 6-bar operative aptitude display (3 sizes: sm/md/lg), editable mode with range sliders + budget tracking, highlight mode for operative type focus |
+| **EpochsApiService** | `services/api/EpochsApiService.ts` | 203 | 27 API methods for epochs + operatives + scores + draft |
+| **AgentsApiService** | `services/api/AgentsApiService.ts` | ~63 | Extended with `getAptitudes()`, `setAptitudes()`, `getAllAptitudes()` methods |
 | **BotApiService** | `services/api/BotApiService.ts` | ~60 | CRUD for bot presets + add/remove bot from epoch |
 
 ### API Endpoints
@@ -105,6 +113,20 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 | POST | `/epochs/{id}/advance` | creator | Advance phase |
 | POST | `/epochs/{id}/cancel` | creator | Cancel epoch |
 | POST | `/epochs/{id}/resolve-cycle` | creator | Trigger cycle resolution |
+
+**Agent Aptitudes:**
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/simulations/{sim_id}/aptitudes` | viewer | Get all aptitude scores for all agents in a simulation |
+| GET | `/simulations/{sim_id}/agents/{agent_id}/aptitudes` | viewer | Get aptitude scores for a specific agent |
+| PUT | `/simulations/{sim_id}/agents/{agent_id}/aptitudes` | editor | Set all 6 aptitude scores (budget must equal 36) |
+
+**Draft:**
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/epochs/{id}/participants/{sim_id}/draft` | owner | Lock in a draft roster (lobby phase only) |
 
 **Participants & Teams:**
 
@@ -153,6 +175,8 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 
 | Method | Path | Description |
 |--------|------|-------------|
+| GET | `/public/simulations/{sim_id}/aptitudes` | All aptitude scores for a simulation |
+| GET | `/public/simulations/{sim_id}/agents/{agent_id}/aptitudes` | Agent aptitude scores |
 | GET | `/public/epochs` | List epochs |
 | GET | `/public/epochs/active` | Active epoch |
 | GET | `/public/epochs/{id}` | Epoch detail |
@@ -173,7 +197,7 @@ LOBBY ──→ FOUNDATION ──→ COMPETITION ──→ RECKONING ──→ C
           (first ~20%)    (middle ~65%)    (final ~15%)
 ```
 
-1. **Lobby** — Epoch created, simulations join, teams form. No game mechanics active.
+1. **Lobby** — Epoch created, simulations join, teams form, players draft their agent roster. No game mechanics active.
 2. **Foundation** — +50% RP income. Build infrastructure, staff buildings, establish embassies. No offensive operatives allowed (guardians OK).
 3. **Competition** — Full mechanics. All 6 operative types available. Alliances locked. Scores snapshot each cycle.
 4. **Reckoning** — Bleed permeability doubled, thresholds reduced by 2, cascade depth +1. Dramatic escalation.
@@ -216,13 +240,20 @@ RP is the action economy currency. Each simulation receives RP at the start of e
 
 ```
 base_probability = 0.55
-+ operative_qualification × 0.05  (0-10 scale → +0 to +0.50)
++ agent_aptitude × 0.03           (3-9 scale → +0.09 to +0.27)
 - target_zone_security × 0.05    (mapped 0-10 → -0 to -0.50)
 - min(0.15, guardian_presence × 0.06)  (−0.06 each, cap 0.15)
 + embassy_effectiveness × 0.15   (0-1 → +0 to +0.15)
 
 Final: clamped to [0.05, 0.95]
 ```
+
+**Aptitude impact examples:**
+- Aptitude 3 (minimum): +0.09
+- Aptitude 6 (default): +0.18
+- Aptitude 9 (maximum): +0.27
+
+This gives an 18 percentage-point swing range between the weakest and strongest agent for any given operative type, compared to the previous 50pp range from qualification (0-10 x 0.05). The narrower range means agent selection matters but doesn't dominate — zone security and guardian presence remain significant factors.
 
 **Failure outcomes:**
 - **Undetected failure** — Mission fails silently. Operative returns. No consequences.
@@ -290,9 +321,9 @@ Platform-level route accessible to all authenticated users. Five tabs:
 
 3-step tactical dossier wizard:
 
-1. **Asset** — Select agent from your simulation. Shows dossier card (portrait, professions, character excerpt). Warning about leaving building post.
+1. **Asset** — Select agent from your simulation. Agent dropdown sorted by aptitude for the selected operative type (descending). Dossier card shows portrait, professions, character excerpt, aptitude bars (sm, highlighted for selected type), and fit indicator badge (Good/Fair/Poor). Warning about leaving building post.
 2. **Mission** — Choose operative type (6 cards with cost/duration/effect). Select embassy route. Guardian special case (deploys to own simulation, no embassy needed).
-3. **Target** — Select target zone/building/agent based on mission type. SVG targeting ring shows success probability with factor breakdown. Confirmation summary with RP cost.
+3. **Target** — Select target zone/building/agent based on mission type. SVG targeting ring shows success probability with factor breakdown (aptitude replaces qualification). Confirmation summary with RP cost.
 
 **Design:** Tactical dossier aesthetic. Amber (#f59e0b) accent, scan-line textures, CLASSIFIED watermark, targeting ring SVG for success probability visualization.
 
@@ -312,6 +343,7 @@ interface EpochConfig {
   foundation_pct: number;    // 10-30
   reckoning_pct: number;     // 10-25
   max_team_size: number;     // 2-8
+  max_agents_per_player: number;  // 4-8, default 6
   allow_betrayal: boolean;
   score_weights: EpochScoreWeights;
   referee_mode: boolean;
@@ -382,8 +414,22 @@ interface BotPlayer {
   updated_at: string;
 }
 
+interface AgentAptitude {
+  id: UUID;
+  agent_id: UUID;
+  simulation_id: UUID;
+  operative_type: OperativeType;
+  aptitude_level: number;     // 3-9
+  created_at: string;
+  updated_at: string;
+}
+
+type AptitudeSet = Record<OperativeType, number>;  // { spy: 6, guardian: 6, ... }
+
 interface EpochParticipant {
   // ... existing fields ...
+  drafted_agent_ids?: UUID[];
+  draft_completed_at?: string;
   is_bot: boolean;
   bot_player_id?: UUID;
   bot_players?: BotPlayer;  // Joined via PostgREST select
@@ -400,14 +446,15 @@ interface EpochParticipant {
 | Materialized views (migration 031) | Applied locally | NOT pushed to production |
 | Epoch chat table (migration 037) | Applied locally | NOT pushed to production |
 | Bot players tables (migration 041) | Applied locally | NOT pushed to production |
-| Backend routers (5) | Complete | epochs, operatives, scores, epoch_chat, bot_players |
-| Backend services (10) | Complete | epoch, operative, scoring, battle_log, game_mechanics, epoch_chat, bot_service, bot_game_state, bot_personality, bot_chat_service |
-| Frontend components (10) | Complete | Command center, wizard, deploy modal, leaderboard, battle log, chat panel, presence indicator, ready panel, invite panel, **bot config panel** |
-| Frontend API services (3) | Complete | EpochsApiService (27 methods), EpochChatApiService (4 methods), **BotApiService** (6 methods) |
+| Agent aptitudes + draft (migration 047) | Applied locally | `agent_aptitudes` table + `drafted_agent_ids`/`draft_completed_at` on epoch_participants + clone function update + 35 agent seed profiles |
+| Backend routers (6) | Complete | epochs, **aptitudes**, operatives, scores, epoch_chat, bot_players |
+| Backend services (12) | Complete | epoch, **aptitude**, operative, scoring, battle_log, game_mechanics, epoch_chat, bot_service, bot_game_state, bot_personality, bot_chat_service, cycle_notification |
+| Frontend components (12) | Complete | Command center, wizard, deploy modal, leaderboard, battle log, chat panel, presence indicator, ready panel, invite panel, bot config panel, **draft roster panel**, **aptitude bars** |
+| Frontend API services (3) | Complete | EpochsApiService (27 methods), EpochChatApiService (4 methods), BotApiService (6 methods). AgentsApiService extended with 3 aptitude methods |
 | RealtimeService | Complete | Singleton managing 4 channel types with Preact Signals |
-| TypeScript types | Complete | 17 interfaces + 6 union types (incl. BotPlayer, BotPersonality, BotDifficulty) |
-| i18n (EN + DE) | Complete | 2007 total strings |
-| Public API endpoints (8) | Complete | Spectator access to leaderboard, battle log, epoch info |
+| TypeScript types | Complete | 19 interfaces + 6 union types (incl. AgentAptitude, AptitudeSet, BotPlayer, BotPersonality, BotDifficulty) |
+| i18n (EN + DE) | Complete | 2073 total strings |
+| Public API endpoints (10) | Complete | Spectator access to leaderboard, battle log, epoch info, **aptitudes** |
 | AI Settings integration | Complete | `bot_chat_mode` toggle + `model_bot_chat` model selector |
 | Production deployment | Pending | Migrations not pushed, code not deployed |
 
@@ -543,6 +590,228 @@ Two new settings in the AI Settings panel (`category: 'ai'`):
 
 ---
 
+## Agent Aptitude System (Migration 047)
+
+Agent aptitudes define per-agent skill scores for each of the 6 operative types. They replace the generic `qualification_level` (0-10, from `agent_professions`) in the success probability formula, providing fine-grained tactical differentiation between agents. Aptitudes are separate from professions — professions define lore identity, aptitudes define game-mechanical competence.
+
+### Design Principles
+
+1. **Budget-constrained distribution** — Each agent has a fixed budget of 36 points across 6 operative types. Default is 6/6/6/6/6/6 (uniform). Players redistribute to create specialists (e.g., 9/3/7/5/3/9) or generalists. Minimum 3, maximum 9 per type.
+2. **Aptitudes ARE the balance lever** — During epoch clone, aptitudes are copied AS-IS (no normalization). This is intentional: a well-configured roster of specialists is a legitimate competitive advantage that rewards preparation.
+3. **Separate from professions** — Professions (lore identity) are normalized to qualification_level=5 in game instances. Aptitudes (game mechanics) persist through cloning unchanged.
+4. **Backward compatible** — `AptitudeService.get_aptitude_for_operative()` returns default 6 if no aptitude row exists. Agents without configured aptitudes perform identically to the old system.
+
+### Database Schema
+
+**`agent_aptitudes` table:**
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | UUID | PK, default gen_random_uuid() | Aptitude row identifier |
+| `agent_id` | UUID | FK agents ON DELETE CASCADE, NOT NULL | Parent agent |
+| `simulation_id` | UUID | FK simulations ON DELETE CASCADE, NOT NULL | Parent simulation (denormalized for RLS) |
+| `operative_type` | TEXT | NOT NULL, CHECK IN (spy, guardian, saboteur, propagandist, infiltrator, assassin) | Which operative type this score applies to |
+| `aptitude_level` | INT | NOT NULL DEFAULT 6, CHECK >= 3 AND <= 9 | Skill score for this type |
+| `created_at` | TIMESTAMPTZ | default now() | Created timestamp |
+| `updated_at` | TIMESTAMPTZ | default now() | Updated timestamp (trigger) |
+
+**Constraints:** `UNIQUE (agent_id, operative_type)` — one score per agent per type.
+
+**Indexes:**
+- `idx_agent_aptitudes_agent` on (agent_id)
+- `idx_agent_aptitudes_simulation` on (simulation_id)
+
+**RLS Policies (5):**
+
+| Policy | Operation | Rule |
+|--------|-----------|------|
+| `agent_aptitudes_select` | SELECT | Simulation members OR template simulations (public browse) |
+| `agent_aptitudes_anon_select` | SELECT (anon) | Template simulations only |
+| `agent_aptitudes_insert` | INSERT | Editors+ in the simulation |
+| `agent_aptitudes_update` | UPDATE | Editors+ in the simulation |
+| `agent_aptitudes_delete` | DELETE | Editors+ in the simulation |
+
+### Backend
+
+**AptitudeService** (`services/aptitude_service.py`, ~115 lines):
+
+| Method | Purpose |
+|--------|---------|
+| `get_for_agent(supabase, simulation_id, agent_id)` | Get all 6 aptitude rows for one agent |
+| `get_all_for_simulation(supabase, simulation_id)` | Get all aptitude rows for all agents in a simulation |
+| `set_aptitudes(supabase, simulation_id, agent_id, aptitudes)` | Batch upsert all 6 rows (budget validated by Pydantic model) |
+| `get_aptitude_for_operative(supabase, agent_id, operative_type)` | Get single aptitude level (returns 6 if no row exists) |
+
+**Pydantic Models** (`models/aptitude.py`):
+
+| Model | Purpose |
+|-------|---------|
+| `AptitudeSet` | 6 fields (spy/guardian/saboteur/propagandist/infiltrator/assassin), each 3-9, `@model_validator` enforces sum=36 |
+| `AptitudeResponse` | Single aptitude row response (id, agent_id, simulation_id, operative_type, aptitude_level, timestamps) |
+| `DraftRequest` | `agent_ids: list[UUID]` with min_length=1, max_length=8 |
+
+**Aptitudes Router** (`routers/aptitudes.py`, ~70 lines):
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/simulations/{sim_id}/aptitudes` | viewer | All agents' aptitudes in simulation |
+| GET | `/simulations/{sim_id}/agents/{agent_id}/aptitudes` | viewer | One agent's aptitudes |
+| PUT | `/simulations/{sim_id}/agents/{agent_id}/aptitudes` | editor | Set all 6 (budget=36 enforced) |
+
+**OperativeService formula update** — `_calculate_success_probability()` now fetches `aptitude_level` via `AptitudeService.get_aptitude_for_operative()` instead of using `qualification_level`. Coefficient changed from 0.05 to 0.03.
+
+### Frontend: VelgAptitudeBars
+
+Shared component (`components/shared/VelgAptitudeBars.ts`, ~329 lines) rendering 6 horizontal bars for operative-type aptitude scores.
+
+**Properties:**
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `aptitudes` | `AptitudeSet` | `{spy:6, guardian:6, ...}` | Score object |
+| `editable` | `boolean` | `false` | Show range sliders instead of static bars |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Display size variant |
+| `highlight` | `OperativeType \| null` | `null` | Dims non-matching bars (used in deploy modal) |
+| `budget` | `number` | `36` | Budget for display in editable mode |
+
+**Events:** `aptitude-change` — dispatched on slider input with `{ type, level, aptitudes }` detail.
+
+**Size variants:**
+
+| Size | Bar Height | Label | Value Width | Use Case |
+|------|-----------|-------|-------------|----------|
+| `sm` | 8px | Hidden | 18px, 8px font | Card thumbnails, draft cards, lineup strip |
+| `md` | 14px | 90px | 28px | Default display |
+| `lg` | 20px | 110px | 32px | AgentDetailsPanel editor |
+
+**Editable mode:** Range sliders (3-9) with budget clamping — prevents exceeding 36 total. Budget indicator footer shows spent/total with color coding (green=exact, red=over). Slider thumb uses `cursor: grab`/`grabbing`.
+
+**Used in:** AgentDetailsPanel (lg, editable), AgentsView lineup strip (sm, readonly), DraftRosterPanel (sm, readonly), DeployOperativeModal (sm, with highlight).
+
+### Frontend: AgentDetailsPanel Aptitude Section
+
+New collapsible section in `AgentDetailsPanel.ts` showing the `VelgAptitudeBars` in `lg` editable mode.
+
+**Behavior:**
+- Loads aptitudes on panel open via `agentsApi.getAptitudes()`
+- Converts flat array of `AgentAptitude[]` to `AptitudeSet` object
+- Editable for users with `canEdit` permission
+- Debounced auto-save (800ms after last slider change) via `_aptitudeSaveTimer`
+- Saving state indicator ("Saving..." text below bars)
+- Toast notification on save success/failure
+
+### Frontend: AgentsView Lineup Overview Strip
+
+Horizontal scrollable strip at the top of the agents list showing all agents with their aptitude bars in `sm` size. Provides an at-a-glance overview of the roster's aptitude distribution.
+
+**Layout:** Full-width panel with `.lineup__header` title ("Lineup Overview") and `.lineup__scroll` horizontal scroll container. Each `.lineup__card` shows avatar + name + `VelgAptitudeBars` (sm). Staggered entrance animation with `--i` CSS variable. Cards are clickable to open the agent detail panel.
+
+**Data:** Fetches all simulation aptitudes via `agentsApi.getAllAptitudes()` and builds an `_aptitudeMap: Map<string, AptitudeSet>`. Only renders when aptitude data is available (`_aptitudeMap.size > 0`).
+
+---
+
+## Draft Phase (Migration 047)
+
+The draft phase occurs during lobby, after a player joins an epoch. Players select which agents from their template simulation to bring into the match. This introduces roster strategy — players must choose their lineup based on the epoch's scoring weights and their opponents' likely strategies.
+
+### Database Schema
+
+**Columns added to `epoch_participants`:**
+
+| Column | Type | Default | Description |
+|--------|------|---------|-------------|
+| `drafted_agent_ids` | UUID[] | NULL | Ordered list of selected agent IDs from template simulation |
+| `draft_completed_at` | TIMESTAMPTZ | NULL | When the draft was locked in (NULL = not yet drafted) |
+
+**`max_agents_per_player` in `EpochConfig` (JSONB):**
+
+| Key | Type | Range | Default | Description |
+|-----|------|-------|---------|-------------|
+| `max_agents_per_player` | integer | 4-8 | 6 | Maximum agents each player can bring into the match |
+
+### Backend
+
+**`EpochService.draft_agents()`** — Validates epoch is in lobby phase, participant belongs to the epoch, agent IDs belong to the participant's template simulation (active, not deleted), count does not exceed `max_agents_per_player`. Updates the participant row with `drafted_agent_ids` and `draft_completed_at`.
+
+**Auto-complete on epoch start** — When `start_epoch()` is called, any participant without `drafted_agent_ids` gets auto-filled with the first N agents (by `created_at`) from their template simulation. This ensures backward compatibility and prevents blocking the epoch if a player forgets to draft.
+
+**Bot auto-draft** — When a bot participant is added to an epoch, `auto_draft()` from `bot_personality.py` selects agents based on personality archetype priorities:
+
+| Personality | Priority Types (3x, 2x, 1x weight) |
+|-------------|--------------------------------------|
+| Sentinel | guardian, spy, saboteur |
+| Warlord | assassin, saboteur, infiltrator |
+| Diplomat | propagandist, infiltrator, spy |
+| Strategist | spy, infiltrator, guardian |
+| Chaos | spy, guardian, saboteur (same as sentinel) |
+
+Each agent is scored by `sum(aptitude[priority_type] * weight)` and the top N are selected. Bot participants have `drafted_agent_ids` set immediately on add.
+
+**Clone function integration** — The `clone_simulations_for_epoch()` PL/pgSQL function reads `drafted_agent_ids` from each participant:
+- If draft IDs exist: clones ONLY those agents, preserving draft order via `array_position()`
+- If draft IDs are NULL: falls back to `ORDER BY created_at LIMIT max_agents`
+- Cloned agents get their aptitudes copied AS-IS (no normalization)
+- Missing aptitudes get uniform defaults (6 each) inserted
+- Synthetic agents are padded to fill the configured max if needed
+
+### Frontend: DraftRosterPanel
+
+Full-screen overlay component (`components/epoch/DraftRosterPanel.ts`, ~738 lines) with two-column layout for agent draft selection.
+
+**Properties:**
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `open` | `boolean` | `false` | Whether overlay is visible |
+| `agents` | `Agent[]` | `[]` | Available agents from template simulation |
+| `maxSlots` | `number` | `6` | Maximum agents to draft (from epoch config) |
+| `aptitudeMap` | `Map<string, AptitudeSet>` | `new Map()` | Pre-loaded aptitude data per agent ID |
+
+**Events:**
+- `draft-cancel` — User clicked Cancel or pressed Escape
+- `draft-complete` — User clicked "Lock In Roster" with `{ agentIds: string[] }` detail
+
+**Layout:**
+
+1. **Header** — Title ("Draft Roster") + close button. Escape key handler.
+2. **Counter bar** — Visual pip indicators (filled/empty) showing `N/max` agents drafted. Text turns green when full.
+3. **Body (two-column grid):**
+   - **Left: Available Roster** — Scrollable list of all agents. Each card shows avatar, name, character snippet, `VelgAptitudeBars` (sm), and best aptitude type/level. Drafted agents are dimmed (`opacity: 0.35`, `pointer-events: none`). Click to add. Staggered entrance animation.
+   - **Right: Deployment Lineup** — Fixed slots (N = maxSlots). Empty slots show "Slot 1", "Slot 2", etc. Filled slots show avatar, name, best aptitude. Click or remove button to unslot. Spring scale animation on fill.
+4. **Team Stats** — Below deployment column when agents are drafted. Shows strongest/weakest operative type across the team and average total aptitude.
+5. **Footer** — Cancel button + "Lock In Roster" button (disabled when 0 agents selected).
+
+**Design:** Military command console aesthetic consistent with epoch UI. Dark gray-950 background, amber accent for filled pips and lock button. Brutalist typography, monospace stat readouts.
+
+### Frontend: EpochCreationWizard Enhancement
+
+New slider in Step 2 (Economy) for `max_agents_per_player`:
+
+| Setting | Range | Default | Description |
+|---------|-------|---------|-------------|
+| Agents Per Player | 4-8 | 6 | How many agents each participant can bring |
+
+### Frontend: EpochLobbyActions Enhancement
+
+Two states for joined participants:
+
+1. **Draft not complete** — "Draft Roster" button (amber outline style, `.lobby-btn--draft`). Dispatches `draft-roster` CustomEvent to EpochCommandCenter which opens DraftRosterPanel.
+2. **Draft complete** — Status text: "Roster Locked (N/max)" showing drafted count vs configured max. No further action available.
+
+### Frontend: DeployOperativeModal Enhancement
+
+Updated Step 1 (Asset selection) with aptitude integration:
+
+1. **Sorted agent dropdown** — When an operative type is selected, agent dropdown is re-sorted by descending aptitude for that type. Aptitude value shown in brackets: `"Elena Voss [9]"`.
+2. **Fit indicator** — After selecting an agent, a badge shows aptitude fitness for the chosen operative type:
+   - **Good** (aptitude >= 7): green badge
+   - **Fair** (aptitude >= 5): amber badge
+   - **Poor** (aptitude < 5): red badge
+3. **Aptitude bars with highlight** — `VelgAptitudeBars` rendered in `sm` size with the `highlight` property set to the selected operative type. Non-matching bars are dimmed to 30% opacity.
+4. **Aptitude data loading** — All simulation aptitudes fetched on modal open via `agentsApi.getAllAptitudes()`, stored in `_aptitudeMap: Map<string, AptitudeSet>`.
+
+---
+
 ## Epoch Realtime Chat & Coordination (Migration 037)
 
 Epoch participants need real-time communication channels for diplomacy, coordination, and tactical planning. Migration 037 adds an in-game chat system built on Supabase Realtime Broadcast, with separate channels for public epoch-wide diplomacy and private team-only encrypted communications.
@@ -672,34 +941,40 @@ The EpochOpsBoard (extracted from EpochCommandCenter) provides a collapsible COM
 
 ## Epoch Cycle Email Notifications (Migration 044)
 
-Players receive email notifications at key epoch lifecycle moments: cycle resolution, phase transitions, and epoch completion. All emails respect per-user preferences (opt-in/opt-out per type, bilingual EN/DE).
+Players receive email notifications at key epoch lifecycle moments: cycle resolution, phase transitions, epoch completion, and epoch start. All emails respect per-user preferences (opt-in/opt-out per type, single-language EN/DE or bilingual). Dark tactical HUD aesthetic with per-simulation accent colors and narrative voice headers. SMTP delivery via `smtplib.SMTP_SSL` (port 465).
 
 ### Notification Types
 
 | Type | Trigger | Content |
 |------|---------|---------|
-| **Cycle Briefing** | `resolve_cycle()` completes | Per-player fog-of-war compliant briefing: own scores, own missions (successes/failures), detected threats, cycle summary |
-| **Phase Change** | `advance_phase()` transitions epoch | New phase name, description of what changes, current standings summary |
-| **Epoch Completed** | Epoch reaches `completed` status | Final leaderboard, winner announcement, per-player final scores breakdown |
+| **Cycle Briefing** | `resolve_cycle()` completes | Per-player fog-of-war compliant briefing: standing (rank + composite + RP + rank gap), 5-dimension analysis with score bars, per-mission deployment log (type/target/outcome), threat assessment (detected/captured inbound ops), spy intel digest (localized zone security + guardian counts from structured metadata), alliance status, next cycle preview (pending missions + RP projection), signal intercepts |
+| **Phase Change** | `advance_phase()` transitions epoch | Phase transition box (old → new, translated), cycle count, per-player standing data, operational changes bullets. Phase-scaled subject urgency (DRINGEND // LETZTE PHASE for reckoning) |
+| **Epoch Completed** | Epoch reaches `completed` status | Winner announcement, full leaderboard with player highlight, per-player result, campaign statistics (ops deployed, success rate, type breakdown), dimension title race results (translated titles, player position), total cycles |
+| **Epoch Start** | `start_epoch()` (G1) | Phase change notification: lobby → foundation transition |
 
 ### Recipient Resolution
 
 `CycleNotificationService._resolve_recipients()` follows this chain:
 
 1. Fetch all `epoch_participants` for the epoch (excluding bots: `is_bot = false`)
-2. Load `notification_preferences` for each participant's `user_id`
-3. Filter by the relevant preference flag (`cycle_resolved`, `phase_changed`, or `epoch_completed`)
-4. Users without a `notification_preferences` row receive defaults (all enabled, locale `'en'`)
-5. Batch-resolve emails via `get_user_emails_batch()` SECURITY DEFINER RPC (queries `auth.users`)
+2. Resolve `source_template_id` → `simulation_members` to find owning `user_id` per participant
+3. Batch-resolve emails via `get_user_emails_batch()` SECURITY DEFINER RPC (queries `auth.users`)
+4. Load `notification_preferences` and filter by the relevant preference flag (`cycle_resolved`, `phase_changed`, or `epoch_completed`)
+5. Users without a `notification_preferences` row receive defaults (all enabled, locale `'en'`)
+6. Each recipient includes: `user_id`, `email`, `simulation_id`, `simulation_name`, `simulation_slug`, `email_locale`
 
 ### Player Briefing (Fog-of-War Compliant)
 
 Cycle briefing emails use `_build_player_briefing()` which only includes data the player should know:
 
-- **Own scores** — all 5 dimensions + composite for current cycle
-- **Own missions** — operative deployments with success/failure results (no enemy mission details)
-- **Detected threats** — only threats that were detected via counter-intelligence (not all incoming operatives)
-- **Cycle number** and **phase** context
+- **Own scores** — all 5 dimensions + composite for current cycle, with deltas from previous cycle
+- **Rank gap** — localized "X Punkte hinter #N" / "Leading by X points" (bilingual dict)
+- **Own missions** — per-mission breakdown: operative type, target simulation name, outcome (B7). Defensive ops (guardian, counter_intel) excluded from mission log, shown as aggregate counts
+- **Detected threats** — only threats that were detected/captured via counter-intelligence (B1)
+- **Spy intel digest** — structured metadata (zone_security levels, guardian_count) with localized rendering instead of raw English narrative (B2)
+- **Alliance status** — team name, ally names, +15% diplomatic bonus indicator (B6)
+- **Next cycle preview** — pending missions count, RP projection (B4)
+- **Signal intercepts** — public battle log events (English, thematically "intercepted transmissions")
 
 ### Database
 
@@ -723,12 +998,14 @@ RLS: authenticated users can SELECT/INSERT/UPDATE their own row only (`user_id =
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| **CycleNotificationService** | `services/cycle_notification_service.py` | Recipient resolution, player briefing assembly, email dispatch via Resend API |
-| **Email Templates** | `services/email_templates.py` | 3 new render functions (`render_cycle_briefing`, `render_phase_change`, `render_epoch_completed`) — bilingual HTML emails with dark tactical HUD aesthetic |
+| **CycleNotificationService** | `services/cycle_notification_service.py` (~740 lines) | Recipient resolution (6-step chain), enriched player briefing assembly (threats, spy intel from metadata, missions, alliance, rank gap, next cycle preview), standing snapshot, campaign stats, email dispatch via SMTP |
+| **Email Templates** | `services/email_templates.py` (~1660 lines) | 4 render functions (`render_epoch_invitation`, `render_cycle_briefing`, `render_phase_change`, `render_epoch_completed`). 85+ bilingual string keys in `_NOTIF_STRINGS`. Per-simulation accent colors (`_SIM_EMAIL_COLORS`), narrative voice headers (`_SIM_HEADERS`). Localized operative type labels, threat statuses, zone security levels, phase names. Dark tactical HUD aesthetic with WCAG AA contrast (`_TEXT_DIM` #888, `_TEXT_DARK` #666). Single-language or bilingual rendering via `email_locale` parameter |
+| **Email Service** | `services/email_service.py` | SMTP SSL delivery (port 465) via `smtplib.SMTP_SSL`, wrapped in `asyncio.to_thread()` |
 
 Integration points in `routers/epochs.py`:
 - `resolve_cycle` endpoint calls `send_cycle_notifications()` after cycle resolution
 - `advance_phase` endpoint calls `send_phase_change_notifications()` on phase transition, and `send_epoch_completed_notifications()` when advancing to `completed`
+- `start_epoch` endpoint calls `send_phase_change_notifications()` for lobby → foundation (G1)
 
 All email sends are best-effort (non-blocking `try/except`) — email failures do not block epoch lifecycle.
 

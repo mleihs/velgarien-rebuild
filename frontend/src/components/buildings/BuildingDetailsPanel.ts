@@ -10,6 +10,7 @@ import type {
   Embassy,
 } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
+import { getFullResUrl } from '../../utils/image.js';
 import { buildingAltText } from '../../utils/text.js';
 import '../shared/Lightbox.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
@@ -410,7 +411,14 @@ export class VelgBuildingDetailsPanel extends LitElement {
     if (!amb) return nothing;
 
     return html`
-      <div class="panel__ambassador" @click=${this._handleAmbassadorClick}>
+      <div class="panel__ambassador" role="button" tabindex="0" @click=${this._handleAmbassadorClick} @keydown=${(
+        e: KeyboardEvent,
+      ) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._handleAmbassadorClick();
+        }
+      }}>
         <div class="panel__ambassador-info">
           <span class="panel__ambassador-name">${amb.name}</span>
           <velg-badge variant="warning">${msg('Ambassador')}</velg-badge>
@@ -689,6 +697,7 @@ export class VelgBuildingDetailsPanel extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .fullSrc=${getFullResUrl(this._lightboxSrc)}
         .alt=${this._lightboxAlt}
         .caption=${this.building?.name ?? ''}
         @lightbox-close=${() => {

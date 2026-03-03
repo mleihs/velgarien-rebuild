@@ -382,7 +382,7 @@ class TestDeployDuplicatePrevention:
 class TestSuccessProbability:
     @pytest.mark.asyncio
     async def test_base_probability_with_no_modifiers(self):
-        """Base prob with no qualification, moderate zone, no guardians, default embassy."""
+        """Base prob with default aptitude, moderate zone, no guardians, default embassy."""
         sb = MagicMock()
         chain = MagicMock()
         chain.select.return_value = chain
@@ -397,8 +397,8 @@ class TestSuccessProbability:
         prob = await OperativeService._calculate_success_probability(
             sb, body, SIM_ID
         )
-        # base=0.55, qualification=0, zone_security=5.0 default, guardian=0, embassy=0.5
-        # 0.55 + 0 - 5.0*0.05 - 0 + 0.5*0.15 = 0.55 - 0.25 + 0.075 = 0.375
+        # base=0.55, aptitude=6 (default, no rows), zone_security=5.0 default, guardian=0, embassy=0.5
+        # 0.55 + 6*0.03 - 5.0*0.05 - 0 + 0.5*0.15 = 0.55 + 0.18 - 0.25 + 0.075 = 0.555
         assert 0.05 <= prob <= 0.95
 
     @pytest.mark.asyncio
@@ -428,11 +428,12 @@ class TestSuccessProbability:
         """Even with all bonuses, should not exceed 95%."""
         sb = MagicMock()
 
-        prof_chain = MagicMock()
-        prof_chain.select.return_value = prof_chain
-        prof_chain.eq.return_value = prof_chain
-        prof_chain.execute.return_value = MagicMock(
-            data=[{"qualification_level": 10}]
+        # aptitude query returns high aptitude
+        aptitude_chain = MagicMock()
+        aptitude_chain.select.return_value = aptitude_chain
+        aptitude_chain.eq.return_value = aptitude_chain
+        aptitude_chain.execute.return_value = MagicMock(
+            data=[{"aptitude_level": 9}]
         )
 
         zone_chain = MagicMock()
@@ -458,8 +459,8 @@ class TestSuccessProbability:
         )
 
         def table_router(name):
-            if name == "agent_professions":
-                return prof_chain
+            if name == "agent_aptitudes":
+                return aptitude_chain
             if name == "zones":
                 return zone_chain
             if name == "operative_missions":
@@ -483,10 +484,11 @@ class TestSuccessProbability:
         """Guardian penalty should be min(0.15, count * 0.06)."""
         sb = MagicMock()
 
-        prof_chain = MagicMock()
-        prof_chain.select.return_value = prof_chain
-        prof_chain.eq.return_value = prof_chain
-        prof_chain.execute.return_value = MagicMock(data=[])
+        # aptitude query — no rows (default 6)
+        aptitude_chain = MagicMock()
+        aptitude_chain.select.return_value = aptitude_chain
+        aptitude_chain.eq.return_value = aptitude_chain
+        aptitude_chain.execute.return_value = MagicMock(data=[])
 
         # 5 guardians -> 5 * 0.06 = 0.30, but capped at 0.15
         guardian_chain = MagicMock()
@@ -506,8 +508,8 @@ class TestSuccessProbability:
         )
 
         def table_router(name):
-            if name == "agent_professions":
-                return prof_chain
+            if name == "agent_aptitudes":
+                return aptitude_chain
             if name == "operative_missions":
                 return guardian_chain
             if name == "embassies":
@@ -520,19 +522,20 @@ class TestSuccessProbability:
         prob = await OperativeService._calculate_success_probability(
             sb, body, SIM_ID
         )
-        # base=0.55 + 0 - 5.0*0.05 - 0.15 + 0.6*0.15 = 0.55 - 0.25 - 0.15 + 0.09 = 0.24
-        assert 0.20 <= prob <= 0.30
+        # base=0.55 + 6*0.03 - 5.0*0.05 - 0.15 + 0.6*0.15 = 0.55 + 0.18 - 0.25 - 0.15 + 0.09 = 0.42
+        assert 0.35 <= prob <= 0.50
 
     @pytest.mark.asyncio
-    async def test_high_qualification_boosts_probability(self):
-        """Agent with high qualification should increase success probability."""
+    async def test_high_aptitude_boosts_probability(self):
+        """Agent with high aptitude should increase success probability."""
         sb = MagicMock()
 
-        prof_chain = MagicMock()
-        prof_chain.select.return_value = prof_chain
-        prof_chain.eq.return_value = prof_chain
-        prof_chain.execute.return_value = MagicMock(
-            data=[{"qualification_level": 8}]
+        # aptitude = 9 for spy
+        aptitude_chain = MagicMock()
+        aptitude_chain.select.return_value = aptitude_chain
+        aptitude_chain.eq.return_value = aptitude_chain
+        aptitude_chain.execute.return_value = MagicMock(
+            data=[{"aptitude_level": 9}]
         )
 
         guardian_chain = MagicMock()
@@ -550,8 +553,8 @@ class TestSuccessProbability:
         )
 
         def table_router(name):
-            if name == "agent_professions":
-                return prof_chain
+            if name == "agent_aptitudes":
+                return aptitude_chain
             if name == "operative_missions":
                 return guardian_chain
             if name == "embassies":
@@ -564,8 +567,8 @@ class TestSuccessProbability:
         prob = await OperativeService._calculate_success_probability(
             sb, body, SIM_ID
         )
-        # base=0.55 + 8*0.05 - 5.0*0.05 - 0 + 0.6*0.15 = 0.55 + 0.4 - 0.25 + 0.09 = 0.79
-        assert 0.75 <= prob <= 0.85
+        # base=0.55 + 9*0.03 - 5.0*0.05 - 0 + 0.6*0.15 = 0.55 + 0.27 - 0.25 + 0.09 = 0.66
+        assert 0.60 <= prob <= 0.70
 
 
 # ── Spy Effect ─────────────────────────────────────────────────
@@ -736,7 +739,7 @@ class TestPropagandistEffect:
         admin_mock.table.return_value = events_chain
 
         with patch(
-            "backend.dependencies.get_admin_supabase",
+            "backend.services.operative_service.get_admin_supabase",
             new_callable=AsyncMock,
             return_value=admin_mock,
         ):

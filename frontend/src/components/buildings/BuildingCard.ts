@@ -22,6 +22,7 @@ export class VelgBuildingCard extends LitElement {
     .card {
       display: flex;
       flex-direction: column;
+      height: 100%;
       background: var(--color-surface-raised);
       border: var(--border-default);
       box-shadow: var(--shadow-md);
@@ -58,6 +59,7 @@ export class VelgBuildingCard extends LitElement {
       flex-direction: column;
       gap: var(--space-2);
       padding: var(--space-4);
+      flex: 1;
     }
 
     .card__name {
@@ -162,7 +164,14 @@ export class VelgBuildingCard extends LitElement {
     const locationText = locationParts.join(', ');
 
     return html`
-      <div class="card ${b.special_type === 'embassy' ? 'card--embassy' : ''}" @click=${this._handleClick}>
+      <div class="card ${b.special_type === 'embassy' ? 'card--embassy' : ''}" role="button" tabindex="0" @click=${this._handleClick} @keydown=${(
+        e: KeyboardEvent,
+      ) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._handleClick();
+        }
+      }}>
         <div class="card__image">
           ${
             b.image_url

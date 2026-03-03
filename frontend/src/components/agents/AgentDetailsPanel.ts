@@ -11,11 +11,14 @@ import {
 import type {
   Agent,
   AgentRelationship,
+  AptitudeSet,
   Embassy,
   EventReaction,
+  OperativeType,
   RelationshipSuggestion,
 } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
+import { getFullResUrl } from '../../utils/image.js';
 import { agentAltText } from '../../utils/text.js';
 import '../buildings/EmbassyLink.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
@@ -24,6 +27,7 @@ import { panelButtonStyles } from '../shared/panel-button-styles.js';
 import { panelCascadeStyles } from '../shared/panel-cascade-styles.js';
 import { VelgToast } from '../shared/Toast.js';
 import '../shared/VelgAvatar.js';
+import '../shared/VelgAptitudeBars.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgSectionHeader.js';
 import '../shared/VelgSidePanel.js';
@@ -530,6 +534,19 @@ export class VelgAgentDetailsPanel extends LitElement {
   @state() private _suggestions: RelationshipSuggestion[] = [];
   @state() private _selectedSuggestions: Set<number> = new Set();
   @state() private _savingSuggestions = false;
+  @state() private _aptitudes: AptitudeSet | null = null;
+  @state() private _aptitudesLoading = false;
+  @state() private _aptitudesSaving = false;
+
+  private _aptitudeSaveTimer: ReturnType<typeof setTimeout> | null = null;
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this._aptitudeSaveTimer) {
+      clearTimeout(this._aptitudeSaveTimer);
+      this._aptitudeSaveTimer = null;
+    }
+  }
 
   protected updated(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('agent') || changedProperties.has('open')) {
@@ -540,9 +557,13 @@ export class VelgAgentDetailsPanel extends LitElement {
         this._selectedSuggestions = new Set();
         this._generating = false;
         this._savingSuggestions = false;
+        this._aptitudes = null;
+        this._aptitudesLoading = false;
+        this._aptitudesSaving = false;
         this._loadReactions();
         this._loadRelationships();
         this._loadAllAgents();
+        this._loadAptitudes();
         if (this.agent.is_ambassador) {
           this._loadEmbassy();
         }
@@ -628,6 +649,65 @@ export class VelgAgentDetailsPanel extends LitElement {
       this._embassyAssignments = assignments;
     } catch {
       // Embassy data not critical
+    }
+  }
+
+  private async _loadAptitudes(): Promise<void> {
+    if (!this.agent || !this.simulationId) return;
+
+    this._aptitudesLoading = true;
+    try {
+      const response = await agentsApi.getAptitudes(this.simulationId, this.agent.id);
+      if (response.success && response.data) {
+        const set: AptitudeSet = {
+          spy: 6,
+          guardian: 6,
+          saboteur: 6,
+          propagandist: 6,
+          infiltrator: 6,
+          assassin: 6,
+        };
+        for (const row of response.data) {
+          set[row.operative_type as OperativeType] = row.aptitude_level;
+        }
+        this._aptitudes = set;
+      }
+    } catch {
+      // Aptitudes not critical — leave null
+    } finally {
+      this._aptitudesLoading = false;
+    }
+  }
+
+  private _handleAptitudeChange(
+    e: CustomEvent<{ type: OperativeType; level: number; aptitudes: AptitudeSet }>,
+  ): void {
+    this._aptitudes = e.detail.aptitudes;
+
+    // Debounced save — 800ms after last change
+    if (this._aptitudeSaveTimer) clearTimeout(this._aptitudeSaveTimer);
+    this._aptitudeSaveTimer = setTimeout(() => this._saveAptitudes(), 800);
+  }
+
+  private async _saveAptitudes(): Promise<void> {
+    if (!this.agent || !this.simulationId || !this._aptitudes || this._aptitudesSaving) return;
+
+    this._aptitudesSaving = true;
+    try {
+      const response = await agentsApi.setAptitudes(
+        this.simulationId,
+        this.agent.id,
+        this._aptitudes,
+      );
+      if (response.success) {
+        VelgToast.success(msg('Aptitudes saved'));
+      } else {
+        VelgToast.error(response.error?.message ?? msg('Failed to save aptitudes'));
+      }
+    } catch {
+      VelgToast.error(msg('Failed to save aptitudes'));
+    } finally {
+      this._aptitudesSaving = false;
     }
   }
 
@@ -1024,7 +1104,14 @@ export class VelgAgentDetailsPanel extends LitElement {
               ${
                 localBuilding
                   ? html`
-                    <div class="panel__embassy-local" @click=${() => this._handleNavigateLocalBuilding(localBuildingId)}>
+                    <div class="panel__embassy-local" role="button" tabindex="0" @click=${() => this._handleNavigateLocalBuilding(localBuildingId)} @keydown=${(
+                      e: KeyboardEvent,
+                    ) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this._handleNavigateLocalBuilding(localBuildingId);
+                      }
+                    }}>
                       ${
                         localBuilding.image_url
                           ? html`<img
@@ -1052,6 +1139,28 @@ export class VelgAgentDetailsPanel extends LitElement {
           `;
         })}
       </div>
+    `;
+  }
+
+  private _renderAptitudes() {
+    if (this._aptitudesLoading) {
+      return html`<div class="panel__reactions-loading">${msg('Loading aptitudes...')}</div>`;
+    }
+
+    if (!this._aptitudes) {
+      return html`<span class="panel__empty">${msg('No aptitudes configured.')}</span>`;
+    }
+
+    const canEdit = appState.canEdit.value;
+
+    return html`
+      <velg-aptitude-bars
+        .aptitudes=${this._aptitudes}
+        ?editable=${canEdit}
+        size="lg"
+        @aptitude-change=${this._handleAptitudeChange}
+      ></velg-aptitude-bars>
+      ${this._aptitudesSaving ? html`<div class="panel__reactions-loading">${msg('Saving...')}</div>` : nothing}
     `;
   }
 
@@ -1192,6 +1301,11 @@ export class VelgAgentDetailsPanel extends LitElement {
                   }
 
                   <div class="panel__section">
+                    <velg-section-header>${msg('Aptitudes')}</velg-section-header>
+                    ${this._renderAptitudes()}
+                  </div>
+
+                  <div class="panel__section">
                     <velg-section-header>${msg('Professions')}</velg-section-header>
                     ${this._renderProfessions()}
                   </div>
@@ -1234,6 +1348,7 @@ export class VelgAgentDetailsPanel extends LitElement {
 
       <velg-lightbox
         .src=${this._lightboxSrc}
+        .fullSrc=${getFullResUrl(this._lightboxSrc)}
         .alt=${this._lightboxAlt}
         .caption=${this.agent?.name ?? ''}
         @lightbox-close=${() => {

@@ -1,7 +1,7 @@
-"""Generate dashboard images: 1 hero background + 3 simulation banners.
+"""Generate dashboard images: 1 hero background + 5 simulation banners.
 
-Uses Replicate Flux Dev directly, converts to WebP, uploads to Supabase Storage
-(simulation.assets bucket), and updates banner_url on each simulation.
+Uses Replicate Flux Dev directly, converts to AVIF (dual-resolution: full-res + thumbnail),
+uploads to Supabase Storage (simulation.assets bucket), and updates banner_url on each simulation.
 
 Usage:
   python3.13 scripts/generate_dashboard_images.py              # Generate all
@@ -59,7 +59,7 @@ def get_service_key() -> str:
 SUPABASE_SERVICE_KEY = get_service_key()
 
 VELGARIEN_SIM_ID = "10000000-0000-0000-0000-000000000001"
-CAPYBARA_SIM_ID = "20000000-0000-0000-0000-000000000001"
+GASLIT_REACH_SIM_ID = "20000000-0000-0000-0000-000000000001"
 STATION_NULL_SIM_ID = "30000000-0000-0000-0000-000000000001"
 SPERANZA_SIM_ID = "40000000-0000-0000-0000-000000000001"
 CITE_DES_DAMES_SIM_ID = "50000000-0000-0000-0000-000000000001"
@@ -67,14 +67,15 @@ CITE_DES_DAMES_SIM_ID = "50000000-0000-0000-0000-000000000001"
 BUCKET = "simulation.assets"
 FLUX_MODEL = "black-forest-labs/flux-dev"
 
-WEBP_QUALITY = 85
+AVIF_QUALITY = 85  # Full-resolution originals
+AVIF_QUALITY_THUMB = 80  # Display-optimized thumbnails
 
 # ── Image definitions ───────────────────────────────────────────────────────
 
 IMAGES = [
     {
         "name": "Dashboard Hero",
-        "storage_path": "platform/dashboard-hero.webp",
+        "storage_path": "platform/dashboard-hero.avif",
         "simulation_id": None,  # Platform-level asset
         "prompt": (
             "Abstract dark fantasy painting of fractured reality, shattered mirror "
@@ -89,7 +90,7 @@ IMAGES = [
     },
     {
         "name": "Velgarien Banner",
-        "storage_path": f"{VELGARIEN_SIM_ID}/banner.webp",
+        "storage_path": f"{VELGARIEN_SIM_ID}/banner.avif",
         "simulation_id": VELGARIEN_SIM_ID,
         "prompt": (
             "Brutalist dystopian cityscape panorama, massive concrete towers under "
@@ -102,8 +103,8 @@ IMAGES = [
     },
     {
         "name": "The Gaslit Reach Banner",
-        "storage_path": f"{CAPYBARA_SIM_ID}/banner.webp",
-        "simulation_id": CAPYBARA_SIM_ID,
+        "storage_path": f"{GASLIT_REACH_SIM_ID}/banner.avif",
+        "simulation_id": GASLIT_REACH_SIM_ID,
         "prompt": (
             "Vast underground cavern panorama with bioluminescent fungi and phosphorescent "
             "water, Victorian gothic subterranean city with rope bridges and fungal spires, "
@@ -115,7 +116,7 @@ IMAGES = [
     },
     {
         "name": "Station Null Banner",
-        "storage_path": f"{STATION_NULL_SIM_ID}/banner.webp",
+        "storage_path": f"{STATION_NULL_SIM_ID}/banner.avif",
         "simulation_id": STATION_NULL_SIM_ID,
         "prompt": (
             "Derelict space station exterior orbiting a supermassive black hole, "
@@ -131,7 +132,7 @@ IMAGES = [
     },
     {
         "name": "Speranza Banner",
-        "storage_path": f"{SPERANZA_SIM_ID}/banner.webp",
+        "storage_path": f"{SPERANZA_SIM_ID}/banner.avif",
         "simulation_id": SPERANZA_SIM_ID,
         "prompt": (
             "Underground sinkhole city panorama, collapsed limestone cavern with "
@@ -147,7 +148,7 @@ IMAGES = [
     },
     {
         "name": "Cité des Dames Banner",
-        "storage_path": f"{CITE_DES_DAMES_SIM_ID}/banner.webp",
+        "storage_path": f"{CITE_DES_DAMES_SIM_ID}/banner.avif",
         "simulation_id": CITE_DES_DAMES_SIM_ID,
         "prompt": (
             "Illuminated manuscript style panorama of a sunlit walled city, "
@@ -168,14 +169,24 @@ IMAGES = [
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 
-def convert_to_webp(image_bytes: bytes, max_width: int, max_height: int) -> bytes:
-    """Convert raw image bytes to WebP, resizing to target dimensions."""
+def convert_to_avif(
+    image_bytes: bytes,
+    max_width: int | None = None,
+    max_height: int | None = None,
+    quality: int = AVIF_QUALITY,
+) -> bytes:
+    """Convert raw image bytes to AVIF.
+
+    If max_width and max_height are provided, resize (thumbnail mode).
+    If omitted, preserve native resolution (full-res mode).
+    """
     img = Image.open(io.BytesIO(image_bytes))
     if img.mode not in ("RGB", "L"):
         img = img.convert("RGB")
-    img = img.resize((max_width, max_height), Image.LANCZOS)
+    if max_width is not None and max_height is not None:
+        img = img.resize((max_width, max_height), Image.LANCZOS)
     output = io.BytesIO()
-    img.save(output, format="WEBP", quality=WEBP_QUALITY)
+    img.save(output, format="AVIF", quality=quality)
     return output.getvalue()
 
 
@@ -185,7 +196,7 @@ def upload_to_storage(path: str, data: bytes) -> str:
     headers = {
         "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
         "apikey": SUPABASE_SERVICE_KEY,
-        "Content-Type": "image/webp",
+        "Content-Type": "image/avif",
         "x-upsert": "true",
     }
 
@@ -221,10 +232,11 @@ def generate_image(prompt: str) -> bytes:
         FLUX_MODEL,
         input={
             "prompt": prompt,
+            "megapixels": "1",
             "guidance": 3.5,
             "num_inference_steps": 28,
-            "output_format": "webp",
-            "output_quality": 90,
+            "output_format": "png",
+            "output_quality": 100,
         },
     )
 
@@ -264,20 +276,25 @@ def main() -> None:
     for img in images:
         print(f"--- {img['name']} ---")
         print(f"  Prompt: {img['prompt'][:80]}...")
-        print(f"  Target: {img['width']}x{img['height']}")
+        print(f"  Thumbnail: {img['width']}x{img['height']}")
 
         # Generate
         print("  Generating via Flux Dev...")
         raw_bytes = generate_image(img["prompt"])
         print(f"  Raw output: {len(raw_bytes)} bytes")
 
-        # Convert to WebP at target size
-        webp_bytes = convert_to_webp(raw_bytes, img["width"], img["height"])
-        print(f"  WebP: {len(webp_bytes)} bytes")
+        # Full-res: native resolution, quality 85
+        full_avif = convert_to_avif(raw_bytes, quality=AVIF_QUALITY)
+        full_path = img["storage_path"].replace(".avif", ".full.avif")
+        print(f"  Full-res AVIF: {len(full_avif)} bytes")
+        upload_to_storage(full_path, full_avif)
+        print(f"  Uploaded full-res: {BUCKET}/{full_path}")
 
-        # Upload
-        print(f"  Uploading to {BUCKET}/{img['storage_path']}...")
-        public_url = upload_to_storage(img["storage_path"], webp_bytes)
+        # Thumbnail: resized, quality 80
+        thumb_avif = convert_to_avif(raw_bytes, img["width"], img["height"], quality=AVIF_QUALITY_THUMB)
+        print(f"  Thumbnail AVIF: {len(thumb_avif)} bytes")
+        print(f"  Uploading thumbnail to {BUCKET}/{img['storage_path']}...")
+        public_url = upload_to_storage(img["storage_path"], thumb_avif)
         print(f"  Public URL: {public_url}")
 
         # Update simulation banner if applicable
@@ -288,7 +305,7 @@ def main() -> None:
         time.sleep(2)  # Brief pause between API calls
 
     print("=== Done ===")
-    print("\nHero image path: platform/dashboard-hero.webp")
+    print("\nHero image path: platform/dashboard-hero.avif")
     print("Banner URLs have been set on the simulation records.")
 
 

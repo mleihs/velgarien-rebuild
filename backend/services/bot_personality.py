@@ -127,10 +127,24 @@ class BotPersonality(ABC):
             return _rng.choice(opponents) if opponents else None
         return state.get_leader_sim_id()
 
-    def _pick_agent(self, state: BotGameState) -> dict | None:
-        """Pick an available agent for deployment."""
+    def _pick_agent(
+        self, state: BotGameState, operative_type: str | None = None
+    ) -> dict | None:
+        """Pick an available agent for deployment.
+
+        At medium/hard difficulty with an operative_type, picks the agent
+        with the highest aptitude for that type. At easy, picks randomly.
+        """
         available = state.get_available_agents()
-        return _rng.choice(available) if available else None
+        if not available:
+            return None
+        if operative_type and self.params["use_intel"]:
+            # Sort by aptitude for this operative type (desc), pick best
+            def apt_score(agent: dict) -> int:
+                return agent.get("aptitudes", {}).get(operative_type, 6)
+            available.sort(key=apt_score, reverse=True)
+            return available[0]
+        return _rng.choice(available)
 
     def _try_deploy(
         self,
@@ -144,7 +158,7 @@ class BotPersonality(ABC):
         if cost > remaining_rp:
             return None
 
-        agent = self._pick_agent(state)
+        agent = self._pick_agent(state, operative_type)
         if not agent:
             return None
 
@@ -666,3 +680,39 @@ def create_personality(personality: str, difficulty: str, config: dict | None = 
         logger.warning("Unknown personality '%s', falling back to sentinel", personality)
         cls = SentinelPersonality
     return cls(difficulty=difficulty, config=config)
+
+
+# ── Personality-preferred operative types for auto-draft ──
+
+_PERSONALITY_PRIORITIES: dict[str, list[str]] = {
+    "sentinel": ["guardian", "spy", "saboteur"],
+    "warlord": ["assassin", "saboteur", "guardian"],
+    "diplomat": ["propagandist", "infiltrator", "spy"],
+    "strategist": ["spy", "infiltrator", "assassin"],
+    "chaos": ["saboteur", "propagandist", "assassin"],
+}
+
+
+def auto_draft(
+    personality: str,
+    agents: list[dict],
+    max_agents: int,
+) -> list[str]:
+    """Select agents from a template roster based on personality archetype.
+
+    Scores each agent by sum of aptitudes for the personality's preferred operative
+    types (weighted: priority 1 = 3x, priority 2 = 2x, priority 3 = 1x).
+    Returns up to max_agents agent IDs sorted by affinity score descending.
+    """
+    priorities = _PERSONALITY_PRIORITIES.get(personality, ["spy", "guardian", "saboteur"])
+
+    def affinity_score(agent: dict) -> float:
+        aptitudes = agent.get("aptitudes", {})
+        score = 0.0
+        for i, op_type in enumerate(priorities):
+            weight = 3 - i  # 3, 2, 1
+            score += aptitudes.get(op_type, 6) * weight
+        return score
+
+    ranked = sorted(agents, key=affinity_score, reverse=True)
+    return [a["id"] for a in ranked[:max_agents]]

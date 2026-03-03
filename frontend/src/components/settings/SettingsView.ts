@@ -338,6 +338,7 @@ export class VelgSettingsView extends LitElement {
               <button
                 role="tab"
                 aria-selected=${this._activeTab === tab.key}
+                aria-controls="settings-tabpanel"
                 class="settings__tab ${this._activeTab === tab.key ? 'settings__tab--active' : ''}"
                 @click=${() => this._handleTabClick(tab.key)}
               >
@@ -347,7 +348,7 @@ export class VelgSettingsView extends LitElement {
           )}
         </nav>
 
-        <div class="settings__content">
+        <div class="settings__content" id="settings-tabpanel" role="tabpanel">
           ${this._renderPanel()}
         </div>
       </div>

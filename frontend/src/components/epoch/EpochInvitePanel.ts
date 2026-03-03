@@ -30,7 +30,7 @@ export class VelgEpochInvitePanel extends LitElement {
       --border-dim: var(--color-gray-700);
       --text-bright: var(--color-gray-100);
       --text-mid: var(--color-gray-300);
-      --text-dim: var(--color-gray-500);
+      --text-dim: var(--color-gray-400);
     }
 
     /* Override VelgSidePanel theme tokens — force dark HUD aesthetic */
@@ -447,6 +447,7 @@ export class VelgEpochInvitePanel extends LitElement {
               <input
                 class="email-input"
                 type="email"
+                aria-label=${msg('Email address for epoch invitation')}
                 placeholder=${msg('operative@email.com')}
                 .value=${this._email}
                 @input=${(e: InputEvent) => {

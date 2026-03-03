@@ -33,6 +33,7 @@ export function getTocSections(): TocSection[] {
     { id: 'alliances', label: msg('Alliances & Diplomacy') },
     { id: 'bleed', label: msg('Bleed & Echoes') },
     { id: 'tactics', label: msg('Tactics & Strategies') },
+    { id: 'demo-run', label: msg('Demo Run') },
     { id: 'matches', label: msg('Example Matches') },
     { id: 'updates', label: msg('Updates') },
     { id: 'analytics', label: msg('Intelligence Report') },
@@ -44,7 +45,9 @@ export function getPhases(): { name: string; color: string; description: string 
     {
       name: msg('Lobby'),
       color: 'var(--color-gray-500)',
-      description: msg('Simulations join and teams form. No operations allowed.'),
+      description: msg(
+        'Simulations join, players draft their agent roster, and teams form. No operations allowed.',
+      ),
     },
     {
       name: msg('Foundation'),
@@ -180,7 +183,7 @@ export function getScorePresets(): { name: string; weights: Record<string, numbe
 }
 
 export function getSuccessFormula(): string {
-  return '0.55 + (qual \u00D7 0.05) \u2212 (zone_sec \u00D7 0.05) \u2212 min(0.15, guardians \u00D7 0.06) + (embassy_eff \u00D7 0.15)';
+  return '0.55 + (aptitude \u00D7 0.03) \u2212 (zone_sec \u00D7 0.05) \u2212 min(0.15, guardians \u00D7 0.06) + (embassy_eff \u00D7 0.15)';
 }
 
 export function getTactics(): TacticCard[] {
@@ -448,6 +451,49 @@ export function getEchoLifecycle(): { name: string; color: string }[] {
 
 export function getChangelog(): ChangelogEntry[] {
   return [
+    {
+      version: 'v2.3',
+      date: '2026-03-03',
+      title: msg('Agent Aptitudes & Draft Phase'),
+      highlights: [
+        msg('Agent aptitudes: per-operative-type skill scores (3\u20139, budget 36)'),
+        msg('Draft phase: select your roster before the epoch starts'),
+        msg('Success formula: qualification \u00D7 0.05 \u2192 aptitude \u00D7 0.03'),
+        msg('Lineup overview and fit indicators in deploy modal'),
+      ],
+      details: [
+        {
+          category: msg('Agent Aptitudes'),
+          changes: [
+            msg(
+              'Each agent has 6 aptitude scores: spy, guardian, saboteur, propagandist, infiltrator, assassin',
+            ),
+            msg('Scores range from 3 (poor) to 9 (best), budget of 36 points per agent'),
+            msg('Set in the simulation template via AgentDetailsPanel'),
+            msg('Aptitude replaces uniform qualification in the success formula'),
+            msg('Aptitude 3 = +9%, aptitude 6 = +18%, aptitude 9 = +27% (18pp swing)'),
+          ],
+        },
+        {
+          category: msg('Draft Phase'),
+          changes: [
+            msg('After joining an epoch, players draft their agent roster'),
+            msg('Select up to N agents from your template (N = max_agents_per_player, default 6)'),
+            msg('Full-screen draft overlay with aptitude bars and team stats'),
+            msg('All human players must lock in before the epoch can start'),
+            msg('Bots auto-draft based on their personality archetype'),
+          ],
+        },
+        {
+          category: msg('Deploy Modal'),
+          changes: [
+            msg('Agent dropdown sorted by aptitude for selected operative type'),
+            msg('Fit indicator: Good (\u22657), Fair (\u22655), Poor (<5)'),
+            msg('Aptitude bars with operative-type highlight in agent dossier'),
+          ],
+        },
+      ],
+    },
     {
       version: 'v2.2',
       date: '2026-03-02',

@@ -115,7 +115,7 @@ class BotGameState:
         )
         self.own_zones = zones_resp.data or []
 
-        # Own agents (available for deployment)
+        # Own agents (available for deployment) with aptitudes
         agents_resp = (
             supabase.table("agents")
             .select("id, name, simulation_id, ambassador_blocked_until")
@@ -124,6 +124,24 @@ class BotGameState:
             .execute()
         )
         self.own_agents = agents_resp.data or []
+
+        # Load aptitudes for own agents (keyed by agent_id)
+        if self.own_agents:
+            aptitudes_resp = (
+                supabase.table("agent_aptitudes")
+                .select("agent_id, operative_type, aptitude_level")
+                .eq("simulation_id", sim_id)
+                .execute()
+            )
+            apt_map: dict[str, dict[str, int]] = {}
+            for row in aptitudes_resp.data or []:
+                aid = row["agent_id"]
+                if aid not in apt_map:
+                    apt_map[aid] = {}
+                apt_map[aid][row["operative_type"]] = row["aptitude_level"]
+            # Attach aptitudes dict to each agent
+            for agent in self.own_agents:
+                agent["aptitudes"] = apt_map.get(agent["id"], {})
 
         # Own embassies (for offensive operations)
         embassies_resp = (

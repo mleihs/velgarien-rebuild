@@ -12,6 +12,7 @@ from backend.dependencies import (
     require_epoch_creator,
     require_simulation_member,
 )
+from backend.models.aptitude import DraftRequest
 from backend.models.bot import AddBotToEpoch
 from backend.models.common import CurrentUser, PaginatedResponse, PaginationMeta, SuccessResponse
 from backend.models.epoch import (
@@ -31,6 +32,7 @@ from backend.services.cycle_notification_service import CycleNotificationService
 from backend.services.epoch_chat_service import EpochChatService
 from backend.services.epoch_service import EpochService
 from backend.services.game_instance_service import GameInstanceService
+from backend.services.scoring_service import ScoringService
 from supabase import Client
 
 logger = logging.getLogger(__name__)
@@ -95,12 +97,9 @@ async def create_epoch(
         description=body.description,
         config=body.config.model_dump() if body.config else None,
     )
-    try:
-        await AuditService.log_action(
-            supabase, None, user.id, "game_epochs", data["id"], "create",
-        )
-    except Exception:
-        logger.debug("Audit log skipped for epoch create (RLS)")
+    await AuditService.safe_log(
+        supabase, None, user.id, "game_epochs", data["id"], "create",
+    )
     return {"success": True, "data": data}
 
 
@@ -130,6 +129,7 @@ async def start_epoch(
     user: CurrentUser = Depends(get_current_user),
     _creator_check: None = Depends(require_epoch_creator()),
     supabase: Client = Depends(get_supabase),
+    admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
     """Start an epoch (lobby -> foundation). Creator only.
 
@@ -140,13 +140,19 @@ async def start_epoch(
     await BattleLogService.log_phase_change(
         supabase, epoch_id, 1, "lobby", "foundation"
     )
+
+    # Send epoch start notification (G1 — lobby → foundation)
     try:
-        await AuditService.log_action(
-            supabase, None, user.id, "game_epochs", epoch_id, "update",
-            details={"action": "start", "new_status": "foundation"},
+        await CycleNotificationService.send_phase_change_notifications(
+            admin_supabase, str(epoch_id), "lobby", "foundation",
         )
     except Exception:
-        logger.debug("Audit log skipped for epoch start (RLS)")
+        logger.warning("Epoch start notification failed for epoch %s", epoch_id, exc_info=True)
+
+    await AuditService.safe_log(
+        supabase, None, user.id, "game_epochs", epoch_id, "update",
+        details={"action": "start", "new_status": "foundation"},
+    )
     return {"success": True, "data": data}
 
 
@@ -180,13 +186,10 @@ async def advance_phase(
     except Exception:
         logger.warning("Phase notification failed for epoch %s", epoch_id, exc_info=True)
 
-    try:
-        await AuditService.log_action(
-            supabase, None, user.id, "game_epochs", epoch_id, "update",
-            details={"action": "advance", "old_status": old_status, "new_status": new_status},
-        )
-    except Exception:
-        logger.debug("Audit log skipped for epoch advance (RLS)")
+    await AuditService.safe_log(
+        supabase, None, user.id, "game_epochs", epoch_id, "update",
+        details={"action": "advance", "old_status": old_status, "new_status": new_status},
+    )
     return {"success": True, "data": data}
 
 
@@ -203,13 +206,10 @@ async def cancel_epoch(
     await BattleLogService.log_phase_change(
         supabase, epoch_id, epoch.get("current_cycle", 0), epoch["status"], "cancelled"
     )
-    try:
-        await AuditService.log_action(
-            supabase, None, user.id, "game_epochs", epoch_id, "update",
-            details={"action": "cancel", "old_status": epoch["status"]},
-        )
-    except Exception:
-        logger.debug("Audit log skipped for epoch cancel (RLS)")
+    await AuditService.safe_log(
+        supabase, None, user.id, "game_epochs", epoch_id, "update",
+        details={"action": "cancel", "old_status": epoch["status"]},
+    )
     return {"success": True, "data": data}
 
 
@@ -273,6 +273,12 @@ async def resolve_cycle(
     except Exception:
         logger.warning("Bot cycle execution failed for epoch %s", epoch_id, exc_info=True)
 
+    # Compute scores after missions resolve (best-effort)
+    try:
+        await ScoringService.compute_cycle_scores(supabase, epoch_id, cycle_number)
+    except Exception:
+        logger.warning("Scoring failed for epoch %s cycle %s", epoch_id, cycle_number, exc_info=True)
+
     # Send cycle notification emails (best-effort, non-blocking)
     try:
         await CycleNotificationService.send_cycle_notifications(
@@ -281,13 +287,10 @@ async def resolve_cycle(
     except Exception:
         logger.warning("Cycle notification failed for epoch %s", epoch_id, exc_info=True)
 
-    try:
-        await AuditService.log_action(
-            supabase, None, user.id, "game_epochs", epoch_id, "update",
-            details={"action": "resolve_cycle", "cycle": data.get("current_cycle")},
-        )
-    except Exception:
-        logger.debug("Audit log skipped for resolve-cycle (RLS)")
+    await AuditService.safe_log(
+        supabase, None, user.id, "game_epochs", epoch_id, "update",
+        details={"action": "resolve_cycle", "cycle": data.get("current_cycle")},
+    )
     return {"success": True, "data": data}
 
 
@@ -347,6 +350,32 @@ async def leave_epoch(
     return {"success": True, "data": {"message": "Left epoch."}}
 
 
+# ── Draft ──────────────────────────────────────────────
+
+
+@router.post(
+    "/{epoch_id}/participants/{simulation_id}/draft",
+    response_model=SuccessResponse[ParticipantResponse],
+)
+async def draft_agents(
+    epoch_id: UUID,
+    simulation_id: UUID,
+    body: DraftRequest,
+    user: CurrentUser = Depends(get_current_user),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Lock in a draft roster for a participant (lobby phase only)."""
+    data = await EpochService.draft_agents(
+        supabase, epoch_id, simulation_id, body.agent_ids
+    )
+    await AuditService.safe_log(
+        supabase, simulation_id, user.id,
+        "epoch_participants", data.get("id"), "update",
+        details={"drafted_agent_ids": [str(a) for a in body.agent_ids]},
+    )
+    return {"success": True, "data": data}
+
+
 # ── Bot Participants ───────────────────────────────────
 
 
@@ -364,13 +393,10 @@ async def add_bot_to_epoch(
 ) -> dict:
     """Add a bot participant to an epoch lobby. Creator only."""
     data = await EpochService.add_bot(supabase, epoch_id, body.simulation_id, body.bot_player_id)
-    try:
-        await AuditService.log_action(
-            supabase, body.simulation_id, user.id, "epoch_participants", data.get("id"), "create",
-            details={"epoch_id": str(epoch_id), "bot_player_id": str(body.bot_player_id), "is_bot": True},
-        )
-    except Exception:
-        logger.debug("Audit log skipped for add-bot (RLS)")
+    await AuditService.safe_log(
+        supabase, body.simulation_id, user.id, "epoch_participants", data.get("id"), "create",
+        details={"epoch_id": str(epoch_id), "bot_player_id": str(body.bot_player_id), "is_bot": True},
+    )
     return {"success": True, "data": data}
 
 
@@ -384,13 +410,10 @@ async def remove_bot_from_epoch(
 ) -> dict:
     """Remove a bot participant from epoch lobby. Creator only."""
     await EpochService.remove_bot(supabase, epoch_id, participant_id)
-    try:
-        await AuditService.log_action(
-            supabase, None, user.id, "epoch_participants", participant_id, "delete",
-            details={"epoch_id": str(epoch_id), "is_bot": True},
-        )
-    except Exception:
-        logger.debug("Audit log skipped for remove-bot (RLS)")
+    await AuditService.safe_log(
+        supabase, None, user.id, "epoch_participants", participant_id, "delete",
+        details={"epoch_id": str(epoch_id), "is_bot": True},
+    )
     return {"success": True, "data": {"message": "Bot removed."}}
 
 

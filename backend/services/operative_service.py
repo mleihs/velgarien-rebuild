@@ -7,6 +7,7 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 
+from backend.dependencies import get_admin_supabase
 from backend.models.epoch import OperativeDeploy
 from backend.services.battle_log_service import BattleLogService
 from backend.services.epoch_service import OPERATIVE_RP_COSTS, EpochService
@@ -260,26 +261,22 @@ class OperativeService:
 
         Formula:
           base = 0.55
-          + operative_qualification × 0.05
+          + agent_aptitude × 0.03
           - target_zone_security × 0.05
           - min(0.15, guardian_count × 0.06)
           + embassy_effectiveness × 0.15
           Clamped to [0.05, 0.95]
+
+        Aptitude range 3-9 → contribution +0.09 to +0.27 (18pp swing).
         """
+        from backend.services.aptitude_service import AptitudeService
+
         base = 0.55
 
-        # Agent qualification (check professions for matching skill)
-        qualification = 0.0
-        professions_resp = (
-            supabase.table("agent_professions")
-            .select("qualification_level")
-            .eq("agent_id", str(body.agent_id))
-            .execute()
+        # Agent aptitude for this operative type (replaces qualification)
+        aptitude = await AptitudeService.get_aptitude_for_operative(
+            supabase, body.agent_id, body.operative_type
         )
-        if professions_resp.data:
-            qualification = max(
-                p.get("qualification_level", 0) for p in professions_resp.data
-            )
 
         # Target zone security
         zone_security = 5.0  # default moderate
@@ -338,7 +335,7 @@ class OperativeService:
 
         probability = (
             base
-            + qualification * 0.05
+            + aptitude * 0.03
             - zone_security * 0.05
             - guardian_penalty
             + embassy_eff * 0.15
@@ -696,8 +693,6 @@ class OperativeService:
     @classmethod
     async def _apply_propagandist_effect(cls, supabase: Client, mission: dict) -> dict:
         """Propagandist: create destabilizing event in target simulation."""
-        from backend.dependencies import get_admin_supabase
-
         admin = await get_admin_supabase()
         target_sim = mission["target_simulation_id"]
         event_data = {

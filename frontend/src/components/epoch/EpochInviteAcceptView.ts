@@ -30,8 +30,8 @@ export class VelgEpochInviteAcceptView extends LitElement {
       --hud-border: var(--color-gray-800);
       --hud-border-dim: var(--color-gray-700);
       --hud-text: var(--color-gray-200);
-      --hud-text-dim: var(--color-gray-600);
-      --hud-text-muted: var(--color-gray-500);
+      --hud-text-dim: var(--color-gray-400);
+      --hud-text-muted: var(--color-gray-400);
       display: block;
       min-height: 100vh;
       background: var(--hud-bg);
