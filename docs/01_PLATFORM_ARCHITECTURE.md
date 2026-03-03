@@ -2,7 +2,7 @@
 
 **Version:** 1.1
 **Datum:** 2026-02-25
-**Aenderung v1.1:** 3 Simulationen live (Velgarien, Capybara Kingdom, Station Null). Public-First-Architektur (anonymer Lesezugriff via `/api/v1/public/*`, 20 GET-Endpoints, anon-RLS-Policies).
+**Aenderung v1.1:** 3 Simulationen live (Velgarien, The Gaslit Reach, Station Null). Public-First-Architektur (anonymer Lesezugriff via `/api/v1/public/*`, 20 GET-Endpoints, anon-RLS-Policies).
 
 ---
 

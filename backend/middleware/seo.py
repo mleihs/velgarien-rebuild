@@ -91,7 +91,10 @@ def get_crawler_redirect(url_path: str) -> str | None:
 _PLATFORM_META: dict[str, dict[str, str]] = {
     "/dashboard": {
         "title": "Dashboard | metaverse.center",
-        "description": "Explore simulated worlds — Velgarien, Capybara Kingdom, Station Null, and Speranza.",
+        "description": (
+            "Explore simulated worlds — Velgarien, The Gaslit Reach,"
+            " Station Null, Speranza, and Cité des Dames."
+        ),
         "canonical": "https://metaverse.center/dashboard",
     },
     "/multiverse": {

@@ -11,7 +11,7 @@ Embassies are a cross-simulation feature that establishes physical diplomatic pr
 
 ### Lore Context
 
-> "When the walls between Shards thin, places appear that shouldn't exist. A tavern in Velgarien that sells goods from a marketplace nobody remembers building. A filing cabinet in a capybara's burrow containing performance reviews from a space station. These are embassies — the Cartographers call them 'architectural bleed.'"
+> "When the walls between Shards thin, places appear that shouldn't exist. A tavern in Velgarien that sells goods from a marketplace nobody remembers building. A filing cabinet in a gaslit parlour containing performance reviews from a space station. These are embassies — the Cartographers call them 'architectural bleed.'"
 
 Embassies represent the physical manifestation of simulation connections. They exist as anomalous buildings within their host simulation, carrying architectural and thematic elements from their origin simulation.
 
@@ -268,7 +268,7 @@ The effects are designed to work across all theme presets:
 | Theme | `--color-primary` | `--color-text-secondary` | Visual |
 |-------|-------------------|--------------------------|--------|
 | Brutalist (Velgarien) | `#000000` | `#525252` | Black→grey pulse, strong contrast |
-| Sunless-Sea (Capybara Kingdom) | `#0d7377` | `#90aa9c` | Teal→sage pulse, underwater glow |
+| Sunless-Sea (The Gaslit Reach) | `#0d7377` | `#90aa9c` | Teal→sage pulse, underwater glow |
 | Deep-Space-Horror (Station Null) | `#8b0000` | `#ff6b35` | Blood red→orange pulse, alarm effect |
 | Arc-Raiders (Speranza) | `#d4a574` | `#8b7355` | Gold→bronze pulse, warm glow |
 | Cyberpunk | `#ff00ff` | `#00ffff` | Magenta→cyan pulse, neon |
@@ -303,9 +303,9 @@ The wizard uses info bubbles (pattern from `DesignSettingsPanel`) on form labels
 | Simulation | Building | Type | Description |
 |------------|----------|------|-------------|
 | Velgarien | Archive Sub-Level C | Archive | Restricted section containing documents from other simulations |
-| Capybara Kingdom | The Drowned Antenna | Observatory | Alien antenna array matching HAVEN's frequencies |
-| Capybara Kingdom | The Threshold | Anomaly | Door to a corridor with concrete walls and fluorescent lighting |
-| Capybara Kingdom | The Warm Market | Trading Post | Vendors selling pre-Fracture technology from "Speranza" |
+| The Gaslit Reach | The Drowned Antenna | Observatory | Alien antenna array matching HAVEN's frequencies |
+| The Gaslit Reach | The Threshold | Anomaly | Door to a corridor with concrete walls and fluorescent lighting |
+| The Gaslit Reach | The Warm Market | Trading Post | Vendors selling pre-Fracture technology from "Speranza" |
 | Station Null | *(planned)* | — | — |
 | Speranza | *(planned)* | — | — |
 

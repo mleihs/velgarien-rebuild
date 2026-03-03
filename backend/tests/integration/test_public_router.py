@@ -274,7 +274,7 @@ class TestPublicSettings:
         assert r.status_code == 200
         body = r.json()
         assert body["success"] is True
-        # Capybara Kingdom has design settings in seed data
+        # The Gaslit Reach has design settings in seed data
         assert len(body["data"]) >= 1
         for setting in body["data"]:
             assert setting["category"] == "design", (

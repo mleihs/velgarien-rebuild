@@ -1,20 +1,20 @@
 -- =============================================================================
 -- SEED 010: Simulation Design Themes
 -- =============================================================================
--- Seeds design settings for the Capybara Kingdom simulation to demonstrate
+-- Seeds design settings for The Gaslit Reach simulation to demonstrate
 -- the per-simulation theming system (Sunless Sea / bioluminescent preset).
 --
 -- Velgarien (sim 001) intentionally has no design settings — base tokens
 -- produce the brutalist aesthetic by default.
 --
--- Depends on: seed 009 (Capybara Kingdom simulation must exist)
+-- Depends on: seed 009 (The Gaslit Reach simulation must exist)
 -- =============================================================================
 
 BEGIN;
 
 DO $$
 DECLARE
-    sim_id uuid := '20000000-0000-0000-0000-000000000001';  -- Capybara Kingdom
+    sim_id uuid := '20000000-0000-0000-0000-000000000001';  -- The Gaslit Reach
     usr_id uuid := '00000000-0000-0000-0000-000000000001';  -- test user
 BEGIN
 

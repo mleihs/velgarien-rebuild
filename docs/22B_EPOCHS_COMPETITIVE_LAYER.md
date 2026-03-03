@@ -1,7 +1,8 @@
 # 22 - Epochs & Competitive Layer
 
-**Version:** 1.5
-**Date:** 2026-03-02
+**Version:** 1.6
+**Date:** 2026-03-03
+**Change v1.6:** Epoch Cycle Email Notifications — Migration 044: `notification_preferences` table + `get_user_emails_batch()` SECURITY DEFINER RPC. CycleNotificationService (recipient resolution, fog-of-war player briefings, Resend API). 3 email types: cycle briefing, phase change, epoch completed (bilingual EN/DE). 2 new API endpoints (GET/POST `/users/me/notification-preferences`). Frontend: NotificationsSettingsPanel in settings view.
 **Change v1.5:** Bot Players — AI-controlled opponents for solo/low-player epochs. Migration 041: `bot_players` + `bot_decision_log` tables, `is_bot`/`bot_player_id` on `epoch_participants`. 5 personality archetypes (Sentinel/Warlord/Diplomat/Strategist/Chaos) × 3 difficulty levels. Backend: BotService (cycle orchestrator), BotGameState (fog-of-war compliant), BotPersonality (5 implementations), BotChatService (dual-mode: template + LLM). Frontend: BotConfigPanel (collectible card deck builder UI), bot indicators in leaderboard/battle log/chat/ready panel, AI Settings bot chat controls.
 **Change v1.4:** Balance patch v2.2 — guardian penalty 0.08→0.06/unit (cap 0.15), guardian cost 3→4 RP, infiltrator rework (cost 6→5, embassy reduction 50%→65%, +3 influence/success, sovereignty −6→−8, score 5→6), assassin cost 8→7 + stability −4→−5 + sovereignty −10→−12, saboteur stability −5→−6, propagandist sovereignty −5→−6, detection penalty 2→3, RP economy 10→12/cycle + cap 30→40, counter-intel sweep 3→4 RP.
 **Change v1.3:** Balance patch v2.1 — guardian penalty 0.20→0.08/unit (cap 0.20), spy intel reveal (zone security + guardian count to battle log), saboteur zone downgrade (security −1 tier), scoring rebalance (propagandist +3→+5, detection −3→−2, spy influence +1/+2, guardian sovereignty +4), betrayal −20%→−25%, alliance 10%→15%. Cartographer's Map: game instance visualization (phase rings, health arcs, sparklines, operative trails, battle feed, leaderboard panel, minimap, 30s refresh).
@@ -27,7 +28,7 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 
 ### Database Schema
 
-**9 tables** (migrations 032 + 037 + 041):
+**10 tables** (migrations 032 + 037 + 041 + 044):
 
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
@@ -40,6 +41,7 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 | `epoch_chat_messages` | Realtime chat messages (epoch-wide + team) | `epoch_id`, `sender_id`, `sender_simulation_id`, `channel_type`, `team_id`, `content`, `sender_type` |
 | `bot_players` | Reusable bot preset definitions | `name`, `personality`, `difficulty`, `config` (JSONB), `created_by_id` |
 | `bot_decision_log` | Audit trail of bot decisions per cycle | `epoch_id`, `participant_id`, `cycle_number`, `phase`, `decision` (JSONB) |
+| `notification_preferences` | Per-user email notification settings | `user_id` (UNIQUE), `cycle_resolved`, `phase_changed`, `epoch_completed`, `email_locale` |
 
 **4 materialized views** (migration 031):
 
@@ -68,6 +70,7 @@ Epochs represent moments when the multiverse forces its simulations into direct 
 | **Bot Game State** | `services/bot_game_state.py` (~200 lines) | Fog-of-war compliant game state builder for bot decision-making |
 | **Bot Personality** | `services/bot_personality.py` (~600 lines) | Abstract base + 5 personality implementations (Sentinel/Warlord/Diplomat/Strategist/Chaos) |
 | **Bot Chat Service** | `services/bot_chat_service.py` (~250 lines) | Dual-mode chat generation (template-based + LLM via OpenRouter) |
+| **Cycle Notification Service** | `services/cycle_notification_service.py` (~200 lines) | Recipient resolution, fog-of-war player briefings, email dispatch via Resend API |
 
 ### Frontend
 
@@ -664,6 +667,81 @@ The EpochOpsBoard (extracted from EpochCommandCenter) provides a collapsible COM
 - If user is a participant in an active epoch, COMMS panel is available
 - Empty state message when user has no active epoch participation
 - Signal strength indicator reflects WebSocket connection health (connected / reconnecting / disconnected)
+
+---
+
+## Epoch Cycle Email Notifications (Migration 044)
+
+Players receive email notifications at key epoch lifecycle moments: cycle resolution, phase transitions, and epoch completion. All emails respect per-user preferences (opt-in/opt-out per type, bilingual EN/DE).
+
+### Notification Types
+
+| Type | Trigger | Content |
+|------|---------|---------|
+| **Cycle Briefing** | `resolve_cycle()` completes | Per-player fog-of-war compliant briefing: own scores, own missions (successes/failures), detected threats, cycle summary |
+| **Phase Change** | `advance_phase()` transitions epoch | New phase name, description of what changes, current standings summary |
+| **Epoch Completed** | Epoch reaches `completed` status | Final leaderboard, winner announcement, per-player final scores breakdown |
+
+### Recipient Resolution
+
+`CycleNotificationService._resolve_recipients()` follows this chain:
+
+1. Fetch all `epoch_participants` for the epoch (excluding bots: `is_bot = false`)
+2. Load `notification_preferences` for each participant's `user_id`
+3. Filter by the relevant preference flag (`cycle_resolved`, `phase_changed`, or `epoch_completed`)
+4. Users without a `notification_preferences` row receive defaults (all enabled, locale `'en'`)
+5. Batch-resolve emails via `get_user_emails_batch()` SECURITY DEFINER RPC (queries `auth.users`)
+
+### Player Briefing (Fog-of-War Compliant)
+
+Cycle briefing emails use `_build_player_briefing()` which only includes data the player should know:
+
+- **Own scores** — all 5 dimensions + composite for current cycle
+- **Own missions** — operative deployments with success/failure results (no enemy mission details)
+- **Detected threats** — only threats that were detected via counter-intelligence (not all incoming operatives)
+- **Cycle number** and **phase** context
+
+### Database
+
+```sql
+CREATE TABLE notification_preferences (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    cycle_resolved  BOOLEAN NOT NULL DEFAULT true,
+    phase_changed   BOOLEAN NOT NULL DEFAULT true,
+    epoch_completed BOOLEAN NOT NULL DEFAULT true,
+    email_locale    TEXT NOT NULL DEFAULT 'en' CHECK (email_locale IN ('en', 'de')),
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (user_id)
+);
+```
+
+RLS: authenticated users can SELECT/INSERT/UPDATE their own row only (`user_id = auth.uid()`).
+
+### Backend
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| **CycleNotificationService** | `services/cycle_notification_service.py` | Recipient resolution, player briefing assembly, email dispatch via Resend API |
+| **Email Templates** | `services/email_templates.py` | 3 new render functions (`render_cycle_briefing`, `render_phase_change`, `render_epoch_completed`) — bilingual HTML emails with dark tactical HUD aesthetic |
+
+Integration points in `routers/epochs.py`:
+- `resolve_cycle` endpoint calls `send_cycle_notifications()` after cycle resolution
+- `advance_phase` endpoint calls `send_phase_change_notifications()` on phase transition, and `send_epoch_completed_notifications()` when advancing to `completed`
+
+All email sends are best-effort (non-blocking `try/except`) — email failures do not block epoch lifecycle.
+
+### Frontend
+
+`NotificationsSettingsPanel` in the Settings view provides 3 toggle switches (Cycle Briefings, Phase Changes, Epoch Completed) and a language selector (English/Deutsch). Uses `NotificationPreferencesApiService` (2 methods: `getPreferences`, `updatePreferences`).
+
+### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/users/me/notification-preferences` | Get preferences (returns defaults if no row) |
+| POST | `/api/v1/users/me/notification-preferences` | Upsert preferences |
 
 ---
 

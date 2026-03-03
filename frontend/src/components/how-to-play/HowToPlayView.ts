@@ -1276,7 +1276,7 @@ export class VelgHowToPlay extends LitElement {
     const profiles = getSimulationProfiles();
     const SIM_HEX: Record<string, string> = {
       Speranza: '#d4a24e',
-      'Capybara Kingdom': '#6bcb77',
+      'The Gaslit Reach': '#6bcb77',
       Velgarien: '#e74c3c',
       'Nova Meridian': '#a78bfa',
       'Station Null': '#67e8f9',
@@ -1318,7 +1318,7 @@ export class VelgHowToPlay extends LitElement {
     const profiles = getSimulationProfiles();
     const SIM_HEX: Record<string, string> = {
       Speranza: '#d4a24e',
-      'Capybara Kingdom': '#6bcb77',
+      'The Gaslit Reach': '#6bcb77',
       Velgarien: '#e74c3c',
       'Nova Meridian': '#a78bfa',
       'Station Null': '#67e8f9',
@@ -1366,8 +1366,8 @@ export class VelgHowToPlay extends LitElement {
   /** Heatmap: 2P head-to-head pairwise win rates. */
   private _buildHeatmapOption(): Record<string, unknown> {
     const h2h = getHeadToHeadData();
-    const simNames = ['Speranza', 'Capybara Kingdom', 'Velgarien', 'Station Null'];
-    const simLabels = ['SP', 'CK', 'V', 'SN'];
+    const simNames = ['Speranza', 'The Gaslit Reach', 'Velgarien', 'Station Null'];
+    const simLabels = ['SP', 'GR', 'V', 'SN'];
 
     const matrixData: [number, number, number][] = [];
     for (const d of h2h) {

@@ -5,10 +5,9 @@ import secrets
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
-import httpx
 from fastapi import HTTPException, status
 
-from backend.config import settings
+from backend.services.email_service import EmailService
 from backend.services.email_templates import epoch_invitation_subject, render_epoch_invitation
 from backend.services.external.openrouter import OpenRouterService
 from backend.services.prompt_service import PromptResolver
@@ -289,11 +288,7 @@ class EpochInvitationService:
         invite_url: str,
         locale: str = "en",
     ) -> bool:
-        """Send invitation email via Resend API."""
-        if not settings.resend_api_key:
-            logger.warning("Resend API key not configured, skipping email send")
-            return False
-
+        """Send invitation email via SMTP."""
         html_body = render_epoch_invitation(
             epoch_name=epoch_name,
             lore_text=lore_text,
@@ -301,35 +296,5 @@ class EpochInvitationService:
             locale=locale,
         )
 
-        payload = {
-            "from": "metaverse.center <onboarding@resend.dev>",
-            "to": [recipient_email],
-            "subject": epoch_invitation_subject(epoch_name, locale),
-            "html": html_body,
-        }
-
-        try:
-            async with httpx.AsyncClient(timeout=15) as client:
-                response = await client.post(
-                    "https://api.resend.com/emails",
-                    json=payload,
-                    headers={
-                        "Authorization": f"Bearer {settings.resend_api_key}",
-                        "Content-Type": "application/json",
-                    },
-                )
-
-            if response.status_code in (200, 201):
-                logger.info("Epoch invitation email sent to %s", recipient_email)
-                return True
-
-            logger.error(
-                "Resend API error %d: %s",
-                response.status_code,
-                response.text[:200],
-            )
-            return False
-
-        except (httpx.TimeoutException, httpx.ConnectError) as e:
-            logger.error("Failed to send email via Resend: %s", e)
-            return False
+        subject = epoch_invitation_subject(epoch_name, locale)
+        return await EmailService.send(recipient_email, subject, html_body)

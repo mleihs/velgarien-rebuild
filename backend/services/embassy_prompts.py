@@ -47,7 +47,7 @@ CONTAMINATION_VOCABULARY: dict[str, dict[str, str]] = {
             "blue-grey overwriting ambient color, concrete dust coating surfaces"
         ),
     },
-    "capybara-kingdom": {
+    "the-gaslit-reach": {
         "materials": (
             "bioluminescent fungal growth, phosphorescent water stains, Victorian "
             "brass fittings corroded by damp, carved limestone with fossil "
@@ -60,14 +60,14 @@ CONTAMINATION_VOCABULARY: dict[str, dict[str, str]] = {
         ),
         "textures": (
             "damp stone with moss colonization, spore-dusted surfaces, copper "
-            "patina (verdigris), wet Victorian leather bindings, fur-matted "
-            "dampness on unexpected surfaces"
+            "patina (verdigris), wet Victorian leather bindings, slick dampness "
+            "on unexpected surfaces as though something recently passed"
         ),
         "objects": (
             "luminous mushrooms growing from cracks in wrong materials, brass "
             "navigation instruments (sextants, compasses with too many cardinal "
             "points), Victorian specimen jars with unclassifiable contents, "
-            "ink-stained quill pens, capybara pawprints in dust"
+            "ink-stained quill pens, scratches of too-long fingers in dust"
         ),
         "atmosphere": (
             "warm humid fog that smells of copper and earth, the sense of vast "
@@ -276,7 +276,7 @@ EMBASSY_BUILDING_PROMPTS: dict[str, str] = {
         "arch the walls become flat poured concrete — a material unknown in this "
         "world, fluorescent tube lighting visible down the corridor casting cold "
         "flat white against warm bioluminescent green, filing cabinets embedded "
-        "in limestone as though fossilized there, documents in High Capybaran "
+        "in limestone as though fossilized there, documents in an archaic "
         "script scattered on both stone floor and linoleum, bioluminescent fungi "
         "growing along the corridor ceiling but arranged in the precise "
         "rectangular grid of an institutional ceiling tile pattern, brass oil "
@@ -402,7 +402,7 @@ EMBASSY_BUILDING_PROMPTS: dict[str, str] = {
         "arrangement of an above-ground market, woven fabric awnings in "
         "Mediterranean patterns stretched between stone columns, impossible "
         "merchandise — maps of underground passages in a geography matching no "
-        "known Kingdom territory, a capybara merchant in a warm leather apron "
+        "known Reach territory, a merchant with too-long fingers in a warm leather apron "
         "stitched with rope rather than thread, warm air currents rising from "
         "the stall carrying scent of rosemary and clay"
     ),
@@ -414,13 +414,13 @@ EMBASSY_BUILDING_PROMPTS: dict[str, str] = {
         "bioluminescent green-amber light, fabric woven from spun light that "
         "shimmers with phosphorescence, maps drawn on damp parchment showing "
         "underground passages that match no known geography, the merchant is "
-        "always a capybara — a large rodent in elaborate clothing standing "
+        "always the same figure — someone too tall, with fingers too long, smiling "
         "behind the counter with Victorian-era brass scales and specimen jars "
         "for measuring goods, Victorian brass fittings on the stall framework "
         "incongruous with Speranza's salvaged-industrial aesthetic, a single "
         "terracotta pot holding a glowing fungal colony in place of the usual "
         "herb garden, damp cave-smell mixing with warm Mediterranean air, copper "
-        "patina on the capybara's coin collection, bioluminescent residue "
+        "patina on the merchant's coin collection, bioluminescent residue "
         "staining the stall's wooden surfaces where the impossible goods have "
         "rested, the prices written in a currency no one remembers establishing "
         "but everyone accepts"
@@ -487,21 +487,20 @@ AMBASSADOR_PORTRAIT_PROMPTS: dict[str, str] = {
         "each one correctly, harsh overhead fluorescent lighting, institutional "
         "concrete background"
     ),
-    "Archivist Mossback": (
-        "elderly anthropomorphic capybara woman, moss growing in thick grey-brown "
-        "fur giving a weathered green patina, small round Victorian spectacles "
-        "perched on broad nose, kind but sleepless eyes with dark circles "
-        "visible through thin fur — eyes adjusting between two light sources, "
-        "elaborate Victorian archivist robes in deep burgundy with brass button "
-        "closures, one lapel bearing an incongruous rubber stamp impression — a "
-        "Velgarien administrative seal pressed into the fabric, paws ink-stained "
-        "with two scripts — one Victorian copperplate and one regulation German "
-        "typescript written simultaneously, carrying a specimen jar containing a "
-        "faintly luminous liquid that reflects green off her spectacles, warm "
-        "bioluminescent amber-green lighting from below, damp stone archival "
-        "chamber background with filing cabinet shadows, expression of patient "
-        "methodical exhaustion — three months without sleep and still "
-        "cross-referencing"
+    "Archivist Quill": (
+        "ancient androgynous figure of indeterminate age, near-blind milky eyes "
+        "behind small round Victorian spectacles, fingers conspicuously too long "
+        "for their hands — seven-jointed and ink-stained in two scripts, one "
+        "Victorian copperplate and one regulation German typescript written "
+        "simultaneously, elaborate Victorian archivist robes in deep burgundy "
+        "with brass button closures, one lapel bearing an incongruous rubber "
+        "stamp impression — a Velgarien administrative seal pressed into the "
+        "fabric, carrying a specimen jar containing a faintly luminous liquid "
+        "that reflects green off their spectacles, warm bioluminescent "
+        "amber-green lighting from below, damp stone archival chamber background "
+        "with filing cabinet shadows, expression of patient methodical exhaustion "
+        "— three months without sleep and still cross-referencing, subtle "
+        "wrongness in proportions that the viewer cannot quite identify"
     ),
     "Navigator Braun": (
         "woman in early 30s, sharp features drawn tight with contained unease, "

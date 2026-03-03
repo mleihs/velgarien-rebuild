@@ -31,9 +31,9 @@ OUT = Path("/tmp/epoch-analysis")
 OUT.mkdir(exist_ok=True)
 
 # ── Simulation metadata ──
-SIM_TAGS = {"V": "Velgarien", "CK": "Capybara Kingdom", "SN": "Station Null",
+SIM_TAGS = {"V": "Velgarien", "GR": "The Gaslit Reach", "SN": "Station Null",
             "SP": "Speranza", "NM": "Nova Meridian"}
-SIM_COLORS = {"Velgarien": "#c0392b", "Capybara Kingdom": "#27ae60",
+SIM_COLORS = {"Velgarien": "#c0392b", "The Gaslit Reach": "#27ae60",
               "Station Null": "#8e44ad", "Speranza": "#d4a017", "Nova Meridian": "#2980b9"}
 
 # ── Style ──
@@ -134,9 +134,9 @@ def parse_analysis_file(filepath, player_count):
             }
 
     # Parse average scores by simulation
-    # | Capybara Kingdom | 82.0 | 9 | 13 | 79 | 9 | 22 |
+    # | The Gaslit Reach | 82.0 | 9 | 13 | 79 | 9 | 22 |
     avg_scores = {}
-    avg_pattern = r"\|\s*(Velgarien|Capybara Kingdom|Station Null|Speranza|Nova Meridian)\s*\|\s*([\d.]+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"
+    avg_pattern = r"\|\s*(Velgarien|The Gaslit Reach|Station Null|Speranza|Nova Meridian)\s*\|\s*([\d.]+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"
     for line in text.split("\n"):
         am = re.match(avg_pattern, line)
         if am:

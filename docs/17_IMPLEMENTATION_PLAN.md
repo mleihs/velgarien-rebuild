@@ -3,7 +3,7 @@
 **Version:** 2.9
 **Datum:** 2026-02-26
 **Aenderung v2.9:** Phase 6 hinzugefuegt — Agent Relationships, Event Echoes, Cartographer's Map. 18 neue Tasks (alle erledigt). 30 DB-Tabellen, 157 API-Endpoints, 23 Router. 302 Frontend-Tests, 359 Backend-Tests, 73 E2E-Specs. 1088 i18n-Strings.
-**Aenderung v2.8:** 3 Simulationen live (Velgarien, Capybara Kingdom, Station Null). 893 lokalisierte UI-Strings. 6 Theme-Presets. Anonymous View Audit komplett. 275 Backend-Tests, 197 Frontend-Tests (88 WCAG), 56 E2E-Specs. Production deployed.
+**Aenderung v2.8:** 3 Simulationen live (Velgarien, The Gaslit Reach, Station Null). 893 lokalisierte UI-Strings. 6 Theme-Presets. Anonymous View Audit komplett. 275 Backend-Tests, 197 Frontend-Tests (88 WCAG), 56 E2E-Specs. Production deployed.
 **Aenderung v2.7:** i18n msg()-Migration (P3.3.4) abgeschlossen — 675 Strings in 66 Komponenten + 2 Services gewrappt, DE-XLIFF komplett, FormatService implementiert, Locale-Toggle in PlatformHeader
 **Aenderung v2.6:** Phase 5 implementiert (Testing & Polish — 10 Tasks). Alle 5 Phasen abgeschlossen.
 **Aenderung v2.5:** Phase 4 implementiert (Social, Multi-User, Realtime — 20 Tasks)

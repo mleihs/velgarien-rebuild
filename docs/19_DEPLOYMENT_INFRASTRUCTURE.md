@@ -318,8 +318,8 @@ Images exist in 4 storage buckets:
 
 | Bucket | Content | Current Count |
 |--------|---------|---------------|
-| `agent.portraits` | Agent portrait images | 13 (8 Velgarien + 5 Capybara) |
-| `building.images` | Building images | 11 (6 Velgarien + 5 Capybara) |
+| `agent.portraits` | Agent portrait images | 13 (8 Velgarien + 5 Gaslit Reach) |
+| `building.images` | Building images | 11 (6 Velgarien + 5 Gaslit Reach) |
 | `user.agent.portraits` | User-created agent portraits | 0 |
 | `simulation.assets` | Simulation banners, icons, lore images | 36 (platform assets) |
 
@@ -436,7 +436,7 @@ supabase db push
 | `014_chat_prompt_templates` | Chat and prompt template updates | Schema |
 | `015_cleanup` | Schema cleanup and fixes | Schema |
 | `016_image_gen_config` | Image generation config seed data | Data-only |
-| `017_capybara_kingdom` | Capybara Kingdom simulation seed | Data-only |
+| `017_capybara_kingdom` | The Gaslit Reach simulation seed | Data-only |
 | `018_public_read_access` | 21 anon RLS policies for public read access | Schema |
 | `019_add_buildings_street_index` | Index on `buildings.street_id` | Schema |
 | `020_restrict_settings_anon_policy` | Restrict `settings_anon_select` to `category = 'design'` | Schema |
@@ -450,7 +450,7 @@ Migrations 016 and 017 contain `INSERT` statements for seed data. They reference
    ```sql
    INSERT INTO supabase_migrations.schema_migrations (version, name)
    VALUES ('20260225000000', '016_image_gen_config'),
-          ('20260225100000', '017_capybara_kingdom');
+          ('20260225100000', '017_the_gaslit_reach');
    ```
 
 ---

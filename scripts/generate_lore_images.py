@@ -9,7 +9,7 @@ Usage:
   python3.13 scripts/generate_lore_images.py                   # Generate all 25
   python3.13 scripts/generate_lore_images.py velgarien          # Generate 3 for Velgarien
   python3.13 scripts/generate_lore_images.py station-null       # Generate 3 for Station Null
-  python3.13 scripts/generate_lore_images.py capybara-kingdom   # Generate 3 for Capybara
+  python3.13 scripts/generate_lore_images.py the-gaslit-reach   # Generate 3 for Gaslit Reach
   python3.13 scripts/generate_lore_images.py speranza           # Generate 3 for Speranza
   python3.13 scripts/generate_lore_images.py cite-des-dames     # Generate 9 for Cité des Dames
   python3.13 scripts/generate_lore_images.py platform           # Generate 4 platform lore
@@ -140,7 +140,7 @@ SIMULATION_IMAGES: dict[str, list[dict]] = {
             ),
         },
     ],
-    "capybara-kingdom": [
+    "the-gaslit-reach": [
         {
             "name": "The Unterzee — Vast Underground Sea",
             "filename": "nature-of-unterzee.avif",
@@ -150,8 +150,9 @@ SIMULATION_IMAGES: dict[str, list[dict]] = {
                 "glowing beneath dark water surface, massive stalactites descending from "
                 "an invisible ceiling hundreds of metres above, a small Victorian-era "
                 "wooden vessel with brass lanterns sailing across the still water, "
-                "capybara silhouettes visible on the deck, distant shore with glowing "
-                "fungal forests, the sense of immense lightless space, mysterious and beautiful"
+                "ambiguous silhouettes visible on the deck with too-long limbs, distant shore "
+                "with glowing fungal forests, the sense of immense lightless space, mysterious "
+                "and beautiful"
             ),
         },
         {
@@ -168,13 +169,13 @@ SIMULATION_IMAGES: dict[str, list[dict]] = {
             ),
         },
         {
-            "name": "The Capybara Compact — Chamber of Accord",
-            "filename": "capybara-compact.avif",
+            "name": "The Founding Compact — Chamber of Accord",
+            "filename": "founding-compact.avif",
             "prompt": (
                 CAPYBARA_STYLE
                 + "Grand underground parliament chamber carved from natural cavern, "
                 "concentric rings of stone seating descending toward a central platform, "
-                "capybaras in Victorian-era formal attire seated throughout the chamber, "
+                "ambiguously non-human figures in Victorian-era formal attire seated throughout, "
                 "bioluminescent crystal chandeliers hanging from stalactites, ancient "
                 "scrolls and treaty documents on the central podium, teal phosphorescent "
                 "light reflecting off a shallow pool around the platform, ceremonial and solemn"

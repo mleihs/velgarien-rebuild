@@ -12,6 +12,7 @@ import './IntegrationSettingsPanel.js';
 import './DesignSettingsPanel.js';
 import './AccessSettingsPanel.js';
 import './PromptsSettingsPanel.js';
+import './NotificationsSettingsPanel.js';
 
 interface TabDef {
   key: SettingCategory;
@@ -28,6 +29,7 @@ function getTabs(): TabDef[] {
     { key: 'integration', label: msg('Integration') },
     { key: 'design', label: msg('Design') },
     { key: 'access', label: msg('Access'), ownerOnly: true },
+    { key: 'notifications', label: msg('Notifications') },
   ];
 }
 
@@ -95,6 +97,7 @@ export class VelgSettingsView extends LitElement {
     .settings__tab:nth-child(5) { animation-delay: 160ms; }
     .settings__tab:nth-child(6) { animation-delay: 200ms; }
     .settings__tab:nth-child(7) { animation-delay: 240ms; }
+    .settings__tab:nth-child(8) { animation-delay: 280ms; }
 
     @keyframes tab-enter {
       from { opacity: 0; transform: translateY(-6px); }
@@ -285,6 +288,13 @@ export class VelgSettingsView extends LitElement {
             @unsaved-change=${this._handleUnsavedChange}
             @settings-saved=${this._handleSettingsSaved}
           ></velg-access-settings-panel>
+        `;
+      case 'notifications':
+        return html`
+          <velg-notifications-settings-panel
+            @unsaved-change=${this._handleUnsavedChange}
+            @settings-saved=${this._handleSettingsSaved}
+          ></velg-notifications-settings-panel>
         `;
       default:
         return nothing;

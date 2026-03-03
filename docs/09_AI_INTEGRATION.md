@@ -2,7 +2,7 @@
 
 **Version:** 1.1
 **Datum:** 2026-02-25
-**Aenderung v1.1:** Replicate Flux Dev (`black-forest-labs/flux-dev`) als Standard-Bildmodell fuer alle Simulationen. 4 Generierungs-Scripts: `generate_velgarien_images.py` (8+6), `generate_capybara_images.py` (5+5), `generate_station_null_images.py` (6+7), `generate_dashboard_images.py` (1 Hero + 3 Banner). Workflow: lokal generieren → via REST API zu Production transferieren.
+**Aenderung v1.1:** Replicate Flux Dev (`black-forest-labs/flux-dev`) als Standard-Bildmodell fuer alle Simulationen. 4 Generierungs-Scripts: `generate_velgarien_images.py` (8+6), `generate_gaslit_reach_images.py` (5+5), `generate_station_null_images.py` (6+7), `generate_dashboard_images.py` (1 Hero + 3 Banner). Workflow: lokal generieren → via REST API zu Production transferieren.
 
 ---
 

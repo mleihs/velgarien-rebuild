@@ -18,7 +18,14 @@ class Settings(BaseSettings):
     # Security
     settings_encryption_key: str = ""
 
-    # Email
+    # Email (SMTP)
+    smtp_host: str = ""
+    smtp_port: int = 465
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = "metaverse.center <info@metaverse.center>"
+
+    # Email (legacy — Resend API, deprecated)
     resend_api_key: str = ""
 
     # App

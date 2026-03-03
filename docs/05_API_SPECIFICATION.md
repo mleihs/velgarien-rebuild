@@ -1,7 +1,8 @@
 # 05 - API Specification: Alle Endpoints (Simulation-Scoped)
 
-**Version:** 1.7
-**Datum:** 2026-03-02
+**Version:** 1.8
+**Datum:** 2026-03-03
+**Aenderung v1.8:** **246 Endpoints total (32 Router).** 2 neue Notification-Preferences-Endpoints auf Users-Router (`GET/POST /api/v1/users/me/notification-preferences`).
 **Aenderung v1.7:** **244 Endpoints total (32 Router).** Neuer bot_players Router (`/api/v1/bot-players`, 4 Endpoints): CRUD fuer Bot-Presets. Epochs-Router erweitert um add-bot/remove-bot (2 Endpoints).
 **Aenderung v1.6:** 236 Endpoints total (31 Router). Neuer Admin-Router (`/api/v1/admin`, 8 Endpoints): Platform-Settings CRUD (list, update), User-Management (list, detail, delete), Membership-Management (add, change role, remove). Alle Admin-Endpoints erfordern `require_platform_admin()` (Email-Allowlist). Verwendet `get_admin_supabase()` (service_role) fuer auth.admin API und platform_settings Zugriff.
 **Aenderung v1.5:** 228 Endpoints total (30 Router). Public-Endpoints erweitert auf 46 (neuer `/battle-feed` Endpoint fuer globalen oeffentlichen Battle-Feed).
@@ -626,6 +627,37 @@ Aktuelles Benutzerprofil mit Simulations-Mitgliedschaften.
   }
 }
 ```
+
+### `GET /api/v1/users/me/notification-preferences`
+Benachrichtigungspraeferenzen des aktuellen Benutzers. Gibt Defaults zurueck wenn keine Zeile existiert.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "cycle_resolved": true,
+    "phase_changed": true,
+    "epoch_completed": true,
+    "email_locale": "en"
+  }
+}
+```
+
+### `POST /api/v1/users/me/notification-preferences`
+Benachrichtigungspraeferenzen upserten (erstellt Zeile bei erstem Aufruf, aktualisiert bei Folgeaufrufen).
+
+**Body:**
+```json
+{
+  "cycle_resolved": true,
+  "phase_changed": false,
+  "epoch_completed": true,
+  "email_locale": "de"
+}
+```
+
+**Response:** Gleiche Struktur wie GET.
 
 ---
 
@@ -1634,7 +1666,7 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | Chat | 11 | Conversations + Messages + Agents |
 | Generation | 6 | AI Text + Image + Relationships |
 | Prompt Templates | 6 | CRUD + Test |
-| Users | 1 | Profile (Auth via Supabase direkt) |
+| Users | 3 | Profile + Notification Preferences (GET + POST) |
 | Invitations | 4 | Create + List + Validate + Accept |
 | Relationships | 5 | List (Agent/Sim) + Create + Patch + Delete |
 | Echoes | 5 | List (Sim/Event) + Trigger + Approve + Reject |
@@ -1648,4 +1680,4 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | Game Mechanics | 8 | Health Dashboard + Sim/Buildings/Zones/Embassies + Refresh |
 | Bot Players | 4 | CRUD (List + Create + Update + Delete) |
 | Public | 45 | Anonymer Lesezugriff (alle GET-only) |
-| **Gesamt** | **244** | **32 Router** |
+| **Gesamt** | **246** | **32 Router** |

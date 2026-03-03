@@ -38,7 +38,7 @@ metaverse.center is a **multiplayer worldbuilding platform** where each player o
 
 The game sits at an unusual intersection: it's part **city builder** (staffing, infrastructure), part **diplomatic strategy** (embassies, alliances, bleed), part **espionage game** (operatives, counter-intelligence), and part **collaborative fiction engine** (AI-generated narratives, worldbuilding). The competitive layer is built entirely on top of the creative tools — there are no "game-only" entities. Every operative is a real agent, every sabotaged building is a real building, every propaganda event is a real event.
 
-**Current state:** 4 active simulations (Velgarien, Capybara Kingdom, Station Null, Speranza), each with distinct themes and ~25 entities. Full competitive layer implemented (backend services, frontend UI, database schema). Not yet deployed to production. No live competitive play has occurred yet.
+**Current state:** 4 active simulations (Velgarien, The Gaslit Reach, Station Null, Speranza), each with distinct themes and ~25 entities. Full competitive layer implemented (backend services, frontend UI, database schema). Not yet deployed to production. No live competitive play has occurred yet.
 
 ---
 
@@ -113,7 +113,7 @@ Every advantage has a cost. Every defensive choice is an offensive opportunity m
 
 ```
 Platform Level
-├── Simulations (4 active: Velgarien, Capybara Kingdom, Station Null, Speranza)
+├── Simulations (4 active: Velgarien, The Gaslit Reach, Station Null, Speranza)
 │   ├── Agents (~6 per sim, unlimited)
 │   │   ├── Professions (qualification_level 1-10, specialization)
 │   │   └── Relationships (typed, weighted, directional graph)
@@ -886,7 +886,7 @@ A simulation that starts an epoch with better infrastructure (more agents, highe
 
 #### Fallen London / Sunless Sea / Sunless Skies (Failbetter Games)
 
-**Similarity:** Narrative-driven world with interconnected locations, mysterious factions, and strong thematic voice. Quality-based narrative (attribute checks determine story outcomes). The Capybara Kingdom simulation in metaverse.center is directly inspired by Fallen London's Unterzee.
+**Similarity:** Narrative-driven world with interconnected locations, mysterious factions, and strong thematic voice. Quality-based narrative (attribute checks determine story outcomes). The Gaslit Reach simulation in metaverse.center is directly inspired by Fallen London's Unterzee.
 
 **Differences:** Single-player narrative. Action-based (spend actions to advance stories). No competitive multiplayer.
 

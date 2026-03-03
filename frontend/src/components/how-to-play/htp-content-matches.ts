@@ -15,7 +15,7 @@ function match1(): MatchConfig {
   return {
     title: msg('First Blood'),
     subtitle: msg('Tutorial Match'),
-    players: ['Velgarien', 'Capybara Kingdom'],
+    players: ['Velgarien', 'The Gaslit Reach'],
     duration: '3 days',
     cycles: 9,
     preset: 'Balanced',
@@ -35,7 +35,7 @@ function match1(): MatchConfig {
             note: msg('Fortify the Market District'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Guardian',
             rpCost: 3,
             note: msg('Protect the River Ward'),
@@ -53,7 +53,7 @@ function match1(): MatchConfig {
             rpCost: 3,
             note: msg('Second guardian in Industrial Quarter'),
           },
-          { simulation: 'Capybara', action: 'Deploy Guardian', rpCost: 3 },
+          { simulation: 'Gaslit Reach', action: 'Deploy Guardian', rpCost: 3 },
         ],
       },
       {
@@ -65,10 +65,10 @@ function match1(): MatchConfig {
             simulation: 'Velgarien',
             action: 'Deploy Spy',
             rpCost: 3,
-            target: 'Capybara',
+            target: 'Gaslit Reach',
             note: msg('First offensive move'),
           },
-          { simulation: 'Capybara', action: 'Deploy Spy', rpCost: 3, target: 'Velgarien' },
+          { simulation: 'Gaslit Reach', action: 'Deploy Spy', rpCost: 3, target: 'Velgarien' },
         ],
       },
       {
@@ -80,10 +80,15 @@ function match1(): MatchConfig {
             simulation: 'Velgarien',
             action: 'Deploy Saboteur',
             rpCost: 5,
-            target: 'Capybara',
-            note: msg('Target the Capybara Bathhouse'),
+            target: 'Gaslit Reach',
+            note: msg('Target The Drowned Bell'),
           },
-          { simulation: 'Capybara', action: 'Deploy Propagandist', rpCost: 4, target: 'Velgarien' },
+          {
+            simulation: 'Gaslit Reach',
+            action: 'Deploy Propagandist',
+            rpCost: 4,
+            target: 'Velgarien',
+          },
         ],
       },
       {
@@ -97,7 +102,7 @@ function match1(): MatchConfig {
             rpCost: 3,
             note: msg('Detects the incoming propagandist!'),
           },
-          { simulation: 'Capybara', action: 'Deploy Saboteur', rpCost: 5, target: 'Velgarien' },
+          { simulation: 'Gaslit Reach', action: 'Deploy Saboteur', rpCost: 5, target: 'Velgarien' },
         ],
       },
       {
@@ -113,7 +118,7 @@ function match1(): MatchConfig {
             note: msg('+2 military score'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Propagandist resolves: DETECTED'),
             rpCost: 0,
             outcome: 'detected',
@@ -131,10 +136,10 @@ function match1(): MatchConfig {
             action: msg('Saboteur resolves: SUCCESS'),
             rpCost: 0,
             outcome: 'success',
-            note: msg('Bathhouse: good \u2192 moderate. +5 military.'),
+            note: msg('Drowned Bell: good \u2192 moderate. +5 military.'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Propagandist',
             rpCost: 4,
             target: 'Velgarien',
@@ -148,7 +153,7 @@ function match1(): MatchConfig {
         rpAllocated: 10,
         actions: [
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Saboteur resolves: FAILED'),
             rpCost: 0,
             outcome: 'failed',
@@ -161,14 +166,14 @@ function match1(): MatchConfig {
         rpAllocated: 10,
         actions: [
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Propagandist resolves: SUCCESS'),
             rpCost: 0,
             outcome: 'success',
             note: msg('Propaganda event created in Velgarien (impact 4). Sovereignty hit!'),
           },
         ],
-        scoreSnapshot: { Velgarien: 68.4, Capybara: 51.2 },
+        scoreSnapshot: { Velgarien: 68.4, 'Gaslit Reach': 51.2 },
       },
     ],
     finalStandings: [
@@ -185,7 +190,7 @@ function match1(): MatchConfig {
       },
       {
         rank: 2,
-        simulation: 'Capybara Kingdom',
+        simulation: 'The Gaslit Reach',
         composite: 51.2,
         stability: 62,
         influence: 5,
@@ -198,9 +203,11 @@ function match1(): MatchConfig {
       msg(
         "Cycle 5: Velgarien's counter-intel sweep catches the propagandist, saving sovereignty points.",
       ),
-      msg('Cycle 7: Saboteur successfully degrades the Bathhouse, tipping the stability balance.'),
       msg(
-        "Cycle 9: Capybara's late propagandist succeeds, creating a destabilizing event in Velgarien.",
+        'Cycle 7: Saboteur successfully degrades The Drowned Bell, tipping the stability balance.',
+      ),
+      msg(
+        "Cycle 9: The Gaslit Reach's late propagandist succeeds, creating a destabilizing event in Velgarien.",
       ),
     ],
   };
@@ -211,12 +218,12 @@ function match2(): MatchConfig {
   return {
     title: msg('The Grand Alliance'),
     subtitle: msg('Team Match'),
-    players: ['Velgarien', 'Capybara Kingdom', 'Station Null', 'Speranza'],
+    players: ['Velgarien', 'The Gaslit Reach', 'Station Null', 'Speranza'],
     duration: '7 days',
     cycles: 21,
     preset: 'Builder',
     description: msg(
-      '2v2 alliance warfare. Velgarien + Speranza vs Capybara + Station Null. Shows coordinated spy\u2192saboteur combos, alliance diplomatic bonus (+10% per ally), and builder stability focus.',
+      '2v2 alliance warfare. Velgarien + Speranza vs Gaslit Reach + Station Null. Shows coordinated spy\u2192saboteur combos, alliance diplomatic bonus (+10% per ally), and builder stability focus.',
     ),
     specialRules: msg('Alliance diplomatic bonus: each ally gives +10% to diplomatic score.'),
     cycleData: [
@@ -230,7 +237,7 @@ function match2(): MatchConfig {
             action: msg('Form alliances'),
             rpCost: 0,
             note: msg(
-              'Velgarien+Speranza form "Iron Pact". Capybara+Station Null form "Void Accord".',
+              'Velgarien+Speranza form "Iron Pact". Gaslit Reach+Station Null form "Void Accord".',
             ),
           },
         ],
@@ -257,7 +264,7 @@ function match2(): MatchConfig {
             simulation: 'Velgarien',
             action: 'Deploy Spy',
             rpCost: 3,
-            target: 'Capybara',
+            target: 'Gaslit Reach',
             note: msg('Intel gathering for coordinated strike'),
           },
           {
@@ -285,7 +292,7 @@ function match2(): MatchConfig {
             simulation: 'Velgarien',
             action: 'Deploy Saboteur',
             rpCost: 5,
-            target: 'Capybara',
+            target: 'Gaslit Reach',
             note: msg('Follow-up strike on revealed weakness'),
           },
           {
@@ -307,7 +314,9 @@ function match2(): MatchConfig {
             action: msg('Saboteur resolves: SUCCESS'),
             rpCost: 0,
             outcome: 'success',
-            note: msg('Building degraded. Builder preset amplifies stability loss for Capybara.'),
+            note: msg(
+              'Building degraded. Builder preset amplifies stability loss for Gaslit Reach.',
+            ),
           },
           {
             simulation: 'Speranza',
@@ -340,7 +349,7 @@ function match2(): MatchConfig {
         scoreSnapshot: {
           Velgarien: 78.2,
           Speranza: 71.5,
-          'Capybara Kingdom': 55.8,
+          'The Gaslit Reach': 55.8,
           'Station Null': 62.1,
         },
       },
@@ -379,7 +388,7 @@ function match2(): MatchConfig {
       },
       {
         rank: 4,
-        simulation: 'Capybara Kingdom',
+        simulation: 'The Gaslit Reach',
         composite: 55.8,
         stability: 55,
         influence: 5,
@@ -578,7 +587,7 @@ function match4(): MatchConfig {
   return {
     title: msg("The Diplomat's Gambit"),
     subtitle: msg('Betrayal Match'),
-    players: ['Velgarien', 'Capybara Kingdom', 'Station Null', 'Speranza'],
+    players: ['Velgarien', 'The Gaslit Reach', 'Station Null', 'Speranza'],
     duration: '7 days',
     cycles: 21,
     preset: 'Diplomat',
@@ -599,7 +608,7 @@ function match4(): MatchConfig {
             action: msg('Form alliances'),
             rpCost: 0,
             note: msg(
-              'Velgarien+Capybara form "Dawn Covenant". Station Null+Speranza form "Ashen League".',
+              'Velgarien+Gaslit Reach form "Dawn Covenant". Station Null+Speranza form "Ashen League".',
             ),
           },
         ],
@@ -655,16 +664,16 @@ function match4(): MatchConfig {
         rpAllocated: 10,
         actions: [
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Saboteur',
             rpCost: 5,
             target: 'Velgarien',
             note: msg(
-              'BETRAYAL! Capybara secretly attacks ally Velgarien. Targets the Great Library.',
+              'BETRAYAL! Gaslit Reach secretly attacks ally Velgarien. Targets the Great Library.',
             ),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Spy',
             rpCost: 3,
             target: 'Velgarien',
@@ -691,12 +700,12 @@ function match4(): MatchConfig {
         rpAllocated: 10,
         actions: [
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Saboteur resolves: DETECTED'),
             rpCost: 0,
             outcome: 'detected',
             note: msg(
-              'BETRAYAL DETECTED! The Dawn Covenant is dissolved. Capybara receives \u221220% diplomatic penalty. The Great Library is saved, but trust is shattered.',
+              'BETRAYAL DETECTED! The Dawn Covenant is dissolved. Gaslit Reach receives \u221220% diplomatic penalty. The Great Library is saved, but trust is shattered.',
             ),
           },
         ],
@@ -710,7 +719,7 @@ function match4(): MatchConfig {
           'Station Null': 74.1,
           Speranza: 70.3,
           Velgarien: 65.8,
-          'Capybara Kingdom': 42.7,
+          'The Gaslit Reach': 42.7,
         },
       },
     ],
@@ -748,7 +757,7 @@ function match4(): MatchConfig {
       },
       {
         rank: 4,
-        simulation: 'Capybara Kingdom',
+        simulation: 'The Gaslit Reach',
         composite: 42.7,
         stability: 65,
         influence: 5,
@@ -759,14 +768,14 @@ function match4(): MatchConfig {
     ],
     keyMoments: [
       msg(
-        'Cycle 15: Capybara secretly deploys against ally Velgarien \u2014 a desperate gambit to seize first place.',
+        'Cycle 15: Gaslit Reach secretly deploys against ally Velgarien \u2014 a desperate gambit to seize first place.',
       ),
       msg("Cycle 17: Velgarien's routine counter-intel sweep reveals the saboteur."),
       msg(
-        'Cycle 18: Betrayal detected! Dawn Covenant dissolves. Capybara loses 20% diplomatic score.',
+        'Cycle 18: Betrayal detected! Dawn Covenant dissolves. Gaslit Reach loses 20% diplomatic score.',
       ),
       msg(
-        'With Diplomat preset (diplomatic weight 35%), the \u221220% penalty is devastating \u2014 Capybara drops from 2nd to last place.',
+        'With Diplomat preset (diplomatic weight 35%), the \u221220% penalty is devastating \u2014 Gaslit Reach drops from 2nd to last place.',
       ),
       msg(
         'Lesson: Betrayal is high-risk. The Diplomat preset punishes it hardest because diplomatic score carries the most weight.',
@@ -780,7 +789,7 @@ function match5(): MatchConfig {
   return {
     title: msg('The Complete Campaign'),
     subtitle: msg('Full Replay \u2014 Every Cycle'),
-    players: ['Velgarien', 'Capybara Kingdom', 'Station Null'],
+    players: ['Velgarien', 'The Gaslit Reach', 'Station Null'],
     duration: '5 days',
     cycles: 15,
     preset: 'Balanced',
@@ -801,10 +810,10 @@ function match5(): MatchConfig {
             note: msg('Market District + Industrial Quarter. Balance: 15\u22126 = 9 RP'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Guardian',
             rpCost: 3,
-            note: msg('River Ward only. Saving RP for quick strike. Balance: 12 RP'),
+            note: msg('Undertide Docks only. Saving RP for quick strike. Balance: 12 RP'),
           },
           {
             simulation: 'Station Null',
@@ -826,10 +835,10 @@ function match5(): MatchConfig {
             note: msg('Noble Quarter. Balance: 9+15\u22123 = 21 RP'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Guardian',
             rpCost: 3,
-            note: msg('Bamboo Market. Balance: 12+15\u22123 = 24 RP'),
+            note: msg('Glimhaven Exchange. Balance: 12+15\u22123 = 24 RP'),
           },
           {
             simulation: 'Station Null',
@@ -851,7 +860,7 @@ function match5(): MatchConfig {
             note: msg('3 guardians deployed. Balance: 21+15 = 30 RP (cap). Foundation ends.'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Save RP'),
             rpCost: 0,
             note: msg('2 guardians deployed. Balance: 24+15 = 30 RP (cap). Aggressive reserve.'),
@@ -874,13 +883,13 @@ function match5(): MatchConfig {
             simulation: 'Velgarien',
             action: 'Deploy Spy',
             rpCost: 3,
-            target: 'Capybara',
+            target: 'Gaslit Reach',
             note: msg(
               'Intel gathering. Instant deploy, resolves cycle 7. Balance: 30+10\u22123 = 30 (cap)',
             ),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Spy',
             rpCost: 3,
             target: 'Station Null',
@@ -907,7 +916,7 @@ function match5(): MatchConfig {
             note: msg('1 cycle deploy. Target: Reactor Core. Balance: 30\u22125 = 25 RP'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Propagandist',
             rpCost: 4,
             target: 'Velgarien',
@@ -936,7 +945,7 @@ function match5(): MatchConfig {
             note: msg('Suspects incoming propaganda. Balance: 25+10\u22123 = 30 (cap)'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Save RP'),
             rpCost: 0,
             note: msg('Waiting for ops to resolve. Balance: 26+10 = 30 (cap)'),
@@ -945,8 +954,8 @@ function match5(): MatchConfig {
             simulation: 'Station Null',
             action: 'Deploy Saboteur',
             rpCost: 5,
-            target: 'Capybara',
-            note: msg('Target: Capybara Bathhouse. Balance: 27+10\u22125 = 30 (cap)'),
+            target: 'Gaslit Reach',
+            note: msg('Target: The Drowned Bell. Balance: 27+10\u22125 = 30 (cap RP)'),
           },
         ],
       },
@@ -960,7 +969,7 @@ function match5(): MatchConfig {
             action: msg('Spy resolves: SUCCESS'),
             rpCost: 0,
             outcome: 'success',
-            note: msg('Capybara weak zone revealed. +2 military. Balance: 30 (cap)'),
+            note: msg('Gaslit Reach weak zone revealed. +2 military. Balance: 30 (cap RP)'),
           },
           {
             simulation: 'Velgarien',
@@ -972,7 +981,7 @@ function match5(): MatchConfig {
             ),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Propagandist resolves: DETECTED'),
             rpCost: 0,
             outcome: 'detected',
@@ -991,11 +1000,11 @@ function match5(): MatchConfig {
             simulation: 'Velgarien',
             action: 'Deploy Assassin',
             rpCost: 8,
-            target: 'Capybara',
-            note: msg('Target: Ambassador Nutmeg. 2 cycle deploy. Balance: 30\u22128 = 22 RP'),
+            target: 'Gaslit Reach',
+            note: msg('Target: The Marchioness. 2 cycle deploy. Balance: 30\u22128 = 22 RP'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Saboteur',
             rpCost: 5,
             target: 'Velgarien',
@@ -1022,7 +1031,7 @@ function match5(): MatchConfig {
             note: msg('Assassin deploying. Balance: 22+10 = 30 (cap)'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Infiltrator',
             rpCost: 6,
             target: msg('Velgarien embassy'),
@@ -1034,8 +1043,8 @@ function match5(): MatchConfig {
             simulation: 'Station Null',
             action: 'Deploy Propagandist',
             rpCost: 4,
-            target: 'Capybara',
-            note: msg('Exploit Capybara while weakened. Balance: 30\u22124 = 26 RP'),
+            target: 'Gaslit Reach',
+            note: msg('Exploit Gaslit Reach while weakened. Balance: 30\u22124 = 26 RP'),
           },
         ],
       },
@@ -1048,11 +1057,11 @@ function match5(): MatchConfig {
             simulation: 'Velgarien',
             action: 'Deploy Saboteur',
             rpCost: 5,
-            target: 'Capybara',
-            note: msg('Target: Bamboo Market (revealed by spy). Balance: 30\u22125 = 25 RP'),
+            target: 'Gaslit Reach',
+            note: msg('Target: Glimhaven Exchange (revealed by spy). Balance: 30\u22125 = 25 RP'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Counter-Intel Sweep',
             rpCost: 3,
             note: msg('Defensive check. Balance: 29+10\u22123 = 30 (cap)'),
@@ -1062,7 +1071,9 @@ function match5(): MatchConfig {
             action: msg('Saboteur resolves: SUCCESS'),
             rpCost: 0,
             outcome: 'success',
-            note: msg('Bathhouse: good \u2192 moderate. +5 military. Capybara stability drops.'),
+            note: msg(
+              'Drowned Bell: good \u2192 moderate. +5 military. Gaslit Reach stability drops.',
+            ),
           },
         ],
       },
@@ -1077,11 +1088,11 @@ function match5(): MatchConfig {
             rpCost: 0,
             outcome: 'success',
             note: msg(
-              'Ambassador Nutmeg hit! All relationships \u22122. BLOCKED for 3 cycles. +8 military.',
+              'The Marchioness hit! All relationships \u22122. BLOCKED for 3 cycles. +8 military.',
             ),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Saboteur resolves: FAILED'),
             rpCost: 0,
             outcome: 'failed',
@@ -1108,11 +1119,11 @@ function match5(): MatchConfig {
             rpCost: 0,
             outcome: 'success',
             note: msg(
-              'Bamboo Market: good \u2192 moderate. +5 military. Velgarien now leads military.',
+              'Glimhaven Exchange: good \u2192 moderate. +5 military. Velgarien now leads military.',
             ),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Infiltrator resolves: FAILED'),
             rpCost: 0,
             outcome: 'failed',
@@ -1126,7 +1137,7 @@ function match5(): MatchConfig {
             rpCost: 0,
             outcome: 'success',
             note: msg(
-              'Propaganda event (impact 4) created in Capybara. +3 military. Sovereignty hit.',
+              'Propaganda event (impact 4) created in Gaslit Reach. +3 military. Sovereignty hit.',
             ),
           },
         ],
@@ -1146,7 +1157,7 @@ function match5(): MatchConfig {
             ),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: 'Deploy Saboteur',
             rpCost: 5,
             target: 'Velgarien',
@@ -1156,9 +1167,9 @@ function match5(): MatchConfig {
             simulation: 'Station Null',
             action: 'Deploy Saboteur',
             rpCost: 5,
-            target: 'Capybara',
+            target: 'Gaslit Reach',
             note: msg(
-              'Pile on the weakest. Target: Bathhouse (already moderate). Balance: 30\u22125 = 25 RP',
+              'Pile on the weakest. Target: Drowned Bell (already moderate). Balance: 30\u22125 = 25 RP',
             ),
           },
         ],
@@ -1175,7 +1186,7 @@ function match5(): MatchConfig {
             note: msg('Final defensive check. Balance: 30\u22123 = 27 RP'),
           },
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Save RP'),
             rpCost: 0,
             note: msg('Nothing left to deploy. Balance: 25+10 = 30 (cap)'),
@@ -1186,7 +1197,7 @@ function match5(): MatchConfig {
             rpCost: 0,
             outcome: 'success',
             note: msg(
-              'Bathhouse: moderate \u2192 poor. +5 military. Capybara stability collapses.',
+              'Drowned Bell: moderate \u2192 poor. +5 military. Gaslit Reach stability collapses.',
             ),
           },
         ],
@@ -1197,7 +1208,7 @@ function match5(): MatchConfig {
         rpAllocated: 10,
         actions: [
           {
-            simulation: 'Capybara',
+            simulation: 'Gaslit Reach',
             action: msg('Saboteur resolves: DETECTED'),
             rpCost: 0,
             outcome: 'detected',
@@ -1207,7 +1218,7 @@ function match5(): MatchConfig {
         scoreSnapshot: {
           Velgarien: 76.3,
           'Station Null': 68.9,
-          'Capybara Kingdom': 44.2,
+          'The Gaslit Reach': 44.2,
         },
       },
     ],
@@ -1235,7 +1246,7 @@ function match5(): MatchConfig {
       },
       {
         rank: 3,
-        simulation: 'Capybara Kingdom',
+        simulation: 'The Gaslit Reach',
         composite: 44.2,
         stability: 48,
         influence: 5,
@@ -1246,22 +1257,22 @@ function match5(): MatchConfig {
     ],
     keyMoments: [
       msg(
-        "Cycle 6\u20137: Velgarien's counter-intel sweep catches Capybara's propagandist \u2014 a 6-point swing (\u22123 for Capybara, +0 saved for Velgarien).",
+        "Cycle 6\u20137: Velgarien's counter-intel sweep catches the Gaslit Reach's propagandist \u2014 a 6-point swing (\u22123 for Gaslit Reach, +0 saved for Velgarien).",
       ),
       msg(
-        "Cycle 8\u201311: Velgarien's assassin blocks Ambassador Nutmeg for 3 cycles, crippling Capybara's diplomatic score during mid-game.",
+        "Cycle 8\u201311: Velgarien's assassin blocks The Marchioness for 3 cycles, crippling the Gaslit Reach's diplomatic score during mid-game.",
       ),
       msg(
-        "Cycle 11: Capybara's saboteur fails against 3 guardians in Velgarien's library zone \u2014 the Foundation Wall strategy pays off.",
+        "Cycle 11: The Gaslit Reach's saboteur fails against 3 guardians in Velgarien's library zone \u2014 the Foundation Wall strategy pays off.",
       ),
       msg(
-        'Cycle 10\u201312: Station Null plays kingmaker \u2014 bathhouse sabotage + propaganda push Capybara to last place.',
+        'Cycle 10\u201312: Station Null plays kingmaker \u2014 Drowned Bell sabotage + propaganda push Gaslit Reach to last place.',
       ),
       msg(
-        "Cycle 14\u201315: Station Null's second saboteur degrades the already-moderate bathhouse to poor, while Capybara's desperate saboteur is detected. A brutal final act.",
+        "Cycle 14\u201315: Station Null's second saboteur degrades the already-moderate Drowned Bell to poor, while the Gaslit Reach's desperate saboteur is detected. A brutal final act.",
       ),
       msg(
-        'RP efficiency: Velgarien spent 36 RP on offense (spy+saboteur\u00D72+assassin) with 3 successes. Capybara spent 23 RP on offense (spy+propagandist+saboteur+infiltrator) with 0 successes. Economy wins wars.',
+        'RP efficiency: Velgarien spent 36 RP on offense (spy+saboteur\u00D72+assassin) with 3 successes. Gaslit Reach spent 23 RP on offense (spy+propagandist+saboteur+infiltrator) with 0 successes. Economy wins wars.',
       ),
     ],
   };

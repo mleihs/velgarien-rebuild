@@ -9,14 +9,14 @@
 --
 -- Simulation IDs (deterministic):
 --   Velgarien:        10000000-0000-0000-0000-000000000001
---   Capybara Kingdom: 20000000-0000-0000-0000-000000000001
+--   The Gaslit Reach: 20000000-0000-0000-0000-000000000001
 --   Station Null:     30000000-0000-0000-0000-000000000001
 --   Speranza:         40000000-0000-0000-0000-000000000001
 --
 -- Player UUIDs (from seed 016):
 --   Admin:  00000000-0000-0000-0000-000000000001
 --   P1:     00000000-0000-0000-0000-000000000002 (Velgarien)
---   P2:     00000000-0000-0000-0000-000000000003 (Capybara)
+--   P2:     00000000-0000-0000-0000-000000000003 (Gaslit Reach)
 --   P3:     00000000-0000-0000-0000-000000000004 (Station Null)
 --   P4:     00000000-0000-0000-0000-000000000005 (Speranza)
 -- =============================================================================
@@ -101,9 +101,9 @@ BEGIN
     SELECT id INTO v_agent_elena FROM agents WHERE name = 'Elena Voss' AND simulation_id = v_velgarien;
     SELECT id INTO v_agent_aldric FROM agents WHERE name = 'General Aldric Wolf' AND simulation_id = v_velgarien;
     SELECT id INTO v_agent_lena FROM agents WHERE name = 'Lena Kray' AND simulation_id = v_velgarien;
-    SELECT id INTO v_agent_whiskers FROM agents WHERE name = 'Commodore Whiskers' AND simulation_id = v_capybara;
-    SELECT id INTO v_agent_mossback FROM agents WHERE name = 'Archivist Mossback' AND simulation_id = v_capybara;
-    SELECT id INTO v_agent_barnaby FROM agents WHERE name = 'Barnaby Gnaw' AND simulation_id = v_capybara;
+    SELECT id INTO v_agent_whiskers FROM agents WHERE name = 'Commodore Harrowgate' AND simulation_id = v_capybara;
+    SELECT id INTO v_agent_mossback FROM agents WHERE name = 'Archivist Quill' AND simulation_id = v_capybara;
+    SELECT id INTO v_agent_barnaby FROM agents WHERE name = 'Obediah Crook' AND simulation_id = v_capybara;
     SELECT id INTO v_agent_vasquez FROM agents WHERE name = 'Commander Elena Vasquez' AND simulation_id = v_station_null;
     SELECT id INTO v_agent_tanaka FROM agents WHERE name = 'Dr. Yuki Tanaka' AND simulation_id = v_station_null;
     SELECT id INTO v_agent_haven FROM agents WHERE name = 'HAVEN' AND simulation_id = v_station_null;
@@ -167,7 +167,7 @@ BEGIN
     INSERT INTO epoch_participants (epoch_id, simulation_id, team_id, joined_at, current_rp, last_rp_grant_at) VALUES
         -- Velgarien: 18 RP, in Northern Pact (builder archetype)
         (v_epoch_id, v_velgarien,    v_team_id, v_starts_at - INTERVAL '1 day',  18, now() - INTERVAL '2 hours'),
-        -- Capybara Kingdom: 22 RP, no team (diplomat archetype)
+        -- The Gaslit Reach: 22 RP, no team (diplomat archetype)
         (v_epoch_id, v_capybara,     NULL,      v_starts_at - INTERVAL '1 day',  22, now() - INTERVAL '4 hours'),
         -- Station Null: 8 RP, in Northern Pact (shadow archetype)
         (v_epoch_id, v_station_null, v_team_id, v_starts_at - INTERVAL '12 hours', 8, now() - INTERVAL '6 hours'),
@@ -180,7 +180,7 @@ BEGIN
 
     -- === VELGARIEN (6 missions: P1) ===
 
-    -- M1: Elena Voss spy → Capybara (active, c6, via embassy)
+    -- M1: Elena Voss spy → Gaslit Reach (active, c6, via embassy)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m1, v_epoch_id, v_agent_elena, 'spy', v_velgarien, v_capybara, v_emb_vel_cap, v_zone_upper_caverns, 'active', 3, 0.65, now() - INTERVAL '8 hours', now() + INTERVAL '16 hours');
 
@@ -202,34 +202,34 @@ BEGIN
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m5, v_epoch_id, v_agent_lena, 'spy', v_velgarien, v_speranza, v_emb_vel_spe, v_zone_hub, 'active', 3, 0.50, v_starts_at + INTERVAL '40 hours', now() + INTERVAL '10 hours');
 
-    -- M6: Elena Voss saboteur → Capybara (deploying, c7)
+    -- M6: Elena Voss saboteur → Gaslit Reach (deploying, c7)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m6, v_epoch_id, v_agent_elena, 'saboteur', v_velgarien, v_capybara, v_emb_vel_cap, v_zone_fungal_warrens, 'deploying', 5, 0.45, now() - INTERVAL '3 hours', now() + INTERVAL '21 hours');
 
-    -- === CAPYBARA KINGDOM (6 missions: P2) ===
+    -- === THE GASLIT REACH (6 missions: P2) ===
 
     -- M7: Cmdr. Whiskers infiltrator → Station Null (success c5, via embassy)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at, resolved_at, mission_result)
     VALUES (v_m7, v_epoch_id, v_agent_whiskers, 'infiltrator', v_capybara, v_station_null, v_emb_sn_cap, v_zone_habitation_ring, 'success', 6, 0.60, v_starts_at + INTERVAL '28 hours', v_starts_at + INTERVAL '40 hours', v_starts_at + INTERVAL '38 hours',
-        '{"outcome": "success", "narrative": "Commodore Whiskers infiltrated the Habitation Ring through maintenance tunnels, temporarily disrupting Station Null''s embassy communication relays.", "relationships_weakened": 1}'::jsonb);
+        '{"outcome": "success", "narrative": "Commodore Harrowgate infiltrated the Habitation Ring through maintenance tunnels, temporarily disrupting Station Null''s embassy communication relays.", "relationships_weakened": 1}'::jsonb);
 
-    -- M8: Barnaby Gnaw saboteur → Station Null (deploying, c7)
+    -- M8: Obediah Crook saboteur → Station Null (deploying, c7)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m8, v_epoch_id, v_agent_barnaby, 'saboteur', v_capybara, v_station_null, v_emb_sn_cap, v_zone_command_deck, 'deploying', 5, 0.40, now() - INTERVAL '2 hours', now() + INTERVAL '14 hours');
 
-    -- M9: Archivist Mossback spy → Velgarien (success c4)
+    -- M9: Archivist Quill spy → Velgarien (success c4)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at, resolved_at, mission_result)
     VALUES (v_m9, v_epoch_id, v_agent_mossback, 'spy', v_capybara, v_velgarien, v_emb_vel_cap, v_zone_altstadt, 'success', 3, 0.55, v_starts_at + INTERVAL '12 hours', v_starts_at + INTERVAL '28 hours', v_starts_at + INTERVAL '30 hours',
-        '{"outcome": "success", "narrative": "Archivist Mossback spent weeks cataloguing Velgarien''s Altstadt archives. The intelligence gathered reveals cracks in the Northern Pact''s supply lines.", "intel_gathered": true}'::jsonb);
+        '{"outcome": "success", "narrative": "Archivist Quill spent weeks cataloguing Velgarien''s Altstadt archives. The intelligence gathered reveals cracks in the Northern Pact''s supply lines.", "intel_gathered": true}'::jsonb);
 
     -- M10: Mossback guardian (domestic, c3, active)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m10, v_epoch_id, v_agent_mossback, 'guardian', v_capybara, NULL, NULL, v_zone_upper_caverns, 'active', 3, NULL, v_starts_at + INTERVAL '22 hours', now() + INTERVAL '360 days');
 
-    -- M11: Barnaby Gnaw saboteur → Speranza (success c6)
+    -- M11: Obediah Crook saboteur → Speranza (success c6)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at, resolved_at, mission_result)
     VALUES (v_m11, v_epoch_id, v_agent_barnaby, 'saboteur', v_capybara, v_speranza, v_emb_spe_cap, v_zone_workshops, 'success', 5, 0.50, v_starts_at + INTERVAL '36 hours', v_starts_at + INTERVAL '48 hours', v_starts_at + INTERVAL '46 hours',
-        '{"outcome": "success", "narrative": "Barnaby Gnaw gnawed through Speranza''s workshop power conduits. The resulting blackout disrupted repair operations for hours.", "infrastructure_damaged": true}'::jsonb);
+        '{"outcome": "success", "narrative": "Obediah Crook sabotaged Speranza''s workshop power conduits. The resulting blackout disrupted repair operations for hours.", "infrastructure_damaged": true}'::jsonb);
 
     -- M12: Cmdr. Whiskers infiltrator → Velgarien (active, c6)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
@@ -245,7 +245,7 @@ BEGIN
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m14, v_epoch_id, v_agent_haven, 'guardian', v_station_null, NULL, NULL, v_zone_science_wing, 'active', 3, NULL, v_starts_at + INTERVAL '20 hours', now() + INTERVAL '360 days');
 
-    -- M15: Kowalski assassin → Capybara (deploying, c7)
+    -- M15: Kowalski assassin → Gaslit Reach (deploying, c7)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m15, v_epoch_id, v_agent_kowalski, 'assassin', v_station_null, v_capybara, v_emb_sn_cap, v_zone_fungal_warrens, 'deploying', 8, 0.30, now() - INTERVAL '4 hours', now() + INTERVAL '44 hours');
 
@@ -264,10 +264,10 @@ BEGIN
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at)
     VALUES (v_m18, v_epoch_id, v_agent_rosa, 'guardian', v_speranza, NULL, NULL, v_zone_topside, 'active', 3, NULL, v_starts_at + INTERVAL '14 hours', now() + INTERVAL '360 days');
 
-    -- M19: Enzo Moretti infiltrator → Capybara (detected c6)
+    -- M19: Enzo Moretti infiltrator → Gaslit Reach (detected c6)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at, resolved_at, mission_result)
     VALUES (v_m19, v_epoch_id, v_agent_enzo, 'infiltrator', v_speranza, v_capybara, v_emb_spe_cap, v_zone_fungal_warrens, 'detected', 6, 0.45, v_starts_at + INTERVAL '28 hours', v_starts_at + INTERVAL '48 hours', v_starts_at + INTERVAL '46 hours',
-        '{"outcome": "detected", "narrative": "Enzo Moretti was spotted by Capybara scouts in the Fungal Warrens. Though he escaped, his cover is blown and Speranza''s intentions are now suspect.", "detected_by": "counter-intel"}'::jsonb);
+        '{"outcome": "detected", "narrative": "Enzo Moretti was spotted by Gaslit Reach scouts in the Fungal Warrens. Though he escaped, his cover is blown and Speranza''s intentions are now suspect.", "detected_by": "counter-intel"}'::jsonb);
 
     -- M20: Celeste Amara spy → Station Null (failed c6)
     INSERT INTO operative_missions (id, epoch_id, agent_id, operative_type, source_simulation_id, target_simulation_id, embassy_id, target_zone_id, status, cost_rp, success_probability, deployed_at, resolves_at, resolved_at, mission_result)
@@ -294,7 +294,7 @@ BEGIN
         (v_epoch_id, v_velgarien, 6, 75.0, 56.0, 64.0, 65.0, 62.0, 65.55, v_starts_at + INTERVAL '48 hours'),
         (v_epoch_id, v_velgarien, 7, 77.0, 58.0, 66.0, 66.0, 64.0, 67.15, v_starts_at + INTERVAL '56 hours');
 
-    -- Capybara: diplomat archetype. c6 sovereignty dip (infiltration detected)
+    -- Gaslit Reach: diplomat archetype. c6 sovereignty dip (infiltration detected)
     INSERT INTO epoch_scores (epoch_id, simulation_id, cycle_number, stability_score, influence_score, sovereignty_score, diplomatic_score, military_score, composite_score, computed_at) VALUES
         (v_epoch_id, v_capybara, 1, 60.0, 55.0, 58.0, 72.0, 42.0, 56.60, v_starts_at + INTERVAL '8 hours'),
         (v_epoch_id, v_capybara, 2, 62.0, 58.0, 60.0, 74.0, 44.0, 58.70, v_starts_at + INTERVAL '16 hours'),
@@ -357,7 +357,7 @@ BEGIN
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 2, 'operative_deployed', v_capybara, v_m9,
-         'Archivist Mossback slips into Velgarien territory under the guise of a scholarly exchange. Target: the Altstadt archives.',
+         'Archivist Quill slips into Velgarien territory under the guise of a scholarly exchange. Target: the Altstadt archives.',
          false, '{"operative_type": "spy", "target": "Velgarien"}'::jsonb, v_starts_at + INTERVAL '12 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
@@ -378,7 +378,7 @@ BEGIN
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 3, 'operative_deployed', v_capybara, v_m10,
-         'Archivist Mossback returns from Velgarien and takes up a guardian post in the Upper Caverns. The tunnels are watched.',
+         'Archivist Quill returns from Velgarien and takes up a guardian post in the Upper Caverns. The tunnels are watched.',
          false, '{"operative_type": "guardian"}'::jsonb, v_starts_at + INTERVAL '22 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
@@ -404,13 +404,13 @@ BEGIN
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 4, 'mission_success', v_capybara, v_velgarien, v_m9,
-         'Intelligence report received: Archivist Mossback''s mission in Velgarien was a complete success. Northern Pact supply line data acquired.',
+         'Intelligence report received: Archivist Quill''s mission in Velgarien was a complete success. Northern Pact supply line data acquired.',
          false, '{"operative_type": "spy", "outcome": "success"}'::jsonb, v_starts_at + INTERVAL '30 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 4, 'operative_deployed', v_speranza, v_capybara, v_m19,
-         'Enzo Moretti infiltrates Capybara territory through the southern trade routes. Target: the Fungal Warrens.',
-         false, '{"operative_type": "infiltrator", "target": "Capybara Kingdom"}'::jsonb, v_starts_at + INTERVAL '28 hours');
+         'Enzo Moretti infiltrates Gaslit Reach territory through the southern trade routes. Target: the Fungal Warrens.',
+         false, '{"operative_type": "infiltrator", "target": "The Gaslit Reach"}'::jsonb, v_starts_at + INTERVAL '28 hours');
 
     -- Cycle 5: Counter-intel, mission failures, sabotage
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
@@ -420,7 +420,7 @@ BEGIN
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 5, 'infiltration', v_capybara, v_station_null, v_m7,
-         'Commodore Whiskers completes a daring infiltration of Station Null''s Habitation Ring. Embassy communications are temporarily compromised.',
+         'Commodore Harrowgate completes a daring infiltration of Station Null''s Habitation Ring. Embassy communications are temporarily compromised.',
          true, '{"operative_type": "infiltrator", "outcome": "success"}'::jsonb, v_starts_at + INTERVAL '38 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
@@ -436,12 +436,12 @@ BEGIN
     -- Cycle 6: Detection wave, sabotage success, active spy deployments
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 6, 'detected', v_speranza, v_capybara, v_m19,
-         'Enzo Moretti spotted by Capybara scouts in the Fungal Warrens! His cover is blown. Speranza''s intentions toward the Kingdom are now suspect.',
+         'Enzo Moretti spotted by Gaslit Reach scouts in the Fungal Warrens! His cover is blown. Speranza''s intentions toward the Reach are now suspect.',
          true, '{"operative_type": "infiltrator", "outcome": "detected"}'::jsonb, v_starts_at + INTERVAL '46 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 6, 'sabotage', v_capybara, v_speranza, v_m11,
-         'Power conduits in Speranza''s Workshops sever and spark — Barnaby Gnaw strikes again. Repair operations disrupted for hours.',
+         'Power conduits in Speranza''s Workshops sever and spark — Obediah Crook strikes again. Repair operations disrupted for hours.',
          true, '{"operative_type": "saboteur", "outcome": "success"}'::jsonb, v_starts_at + INTERVAL '46 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
@@ -451,8 +451,8 @@ BEGIN
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 6, 'operative_deployed', v_velgarien, v_capybara, v_m1,
-         'Elena Voss crosses into Capybara territory through diplomatic channels. Her mission: intelligence gathering in the Upper Caverns.',
-         false, '{"operative_type": "spy", "target": "Capybara Kingdom"}'::jsonb, now() - INTERVAL '8 hours');
+         'Elena Voss crosses into Gaslit Reach territory through diplomatic channels. Her mission: intelligence gathering in the Upper Caverns.',
+         false, '{"operative_type": "spy", "target": "The Gaslit Reach"}'::jsonb, now() - INTERVAL '8 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 6, 'operative_deployed', v_station_null, v_speranza, v_m13,
@@ -462,27 +462,27 @@ BEGIN
     -- Cycle 7: Final deployments — assassins and saboteurs, tension peaks
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 7, 'operative_deployed', v_velgarien, v_capybara, v_m6,
-         'Elena Voss transitions to saboteur operations. A second Velgarien strike against the Capybara Kingdom — this time targeting the Fungal Warrens.',
-         false, '{"operative_type": "saboteur", "target": "Capybara Kingdom"}'::jsonb, now() - INTERVAL '3 hours');
+         'Elena Voss transitions to saboteur operations. A second Velgarien strike against the Gaslit Reach — this time targeting the Fungal Warrens.',
+         false, '{"operative_type": "saboteur", "target": "The Gaslit Reach"}'::jsonb, now() - INTERVAL '3 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 7, 'operative_deployed', v_capybara, v_station_null, v_m8,
-         'The Capybara Kingdom dispatches a saboteur to Station Null. Barnaby Gnaw gnaws his way through the bureaucracy — and into the Command Deck.',
+         'The Gaslit Reach dispatches a saboteur to Station Null. Obediah Crook slips through the bureaucracy with a cheerful wave — and into the Command Deck.',
          false, '{"operative_type": "saboteur", "target": "Station Null"}'::jsonb, now() - INTERVAL '2 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 7, 'operative_deployed', v_station_null, v_capybara, v_m15,
          'Station Null deploys Engineer Kowalski on an assassination mission. Target: the Fungal Warrens. The shadows deepen.',
-         false, '{"operative_type": "assassin", "target": "Capybara Kingdom"}'::jsonb, now() - INTERVAL '4 hours');
+         false, '{"operative_type": "assassin", "target": "The Gaslit Reach"}'::jsonb, now() - INTERVAL '4 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 7, 'operative_deployed', v_speranza, v_velgarien, v_m21,
-         'Enzo Moretti, his cover blown in the Capybara Kingdom, is redirected on a desperate assassination mission against Velgarien''s Regierungsviertel.',
+         'Enzo Moretti, his cover blown in the Gaslit Reach, is redirected on a desperate assassination mission against Velgarien''s Regierungsviertel.',
          false, '{"operative_type": "assassin", "target": "Velgarien"}'::jsonb, now() - INTERVAL '5 hours');
 
     INSERT INTO battle_log (epoch_id, cycle_number, event_type, source_simulation_id, target_simulation_id, mission_id, narrative, is_public, metadata, created_at) VALUES
         (v_epoch_id, 7, 'operative_deployed', v_capybara, v_velgarien, v_m12,
-         'Commodore Whiskers begins a second infiltration operation — this time targeting Velgarien''s Regierungsviertel. The capybara''s appetite for secrets grows.',
+         'Commodore Harrowgate begins a second infiltration operation — this time targeting Velgarien''s Regierungsviertel. The Commodore''s appetite for secrets grows.',
          false, '{"operative_type": "infiltrator", "target": "Velgarien"}'::jsonb, now() - INTERVAL '10 hours');
 
     RAISE NOTICE 'Epoch demo data inserted: "The Convergence Protocol" with 4 participants, 1 team, 21 missions, 28 score entries, 30 battle log entries.';

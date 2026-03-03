@@ -10,7 +10,7 @@
 --
 -- Player UUIDs:
 --   P1 (Velgarien):        00000000-0000-0000-0000-000000000002
---   P2 (Capybara Kingdom): 00000000-0000-0000-0000-000000000003
+--   P2 (The Gaslit Reach): 00000000-0000-0000-0000-000000000003
 --   P3 (Station Null):     00000000-0000-0000-0000-000000000004
 --   P4 (Speranza):         00000000-0000-0000-0000-000000000005
 -- =============================================================================
@@ -51,7 +51,7 @@ BEGIN
         (v_p2, v_instance, 'authenticated', 'authenticated',
          'player-capybara@velgarien.dev', v_password, now(),
          '{"provider":"email","providers":["email"]}',
-         '{"name":"Cmdr. Whiskers"}',
+         '{"name":"Cmdr. Harrowgate"}',
          now(), now(), '', '', '', ''),
         (v_p3, v_instance, 'authenticated', 'authenticated',
          'player-station-null@velgarien.dev', v_password, now(),
@@ -96,5 +96,5 @@ BEGIN
         (v_speranza,     v_p4, 'owner')
     ON CONFLICT (simulation_id, user_id) DO NOTHING;
 
-    RAISE NOTICE 'Dev players created: P1 (Velgarien), P2 (Capybara), P3 (Station Null), P4 (Speranza).';
+    RAISE NOTICE 'Dev players created: P1 (Velgarien), P2 (Gaslit Reach), P3 (Station Null), P4 (Speranza).';
 END $$;

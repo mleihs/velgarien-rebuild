@@ -27,7 +27,7 @@ Following the initial Shadow War playthrough, multiple bugs were discovered and 
 | Player | Simulation | Guardians | Strategy |
 |--------|-----------|-----------|----------|
 | P1 | Velgarien (dystopian) | 2 | Heavy defense + targeted strikes |
-| P2 | Capybara Kingdom (fantasy) | 1 | Light defense + aggressive offense |
+| P2 | The Gaslit Reach (fantasy) | 1 | Light defense + aggressive offense |
 
 ## Game Configuration
 
@@ -52,38 +52,38 @@ EPOCH PLAYTHROUGH — Bug Fix Verification
 [2] Creating epoch...
   Epoch: 99e345fe-20b3-466a-8357-326aaf912550
 
-[3] Joining with Velgarien and Capybara Kingdom...
+[3] Joining with Velgarien and The Gaslit Reach...
   Joined: Velgarien (RP: 0)
-  Joined: The Capybara Kingdom (RP: 0)
+  Joined: The Gaslit Reach (RP: 0)
 
 [4] Starting epoch (lobby → foundation)...
   Status: foundation | Cycle: 1
   V instance: 78b57162... (RP: 37)
-  CK instance: dda1ed60... (RP: 37)
+  GR instance: dda1ed60... (RP: 37)
 
 [5] Looking up cloned agents, zones, embassies...
-  V agents: 6, CK agents: 6
+  V agents: 6, GR agents: 6
   V zones: [('Altstadt', 'high'), ('Industriegebiet Nord', 'medium'), ('Regierungsviertel', 'medium')]
-  CK zones: [('Deepreach', 'high'), ('The Fungal Warrens', 'medium'), ('The Undertide Docks', 'medium'), ('The Upper Caverns', 'low')]
+  GR zones: [('Deepreach', 'high'), ('The Fungal Warrens', 'medium'), ('The Undertide Docks', 'medium'), ('Upper Galleries', 'low')]
   Embassy: c64b209e...
 
 [6] FOUNDATION — Deploying guardians...
   V Guardian: Doktor Fenn ✓
   V Guardian: Elena Voss ✓
-  CK Guardian: Archivist Mossback ✓
+  GR Guardian: Archivist Mossback ✓
   V RP after guardians: 31 (37 - 2×3 = 31)
-  CK RP after guardians: 34 (37 - 1×3 = 34)
+  GR RP after guardians: 34 (37 - 1×3 = 34)
 
 [7] Advancing to COMPETITION...
   Status: competition
 
 [8] COMPETITION — Deploying offensive operatives...
-  V→CK Spy: prob=0.190 (CK has 1 guardian, low zone)
-  V→CK Saboteur: prob=0.110 (CK has 1 guardian, medium zone)
-  CK→V Spy: prob=0.050 (V has 2 guardians → −0.40!)
-  CK→V Propagandist: prob=0.050 (V has 2 guardians → −0.40!)
+  V→GR Spy: prob=0.190 (GR has 1 guardian, low zone)
+  V→GR Saboteur: prob=0.110 (GR has 1 guardian, medium zone)
+  GR→V Spy: prob=0.050 (V has 2 guardians → −0.40!)
+  GR→V Propagandist: prob=0.050 (V has 2 guardians → −0.40!)
   V RP remaining: 23
-  CK RP remaining: 27
+  GR RP remaining: 27
 
 [9] Force-expiring missions and resolving...
   spy: detected (prob=0.190)
@@ -97,13 +97,13 @@ EPOCH PLAYTHROUGH — Bug Fix Verification
 
 [11] Leaderboard...
   #1 Velgarien (Epoch 12): 0.00
-  #2 The Capybara Kingdom (Epoch 12): -3.36
+  #2 The Gaslit Reach (Epoch 12): -3.36
 
 [12] Resolving cycle, advancing to cycle 2...
 
 [13] Cycle 2 — more operatives...
-  V→CK Propagandist: prob=0.140
-  CK→V Saboteur: prob=0.050
+  V→GR Propagandist: prob=0.140
+  GR→V Saboteur: prob=0.050
   saboteur: success (prob=0.110)
   propagandist: detected (prob=0.050)
 
@@ -116,7 +116,7 @@ EPOCH PLAYTHROUGH — Bug Fix Verification
 
 [15] Final standings...
   #1 Velgarien (Epoch 12): 80.00
-  #2 The Capybara Kingdom (Epoch 12): -3.36
+  #2 The Gaslit Reach (Epoch 12): -3.36
 
 [16] Battle log...
   [phase_change] Epoch transitions from reckoning to completed.
@@ -135,13 +135,13 @@ EPOCH PLAYTHROUGH — Bug Fix Verification
 | Target | Guardians | Avg Success Probability | Missions |
 |--------|-----------|------------------------|----------|
 | Velgarien | 2 | **0.050** (floor) | 3 |
-| Capybara Kingdom | 1 | **0.147** | 3 |
+| The Gaslit Reach | 1 | **0.147** | 3 |
 
-The −0.20 per guardian penalty is clearly visible. With 2 guardians, all attacks on Velgarien are floored at 0.05 (5%). With 1 guardian, Capybara attacks average 14.7%.
+The −0.20 per guardian penalty is clearly visible. With 2 guardians, all attacks on Velgarien are floored at 0.05 (5%). With 1 guardian, Gaslit Reach attacks average 14.7%.
 
 ### Scoring ✓
 
-| Dimension | Velgarien | Capybara Kingdom | Notes |
+| Dimension | Velgarien | The Gaslit Reach | Notes |
 |-----------|-----------|-----------------|-------|
 | Stability | 19.5 | 16.9 | From zone MV after refresh |
 | Influence | 0.0 | 0.0 | No bleed echoes in game |
@@ -165,7 +165,7 @@ Mixed outcomes confirm probabilistic resolution works. All 3 guardians remain ac
 
 ### RP Economy ✓
 
-| Event | V RP | CK RP |
+| Event | V RP | GR RP |
 |-------|------|-------|
 | Foundation bonus (25 × 1.5) | 37 | 37 |
 | After guardians (−3 each) | 31 | 34 |

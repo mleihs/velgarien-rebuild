@@ -3,7 +3,7 @@
 > **Simulated:** 2026-03-02 (local API, balance tuning v2.1 applied)
 > **Total games:** 200 (50x2P + 50x3P + 50x4P + 50x5P)
 > **Valid games:** 188 (12 empty leaderboards: 0 in 2P, 4 in 3P, 6 in 4P, 2 in 5P)
-> **Simulations tested:** Velgarien (V), Capybara Kingdom (CK), Station Null (SN), Speranza (SP), Nova Meridian (NM)
+> **Simulations tested:** Velgarien (V), The Gaslit Reach (GR), Station Null (SN), Speranza (SP), Nova Meridian (NM)
 > **Note:** NM excluded from 2P (only 4 sims). All 4 batteries ran complete 50-game sets. This is the v2.1 run with guardian penalty reduction (0.08/unit, cap 0.20), saboteur zone downgrade, scoring dimension rebalance, and betrayal/alliance tuning applied.
 
 ---
@@ -50,7 +50,7 @@ The v2.1 balance tuning is a **transformational improvement** over v2. The two m
 |-----------|---------|---------|---------|---------|---------|
 | **Speranza** | **54%** (15/28) | **48%** (13/27) | 26% (12/46) | 22% (11/50) | **34%** (51/151) |
 | **Velgarien** | 46% (12/26) | 37% (10/27) | 26% (11/43) | 22% (11/50) | **30%** (44/146) |
-| **Capybara Kingdom** | **65%** (15/23) | 15% (4/27) | 14% (5/37) | 22% (11/50) | **26%** (35/137) |
+| **The Gaslit Reach** | **65%** (15/23) | 15% (4/27) | 14% (5/37) | 22% (11/50) | **26%** (35/137) |
 | **Station Null** | 35% (8/23) | 35% (12/34) | 17% (7/41) | 12% (6/50) | **22%** (33/148) |
 | **Nova Meridian** | N/A | 20% (7/35) | **27%** (9/33) | 18% (9/50) | **21%** (25/118) |
 
@@ -67,7 +67,7 @@ The convergence toward theoretical fairness at higher player counts is remarkabl
 | 4P (theoretical: 25%) | 20–30% | 4 of 5 (SP, V, NM, SN) |
 | 5P (theoretical: 20%) | 15–25% | **5 of 5** (all) |
 
-At 5P, every simulation is within 10pp of the theoretical 20% — this is exceptional balance. The 2P outliers (CK at 65%, SN at 35%) are expected variance in a format where one bad strategy assignment can dominate.
+At 5P, every simulation is within 10pp of the theoretical 20% — this is exceptional balance. The 2P outliers (GR at 65%, SN at 35%) are expected variance in a format where one bad strategy assignment can dominate.
 
 ### Simulation Profiles
 
@@ -75,7 +75,7 @@ At 5P, every simulation is within 10pp of the theoretical 20% — this is except
 
 **Velgarien (30% — Balanced):** The v2.1 tuning achieved what v2 couldn't: V is now a normal competitor. The 3P spike (v2: 59%) collapsed to 37%, perfectly within the fairness band. V's zone stability advantage from having 3 original zones (padded to 4 in cloning) no longer translates to wins — the saboteur zone downgrade equalizer works.
 
-**Capybara Kingdom (26% — 2P Specialist):** CK's 65% at 2P is the largest single-format outlier in the dataset. At 3P+ CK drops to 14–22%. This "strong in duels, weak in crowds" profile suggests CK's template excels at head-to-head but gets outmaneuvered when targets are diluted across multiple opponents.
+**The Gaslit Reach (26% — 2P Specialist):** GR's 65% at 2P is the largest single-format outlier in the dataset. At 3P+ GR drops to 14–22%. This "strong in duels, weak in crowds" profile suggests GR's template excels at head-to-head but gets outmaneuvered when targets are diluted across multiple opponents.
 
 **Station Null (22% — Consistent Underperformer):** SN has the lowest overall win rate. Its 12% at 5P is the weakest single data point. Yet SN maintains 35% at 2P/3P — the same as its v2 numbers. The scaling issue likely comes from SN's template characteristics interacting poorly with the clone normalization at higher player counts.
 
@@ -87,7 +87,7 @@ At 5P, every simulation is within 10pp of the theoretical 20% — this is except
 |-----------|-----|-----|------|-------|
 | Velgarien | **87%** | 43% | 30% | Declining toward fair |
 | Speranza | 16% | 41% | 34% | Stabilizing as leader |
-| Capybara Kingdom | — | 32% | 26% | Declining toward fair |
+| The Gaslit Reach | — | 32% | 26% | Declining toward fair |
 | Station Null | — | 25% | 22% | Stable, slightly low |
 | Nova Meridian | — | **0%** | 21% | **Fixed** |
 
@@ -228,7 +228,7 @@ ci_defensive's 64% win rate represents a fundamental game design issue. Breaking
 | Velgarien | 55% | 57% | 54% | 58% | **56%** |
 | Station Null | 59% | 52% | 49% | 57% | **54%** |
 | Nova Meridian | N/A | 50% | 55% | 56% | **54%** |
-| Capybara Kingdom | 56% | 53% | 53% | 55% | **54%** |
+| The Gaslit Reach | 56% | 53% | 53% | 55% | **54%** |
 | Speranza | 52% | 52% | 52% | 55% | **53%** |
 
 **Remarkably tight clustering (53–56%).** The qualification normalization (all agents get qual=5) combined with the reduced guardian penalty created near-identical success environments across all simulations. No simulation has a structural advantage in mission execution. The 1–3pp differences are within statistical noise for these sample sizes.
@@ -268,9 +268,9 @@ The 2P data shows the opposite pattern (higher RP = lower margin), likely becaus
 
 **Closest games in the dataset:**
 - 3P G23: SN beats NM by **0.4 points** (74.9 vs 74.5)
-- 5P G45: SP beats CK by **0.5 points** (92.9 vs 92.4)
-- 4P G13: SP beats CK by **1.2 points** (97.2 vs 96.0)
-- 4P G8: SN beats CK by **1.6 points** (31.6 vs 30.0)
+- 5P G45: SP beats GR by **0.5 points** (92.9 vs 92.4)
+- 4P G13: SP beats GR by **1.2 points** (97.2 vs 96.0)
+- 4P G8: SN beats GR by **1.6 points** (31.6 vs 30.0)
 
 These razor-thin margins demonstrate that the scoring system can produce genuinely competitive outcomes where every operative decision matters.
 
@@ -405,7 +405,7 @@ With 200 games (188 valid), the key confidence levels are:
 | Per-player-count rates | 23–50 games per sim | ±12–20pp | LOW-MODERATE |
 | Guardian impact | 20–86 data points per bin | ±10–22pp | LOW-MODERATE |
 
-**The overall narratives are statistically robust** (NM's resurrection, V's decline, ci_defensive dominance). Individual per-format data points (e.g., "CK at 2P = 65%") should be treated as indicative rather than definitive — the 95% CI is ±14pp, meaning CK's true 2P rate could be anywhere from 51% to 79%.
+**The overall narratives are statistically robust** (NM's resurrection, V's decline, ci_defensive dominance). Individual per-format data points (e.g., "GR at 2P = 65%") should be treated as indicative rather than definitive — the 95% CI is ±14pp, meaning GR's true 2P rate could be anywhere from 51% to 79%.
 
 ---
 
@@ -441,7 +441,7 @@ Each game is generated with varied parameters:
 | Simulation | Tag | Cloned Agents | Cloned Buildings | Zones | Embassies | Success Rate |
 |-----------|-----|--------------|-----------------|-------|-----------|-------------|
 | Velgarien | V | 6 | 8 | 4 | 3 | 56% |
-| Capybara Kingdom | CK | 6 | 8 | 4 | 3 | 54% |
+| The Gaslit Reach | GR | 6 | 8 | 4 | 3 | 54% |
 | Station Null | SN | 6 | 8 | 4 | 3 | 54% |
 | Speranza | SP | 6 | 8 | 4 | 3 | 53% |
 | Nova Meridian | NM | 6 | 8 | 4 | 3 | 54% |

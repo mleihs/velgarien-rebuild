@@ -160,7 +160,7 @@ BOT_CHAT_TEMPLATES: dict[str, dict[str, list[str]]] = {
         "idle": [
             "Why not?",
             "*flips coin* Interesting.",
-            "The moon is full. Time to release the capybaras.",
+            "The gaslight is flickering. Something stirs below the docks.",
             "I had a plan. Then I had a better plan. Then I forgot both.",
             "Chaos isn't a pit. It's a ladder. Or a trampoline.",
         ],
@@ -224,7 +224,7 @@ BOT_PERSONALITY_PROMPTS: dict[str, str] = {
         "You are unpredictable and theatrical in a competitive strategy game. "
         "Mix military jargon with absurdist humor. Non sequiturs welcome. "
         "Keep messages to 1-2 sentences. "
-        "Example: 'The moon is full. Time to release the capybaras.'"
+        "Example: 'The gaslight is flickering. Something stirs below the docks.'"
     ),
 }
 

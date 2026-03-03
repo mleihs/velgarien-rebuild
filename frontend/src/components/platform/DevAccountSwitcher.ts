@@ -21,7 +21,7 @@ interface DevAccount {
 const DEV_ACCOUNTS: DevAccount[] = [
   { label: 'Admin', email: 'admin@velgarien.dev' },
   { label: 'Voss (Vel)', email: 'player-velgarien@velgarien.dev' },
-  { label: 'Whiskers (Cap)', email: 'player-capybara@velgarien.dev' },
+  { label: 'Harrowgate (GR)', email: 'player-capybara@velgarien.dev' },
   { label: 'Vasquez (SN)', email: 'player-station-null@velgarien.dev' },
   { label: 'Rosa (Spe)', email: 'player-speranza@velgarien.dev' },
 ];

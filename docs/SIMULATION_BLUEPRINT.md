@@ -2,7 +2,7 @@
 
 Reusable reference for creating new simulations on metaverse.center. Every simulation follows the same file/data structure. This document captures the complete process, from world design through deployment, so future additions can reference it directly.
 
-**Current simulations:** Velgarien (1), Capybara Kingdom (2), Station Null (3), Speranza (4), Cit&eacute; des Dames (5).
+**Current simulations:** Velgarien (1), The Gaslit Reach (2), Station Null (3), Speranza (4), Cit&eacute; des Dames (5).
 
 ---
 

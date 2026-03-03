@@ -2,7 +2,7 @@
 
 **Version:** 1.4
 **Datum:** 2026-02-25
-**Status:** Alle 6 Phasen + i18n + per-Simulation-Theming komplett. 4 Simulationen live: Velgarien, Capybara Kingdom, Station Null, Speranza. Agent Relationships + Event Echoes + Cartographer's Map (Phase 6). Embassies & Ambassadors (cross-sim diplomatische Gebaeude, `.card--embassy` Pulsring + Gradient-Hover mit per-Theme-Farben). Slug-basierte URLs. 30 Migrationen (001-029 + ensure_dev_user). 7 Theme-Presets. 1090 lokalisierte UI-Strings (EN/DE). Alle Bilder via Replicate AI generiert (AVIF). Production deployed auf Railway + hosted Supabase. (Siehe [19_DEPLOYMENT_INFRASTRUCTURE.md](./19_DEPLOYMENT_INFRASTRUCTURE.md))
+**Status:** Alle 6 Phasen + i18n + per-Simulation-Theming komplett. 4 Simulationen live: Velgarien, The Gaslit Reach, Station Null, Speranza. Agent Relationships + Event Echoes + Cartographer's Map (Phase 6). Embassies & Ambassadors (cross-sim diplomatische Gebaeude, `.card--embassy` Pulsring + Gradient-Hover mit per-Theme-Farben). Slug-basierte URLs. 30 Migrationen (001-029 + ensure_dev_user). 7 Theme-Presets. 1090 lokalisierte UI-Strings (EN/DE). Alle Bilder via Replicate AI generiert (AVIF). Production deployed auf Railway + hosted Supabase. (Siehe [19_DEPLOYMENT_INFRASTRUCTURE.md](./19_DEPLOYMENT_INFRASTRUCTURE.md))
 
 ---
 
@@ -20,7 +20,7 @@ Plattform (Multi-Tenancy)
 │   ├── 8 Agenten, 6 Gebäude, 6 Events, 3 Zonen, 1 Stadt
 │   ├── Eigene Enums, Prompts, Design, Integrationen
 │   └── Eigene AI-Modelle und Konfiguration
-├── Simulation "Capybara Kingdom" (fantasy, underground kingdom)
+├── Simulation "The Gaslit Reach" (fantasy, underground kingdom)
 │   ├── 5 Agenten, 5 Gebäude, 5 Zonen, 1 Stadt
 │   └── Fantasy-Kingdom Theme, viktorianische Ästhetik
 ├── Simulation "Station Null" (sci-fi horror, deep space)

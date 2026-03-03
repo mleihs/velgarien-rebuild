@@ -1,7 +1,8 @@
 # 04 - Domain Models: Entitaeten mit Simulation-Scope
 
-**Version:** 2.7
-**Datum:** 2026-03-02
+**Version:** 2.8
+**Datum:** 2026-03-03
+**Aenderung v2.8:** NotificationPreferences interface. SettingCategory + `'notifications'`.
 **Aenderung v2.7:** Bot Player types (BotPlayer, BotPersonality, BotDifficulty). is_bot/bot_player_id/bot_players auf EpochParticipant. sender_type auf EpochChatMessage.
 **Aenderung v2.6:** Platform Admin types (PlatformSetting, AdminUser, AdminUserDetail, AdminMembership) fuer Admin-Panel User-Management und Cache-TTL-Konfiguration.
 **Aenderung v2.5:** RelationshipSuggestion interface (AI-generated relationship suggestions for inline review in AgentDetailsPanel).
@@ -102,7 +103,7 @@ interface SimulationMember {
 interface SimulationSetting {
   id: UUID;
   simulation_id: UUID;
-  category: SettingCategory;        // 'general' | 'world' | 'ai' | 'integration' | 'design' | 'access' | 'prompts'
+  category: SettingCategory;        // 'general' | 'world' | 'ai' | 'integration' | 'design' | 'access' | 'prompts' | 'notifications'
   setting_key: string;              // RENAMED: key -> setting_key (SQL reserved word)
   setting_value: any;               // RENAMED: value -> setting_value (SQL reserved word)
   updated_by_id?: UUID;             // RENAMED: updated_by -> updated_by_id (FK-Suffix)
@@ -1177,3 +1178,16 @@ interface BotPlayer {
   updated_at: string;
 }
 ```
+
+### Notification Preferences
+
+```typescript
+interface NotificationPreferences {
+  cycle_resolved: boolean;           // Email nach cycle resolve
+  phase_changed: boolean;            // Email bei Phasenwechsel
+  epoch_completed: boolean;          // Email bei Epoch-Ende (Endrangliste)
+  email_locale: string;              // 'en' | 'de' — Sprache der Email
+}
+```
+
+Gespeichert in `notification_preferences` Tabelle (1 Zeile pro User, UNIQUE user_id). Defaults: alle `true`, locale `'en'`. Verwendet in `CycleNotificationService` fuer Recipient-Resolution.

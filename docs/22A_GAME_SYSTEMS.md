@@ -529,7 +529,7 @@ The existing role hierarchy is: **Owner** > **Editor** > **Viewer** (per simulat
 │  │  Reach: 2.4                   │  │  Permeability: 0.61   ││
 │  │  Active embassies: 3          │  │                       ││
 │  │                               │  │  Outbound echoes:  7  ││
-│  │  ● Capybara Kingdom    0.82   │  │  Inbound echoes:   4  ││
+│  │  ● The Gaslit Reach    0.82   │  │  Inbound echoes:   4  ││
 │  │  ○ Station Null         0.61   │  │                       ││
 │  │  ○ Speranza            0.34   │  │  Cascade risk: LOW    ││
 │  │                               │  │  ░░░░░░░░░░░░░░░░░░░ ││
@@ -610,7 +610,7 @@ The existing role hierarchy is: **Owner** > **Editor** > **Viewer** (per simulat
 │  ┌─ PAST EPOCHS ─────────────────────────────────────────────┐│
 │  │  #3  "The Reckoning"     14d    Winner: Velgarien  (72.3) ││
 │  │  #2  "Convergence War"    7d    Winner: Team Alpha (68.1) ││
-│  │  #1  "First Contact"      3d    Winner: Capybara   (81.0) ││
+│  │  #1  "First Contact"      3d    Winner: Gaslit R.  (81.0) ││
 │  └───────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -626,7 +626,7 @@ The existing role hierarchy is: **Owner** > **Editor** > **Viewer** (per simulat
 │  ┌─ LEADERBOARD ─────────────────────────────────────────────┐│
 │  │ #  Simulation        Score  Stab Infl Sovr Dipl Milt      ││
 │  │ 1  Velgarien          72.3  ████ ███░ ████ ██░░ ███░      ││
-│  │ 2  Capybara Kingdom   68.1  ████ ██░░ ███░ ████ ██░░      ││
+│  │ 2  The Gaslit Reach   68.1  ████ ██░░ ███░ ████ ██░░      ││
 │  │ 3  Station Null       54.7  ██░░ ████ ██░░ █░░░ ████      ││
 │  │ 4  Speranza          41.2  █░░░ ██░░ ███░ ██░░ █░░░      ││
 │  └───────────────────────────────────────────────────────────┘│
@@ -647,14 +647,14 @@ The existing role hierarchy is: **Owner** > **Editor** > **Viewer** (per simulat
 │  ┌─ BATTLE LOG (last 24h) ───────────────────────────────────┐│
 │  │  ⚔ Your saboteur damaged "Clockwork Forge" in Speranza    ││
 │  │  🛡 Guardian detected spy in Industrial District (captured)││
-│  │  💀 Your spy in Capybara was detected — diplomatic incident││
+│  │  💀 Your spy in Gaslit Reach was detected — diplomatic incident││
 │  │  📢 Propagandist generated "The False Prophecy" in S.Null  ││
 │  └───────────────────────────────────────────────────────────┘│
 │                                                               │
 │  ┌─ ALLIANCES ───────────────┐  ┌─ QUICK ACTIONS ───────────┐│
 │  │  Team "The Accord"        │  │  [Deploy Operative]  3-8 RP││
 │  │  • Velgarien (you)        │  │  [Boost Embassy]     2 RP  ││
-│  │  • Capybara Kingdom       │  │  [Repair Building]   1 RP  ││
+│  │  • The Gaslit Reach       │  │  [Repair Building]   1 RP  ││
 │  │                           │  │  [Trigger Bleed]     2 RP  ││
 │  │  [Invite to Alliance]     │  │  [Counter-Intel]     3 RP  ││
 │  └───────────────────────────┘  └────────────────────────────┘│
@@ -775,7 +775,7 @@ The existing map gains competitive overlays during an active epoch:
 ┌─────────────────────────────────────────────────────────────┐
 │  ░░ THE CARTOGRAPHER'S MAP ░░    "The Convergence" Day 7/14  │
 │                                                               │
-│            [Velgarien]──────────[Capybara Kingdom]            │
+│            [Velgarien]──────────[The Gaslit Reach]            │
 │             ╱  #1 72.3  ╲thick      #2 68.1     ╲           │
 │            ╱               ╲                       ╲          │
 │   [Station Null]────────────[Speranza]              │          │
@@ -820,8 +820,8 @@ Competitive actions generate notifications (via existing `NotificationCenter`):
 | Operative detected | Both players | Critical | "Diplomatic incident! Your saboteur was captured in Speranza." |
 | Building sabotaged | Target player | Critical | "The Clockwork Forge was sabotaged! Condition: good → moderate." |
 | Incoming propaganda | Target player | High | "Foreign propaganda event detected in Market Ward: 'The False Prophecy'." |
-| Alliance formed | Team members | Normal | "Alliance 'The Accord' formed with Capybara Kingdom." |
-| Alliance betrayal | Victim | Critical | "BETRAYAL: Capybara Kingdom attacked from within your alliance!" |
+| Alliance formed | Team members | Normal | "Alliance 'The Accord' formed with The Gaslit Reach." |
+| Alliance betrayal | Victim | Critical | "BETRAYAL: The Gaslit Reach attacked from within your alliance!" |
 | Phase transition | All participants | High | "RECKONING PHASE begins. Bleed thresholds -2. Cascade depth +1." |
 | Epoch ended | All participants | Critical | "Epoch 'The Convergence' ended. Winner: Velgarien (72.3 pts)." |
 

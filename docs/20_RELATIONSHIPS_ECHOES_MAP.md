@@ -59,7 +59,7 @@ Creates a directed graph of relationships between agents within a simulation. Ea
 | Simulation | Types |
 |-----------|-------|
 | **Velgarien** | handler, informant, rival, co_conspirator, supervisor, subject |
-| **Capybara Kingdom** | ally, mentor, rival, trading_partner, blood_oath, scholarly_colleague |
+| **The Gaslit Reach** | ally, mentor, rival, trading_partner, blood_oath, scholarly_colleague |
 | **Station Null** | crew_partner, antagonist, subject_of_study, commanding_officer, quarantine_contact |
 | **Speranza** | contrada_kin, raid_partner, apprentice, rival, salvage_partner, sworn_enemy |
 
@@ -145,7 +145,7 @@ curl "http://localhost:8000/api/v1/public/simulations/{sim_id}/agents/{agent_id}
 - Voss --> Kessler: `rival` (intensity 6) — "A quiet bureaucratic war over Bureau 9 jurisdiction"
 - Mueller --> Braun: `informant` (intensity 7) — "Mueller reports architectural anomalies to Braun"
 
-**Capybara Kingdom (3 relationships):**
+**The Gaslit Reach (3 relationships):**
 - Elderberry --> Fernwhistle: `mentor` (intensity 9) — "The elder scholar guides the young cartographer"
 - Thornback --> Mudwalker: `trading_partner` (intensity 7) — "Bioluminescent goods flow between their domains"
 - Dewdrop --> Elderberry: `scholarly_colleague` (intensity 6) — "They share research on the Unterzee tides"
@@ -182,7 +182,7 @@ The seven channels through which events bleed between simulations:
 
 | Vector | Description | Example |
 |--------|-------------|---------|
-| **Commerce** | Trade, economics, resource flow | A market crash in Velgarien causes supply shortages in Capybara Kingdom |
+| **Commerce** | Trade, economics, resource flow | A market crash in Velgarien causes supply shortages in The Gaslit Reach |
 | **Language** | Words, phrases, propaganda | Bureaucratic terms from Velgarien appear in Station Null comms |
 | **Memory** | Collective/individual memory | Station Null crew dream of underground kingdoms |
 | **Resonance** | Vibration, frequency, music | Bureau radio frequencies bleed into station transmissions |
@@ -367,11 +367,11 @@ A platform-level page at `/multiverse` showing all four simulations as nodes in 
 
 | Simulation A | Simulation B | Vectors | Strength | Description |
 |-------------|-------------|---------|----------|-------------|
-| Velgarien | Capybara Kingdom | memory, architecture | 0.7 | Brutalist forms appear in cavern walls; citizens dream of dark waters |
+| Velgarien | The Gaslit Reach | memory, architecture | 0.7 | Brutalist forms appear in cavern walls; citizens dream of dark waters |
 | Velgarien | Station Null | dream, resonance | 0.5 | Bureau radio frequencies bleed into station comms |
 | Velgarien | Speranza | commerce, language | 0.6 | Propaganda leaflets found in salvage; similar bureaucratic structures |
-| Capybara Kingdom | Station Null | memory, desire | 0.4 | The Unterzee's darkness mirrors the void; bioluminescence echoes station lights |
-| Capybara Kingdom | Speranza | architecture, commerce | 0.5 | Underground civilizations share construction knowledge |
+| The Gaslit Reach | Station Null | memory, desire | 0.4 | The Unterzee's darkness mirrors the void; bioluminescence echoes station lights |
+| The Gaslit Reach | Speranza | architecture, commerce | 0.5 | Underground civilizations share construction knowledge |
 | Station Null | Speranza | resonance, dream | 0.6 | Station transmissions reach underground receivers; shared isolation themes |
 
 ### Force-Directed Layout Algorithm

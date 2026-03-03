@@ -25,7 +25,8 @@ export type SettingCategory =
   | 'integration'
   | 'design'
   | 'access'
-  | 'prompts';
+  | 'prompts'
+  | 'notifications';
 
 export type TaxonomyType =
   | 'gender'
@@ -1104,4 +1105,13 @@ export interface AdminMembership {
   simulation_id: string;
   member_role: string;
   simulations?: { id: string; name: string; slug: string };
+}
+
+// --- Notification Preferences ---
+
+export interface NotificationPreferences {
+  cycle_resolved: boolean;
+  phase_changed: boolean;
+  epoch_completed: boolean;
+  email_locale: string;
 }

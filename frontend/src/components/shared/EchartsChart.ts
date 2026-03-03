@@ -13,7 +13,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 const TACTICAL_THEME: Record<string, unknown> = {
   color: [
     '#d4a24e', // Speranza amber
-    '#6bcb77', // Capybara green
+    '#6bcb77', // Gaslit Reach green
     '#e74c3c', // Velgarien red
     '#a78bfa', // Nova Meridian purple
     '#67e8f9', // Station Null cyan

@@ -26,6 +26,7 @@ from backend.models.epoch import (
 from backend.models.epoch_chat import ReadySignal
 from backend.services.audit_service import AuditService
 from backend.services.battle_log_service import BattleLogService
+from backend.services.cycle_notification_service import CycleNotificationService
 from backend.services.epoch_chat_service import EpochChatService
 from backend.services.epoch_service import EpochService
 from backend.services.game_instance_service import GameInstanceService
@@ -154,18 +155,34 @@ async def advance_phase(
     user: CurrentUser = Depends(get_current_user),
     _creator_check: None = Depends(require_epoch_creator()),
     supabase: Client = Depends(get_supabase),
+    admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
     """Advance to next epoch phase. Creator only."""
     epoch = await EpochService.get(supabase, epoch_id)
     old_status = epoch["status"]
     data = await EpochService.advance_phase(supabase, epoch_id)
+    new_status = data["status"]
     await BattleLogService.log_phase_change(
-        supabase, epoch_id, epoch.get("current_cycle", 1), old_status, data["status"]
+        supabase, epoch_id, epoch.get("current_cycle", 1), old_status, new_status
     )
+
+    # Send notification emails (best-effort, non-blocking)
+    try:
+        if new_status == "completed":
+            await CycleNotificationService.send_epoch_completed_notifications(
+                admin_supabase, str(epoch_id),
+            )
+        else:
+            await CycleNotificationService.send_phase_change_notifications(
+                admin_supabase, str(epoch_id), old_status, new_status,
+            )
+    except Exception:
+        logger.warning("Phase notification failed for epoch %s", epoch_id, exc_info=True)
+
     try:
         await AuditService.log_action(
             supabase, None, user.id, "game_epochs", epoch_id, "update",
-            details={"action": "advance", "old_status": old_status, "new_status": data["status"]},
+            details={"action": "advance", "old_status": old_status, "new_status": new_status},
         )
     except Exception:
         logger.debug("Audit log skipped for epoch advance (RLS)")
@@ -232,6 +249,14 @@ async def resolve_cycle(
         )
     except Exception:
         logger.warning("Bot cycle execution failed for epoch %s", epoch_id, exc_info=True)
+
+    # Send cycle notification emails (best-effort, non-blocking)
+    try:
+        await CycleNotificationService.send_cycle_notifications(
+            admin_supabase, str(epoch_id), cycle_number,
+        )
+    except Exception:
+        logger.warning("Cycle notification failed for epoch %s", epoch_id, exc_info=True)
 
     try:
         await AuditService.log_action(

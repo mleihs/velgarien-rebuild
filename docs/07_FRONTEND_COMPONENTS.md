@@ -1,7 +1,8 @@
 # 07 - Frontend Components: Komponenten + Simulation-Settings-UI
 
-**Version:** 2.0
-**Datum:** 2026-03-02
+**Version:** 2.1
+**Datum:** 2026-03-03
+**Aenderung v2.1:** Epoch Cycle Email Notifications — NotificationsSettingsPanel in settings/ (new "Notifications" tab with 3 toggle switches + locale selector). NotificationPreferencesApiService (2 Methoden). Updated counts: **129 files across 17 subdirectories, 106 @customElement components**, 26 API services.
 **Aenderung v2.0:** Front Page Literary Rewrite — LoreScroll expanded from 20 to 25 sections across 6 chapters, all 5 simulations now covered equally (Bureau Dossier + Field Report per sim). SimulationsDashboard updated: new slogan "Five Worlds. One Fracture.", Spectral/`--font-bureau` serif font on hero/footer/lore strip. lore/ directory: 7 files (5 content files + dispatcher + SimulationLoreView). Cité des Dames lore content file added. 2063 i18n strings total.
 **Aenderung v1.9:** Bot Players — 1 neue Komponente in `epoch/` (BotConfigPanel). BotApiService (6 Methoden). Bot-Indikatoren auf EpochLeaderboard, EpochBattleLog, EpochChatPanel, EpochReadyPanel, EpochOpsBoard. "Add Bots" Button auf EpochLobbyActions. AI Settings: bot_chat_mode + model_bot_chat. Updated counts: **128 files across 17 subdirectories, 105 @customElement components**, 25 API services.
 **Aenderung v1.8:** Platform Admin Panel — 3 neue Komponenten in `admin/` (AdminPanel, AdminUsersTab, AdminCachingTab). AdminApiService (8 Methoden). `isPlatformAdmin` computed Signal in AppStateManager. `/admin` Route mit Auth+Admin-Guard. "Admin" Nav-Link in PlatformHeader (rot, nur fuer Platform-Admin sichtbar). Updated counts: 126 files across 17 subdirectories, 104 @customElement components, 24 API services.
@@ -19,7 +20,7 @@
 
 ### Plattform-Level
 
-**123 component files** across 16 subdirectories. **101 @customElement** components. **16 shared components + 10 CSS modules + 1 base class.**
+**129 component files** across 17 subdirectories. **106 @customElement** components. **16 shared components + 10 CSS modules + 1 base class.**
 
 ```
 App (Root)
@@ -136,7 +137,8 @@ SimulationShell (Layout mit Navigation)
     ├── DesignSettingsPanel (extends BaseSettingsPanel)
     ├── AccessSettingsPanel (extends BaseSettingsPanel)
     ├── PromptsSettingsPanel
-    └── BleedSettingsPanel
+    ├── BleedSettingsPanel
+    └── NotificationsSettingsPanel (3 toggle switches + locale selector)
 ```
 
 ### Shared Components
@@ -529,10 +531,11 @@ frontend/src/services/api/
 ├── EpochChatApiService.ts          # Epoch chat messages (REST catch-up) + ready signals
 ├── HealthApiService.ts             # Simulation health + game mechanics
 ├── BotApiService.ts                # Bot player preset CRUD + add/remove bot from epoch
+├── NotificationPreferencesApiService.ts  # Notification preferences (GET + POST /users/me/notification-preferences)
 └── index.ts                        # Re-exports all service singletons
 ```
 
-**25 API services** (excluding BaseApiService and index.ts).
+**26 API services** (excluding BaseApiService and index.ts).
 
 ### Platform-Level Services
 
@@ -616,6 +619,7 @@ class BaseApiService {
 | Embassies, Epochs, Health | EmbassiesApi, EpochsApi, HealthApi | FastAPI |
 | Epoch Chat (REST catch-up) | EpochChatApiService | FastAPI |
 | Bot Players (presets, add/remove from epoch) | BotApiService | FastAPI |
+| Notification Preferences (get + upsert) | NotificationPreferencesApiService | FastAPI |
 | Epoch Realtime (live messages, presence, ready) | RealtimeService | Supabase Realtime |
 
 ---
@@ -726,12 +730,12 @@ Alle Änderungen zeigen eine Live-Preview innerhalb der Shell. Preset-Auswahl f�
 | locations/ | 5 | 5 | View, CityList, ZoneList, StreetList, LocationEditModal |
 | lore/ | 7 | 1 | SimulationLoreView + lore-content dispatcher + 5 content files (per-simulation) |
 | multiverse/ | 10 | 7 | CartographerMap, MapGraph, MapTooltip, MapConnectionPanel, MapBattleFeed, MapLeaderboardPanel, MapMinimap + 3 utilities |
-| settings/ | 9 | 9 | SettingsView + 8 panels (General, World, AI, Integration, Design, Access, Prompts, Bleed) |
+| settings/ | 10 | 10 | SettingsView + 9 panels (General, World, AI, Integration, Design, Access, Prompts, Bleed, Notifications) |
 | health/ | 1 | 1 | SimulationHealthView (game metrics dashboard) |
 | epoch/ | 16 | 16 | CommandCenter (orchestrator), OpsBoard, OverviewTab, OperationsTab, AlliancesTab, LobbyActions, CreationWizard, Leaderboard, BattleLog, DeployOperativeModal, InvitePanel, InviteAcceptView, ChatPanel, PresenceIndicator, ReadyPanel, BotConfigPanel |
 | how-to-play/ | 5 | 1 | HowToPlayView + htp-styles (extracted CSS) + 3 content/type files (htp-types, htp-content-rules, htp-content-matches) |
 | shared/ | 27 | 16 | 16 components + 10 CSS modules + 1 base class |
-| **Gesamt** | **128** | **105** (in components/) | **17 Verzeichnisse** |
+| **Gesamt** | **129** | **106** (in components/) | **17 Verzeichnisse** |
 
 ### Utilities
 
@@ -918,7 +922,7 @@ Statische Farb-Zuordnung fuer Knoten-Borders und Glow-Effekte. Korrespondiert mi
 const THEME_COLORS: Record<string, string> = {
   dystopian: '#ef4444',    // Velgarien
   dark: '#ef4444',
-  fantasy: '#f59e0b',      // Capybara Kingdom
+  fantasy: '#f59e0b',      // The Gaslit Reach
   utopian: '#22c55e',
   scifi: '#06b6d4',        // Station Null
   historical: '#a78bfa',
@@ -1277,3 +1281,15 @@ REST API service for bot player preset management and epoch bot assignment.
 | `deletePreset(id)` | DELETE | `/bot-players/{id}` | Delete a bot preset |
 | `addBotToEpoch(epochId, data)` | POST | `/epochs/{epochId}/add-bot` | Add a bot participant to an epoch (bot_player_id, simulation_id) |
 | `removeBotFromEpoch(epochId, participantId)` | DELETE | `/epochs/{epochId}/remove-bot/{participantId}` | Remove a bot participant from an epoch |
+
+### NotificationPreferencesApiService
+
+REST API service for per-user email notification preferences (epoch cycle briefings, phase changes, epoch completion).
+
+**Singleton:** `notificationPreferencesApi` (exported from `NotificationPreferencesApiService.ts`)
+
+**Methods:**
+| Method | HTTP | Path | Description |
+|--------|------|------|-------------|
+| `getPreferences()` | GET | `/users/me/notification-preferences` | Get current user's preferences (returns defaults if no row exists) |
+| `updatePreferences(data)` | POST | `/users/me/notification-preferences` | Upsert preferences (cycle_resolved, phase_changed, epoch_completed, email_locale) |

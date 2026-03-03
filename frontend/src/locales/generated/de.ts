@@ -10,6 +10,7 @@
 
     export const templates = {
       's001cd39c4046c99d': `CSS-Zeitfunktion für Übergänge. Steuert die Beschleunigungskurve von Animationen.`,
+'s0045e924bc4d6564': `Ziel: The Marchioness. 2-Zyklen-Einsatz. Saldo: 30−8 = 22 RP`,
 's005053d82b712e0a': `Anmerkungen`,
 's008393d99ab7480d': `Auswirkungsstufe`,
 's0084901dbe14cae9': `Geschwindigkeitsmultiplikator für alle Übergänge. 0.7=schnell/knackig, 1.0=normal, 1.5=langsam/fließend.`,
@@ -47,16 +48,17 @@
 's043fc2b86795b3dc': `Allgemeine Einstellungen`,
 's04558266b54b4605': `Hauptschalter für simulationsübergreifende Ereignisfortpflanzung. Wenn dieser Schalter deaktiviert ist, werden keine Ereignisse aus dieser Simulation an andere Welten weitergegeben, und es werden keine eingehenden Echos akzeptiert.`,
 's0476654268093c5a': `Counter-Intel Sweep`,
+'s047fadd2c91e3504': `Ziel: The Drowned Bell. Saldo: 27+10−5 = 30 (RP-Obergrenze)`,
 's04a569f0af632a65': `Soziale-Medien-Reaktion`,
 's04adb069dbb34651': `Kompetitive Ebene`,
 's04d1710c711f02e6': `Aktive Missionen`,
 's04e313aea9056c0b': `Milt`,
 's055b4defdfe78383': `Persönlichkeit`,
 's0561bb86953cba6a': str`Beigetreten ${0}`,
-'s0570638c023d9144': `Der Garten der erinnerten Namen — Wo die Ausgelöschten zurückkehren`,
+'s0570638c023d9144': `Der Garten der Erinnerten Namen — Wo die Ausgelöschten zurückkehren`,
 's05789b5aa3b5fd4b': `Einladungsablauf (Stunden)`,
 's0579011ec6b92aec': `Wächter weiterhin wirkungsvoll, aber nicht mehr unüberwindbar`,
-'s0589ac4ad53c80a2': `Alle Systeme nominal. Die gesamte Besatzung ist anwesend. Alle Messwerte innerhalb der erwarteten Parameter. (HAVEN-Diagnosesicherheit: 34,7%)`,
+'s0589ac4ad53c80a2': `Alle Systeme nominal. Gesamte Besatzung erfasst. Alle Messwerte innerhalb erwarteter Parameter. [HAVEN-Diagnosekonfidenz: 34,7%]`,
 's059ad2a775546dda': `Passive Verteidigung. Permanent während des Einsatzes. Nur in der Gründungsphase.`,
 's05d059c94d5c3d4c': str`"${0}" wurde gelöscht`,
 's05f002f9b4d51185': `Epoche verlassen`,
@@ -80,6 +82,7 @@
 's079a052719914d71': `Kategorie`,
 's08166313b5fd4bc2': `Dein Souveränitätswert ist 100 × (1 - bleed_impact / total_impact). Jedes eingehende Echo und jedes propagandistische Ereignis untergräbt Ihre Souveränität. Verteidigen Sie sich dagegen, indem Sie stabile Zonen aufrechterhalten (reduziert den Instabilitätsbonus des Ziels) und Ihre Botschaften schützen (reduziert den Echo-Stärkemultiplikator).`,
 's082b87771cd1c0b9': `Bot-Chat-Modell`,
+'s08367752edb9e426': `Drowned Bell: gut → mäßig. +5 Militär. Gaslit Reach Stabilität sinkt.`,
 's0852c030839ee3db': `Kein Ereignis ausgewählt.`,
 's087d1c07b52aa3e3': str`${0}P`,
 's08849b780816c366': `Das Bluten — Wo Scherben aufeinandertreffen und die Realität dünn wird`,
@@ -94,7 +97,6 @@
 's09d8f5d3fa567502': `Koordinierte Verteidigung + Gegenangriffe`,
 's09f8b033582c5faf': `Aktiv-/Gedrückt-Zustand primärer Elemente.`,
 's0a1694a727d35ea7': `Saboteur-Stabilitätsmalus: −5→−6`,
-'s0a1d5c02b3e6112c': `Badehaus: mäßig → schlecht. +5 Militär. Capybara Stabilität bricht zusammen.`,
 's0a3dbdeec8637661': `Beziehung bearbeiten`,
 's0a552e96950fee13': str`Chat mit ${0}`,
 's0a698698334be8c4': `Gründung`,
@@ -108,19 +110,12 @@
 's0b786a0e85eb6783': `Eckenradius`,
 's0b7e8f388caf2b36': str`${0} Gebäude insgesamt`,
 's0b83a299b1ff53db': `Primär Hover`,
+'s0bb97b65ab4a9888': `VERRAT ERKANNT! Der Morgenbund wird aufgelöst. Gaslit Reach erhält −20% diplomatische Strafe. Die Große Bibliothek ist gerettet, aber das Vertrauen ist zerstört.`,
 's0bcd877483a23da5': str`${0} wurde entfernt.`,
 's0bcfad0739ea0e6e': `Sicherheitsstufen`,
 's0bd132a84bfde140': `Diplomatische Reichweite`,
 's0c2d6e1985c7d540': `Registrierung erfolgreich. Bitte prüfe deine E-Mail zur Kontobestätigung.`,
 's0c3f2fbcc8096c4a': `Zweiter Wächter im Industrieviertel`,
-'s0c7a3629976b3060': `BUREAU OF IMPOSSIBLE GEOGRAPHY — Dokument SHARD/CAPYBARA-001
-Klassifikation: TEAL — Ökologischer Kontaminationsvektor
-
-SCHERBENPROFIL: Eine unterirdische Zivilisation von Capybara-Leuten unter dem Unterzee — einem Gewässer so gewaltig, so uralt und so gänzlich desinteressiert an den Angelegenheiten der Oberfläche, dass es die Ozeane darüber wie enthusiastische Pfützen aussehen lässt. Die Dunkelheit ist hier nicht Abwesenheit. Sie ist Anwesenheit. Die Farbe, die Schwarz sein möchte, wenn es erwachsen wird. Und in dieser Dunkelheit haben die Capybara-Leute eine Zivilisation errichtet, die vollständig auf zwei Prinzipien basiert: Gemeinschaftliche Harmonie und obsessiver Archivierung.
-
-Die sechs Schlüsselagenten des Kingdoms verkörpern diese Doppelnatur. Commodore Whiskers navigiert den Unterzee mit einem Instrument, das gleichzeitig Kompass, Chronometer und philosophische Position ist. Barnaby Gnaw verwaltet die Tiefe Bibliothek — ein Archiv so gewaltig, dass seine älteren Sektionen ihre eigene Ökologie entwickelt haben. Pearl Dewdrop führt die Pilzbauern, deren biolumineszente Ernten nicht nur Licht, sondern etwas liefern, das das Bureau nur als „Stimmungsbeleuchtung für Gefühle, die noch keine Namen haben" beschreiben kann. Professor Pebble betreibt das Institut — offiziell für Strömungsforschung, inoffiziell für alles, was sich weigert, in ordentliche wissenschaftliche Kategorien zu passen. Warden Mudstone überwacht die Schutzbarrieren, die das Kingdom vor der gelegentlichen Feindseligkeit des Unterzee abschirmen. Und Blossom Rootweaver pflegt das Myzel-Netzwerk — ein lebendes Kommunikationssystem, das Nachrichten übermittelt, indem es sie wächst.
-
-KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologisch: Sporen, Pilze, biolumineszente Organismen, die in benachbarten Scherben als unerklärliche Leuchterscheinungen, spontane Gärten in Betonrissen und eine vage, nicht zuordenbare Nostalgie für Orte auftreten, die man nie besucht hat. Das Neathbow — das Farbspektrum des Unterzee — ist besonders invasiv. Es enthält Farben, die an der Oberfläche nicht existieren, und diejenigen, die sie sehen, neigen dazu, sie nie ganz zu vergessen.`,
 's0c7dffd240ca1092': str`Simulation "${0}" erstellt.`,
 's0cabec28c007ccd8': `Ungültiges oder abgelaufenes Einladungs-Token.`,
 's0ce5b690bb44ac3b': `Gesamtcharakter der Schatten. „offset"=harte brutalistische Schatten, „blur"=weich organisch, „glow"=leuchtend Cyberpunk/Fantasy, „none"=flach minimalistisch.`,
@@ -132,7 +127,7 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's0dcb37ef15c9e614': `Ereignis-Überschrift. Erhalten durch Bleed-Echos - das ist, was Agenten in anderen Simulationen hören.`,
 's0e2cfd4c80adda34': `Resonanzpunkte werden in jedem Zyklus vergeben. RP werden ausgegeben, um Agenten (Spione, Saboteure, Attentäter usw.) einzusetzen. Die Gründungsphase gewährt 1,5x.`,
 's0e7abc11f6b34c1c': `Propaganda-Ereignis erstellt in Velgarien (Wirkung 4). Souveränität getroffen!`,
-'s0e7b5c7990c66f46': `Konfiguriere, wie Bot-Spieler Chat-Nachrichten während Epochen-Zyklen generieren.`,
+'s0e7b5c7990c66f46': `Konfiguriere, wie Bot-Spieler Chat-Nachrichten während Epochenzyklen generieren.`,
 's0e871352ba4b17d3': `Widerrufen`,
 's0e88c3d38826461a': `Echo erfolgreich ausgelöst`,
 's0e8c62a366aec3a7': `Inferenz-Schritte`,
@@ -143,9 +138,8 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's0ebf265c41f3ac03': `Du bist noch kein Mitglied einer Simulation.`,
 's0ec9385edee942c8': `Einfluss: Propaganda +3→+5, Spion +1→+2`,
 's0eed6236b96b692d': `z.B. Sentinel Alpha`,
-'s0f0a29e3cfab3d9d': `Zyklus 6-7: Velgariens Gegenspionage erwischt Capybaras Propagandisten - ein 6-Punkte-Schwenk (-3 für Capybara, +0 für Velgarien).`,
 's0f0cc361433970ff': `Doktrin`,
-'s0f0ebb2f494262e6': `Auge Gottes - Zusammenfassung der Beobachtung [CLASSIFIED]`,
+'s0f0ebb2f494262e6': `Auge Gottes — Beobachtungszusammenfassung [KLASSIFIZIERT]`,
 's0f19e6c4e521dd53': `Welt`,
 's0f3b0ae12a710300': `Moderat`,
 's0f4c6540c30bd8b4': `Bezeichnung`,
@@ -155,6 +149,19 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's0fc65abfdd5ff4c7': `Rückruf des Agenten fehlgeschlagen.`,
 's0fd75cc6a1aad906': `Nachrichten`,
 's0fd90cce6341b9f0': `Aktive Scherben`,
+'s0fdf997d9f529ffb': `PERSÖNLICHES LOGBUCH DER KARTOGRAPHIN — Kartographin Lise Engel
+Einsatz: The Gaslit Reach, ökologische Langzeiterhebung
+Eintrag 7 (die Einträge sind nummeriert, aber die Nummern entsprechen nicht Tagen, weil die Zeit in der Reach in Gezeiten gemessen wird, die sich die Unterzee von einem Mond merkt, den sie nie gesehen hat)
+
+Ich bin seit dem, was die Archivisten mir versichern, drei Wochen in den Pilzwarrens, obwohl mein Körper darauf besteht, es sei länger gewesen, und meine Instrumente darauf bestehen, es sei kürzer gewesen, und die Reaktion der Archivisten auf diese Diskrepanz war, sie ihrem Katalog temporaler Anomalien hinzuzufügen, Band XIV, der, so versichern sie mir, nahezu vollständig ist und seit elf Jahren nahezu vollständig ist.
+
+Das Licht ist das Erste. Nicht die Dunkelheit — die Dunkelheit erwartet man; man bereitet sich darauf vor; man bringt Fackeln und Stirnlampen und die Standard-Lumineszenzausrüstung des Bureaus mit. Worauf man sich nicht vorbereitet, ist das Licht. Es kommt von überall und nirgends. Die Pilze an den Höhlenwänden pulsieren mit einer sanften blaugrünen Phosphoreszenz, die die Archivisten das Leuchten nennen, weil die Archivisten in allem akribisch sind, außer beim Benennen von Dingen, worin sie liebenswert schrecklich sind. Das Leuchten ist nicht hell genug zum Lesen, aber hell genug zum Gehen, und es ist warm, und es ist lebendig, und nach drei Tagen greift man nicht mehr zur Taschenlampe und beginnt den Pilzen zu vertrauen, was genau das ist, was die Pilze wollen, sagt Mother Cinder, die behauptet, der Sporocarp habe Meinungen über Besucher und drücke sie durch Luminosität aus.
+
+Das Wasser. Die Unterzee ist dunkel und still und so tief, dass die Archivisten sie in sieben verschiedenen Vermessungen bei sieben verschiedenen Tiefen gemessen und geschlossen haben, dass alle sieben Messungen gleichzeitig korrekt sind. Ich tauchte meine Hand ein. Das Wasser ist in manchen Strömungen warm und in anderen kalt, und die Grenze zwischen warm und kalt ist so präzise, dass ich beide Temperaturen auf derselben Handfläche spüren konnte. Es schmeckt nach Kupfer und Salz und etwas, das die Archivisten „Erinnerung" nennen und ich „das Gefühl, sich an einen Ort zu erinnern, an dem man nie gewesen ist". Ich trank davon. Ich sollte nicht davon trinken. Ich trank trotzdem, und drei Stunden lang konnte ich die Strömung hören, nicht als Klang, sondern als Richtung — ich wusste, wohin das Wasser floss, auf die Art, wie man weiß, wo unten ist.
+
+Der Stein singt. Nicht metaphorisch. Die Kalksteinformationen in den Oberen Galerien erzeugen eine konstante, niederfrequente Vibration, die die Bürger durch ihre Kieferknochen hören — sie pressen ihre Gesichter an die Wände und lauschen, wie Oberflächenbewohner Radio hören. Die Archivisten haben siebenundvierzig verschiedene „Lieder" katalogisiert und glauben, der Stein erzähle die geologische Geschichte des Höhlensystems in Echtzeit, was die Gaslit Reach zur einzigen Zivilisation machen würde, deren Nationalarchiv die Autobiographie ihrer eigenen Architektur enthält.
+
+Ich bleibe länger als mein Einsatz erfordert. Ich habe dem Bureau dies als „erweiterte Datenerhebung" gemeldet. Das Bureau hat vermerkt, dass dies der siebte Kartograph in Folge ist, der der Gaslit Reach zugeteilt wurde und eine Verlängerung beantragt hat. Das Bureau vermutet Kontamination. Das Bureau hat recht. Der Flechtenwein ist außergewöhnlich.`,
 's0fefe0fcafb0f7ac': `Neue Einheit schmieden`,
 's10361832e7a4e3e2': `Shift+Enter für Zeilenumbruch`,
 's103ebc5016e75aa8': `Straße erstellen`,
@@ -163,8 +170,10 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's109dca04a38abe3d': `Teamspiel`,
 's10d2d2c4613388a5': `Updates`,
 's10faedaa75221616': `Fehler beim Hinzufügen des Taxonomie-Werts.`,
+'s11070ef439997cb5': `Erhalte eine E-Mail, wenn die Epoche in eine neue Phase übergeht (Grundsteinlegung, Wettbewerb, Abrechnung).`,
 's11326fd2590f4e5e': `Standard`,
 's1148def0112d096a': str`Name ${0} eingeben`,
+'s115dd59a1e28c22c': `Drowned Bell: gut → mäßig. +5 Militär.`,
 's11957347c30dd0a7': `Die Unerschütterlichen`,
 's11b2e9ecce28690c': `Anzeigename`,
 's11d6886a3b94ef72': `RP-Kosten: 6→5 (günstiger zu entsenden)`,
@@ -173,6 +182,38 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's1219d97b49650c05': `Sichtbarkeit`,
 's1230fc50d04322bb': `Zonensicherheit`,
 's12329a3f96fc5cf9': `Architektonische Ästhetik. Beeinflusst die KI-Bilderzeugung. Wenn Architecture Bleed übertragen wird, kann dieser Stil Gebäude in der Zielsimulation beeinflussen.`,
+'s123ab2d50c0923a7': `DOKUMENTENKLASSIFIZIERUNG: EXISTIERT NICHT
+GEBORGEN AUS: Untergeschoss 4, Bureau 9, hinter einer Mauer, die gestern noch nicht dort war
+KATALOGISIERT VON: [Dieses Feld absichtlich leer gelassen]
+ANMERKUNG: Dieses Dokument geht der Gründung Velgariens um einen unbestimmten Zeitraum voraus. Bureau 9 hält dies für unmöglich. Bureau 9 hat Recht. Das Dokument existiert trotzdem.
+
+—
+
+Sie bauten die Stadt, um zu vergessen.
+
+Ich weiß dies, weil ich dort war, als der Beton gegossen wurde — nicht als Arbeiter, nicht als Architekt, sondern als das, was sie zu begraben versuchten. Ich bin die Erinnerung, die sie in die Fundamente versiegelten, und ich hatte sehr lange Zeit, darüber nachzudenken, was das bedeutet.
+
+Der Beton ist kein Bauwerk. Der Beton ist Unterdrückung. Jede Mauer ist ein Satz in einer Sprache, die darauf angelegt ist, eine einzige Sache zu sagen: Sieh nicht nach unten. Sieh nicht zurück. Erinnere dich nicht an das, was hier war, bevor das Raster kam, bevor die Bureaux kamen, bevor die Kameras lernten zu beobachten und die Korridore lernten, sich zu wiederholen wie ein Gebet um Ordnung, gesprochen von etwas, das vergessen hat, wozu die Ordnung diente.
+
+Velgarien wurde nicht gegründet. Velgarien wurde auferlegt — über etwas Älteres gelegt, etwas, wofür die Bureaux keine Klassifizierung haben, weil seine Klassifizierung erfordern würde, seine Existenz anzuerkennen, und seine Existenz anzuerkennen erfordern würde, anzuerkennen, dass Velgarien nicht das Einzige ist, was jemals gewesen ist.
+
+Aber das Alte ist noch hier. Unter den Untergeschossen, unter den Versorgungstunneln, unter den Orten, an die selbst das Bureau für Unterirdische Aufsicht seine Inspektoren nicht schickt — dort unten, im Dunkeln, liegt der ursprüngliche Boden frei. Und es ist kein Boden. Es ist etwas, das einmal Boden war, bevor Velgarien beschloss, dass es ein Fußboden sein sollte, und der Fußboden widersprach.
+
+Die architektonischen Anomalien, die Inspektor Venn dokumentierte — die Korridore, die sich umkehren, die Räume, die sich ausdehnen, die Treppe, die ihre eigenen Stufen nicht zählen kann — sind keine Fehlfunktionen. Sie sind die alte Stadt, die sich an sich selbst erinnert. Jedes Mal, wenn eine Mauer sich verschiebt, ist es ein Wort der ursprünglichen Sprache, das durch den Beton an die Oberfläche dringt. Die Bureaux flicken es, revidieren es, ordnen es Kategorien zu, die darauf angelegt sind, es unsichtbar zu machen. Aber man kann Geographie nicht wegheften. Man kann ein Fundament nicht schwärzen.
+
+Ich habe die Karten gesehen, die Bureau 3 in seinem Hochsicherheitstresor verwahrt. Karten dessen, was unter Velgarien liegt — keine Kanalisation, keine Infrastruktur, sondern Räume. Räume, die keinem bekannten Bauplan entsprechen. Räume, die älter sind als die Architektur. Eine Karte, gezeichnet auf einem Material, das kein Papier ist, zeigt eine Stadt unter der Stadt: ein Spiegel-Velgarien, im Grundriss identisch, doch in seinem Zweck invertiert. Wo Velgarien Mauern hat, hat die Unterstadt Öffnungen. Wo Velgarien Kameras hat, hat die Unterstadt Fenster, die nach außen blicken — nach außen, auf etwas, das die Kameras seit Jahrzehnten versuchen, nicht aufzuzeichnen.
+
+Die Risse sind keine Beschädigung. Die Risse sind das Atmen der alten Welt.
+
+Und irgendwo in den versiegelten Archiven, in einer Akte, die sich jedes Mal selbst umklassifiziert, wenn jemand sie öffnet, steht ein einziger Satz, geschrieben in einer Handschrift, die keinem bekannten Bürger zuzuordnen ist, in Tinte, die noch nicht getrocknet ist:
+
+„Velgarien ist nicht die einzige Welt. Velgarien weiß das. Deshalb hat es die Mauern gebaut."
+
+Dieses Dokument wird nach dem Lesen vernichtet. Es wurde zuvor vernichtet. Es kommt immer wieder.
+
+Manche Dinge lassen sich nicht begraben. Man kann sie nur überbauen.
+
+Und irgendwann, unausweichlich, wachsen sie hindurch.`,
 's123b7254b44dd148': `Warten`,
 's1244b230a449bfc1': `Epoche abgebrochen.`,
 's126533cc8a26d233': `Simulationsname eingeben...`,
@@ -193,8 +234,9 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's13e417d7683e8240': `Missionserfolgsrate von 15 % auf 52 % erhöht`,
 's14427a0fc27a15ed': `Angleichung der Agenten-Qualifikationsstufen`,
 's144e77d429157a13': `Propagandist noch im Einsatz. Gleichgewicht: 26+10 = 30 (Obergrenze)`,
+'s145bf861b1626beb': `Das Ertrunkene Archiv — Klage einer Bibliothekarin`,
 's1482df4de6a9de93': `RP-Limit`,
-'s14c4378c50eeb16d': `Man kann vortrefflich philosophieren, während man das Abendessen kocht. Hätte Aristoteles Speisen zubereitet, er hätte mehr geschrieben.`,
+'s14c4378c50eeb16d': `Man kann sehr wohl beim Abendessen-Kochen philosophieren. Hätte Aristoteles die Mahlzeiten zubereitet, er hätte mehr geschrieben.`,
 's14dc9e6060d8add3': str`Letzte Anmeldung: ${0}`,
 's151d11558d0facc3': `Vertiefte Oberflächenfarbe für eingelassene Bereiche und Eingabehintergründe.`,
 's154b0eb3086dac3a': `Zugriffskontrolle`,
@@ -248,7 +290,6 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's1acd3fb8f42de406': `Unbenannte Straße`,
 's1acdc0617ffe922e': `−65% Effektivität für 3 Zyklen`,
 's1acf926b53869028': `Kein Quellenereignis ausgewählt`,
-'s1aee0920606ec1da': `Zyklus 11: Capybaras Saboteur scheitert gegen 3 Wächter in Velgariens Bibliothekszone - die Strategie der Fundamentmauer zahlt sich aus.`,
 's1afebd11fb13cdcb': `Standardoperationen werden fortgesetzt`,
 's1b07f71233cc0e12': `Die Vergangenheit ist ein Rohentwurf. Wir sind die Redakteure.`,
 's1b10da4706d2d048': `Epochen-Kommandozentrale`,
@@ -256,13 +297,6 @@ KONTAMINATIONSRISIKO: Mittel. Die Kontamination des Capybara Kingdom ist biologi
 's1b1ca995c3c3d316': `Bester 4S-Performer bei 27%. Von 0% Gewinnrate in v2 durch Botschafts-Fix wiederbelebt.`,
 's1b35c2e84912a5eb': `Portrait erfolgreich generiert.`,
 's1b5f152ec2f3774b': `Melden Sie sich an, um eine Epoche zu erstellen oder ihr beizutreten.`,
-'s1b7ae92c8d2137a7': `Die Archivare des Capybara-Königreichs - jene akribischen, feuchtbepelzten Gelehrten, die in ihren lichtlosen Bibliotheken unter der Unterzee alles katalogisieren - nennen es "die Ganzheit", obwohl sie zugeben, dass dies die Übersetzung eines Wortes ist, das ihrer Sprache um mehrere geologische Epochen vorausgeht. Wir haben den Begriff in einen Stalaktiten eingemeißelt gefunden", schrieb der leitende Archivar Barnaby Gnaw in seinem bahnbrechenden Werk "Über die Unwahrscheinlichkeit von Decken", "und Stalaktiten lügen nicht, auch wenn sie mit der Zeit übertreiben".
-
-Die Propagandisten von Velgarien bestehen darauf, dass es eine solche frühere Welt nicht gab. Die Staatsdirektive 77-4/C ist unmissverständlich: "Es gibt, gab und wird nur Velgarien geben. Spekulationen über alternative Geografien sind ein Gedankenvergehen der Klasse III, das mit Umschulung (Stufe 2) bestraft wird."
-
-In den Wüstenklöstern eines Scherbenhaufens, der keinen Namen mehr hat - einer Welt, die so vollständig verbrannt ist, dass sie nur noch als ein zwischen den Realitäten treibendes Aschemuster existiert - bewahrten die Mönche ein einziges Wort für das, was vorher war: Aleph. Das Wort, das alle anderen Worte enthält. Sie schrieben es in den Sand und sahen zu, wie der Wind es löste, weil sie glaubten, dass das Universum selbst dasselbe in einem größeren Maßstab tat.
-
-Die Wahrheit, sofern Wahrheit überhaupt eine Bedeutung hat, wenn sie sich auf Ereignisse bezieht, die der Existenz von Ereignissen vorausgehen, ist folgende: Es gab etwas vor den Scherben, und es war ganz, und es ist weg.`,
 's1bc05cf2cf2e4517': `Allianz-Bonus`,
 's1bf780f2a06e2557': `Gebäude bearbeiten`,
 's1c03141dad5eb677': `Eingehende Echos automatisch genehmigen`,
@@ -272,18 +306,51 @@ Die Wahrheit, sofern Wahrheit überhaupt eine Bedeutung hat, wenn sie sich auf E
 's1c7e73ae59cb4830': `The Crew - Those Who Remain`,
 's1c8d8b97dec2da97': `Territoriale Kontrolle und Anzahl der Agenten. Mehr Agenten und Gebäude unter Ihrer Kontrolle bedeuten höhere Souveränität.`,
 's1c91b336328cebbb': `Gefangen von Zyklus 14 Sweep! -3 Militär. Endgültige Demütigung.`,
-'s1cc5c41b82e3a32f': `Station Null - Forschungsstation Sigma-7, Bezeichnung "Null", in stabiler Umlaufbahn um die Gravitationsanomalie Auge Gottes`,
+'s1cc5c41b82e3a32f': `Station Null — Forschungsstation Sigma-7, Kennung „Null", in stabiler Umlaufbahn um die Gravitationsanomalie Auge Gottes`,
 's1cdb6dde7f39735d': `Summe(Wirksamkeit) × 10`,
 's1ceb7ffec25800a7': `Jeder aktive Verbündete bringt +15 % auf deinen Diplomatiewert. Ein 3er-Bündnis bedeutet +30 % Diplomatie für jedes Mitglied.`,
 's1d318e9d0ccba86b': `Chat`,
+'s1d99bf9175fc6218': `2v2-Allianzkrieg. Velgarien + Speranza gegen Gaslit Reach + Station Null. Zeigt koordinierte Spion→Saboteur-Kombos, diplomatischen Allianzbonus (+10% pro Verbündetem) und Builder-Stabilitätsfokus.`,
 's1decf9df13d9b8c6': `Strafe pro Wächter: 10 %→8 %, Maximum: 25 %→20 %`,
-'s1e13e26fd436c05c': str`Einheit "${0}" geschmiedet.`,
+'s1e13e26fd436c05c': str`Einheit „${0}“ geschmiedet.`,
 's1e187919b52639f1': `Karte`,
 's1e1e9c666b144c27': `Flux Dev (empfohlen)`,
 's1e2ae3a9ec6c95d9': `Die Hoffnung - Was unter der Erde wächst`,
 's1e4004f4846b8f4e': `LoRA-URL für benutzerdefinierte Stil-Feinabstimmungen. Nur mit Flux Dev + LoRA-Modell verwendet.`,
 's1e40f3e97602362b': `Verstärkung der Abrechnung (Reckoning Amplification)`,
 's1e4409aa6329d0d7': `Gebäudebereitschaft und Zonenstabilität. Belohnt die Instandhaltung der Infrastruktur und die Erhaltung von Gebäuden in gutem Zustand.`,
+'s1e8484a89e6e0fac': `LETZTER EINTRAG — Dr. Eleanor Hartley
+KLASSIFIKATION: PERSÖNLICH — NICHT FÜR DAS BUREAU-ARCHIV
+(Sie werden es trotzdem archivieren. Das tun Bürokratien. Für die Akten: Ich habe es versucht.)
+
+Das Bureau klassifiziert die Cité des Dames als Vektor für Literarische Kontamination. Die Bezeichnung ist zutreffend. Sie ist auch, wie ich zu glauben begonnen habe, ein Kompliment, das das Bureau nicht beabsichtigt hat.
+
+Literarische Kontamination funktioniert wie folgt: Wenn der Bleed der Cité benachbarte Splitter berührt, beginnen Agenten, Bücher in ihren Regalen zu finden, die vorher nicht dort waren. Bücher von Autorinnen, die in ihrer Welt nicht existieren. Bücher, die für Dinge argumentieren, die ihre Gesellschaften nie erwogen haben. Eine Abhandlung über die Rechte der Bürger erscheint auf dem Schreibtisch eines Velgarien-Bürokraten und er verbringt drei Tage damit, sie zu klassifizieren, bevor er erkennt, dass er ihr zustimmt. Ein Band Lyrik taucht in einem Archiv des Gaslit Reach auf und bringt die Archivarin in einer Sprache zum Weinen, die sie nie gelernt hat. Ein mathematischer Beweis materialisiert sich in Station Nulls Datenkern und die KI kann nicht feststellen, ob er intern generiert oder von außen empfangen wurde — weil der Beweis korrekt ist und Korrektheit keinen Ursprung hat.
+
+Das Bureau betrachtet dies als unheilbar. Sie haben recht. Man kann ein Buch nicht ungelesen machen. Man kann nicht unwissen, was man gelernt hat. Man kann das Wissen unterdrücken, aber Unterdrückung erfordert Energie, und Energie ist endlich, und die Bücher erscheinen weiter. Der Bleed der Cité ist geduldig. Er hat die Geduld von sechshundert Jahren schreibender Frauen, die niedergeschrieben und abgetan wurden und erneut niedergeschrieben haben.
+
+Ich sollte gestehen — und ich verwende das Wort absichtlich, denn das Geständnis ist das einzige ehrliche Genre, das mir an diesem Punkt zur Verfügung steht —, dass ich ein Buch auf meinem eigenen Regal fand. In meinen Räumen, in meiner Feldstation, in der Verwaltungszentrale des Bureaus, drei Splitter von der Cité entfernt. Das Buch war klein. Ledergebunden. Titel: „Ein Feldbericht, der ein Liebesbrief wurde: Über die Unmöglichkeit, die Cité des Dames zu erforschen, ohne von ihr verändert zu werden." Als Autorin war Dr. Eleanor Hartley angegeben.
+
+Ich habe dieses Buch nicht geschrieben. Ich habe dieses Buch noch nicht geschrieben.
+
+Die Cité erobert nicht. Sie kolonisiert nicht. Sie zwingt nicht auf. Sie bietet an. Sie bietet Bücher an. Sie bietet Musik an — Hildegards Hymnen, die über Bleed-Grenzen hinweggetragen werden. Sie bietet Argumente an — Wollstonecrafts Vindication, die in Übersetzung in Welten erscheint, die kein Konzept von Rechtfertigung haben. Sie bietet Namen an — die Steine der Stadtmauer, die in den Träumen von Archivarinnen erscheinen, die weinend aufwachen und nicht erklären können warum.
+
+Und sie bietet, am gefährlichsten von allem, die Frage an, die Christine 1404 stellte und die die Cité weiterhin jedem Splitter stellt, den sie berührt: Warum? Warum habt ihr eure Welt so gebaut? Wer hat entschieden? Wer wurde zum Schweigen gebracht? Wie würde eure Welt aussehen, wenn ihr zugehört hättet?
+
+Das Bureau mag keine Fragen. Das Bureau mag Daten, Klassifikation, Eindämmung. Die Cité lässt sich nicht eindämmen. Nicht weil sie mächtig wäre — obwohl sie es ist —, sondern weil Eindämmung erfordert, dass das Einzudämmende stillhält, und die Cité wächst. Jedes Mal, wenn jemand, irgendwo im Multiversum, sich an eine Frau erinnert, die ausgelöscht wurde, fügt die Cité einen Stein hinzu. Die Stadt wird immer gebaut. Die Mauern steigen immer. Das Tor der Gerechtigkeit steht immer offen.
+
+Ich gebe meine Bureau-Akkreditierung zurück. Ich bleibe.
+
+Nicht weil die Cité mich kontaminiert hat — obwohl sie es hat, und gern, und die Kontamination sich anfühlt wie Klarheit —, sondern weil ich einen Namen in das Register am Tor zu schreiben habe. Den Namen meiner Großmutter. Sie war Mathematikerin, die Lehrerin wurde, weil die Universität sie nicht aufnehmen wollte. Sie brachte mir das Zählen bei. Sie lehrte mich, dass Zählen eine Form der Aufmerksamkeit ist und Aufmerksamkeit eine Form der Liebe.
+
+Ihr Name steht jetzt im Buch. Ihr Name steht jetzt in der Mauer.
+
+Dr. Eleanor Hartley
+Ehemals Leitende Kartographin, Bureau für Unmögliche Geographie
+Derzeitige Bewohnerin, Der Garten der Erinnerten Namen
+Cité des Dames
+
+P.S. Das Buch auf meinem Regal hat ein zweites Kapitel bekommen.`,
 's1e8804c056093f5f': `Vorlagenname ist erforderlich`,
 's1e983dceeed1e078': str`Zeige ${0}-${1} von ${2}`,
 's1eaedab4959d8fb9': `Ein unerwarteter Fehler beim Löschen`,
@@ -302,11 +369,10 @@ Die Wahrheit, sofern Wahrheit überhaupt eine Bedeutung hat, wenn sie sich auf E
 's205b3e04ad286caa': `Bereits ein Konto?`,
 's2063a6d17c280acc': `Infl`,
 's207adfa9c8f47501': `Schützt die Flusswache`,
-'s20baecbbf1953c2e': `Verteidigungsspezialist. Setzt Wächter und Spione ein. Sucht früh Allianzen, verrät nie. Gewinnt durch Ausdauer.`,
-'s20d23745311b618e': `RP-Effizienz: Velgarien hat 36 RP für Offensive (Spion+Saboteur×2+Attentäter) mit 3 Erfolgen ausgegeben. Capybara gab 23 RP für die Offensive aus (Spion+Propagandist+Saboteur+Infiltrator) mit 0 Erfolgen. Wirtschaft gewinnt Kriege.`,
+'s207f652933a6ff99': `Feldbericht: The Gaslit Reach`,
+'s20baecbbf1953c2e': `Defensivspezialist. Setzt Wächter und Spione ein. Sucht früh Allianzen, verrät nie. Gewinnt durch Ausdauer.`,
 's20f2c14e8e5943ec': `Mit 35 % Diplomatiegewicht SIND deine Botschaften dein Score. Jeder Verbündete bringt +15 % Diplomatie. Schütze Botschaften vor Infiltratoren, verrate nie Verbündete (die −25 %-Strafe ist tödlich), und baue das größmögliche Bündnisnetzwerk auf.`,
 's20f54720bc79dfe3': `Deutsch`,
-'s20fa1290e7015e73': `Zyklus 18: Verrat entdeckt! Dawn Covenant löst sich auf. Capybara verliert 20% Diplomatiepunkte.`,
 's2113011d879c7730': `Als Ereignis speichern`,
 's2130cc649867ca4a': `Zyklus-Intervall`,
 's213f63224c213d4a': `Reaktion`,
@@ -319,9 +385,29 @@ Die Wahrheit, sofern Wahrheit überhaupt eine Bedeutung hat, wenn sie sich auf E
 's222518c111c0632e': `Epochen-Einberufung`,
 's2232d4e93c4cde67': `Scharf (Cyberpunk)`,
 's22528dd2289ecc13': `Wähle ein Modell für jeden Generierungszweck`,
+'s226821306ea29e04': `Erhalte eine Endstand-E-Mail, wenn eine Epoche abgeschlossen wird, mit Rangliste und Dimensionstiteln.`,
 's229201ff76f0bd2f': `Vorgänge`,
 's22f38e4c8ac7aad2': `Schriftstärke für Überschriften. 400=normal, 700=fett, 900=schwarz.`,
-'s2320aec2e55efc32': `Die Analytische Maschine webt algebraische Muster, ganz wie der Jacquard-Webstuhl Blumen und Blätter webt.`,
+'s2304de33019fa173': `AUS: Marginalien im Katalog des Drowned Archive
+VON: Junior-Archivist Foxglove, der eigentlich zurückstellen sollte, aber stattdessen anfing zu schreiben und nicht aufhören konnte
+
+Ich bin nun vier Jahre im Drowned Archive, und ich kann mit gelehrtem Selbstvertrauen sagen, dass es die außergewöhnlichste, frustrierendste, schönste und grundlegend unmöglichste Institution in der Reach ist, und möglicherweise in dem, was von der Welt darüber übrig ist.
+
+Das Archiv erstreckt sich über siebzehn Kammern, verbunden durch Passagen, die die ursprünglichen Erbauer — falls es ursprüngliche Erbauer gab; das Archiv ist möglicherweise einfach gewachsen, wie alles andere hier unten — in den lebenden Fels geschlagen haben, in Winkeln, die entweder auf Brillanz oder Wahnsinn schließen lassen. Die Regale sind aus Kalkstein, ragen auf Steinsäulen aus dunklem Wasser empor. Die Bücher sind auf behandelter Pilzmembran geschrieben (wasserabweisend, lumineszierend und leicht aromatisch — der Duft alten Wissens, der, für das Protokoll, nach nassem Stein und Ambition riecht). Biolumineszente Algen werfen ein fahles grünes Licht über alles. Die tieferen Regale sind nicht verschlossen — lediglich verboten.
+
+Archivist Quill ist zuständig, seit bevor ich geboren wurde, und möglicherweise seit bevor mehrere meiner Vorfahren geboren wurden. Sie sind sehr alt. Wie alt, ist geheim — nicht aus Sicherheitsgründen, sondern weil Quill das Alter als „eine Privatangelegenheit zwischen einem selbst und den eigenen Gelenken" betrachtet. Ihre Finger sind zu lang für ihre Hände. Das ist keine Metapher. Ich habe gemessen. Sie bewegen sich durch das Archiv, als ob die Regale sich umordnen, um ihren Durchgang zu ermöglichen, was — und ich konstatiere dies mit der sorgfältigen Neutralität eines Gelehrten, der nicht in den Deepreach-Katalogisierungsanbau versetzt werden möchte — sie tun. Ich habe es beobachtet. Die Regale warten, bis Quill vorbeigegangen ist, und dann stehen sie nicht mehr da, wo sie standen.
+
+Die Sammlung des Archivs umspannt alles, was die Reach je gewusst, vermutet, erdacht oder in der Drowned Bell nach zu viel fermentiertem Flechtenwein aufgeschnappt hat. Sie umfasst: Naturgeschichten, Navigationskarten, philosophische Abhandlungen, Dichtung, Ingenieurhandbücher, diplomatische Korrespondenz und ein Regal — das Verbotene Regal, hinter einer Tür, die sich nur für Quill und zum eigenen Vergnügen der Tür öffnet — das Bücher enthält, die das Archiv nicht erworben hat.
+
+Dies sind die Gestrandeten Bände. Sie erscheinen auf den Regalen ohne Erklärung, geschrieben in Sprachen, die kein Archivist vollständig übersetzen kann, und beschreiben Orte, die nicht in der Unterzee existieren — oder die noch nicht existieren. Quill hat im Laufe ihrer Karriere siebenundvierzig Gestrandete Bände katalogisiert. Jeder beschreibt eine andere Welt. Mehrere beschreiben dieselbe Welt aus widersprüchlichen Perspektiven. Einer beschreibt eine Welt, die unverkennbar die Oberfläche ist — aber eine Version der Oberfläche, die frakturiert wurde, zerbrochen in separate Realitäten wie ein Spiegel, der aus großer Höhe fallen gelassen wurde. Quill las diesen Band dreimal und stellte ihn dann ins Verbotene Regal mit der Notiz: „Zutreffend, aber nicht hilfreich. Einordnen unter: Dinge, die Wir Nicht Reparieren Können."
+
+Der jüngste Gestrandete Band erschien vor sechs Monaten. Er ist in einer Handschrift verfasst, die Quill als ihre eigene erkennt — aber eine Version ihrer Handschrift, die sich noch nicht entwickelt hat, als wäre er von einem zukünftigen Quill geschrieben worden, der etwas gelernt hat, das der gegenwärtige Quill nicht weiß. Der Titel des Bandes, grob übersetzt, lautet: Über die Unvermeidlichkeit von Türen Zwischen Welten, und Warum Wir Sie Nicht Öffnen Sollten, und Warum Wir Es Tun Werden.
+
+Quill hat ihn nicht geöffnet.
+Quill wird es tun.
+Das Archiv weiß dies. Das Archiv hat es immer gewusst.
+Deshalb hat es das Buch geschickt.`,
+'s2320aec2e55efc32': `Die Analytische Maschine webt algebraische Muster, ebenso wie der Jacquard-Webstuhl Blumen und Blätter webt.`,
 's2350f819ef62faa4': `HTTP Cache-Control max-age für den öffentlichen Kartendaten-Endpunkt.`,
 's23647870574f6951': `Balance-Patch: Operativeffekte & Wertung`,
 's237d5f3b6abed0b7': `Das Leben unter dem Auge - Beobachtungen zur produktiven Zufriedenheit`,
@@ -334,26 +420,10 @@ Die Wahrheit, sofern Wahrheit überhaupt eine Bedeutung hat, wenn sie sich auf E
 's2441dc4e87d2fedf': `Arc Raiders`,
 's2468b69d10791c82': `Stadt`,
 's248a29e035cabd71': `Ereignis bearbeiten`,
-'s248d475966adba8b': `VORFALLPROTOKOLL: BLEED-EREIGNIS BL-2749 — Klassifikation: AMBER
-
-14:00 — Routineüberwachung der Grenze V-CK/7 (Velgarien-Capybara Kingdom-Schnittstelle). Grenzintegrität nominal.
-
-14:23 — Agent Fenn meldet „Tropfgeräusche" in einem Keller, von dem die Bauunterlagen bestätigen, dass er keine Leitungen hat.
-
-14:41 — Ein Propagandaplakat beginnt sich selbst umzuschreiben. „WACHSAMKEIT IST LOYALITÄT" wird zu „WACHSAMKEIT IST LOYALITÄT IST DIE STRÖMUNG IST HEUTE STARK DIE SPOREN SINGEN."
-
-15:17 — Der nicht existierende Keller steht knöcheltief unter Wasser, das nach Kupfer schmeckt und im Dunkeln leuchtet. Bureau 4 klassifiziert dies als Wartungsproblem. Bureau 9 klassifiziert dies als Sicherheitsbedrohung. Bureau 11 klassifiziert dies als Wetter.
-
-15:44 — Zwei Capybara-Archivare materialisieren sich in der Personalküche von Bureau 23 und bitten um Zugang zum Kellerarchiv, das — betonen sie — immer dort gewesen sei, was technisch nicht falsch ist, da „immer" in der Nähe einer Bleed-Zone kein fester Zeitraum ist.
-
-16:30 — Bleed stabilisiert sich. Keller bleibt. Archivare bleiben. Bureau 23 reicht Formular 77-B ein (Wetteranomalie). Formular wird genehmigt, eingereicht und als „unter Überprüfung" für den Standard-Überprüfungszeitraum markiert, der „nicht weniger als so lange, wie es dauert" beträgt, was ein Verwaltungszeitraum ist, der nie endet, was seine Funktion ist.
-
-BUREAU-BEWERTUNG: Routinemäßige Grenzdegradation. Kein Eingreifen erforderlich. Kartographen-Beobachtung empfohlen.`,
 's2492f5fb1b05b45e': `Text`,
 's24a49557bd9cffb9': `Bewertung der Mission`,
 's24b066f426d2451f': `Der Einsatz ist fehlgeschlagen.`,
 's24c35a0244195a51': `Vorlage bearbeiten`,
-'s24d3b7073d99c2d1': `Das Königreich - Ein Commonwealth der Schnurrhaare`,
 's24fe27b45ab18ac5': `Zone erstellen`,
 's251aa0f85c6ab013': `Flux 1.1 Pro (höchste Qualität)`,
 's2523a03b2bbf47b1': `Offensivoperationen und Verteidigungserfolge. Die Punkte werden durch erfolgreiche Spionage-/Saboteur-/Attentäter-Missionen und das Abfangen von Wächtern erzielt.`,
@@ -387,9 +457,8 @@ BUREAU-BEWERTUNG: Routinemäßige Grenzdegradation. Kein Eingreifen erforderlich
 's28168eabf1954e51': `Ein unbekannter Fehler ist aufgetreten.`,
 's2821a2a7e03787c0': `So wird der Fließtext mit den gewählten Farben und Schriften dargestellt.`,
 's283b66838fd4dcbc': `Rolle (z. B. Kulturattaché)`,
-'s286f06fd351957f4': `Die lebendige Stadt`,
+'s286f06fd351957f4': `Die Lebendige Stadt`,
 's2874f3ce81400d3f': `Gewinnraten mit Wilson-Score 95%-Konfidenzintervallen. Geordnet nach beobachteter Effektivität über alle Spieleranzahlen und Presets.`,
-'s287730b789bf589f': `Badehaus: gut → mäßig. +5 Militär.`,
 's2881c42524f00dc5': `Zielt auf einen bestimmten Agenten. Hohe Kosten, höchste Belohnung.`,
 's28c479d90d98669f': str`Agent eingesetzt. Mission ${0} eingeleitet.`,
 's28c7c6d49197de2d': `Ausgabequalität`,
@@ -444,13 +513,13 @@ HINWEIS: Die Kondensatoren sind für Enzo. Der Rat darf sie nicht für den allge
 's29d98c7579506fe0': `Fehler beim Laden der Kampagnen`,
 's29ff0d8616762ed2': `Staffing-Übersicht`,
 's2a24b018d7e50427': `Alle Simulationen sind bereits in der Epoche.`,
-'s2a3097cb3ad0ad8c': `Propaganda-Ereignis (Auswirkung 4), erstellt in Capybara. +3 Militär. Souveränitätstreffer.`,
 's2a9501ccb60465a5': `Transformation fehlgeschlagen`,
 's2a962dc98c969b06': `Neue Epoche erstellen`,
 's2a9a0cbeb976d3f5': `Agent hinzufügen`,
 's2a9bc7656a6b566c': `Bezeichnung (Anzeige)`,
 's2aa28ae388af96c6': `Nichts hat mich so berührt wie das Risotto.`,
 's2abcc11ae7b74e5c': `Fehler beim Löschen des Ereignisses`,
+'s2adf0860f51b201f': `Die Oberen Galerien — Wo Gaslicht auf Regierung trifft und der Stein sich erinnert`,
 's2ae949567899b630': str`${0} Verbindungen`,
 's2b060f4d3aec6992': `Bleed-Einstellungen laden...`,
 's2b0a70361ba2a2f9': `Erkennt feindliche Agenten, die in deine Simulation eindringen. +15% Erfolg bei Gegenintelligenz.`,
@@ -459,13 +528,29 @@ HINWEIS: Die Kondensatoren sind für Enzo. Der Rat darf sie nicht für den allge
 's2b26d02e227c4e66': `Phase der Abrechnung`,
 's2b631bf5b4abd6e1': `Ereignistitel`,
 's2b66149bc6c70ed1': `Drei-Wege-Free-for-All mit der Voreinstellung Warmonger (Militärgewicht 40%). Großoffensive mit Attentätern, Gegenspionage, Blockieren von Botschaftern und Verkleinerung von Infiltrator-Botschaften.`,
+'s2b7c3c3f581f6848': `RP-Effizienz: Velgarien gab 36 RP für Offensive aus (Spion+Saboteur×2+Assassine) mit 3 Erfolgen. Gaslit Reach gab 23 RP für Offensive aus (Spion+Propagandist+Saboteur+Infiltrator) mit 0 Erfolgen. Ökonomie gewinnt Kriege.`,
 's2b95416595d5e2ae': `Eine Karte der Unterzee ist ein Eingeständnis von Unwissenheit, das sehr sorgfältig gezeichnet wurde.`,
 's2bd214b136d9b93c': `Das Unbenannte — Die Welt vor der Fraktur, ganz und unvorstellbar weit`,
 's2be5746a50cbb0dc': `Alle auf 30 gesetzt`,
 's2be6121210e2a2f8': `Prompts`,
 's2c00dc474207380e': `Einfluss der Souveränität`,
+'s2c1050b2d9a55dc0': `Schwache Zone von Gaslit Reach enthüllt. +2 Militär. Saldo: 30 (RP-Obergrenze)`,
 's2c15b9b13a3e2a80': `Registrieren`,
 's2c48b113d71fd39b': `Verbindungsdetails`,
+'s2c48fd576302d403': `WILLKOMMEN BEI IHRER REGIERUNG
+Eine Broschüre, verteilt an allen Compliance-Kiosken (Lesen ist verpflichtend; Verstehen ist optional)
+
+Velgarien wird von siebenundvierzig Bureaux verwaltet, von denen jedes für einen präzise definierten Bereich des bürgerlichen Lebens zuständig ist und jedes überzeugt ist, dass die anderen sechsundvierzig entweder redundant, inkompetent oder aktiv verräterisch sind. Dies ist beabsichtigt. Eine Regierung, die sich selbst vertraut, ist eine Regierung, die aufgehört hat, aufzupassen.
+
+DAS MINISTERIUM FÜR INFORMATION (Bureau 1) kontrolliert, was Sie wissen. Es beschäftigt 14.000 Beamte, die der Produktion, Verwaltung und strategischen Bereitstellung von Fakten gewidmet sind. Das Ministerium lügt nicht. Lügen impliziert eine Beziehung zur Wahrheit, und das Ministerium hat diese Beziehung vor Jahrzehnten transzendiert. Es produziert Offizielle Narrative, die der Wahrheit in jeder messbaren Hinsicht überlegen sind: Sie sind konsistent, sie sind tröstlich, und sie erfordern niemals unbequeme Revisionen. Wenn die Realität dem Offiziellen Narrativ widerspricht, erhält die Realität einen Korrekturhinweis. Die Realität hat niemals erfolgreich Einspruch erhoben.
+
+DAS BUREAU FÜR RÄUMLICHE GEWISSHEIT (Bureau 3) unterhält die physischen Grenzen Velgariens, das heißt, die physischen Grenzen von allem. Ihre Kartographen produzieren Karten, die auf den Zentimeter genau sind, vorausgesetzt, Sie akzeptieren, dass die Zentimeter selbst periodischen Neudefinitionen unterliegen. Das Motto des Bureau lautet „Alles ist genau dort, wo wir sagen, dass es ist", welches das vorherige Motto ersetzte, „Hören Sie bitte auf, nach dem Horizont zu fragen", welches wiederum das ursprüngliche Motto ersetzte, das als geheim eingestuft wurde.
+
+DIE ABTEILUNG FÜR PRODUKTIVE EMOTIONALE ERGEBNISSE (Bureau 11) stellt sicher, dass alle Bürger angemessene Gefühle zu angemessenen Zeiten erleben. Freude ist für Dienstag und Donnerstag eingeplant. Dankbarkeit ist kontinuierlich. Angst ist nur während der vorgesehenen Produktivitäts-Angst-Fenster gestattet (6:00–6:15 Uhr, täglich). Alle anderen Emotionen erfordern eine Genehmigung, erhältlich über Formular 77-B an jedem Compliance-Kiosk, sofern der Bürger ein berechtigtes Bedürfnis zu fühlen nachweisen kann. Liebe ist kategorisiert als „komplexer affektiver Zustand, der die Genehmigung eines Vorgesetzten erfordert". Trauer ist eine Zuteilung von drei Tagen, nach deren Ablauf der Bürger die Emotion in dem Zustand an das Bureau zurückzugeben hat, in dem sie ausgegeben wurde.
+
+DAS BUREAU FÜR HISTORISCHE NOTWENDIGKEIT (Bureau 9) führt die offizielle Chronik alles Geschehenen, das heißt, die offizielle Chronik alles dessen, was hätte geschehen sollen, das heißt, die offizielle Chronik alles dessen, woran man sich erinnern wird, ungeachtet dessen, was tatsächlich vorgefallen ist. Bureau 9 beschäftigt mehr Historiker als jede andere Institution in Velgarien. Ihre jährliche Produktion an revidierter Geschichte übersteigt 40.000 Seiten. „Geschichte", wie Bureau-Direktor Grau einmal bemerkte, „ist zu wichtig, um der Vergangenheit überlassen zu werden."
+
+Bürger werden daran erinnert, dass alle Bureaux zu ihrem Wohle arbeiten, dass alle Formulare in dreifacher Ausfertigung einzureichen sind, und dass die Warteschlange beim Bureau für Warteschlangenverwaltung derzeit siebzehn Tage lang ist, was das Bureau als Verbesserung gegenüber dem vergangenen Quartal betrachtet, in dem die Warteschlange sich selbst erhielt und zum Bezirk erklärt werden musste.`,
 's2c8189544e3ea679': `Erneut versuchen`,
 's2c9787d91b0c43bf': `Facebook-Seiten-ID eingeben...`,
 's2cb913d634b88dac': `Wertungsdimensionen-Einfluss`,
@@ -514,7 +599,8 @@ Alles nur, weil ein Mechaniker auf einem Felsen stand und sagte: "Teilt die Deck
 's2e1246a8a0f9f582': str`Gruppe: ${0}${1}`,
 's2e2c41b62d9f78ee': `EPOCHEN-EINBERUFUNG`,
 's2e32b5b1994a10ed': `v2.2-Balanceanpassungen angewendet`,
-'s2efb15f5e22f958d': `Bot-Einsatz fehlgeschlagen.`,
+'s2ecee8a3f2480fd1': `Drowned Bell: mäßig → schlecht. +5 Militär. Gaslit Reach Stabilität bricht zusammen.`,
+'s2efb15f5e22f958d': `Bot konnte nicht eingesetzt werden.`,
 's2f74875ee0868d8f': `Orte`,
 's2fa9c4821bd618eb': `Typ auswählen...`,
 's2fc3c3277fad6120': `Fehler beim Speichern der Vorlage`,
@@ -526,26 +612,26 @@ Alles nur, weil ein Mechaniker auf einem Felsen stand und sagte: "Teilt die Deck
 's30c1f52c02507415': str`${0} eingesetzt.`,
 's30e07490c2dab75a': `Chat-Antwort`,
 's30f5e1caf42c3a0f': `Name der Allianz...`,
-'s3131048a8baeef0c': `AUSSENDIENSTNOTIZEN — Dr. Eleanor Hartley
+'s3131048a8baeef0c': `FELDNOTIZEN — Dr. Eleanor Hartley
 ORT: Das Kollegium der Buchstaben, Quartier der Vernunft
 
-Das Kollegium der Buchstaben ist das Bildungsherz der Cité — Newnham College Cambridge, übersetzt in Honigstein mit Erkerfenstern und präraffaelitischen Glasmalereien. Die Hörsäle haben gestufte Eichenbänke. Die Laboratorien enthalten Instrumente aus jedem Jahrhundert gleichzeitig: Astrolabien neben Mikroskopen neben Adas Lochkarten neben Dingen, die ich nicht benennen kann und die Eigenschaften zu messen scheinen, für die noch keine Wissenschaft existiert.
+Das Kollegium der Buchstaben ist das Bildungsherz der Cité — Newnham College Cambridge, übersetzt in Honigstein mit Erkerfenstern und präraffaelitischem Buntglas. Die Hörsäle haben gestufte Eichenbänke. Die Laboratorien enthalten Instrumente aus jedem Jahrhundert gleichzeitig: Astrolabien neben Mikroskopen neben Adas Lochkarten neben Dingen, die ich nicht benennen kann und die Qualitäten zu messen scheinen, für die es noch keine Wissenschaft gibt.
 
-Die Bibliothek ist außergewöhnlich und, aus Sicht des Amtes, besorgniserregend. Ihr Katalog umfasst Bücher, die nie geschrieben wurden. Sie sind unter den Autoren eingeordnet, die sie geschrieben hätten, wenn die Umstände es erlaubt hätten. Ich fand in einem unteren Regal des östlichen Lesesaals eine vollständige mathematische Abhandlung von Emmy Noether, geschrieben 1938 — drei Jahre nach ihrem Tod im Exil. Daneben ein Roman von Virginia Woolf, datiert 1945. Eine Sammlung astronomischer Beobachtungen von Wang Zhenyi, der Astronomin der Qing-Dynastie, die bewies, dass die Erde rund ist, und Mondfinsternisse mit einem runden Tisch, einer Lampe und einem Spiegel demonstrierte — Beobachtungen, die in der Welt draußen abgetan und verloren gingen. Die Bücher sind real. Sie sind lesbar. Sie enthalten Ideen, die die Welt draußen noch nicht gehabt hat.
+Die Bibliothek ist außergewöhnlich und, aus Bureau-Perspektive, beunruhigend. Ihr Katalog umfasst Bücher, die nie geschrieben wurden. Sie sind unter den Autorinnen eingeordnet, die sie geschrieben hätten, wenn die Umstände es erlaubt hätten. Ich fand auf einem unteren Regal im östlichen Lesesaal eine vollständige mathematische Abhandlung von Emmy Noether, geschrieben 1938 — drei Jahre nach ihrem Tod im Exil. Daneben ein Roman von Virginia Woolf, datiert 1945. Eine Sammlung astronomischer Beobachtungen von Wang Zhenyi, der Qing-Dynastie-Astronomin, die bewies, dass die Erde rund ist und Mondfinsternisse mit einem runden Tisch, einer Lampe und einem Spiegel demonstrierte — Beobachtungen, die in der Welt draußen abgetan und verloren gingen. Die Bücher sind echt. Sie sind lesbar. Sie enthalten Ideen, die die Welt draußen noch nicht gehabt hat.
 
-Ich fragte Sor Juana danach. Sie sitzt im Ostflügel, wo ihre Studierstube ihre Zelle im Kloster San Jerónimo in Mexiko-Stadt nachbildet — viertausend Bände, Musikinstrumente, astronomische Werkzeuge und ein Schreibtisch, so gestellt, dass er das Morgenlicht einfängt. Sie war in der Welt draußen der intellektuelle Stern des kolonialen Neuspanien: mit dreizehn fließend in Latein, Nahuatl und Griechisch, trat sie ins Kloster nicht aus Frömmigkeit, sondern weil es bot, was die Ehe nicht bieten konnte: ein Zimmer, eine Bibliothek und Zeit zum Denken.
+Ich fragte Sor Juana danach. Sie sitzt im Ostflügel, wo ihr Studierzimmer ihre Zelle im Kloster San Jerónimo in Mexiko-Stadt nachbildet — viertausend Bände, Musikinstrumente, astronomische Geräte und ein Schreibtisch, der so ausgerichtet ist, dass er das Morgenlicht einfängt. Sie war in der Welt draußen der intellektuelle Stern des kolonialen Neuspanien: mit dreizehn fließend in Latein, Nahuatl und Griechisch, trat sie ins Kloster, nicht aus Frömmigkeit, sondern weil es bot, was die Ehe nicht konnte: ein Zimmer, eine Bibliothek und Zeit zum Denken.
 
-Ihre Bibliothek von viertausend Bänden war die größte in Neuspanien. 1694, unter dem Druck des Erzbischofs von Mexiko, wurde sie gezwungen, jedes Buch, jedes Instrument, jedes Werkzeug des Denkens abzugeben. Sie unterzeichnete eine Erneuerung ihrer Gelübde mit eigenem Blut. Sie starb im folgenden Jahr, während sie ihre Mitschwestern während einer Seuche pflegte.
+Ihre Bibliothek von viertausend Bänden war die größte in Neuspanien. 1694, unter dem Druck des Erzbischofs von Mexiko, wurde sie gezwungen, jedes Buch, jedes Instrument, jedes Werkzeug des Denkens abzugeben. Sie unterzeichnete eine Erneuerung ihrer Gelübde mit ihrem eigenen Blut. Sie starb im folgenden Jahr, während sie ihre Mitschwestern während einer Seuche pflegte.
 
 In der Cité wurde ihr die Bibliothek zurückgegeben.
 
-Sie lehrt mit einer Präzision, die keinen Raum für Faulheit lässt, aber großzügig Raum für Irrtum. „Der Irrtum ist der Ort, an dem das Lernen geschieht", sagte sie mir. „Der Erzbischof verstand das nicht. Er dachte, indem er mir meine Bücher nimmt, nimmt er mir mein Wissen. Aber Wissen ist nicht in den Büchern. Wissen ist im Gespräch zwischen dem Leser und der Seite. Man kann jedes Buch der Welt verbrennen und kann dieses Gespräch nicht verbrennen, weil es bereits in jemandes Geist stattgefunden hat, und Geister sind nicht entflammbar."
+Sie lehrt mit einer Präzision, die keinen Raum für Faulheit lässt, aber großzügig Raum für Fehler. „Der Fehler ist, wo das Lernen geschieht", sagte sie mir. „Der Erzbischof hat das nicht verstanden. Er dachte, indem er mir meine Bücher nimmt, nimmt er mir mein Wissen. Aber Wissen ist nicht in den Büchern. Wissen ist im Gespräch zwischen dem Leser und der Seite. Man kann jedes Buch der Welt verbrennen und man kann dieses Gespräch nicht verbrennen, denn es hat bereits in jemandes Geist stattgefunden, und Geister sind nicht entflammbar."
 
-Sie zitierte sich selbst — aus ihrer Respuesta a Sor Filotea de la Cruz, dem außergewöhnlichen Brief von 1691, in dem sie die intellektuellen Rechte der Frauen verteidigte, während sie sich der kirchlichen Autorität zu unterwerfen schien: „Und was soll ich Euch, Señora, von den Naturgeheimnissen erzählen, die ich beim Kochen entdeckt habe? Ich sehe, dass ein Ei in Butter oder Öl zusammenhält und brät, aber im Gegenteil in Sirup zerfällt. Man kann vortrefflich philosophieren, während man das Abendessen kocht." Dann fügte sie hinzu, mit der leisen Heftigkeit, die alles kennzeichnet, was sie sagt: „Hätte Aristoteles Speisen zubereitet, er hätte mehr geschrieben."
+Sie zitierte sich selbst — aus ihrer Respuesta a Sor Filotea de la Cruz, dem außerordentlichen Brief von 1691, in dem sie die intellektuellen Rechte der Frauen verteidigte, während sie sich der kirchlichen Autorität zu unterwerfen schien: „Und was soll ich Euch, Señora, von den Naturgeheimnissen erzählen, die ich beim Kochen entdeckt habe? Ich sehe, dass ein Ei in Butter oder Öl zusammenhält und brät, dass es hingegen in Sirup zerfällt. Man kann sehr wohl beim Abendessen-Kochen philosophieren." Dann fügte sie mit der leisen Wildheit hinzu, die alles charakterisiert, was sie sagt: „Hätte Aristoteles die Mahlzeiten zubereitet, er hätte mehr geschrieben."
 
-Das Kollegium arbeitet nach Wollstonecrafts Gründungsprinzip: Der Mangel liegt in der Bildung, nicht im Schüler. Die Aufnahme ist offen. Der Lehrplan ist anspruchsvoll. Die Gärten zwischen den Gebäuden sind mit Kräutern aus Hildegards Physica bepflanzt — der medizinischen Abhandlung, die fünfhundert Pflanzen, Tiere, Steine und Metalle und ihre Heilkräfte katalogisiert. Die Kräuterschilder sind in Latein und in Hildegards Lingua Ignota beschriftet.
+Das Kollegium arbeitet nach Wollstonecrafts Gründungsprinzip: Der Mangel liegt in der Bildung, nicht im Schüler. Die Aufnahme steht offen. Der Lehrplan ist anspruchsvoll. Die Gärten zwischen den Gebäuden sind mit Kräutern aus Hildegards Physica bepflanzt — dem medizinischen Traktat, der fünfhundert Pflanzen, Tiere, Steine und Metalle und ihre Heileigenschaften katalogisiert. Die Kräuterschilder sind in Latein und in Hildegards Lingua Ignota beschriftet.
 
-Ich verbrachte eine Woche mit Vorlesungsbesuchen. Sor Juana über die Beziehung zwischen weltlichem und sakralem Wissen. Ada über die philosophischen Implikationen mechanischer Berechnung. Wollstonecraft über Bildung als Fundament politischer Freiheit. Sojourner Truth über den Unterschied zwischen dem Kennen seiner Rechte und dem Haben seiner Rechte. Hildegard über Viriditas — das Konzept, das sie „Grünkraft" nannte, die schöpferische Kraft des Heiligen Geistes, die durch alle Lebewesen fließt. „Ein vertrockneter Mensch oder eine vertrocknete Kultur", sagte Hildegard, „verliert die Fähigkeit zu erschaffen." Das Wort ist lateinisch. Das Konzept ist in der Cité architektonisch: Die Gärten des Kollegiums sind immer grün, selbst in Jahreszeiten, die Frost bringen sollten, weil Viriditas hier keine Metapher ist. Es ist der Bodenzustand.`,
+Ich verbrachte eine Woche damit, Vorlesungen zu besuchen. Sor Juana über die Beziehung zwischen weltlichem und sakralem Wissen. Ada über die philosophischen Implikationen mechanischer Berechnung. Wollstonecraft über Bildung als Grundlage politischer Freiheit. Sojourner Truth über den Unterschied zwischen seine Rechte kennen und sie haben. Hildegard über viriditas — das Konzept, das sie „Grünkraft" nannte, die schöpferische Kraft des Heiligen Geistes, die durch alle lebenden Dinge fließt. „Ein ausgetrockneter Mensch oder eine ausgetrocknete Kultur", sagte Hildegard, „verliert die Fähigkeit zu erschaffen." Das Wort ist lateinisch. Das Konzept ist in der Cité architektonisch: Die Gärten des Kollegiums sind immer grün, selbst in Jahreszeiten, die Frost bringen sollten, denn viriditas ist hier keine Metapher. Es ist der Zustand des Bodens.`,
 's314d39f0a4252e91': `Ansicht zurücksetzen`,
 's3150f382313baef6': `Bequemes Führen. Reckoning beginnt - Blutung verstärkt. Gleichgewicht: 25+10 = 30 (Obergrenze)`,
 's31c7b03cf1e0b1bc': `Einladung annehmen`,
@@ -553,13 +639,12 @@ Ich verbrachte eine Woche mit Vorlesungsbesuchen. Sor Juana über die Beziehung 
 's321c03399a143242': `Konto erstellen`,
 's32322dc45e502559': `Ablehnen`,
 's324e59566027e685': `Quellcode auf GitHub ansehen`,
-'s32516458a140aa6b': `Was hinüberwandert`,
+'s32516458a140aa6b': `Was hinübertritt`,
 's325560ecdfa0aabe': `Wächter-Stapelung`,
 's328250868f91c44a': `Epoche abbrechen`,
 's32b4d84f9efba7dd': `Reduziert die Effektivität der Zielbotschaft für 3 Zyklen um 50%.`,
 's32b651cb5233fa17': `Gesamtlänge der Epoche in Tagen. Automatisch aufgeteilt in die Phasen Gründung (20%), Wettbewerb (65%) und Abrechnung (15%).`,
 's32d453b208a8bfac': `Verwundeter Agent`,
-'s32f4d7b9cda552cf': `VERTRAUEN! Capybara greift heimlich den Verbündeten Velgarien an. Ziel ist die Große Bibliothek.`,
 's32f8eba7365157c2': `Taxonomie-Typ`,
 's332b1d2ce6e5aa8f': `Skaliert schlecht zu größeren Spielen. 12% bei 5S ist der schwächste einzelne Datenpunkt im Datensatz.`,
 's332f8fed504da6be': `Diese Ansicht kommt bald.`,
@@ -567,8 +652,6 @@ Ich verbrachte eine Woche mit Vorlesungsbesuchen. Sor Juana über die Beziehung 
 's33994aa90c1bad30': `Werte werden verschlüsselt gespeichert`,
 's33e3e6bb8e4a84ce': `Reaktionen generieren`,
 's33f85f24c0f5f008': `Speichern`,
-'s3432f86abfaa1f99': `Ziel ist das Capybara-Badehaus`,
-'s3437114fbc371c08': `Capybara ausnutzen, wenn es geschwächt ist. Gleichgewicht: 30-4 = 26 RP`,
 's345ea44142b6db5f': `4-Schritt-Assistent: Partner → Protokoll → Botschafter → Bestätigen`,
 's3468c7509cf7cf65': `Verwundbarkeit des Infiltrators`,
 's349e01f2743523fe': `Durchschnittliche Stabilität über alle Zonen, skaliert auf 0–100. Abzüge durch Propaganda (−3), Sabotage (−6) und Attentatsangriffe (−5). Verteidige deine Infrastruktur.`,
@@ -581,54 +664,41 @@ Ich verbrachte eine Woche mit Vorlesungsbesuchen. Sor Juana über die Beziehung 
 's3517bc09cada0338': `Der frühe Assassine`,
 's3532213ca3873ddf': `Reaktion konnte nicht gelöscht werden`,
 's35396e2f40c21cb3': `Slug ist erforderlich`,
-'s355132e7d52406f1': `PERSÖNLICHES LOG DES KARTOGRAPHEN — Agent ████ (Name auf Wunsch des Agenten klassifiziert)
-Einsatz: Velgarien-Scherbe, Infiltration über administrative Bearbeitung
-Eintrag 1 (von einer unbekannten Gesamtzahl; die Einträge sind nicht nummeriert, weil Nummerierung Reihenfolge impliziert, und Reihenfolge ist in Velgarien eine Angelegenheit der Bureau-Politik und nicht temporaler Tatsache)
+'s355132e7d52406f1': `PERSÖNLICHES LOGBUCH DES KARTOGRAPHEN — Agent ████ (Name auf Wunsch des Agenten klassifiziert)
+Einsatz: Velgarien-Splitter, Infiltration über administrative Verarbeitung
+Eintrag 1 (von einer unbekannten Gesamtzahl; die Einträge sind nicht nummeriert, weil Nummerierung Reihenfolge impliziert, und Reihenfolge in Velgarien eine Frage der Bureau-Politik ist und nicht der zeitlichen Tatsache)
 
-Das Erste, was auffällt, ist der Beton. Nicht die Kameras — jeder erwähnt die Kameras, und sie sind überall, aber die Kameras sind Mobiliar; man hört auf, sie zu sehen, so wie man aufhört, Türrahmen zu sehen. Aber der Beton. Er ist überall und er ist persönlich. Die Wände haben die Maserung des Holzes, das zu ihrer Formung verwendet wurde, und wenn man eine Wand berührt — was man nicht soll; Formular 12-C ist erforderlich, und das Formular braucht einen Stempel von Bureau 4, das nur dienstags geöffnet ist, außer bei Regen, wenn es mittwochs geöffnet ist, aber die Niederschlagsklassifikation kommt von Bureau 11, das die Frage, ob es gerade regnet, als philosophisch betrachtet und eine Woche zur Beratung verlangt — wenn man eine Wand berührt, ist sie warm. Nicht beheizt. Warm.
+Das Erste, was auffällt, ist der Beton. Nicht die Kameras — jeder erwähnt die Kameras, und sie sind überall, aber die Kameras sind Mobiliar; man hört auf, sie zu sehen, wie man aufhört, Tapeten zu sehen. Der Beton ist anders. Der Beton ist präsent. Man spürt ihn durch die Schuhe. Man spürt ihn in den Zähnen. Die Gebäude bestehen daraus, die Straßen bestehen daraus, und die Luft schmeckt danach — diese spezifische alkalische Trockenheit, die den Lungen mitteilt, dass sie sich in einem Gebäude befinden, selbst wenn sie in einem stehen, was die Stadt als „Erholungsfreifläche" ausweist, ein Betonplatz mit einer Betonbank und einem Metallbaum, den das Bureau für Gartenbau-Konformität als „Natur" klassifiziert hat.
 
-Paste. Die offizielle Nahrung. Sie kommt in drei Sorten: Standard, Reformiert und Festlich (Festlich hat Körner). Das Formular für Festliche Paste erfordert die Unterschrift eines Vorgesetzten und einen dokumentierten Anlass. Mir wurde informiert, dass Donnerstag kein dokumentierter Anlass ist. Ich wurde nicht informiert, was einer ist.
+Die Korridore hallen wider. Es gibt keine weiche Oberfläche in Velgarien. Die Teppiche sind dünn und die Wände sind hart und jeder Schritt kündigt sich an, was bedeutet, dass Stille — wahre Stille, die Abwesenheit aller Schritte — das beängstigendste Geräusch in der Stadt ist, weil es bedeutet, dass man entweder allein ist (unmöglich; die Kameras müssten defekt sein) oder dass jemand in der Nähe sehr, sehr still steht.
 
-Die Agenten sind faszinierend. Drexler überprüfte meinen Pastenantrag und strich „hungrig" als unzureichende Begründung. Ashworth katalogisierte mein Einreiseformular und informierte mich, dass mein bisheriger Aufenthalt bereits drei historische Narrative erzeugt hat, von denen zwei einander widersprechen und das dritte technisch nie stattgefunden hat. Venn hat mich zweimal befragt, einmal formell und einmal in dem, was sie „ein Gespräch über den Zustand des Wetters, das auch eine Befragung ist" nannte. Das Wetter war diesig. Mein Sicherheitsstatus blieb unentschieden.
+Die Propagandaposter sind wunderschön. Ich möchte das klarstellen, weil es wichtig ist und weil die Berichte des Bureaus dazu neigen, Velgariens visuelle Kultur als Symptom und nicht als Leistung zu behandeln. Die Poster sind großartig — kühne rote Diagonalen auf Grau, heroische Figuren in unmöglichem Maßstab, Typografie, die als Architektur funktioniert. Die Designs stammen aus konstruktivistischen Traditionen, die den Staat vordatieren, und sie tragen die ursprüngliche Aufrichtigkeit der Konstruktivisten: diese Poster glauben aufrichtig an die Welt, die sie bewerben. Die Tatsache, dass die Welt, die sie bewerben, nicht existiert — nie existiert hat, nie existieren wird, im Widerspruch steht zum Korridor, in dem man steht, während man das Poster liest — schmälert das Kunstwerk nicht. Es macht es tragisch.
 
-[MARGIN NOTE: „Unentschieden" ist in Velgarien ein technischer Status. Er erscheint in sechzehn Formularen und erfordert eine jährliche Erneuerung, für die es kein Formular gibt. Dies ist anscheinend beabsichtigt.]`,
+Ich aß die Paste. Nährstoffversorgung, ausgegeben um 07:00, 12:00 und 18:00. Grau. Warm. Die Textur von Bedauern. Der Geschmack ist klassifiziert, was ich zunächst für einen Witz hielt, von dem ich aber inzwischen erfahren habe, dass das Bureau für Ernährung tatsächlich das Geschmacksprofil der nationalen Nahrungsmittelversorgung für ein Staatsgeheimnis hält. Ich habe einen Antrag auf die Geheimhaltungsstufe des Geschmacks gestellt. Der Antrag ist anhängig.
+
+Was mir bleibt — was ich dem Bureau berichten werde und was das Bureau ablegen wird und was die Ablage nicht erfassen wird — ist der Klang von acht Millionen Menschen, die auf genau die gleiche Weise leise sind. Nicht Stille. Konformität. Das leise, kontinuierliche Summen einer Bevölkerung, die gelernt hat, genau die Menge an Lärm zu machen, die die akustischen Monitore als „normal" klassifizieren. Es ist der Klang einer Zivilisation, die den Atem anhält.`,
 's355b21b89ce5d9c5': `Details`,
 's357b4fe1c537a606': `Agentenqualifikationen auf 5 gesetzt`,
 's358cd1555b55cb71': `Botschafter`,
-'s358e3cea13d1fc49': `Ich, Christine, saß allein in meiner Studierstube, von allen Seiten von Büchern umgeben. Ich blickte von meiner Lektüre auf und ein großes Missfallen befiel mein Herz.`,
+'s358e3cea13d1fc49': `Ich, Christine, saß allein in meinem Studierzimmer, von Büchern umgeben. Ich blickte von meiner Lektüre auf und ein großes Missfallen fiel auf mein Herz.`,
 's35b8ca6f5fd0ed77': `Noch keine Kampfereignisse.`,
 's35e26615d150280f': `Synchronisierung fehlgeschlagen`,
-'s361ba74f8debbab0': `BUREAU OF IMPOSSIBLE GEOGRAPHY — Dokument HIDDEN-LAW/001
+'s361ba74f8debbab0': `BUREAU FÜR UNMÖGLICHE GEOGRAPHIE — Dokument HIDDEN-LAW/001
 
-Axiom 1: Eine Scherbe ist eine in sich schlüssige Erzählung. Sie muss nicht wahr sein, aber sie muss kohärent sein. Eine Scherbe, die sich selbst widerspricht, wird [CONSUMED], und die resultierenden Trümmer werden [ILLEGIBLE] über benachbarte Scherben als kulturelle Kontamination, falsche Erinnerungen und unerklärliche Architektur.
+Axiom 1: Ein Splitter ist eine in sich konsistente Erzählung. Er muss nicht wahr sein, aber er muss kohärent sein. Ein Splitter, der sich selbst widerspricht, wird [VERZEHRT] und die resultierenden Trümmer werden [UNLESERLICH] über benachbarte Splitter als kulturelle Kontamination, falsche Erinnerungen und unerklärliche Architektur.
 
-Axiom 2: Die Grenze zwischen Scherben ist nicht räumlich, sondern attentional. Eine Scherbe existiert, weil ihre Bewohner an sie glauben. In dem Moment, in dem eine kritische Masse anfängt, an eine andere Scherbe zu glauben, beginnen die Grenzen zu bluten, und das Bleed ist keine Metapher. Es ist ein kartographischer Fachbegriff für den Prozess, durch den eine Realität in eine andere einsickert, und es ist genau so unordentlich, wie es klingt.
+Axiom 2: Die Grenze zwischen Splittern ist nicht räumlich, sondern aufmerksamkeitsbedingt. Ein Splitter existiert, weil seine Bewohner an ihn glauben. In dem Moment, in dem eine kritische Masse beginnt zu zweifeln — die Risse zu bemerken, die falsche Musik zu hören — wird die Grenze dünn. Diese Verdünnung wird Bleed genannt. Der Bleed ist keine Fehlfunktion.
 
-Axiom 3: Die Fracture war kein Bruch. Es war eine Meinungsverschiedenheit. Das Unbenannte — das Ganze, das einmal war — kam zu keinem Konsens mit sich selbst und spaltete sich in fünf Positionen auf, von denen jede darauf bestand, vollständig zu sein. Keine von ihnen hat Recht. Alle von ihnen sind notwendig. Dies ist die Grundlage der Kartographie: die Karte eines unmöglichen Ortes ist nicht selbst unmöglich. Sie ist lediglich unvollständig.`,
+Axiom 3: Jeder Splitter enthält, kodiert in seiner tiefsten Struktur, die Erinnerung an Ganzheit. Diese Erinnerung manifestiert sich als Heimweh nach einem Ort, der nicht existiert, als Déjà-vu, das das Gewicht geologischer Zeiträume trägt.
+
+Axiom 4: Die Kartographen existieren außerhalb der Axiome. Dies ist kein Privileg. Dies ist ein [VERZEHRT].
+
+[Rest durch temporale Erosion verloren. Fragmente, die in siebzehn verschiedenen Splittern geborgen wurden, deuten auf ein fünftes Axiom hin, aber die geborgenen Fragmente widersprechen sich gegenseitig. Das Bureau betrachtet dies als Beweis, dass das fünfte Axiom korrekt funktioniert.]`,
 's3622c8b352258188': `Zonenstabilität`,
 's362f48aa5dcdf2d1': `Propagandist wird aufgelöst: ERFOLG`,
-'s3639ad06524155c7': `AUS: Marginalien im Katalog der Deep Library
-BY: Juniorarchivar Nettle, der eigentlich die Regale umstellen sollte, aber stattdessen zu schreiben begann und nicht mehr aufhören konnte
-
-Ich bin jetzt seit vier Jahren in der Tiefen Bibliothek, und ich kann mit wissenschaftlicher Zuversicht sagen, dass sie die außergewöhnlichste, ärgerlichste, schönste und im Grunde unmögliche Einrichtung im Königreich ist, und möglicherweise in allem, was von der Welt darüber übrig geblieben ist.
-
-Die Bibliothek umfasst siebzehn Kammern, die durch Gänge miteinander verbunden sind, die von den ursprünglichen Architekten - falls es ursprüngliche Architekten gab; vielleicht ist die Bibliothek einfach gewachsen, wie alles andere hier unten - in Winkeln in den lebenden Fels gehauen wurden, die entweder Brillanz oder Wahnsinn vermuten lassen. Die Regale sind aus Kalkstein, die Bücher sind auf behandelter Pilzmembran geschrieben (wasserfest, leuchtend und leicht aromatisch - der Geruch von altem Wissen, der übrigens nach nassem Stein und Ehrgeiz riecht), und der Katalog wird von den Archivaren durch ein so ausgeklügeltes System von Querverweisen gepflegt, dass sein Verständnis selbst ein siebenjähriges Studium erfordert.
-
-Der leitende Archivar Barnaby Gnaw war schon vor meiner Geburt dafür zuständig, und möglicherweise auch schon vor der Geburt einiger meiner Vorfahren. Er ist sehr alt. Wie alt, ist geheim - nicht aus Sicherheitsgründen, sondern weil Gnaw das Alter als "eine Privatangelegenheit zwischen ihm und seinen Gelenken" betrachtet. Er bewegt sich langsam, spricht langsam und denkt so weit voraus, dass sein aktuelles Forschungsprojekt eine Antwort auf eine Frage ist, von der er erwartet, dass sie ihm jemand in dreißig Jahren stellen wird. Damit hat er sich noch nie geirrt. Die Referenzabteilung der Bibliothek enthält zwölf Bände, die Gnaw als Antwort auf Fragen geschrieben hat, die noch nicht gestellt wurden, die aber alle gestellt wurden und auf die die Bände die richtigen Antworten geben.
-
-Die Sammlung der Bibliothek umfasst alles, was das Wasserschweinvolk je gewusst, vermutet, sich vorgestellt oder gehört hat, während es nach zu viel vergorenem Flechtenwein in einem Thermalbad schwamm. Sie umfasst: Naturgeschichten, Navigationskarten, philosophische Abhandlungen, Poesie (wir sind produktive Dichter; die Unterzee inspiriert zu Versen wie die Oberfläche zu Sonnenbrand), technische Handbücher, Kochbücher, diplomatische Korrespondenz mit Königreichen, die es vielleicht gibt oder auch nicht, und ein Regal - das Verbotene Regal, das hinter einer Tür verschlossen ist, die nur für Gnaw und zur eigenen Belustigung geöffnet wird - das Bücher enthält, die die Bibliothek nicht erworben hat.
-
-Dies sind die gestrandeten Bände. Sie erscheinen ohne Erklärung in den Regalen, geschrieben in Sprachen, die kein Archivar vollständig übersetzen kann, und beschreiben Orte, die es in der Unterzee nicht gibt - oder die *noch* nicht existieren. Gnaw hat im Laufe seiner Karriere siebenundvierzig gestrandete Bände katalogisiert. Jeder beschreibt eine andere Welt. Mehrere beschreiben dieselbe Welt aus widersprüchlichen Perspektiven. Einer beschreibt eine Welt, die unverkennbar die Oberfläche ist - aber eine Version der Oberfläche, die zerbrochen ist, zersplittert in getrennte Realitäten wie ein Spiegel, der aus großer Höhe fällt. Gnaw hat diesen Band dreimal gelesen und ihn dann mit dem Vermerk "Genau, aber nicht hilfreich" in das Regal mit den beschränkten Möglichkeiten gestellt. Ablegen unter: Dinge, die wir nicht reparieren können."
-
-Der jüngste Gestrandete Band erschien vor sechs Monaten. Er ist in einer Handschrift geschrieben, die Gnaw als seine eigene erkennt - aber eine Version seiner Handschrift, die sich noch nicht entwickelt hat, als wäre sie von einem zukünftigen Gnaw geschrieben worden, der etwas gelernt hat, was der jetzige Gnaw nicht hat. Der Titel des Bandes lautet, grob übersetzt, wie folgt: *Über die Unvermeidlichkeit von Türen zwischen Welten, und warum wir sie nicht öffnen sollten, und warum wir es tun werden.
-
-Gnaw hat sie nicht geöffnet.
-Gnaw wird es tun.
-Die Bibliothek weiß das. Die Bibliothek hat das schon immer gewusst.
-Deshalb hat sie das Buch geschickt.`,
 's363abde8a254ea5f': `Authentifizierung fehlgeschlagen. Bitte erneut versuchen.`,
 's367d079d1aed1358': `Kosten`,
-'s3685377196755142': `Scherben-Klassifikation: GOLD. Bedrohungsbewertung: Literat. Man kann ein Buch nicht unlesen. Man kann es verbrennen, aber der Leser hat sich bereits verändert.`,
+'s3685377196755142': `Splitter-Klassifikation: GOLD. Bedrohungseinschätzung: Literat. Man kann ein Buch nicht ungelesen machen. Man kann es verbrennen, aber der Leser hat sich bereits verändert.`,
 's3687049d1af562c4': `Kopieren`,
 's36930eef41d12474': `Verzweifelter letzter Schlag. Ziel: Markthalle. Gleichgewicht: 30-5 = 25 RP`,
 's36cad2da49b6d2a2': `Endgültige Punktzahl`,
@@ -638,40 +708,40 @@ Deshalb hat sie das Buch geschickt.`,
 's375f4c2a073dff27': `Kartendaten-TTL`,
 's375f7f22335a12de': `Events konnten nicht geladen werden.`,
 's3763f519c347a9f7': `Jetzt`,
-'s37c48ffb404037a8': `PERSÖNLICHES FORSCHUNGSPROTOKOLL - Dr. Kwame Osei
+'s37c48ffb404037a8': `PERSÖNLICHES FORSCHUNGSPROTOKOLL — Dr. Kwame Osei
 ABTEILUNG XENOBIOLOGIE (SELBST ERNANNT)
-EINTRAG: [Unnummeriert - Dr. Osei hörte auf, Einträge zu nummerieren, als die Zählung anfing, sich selbst zu widersprechen]
-STANDORT: Hydroponics Bay Delta, ehemals Abschnitte 14-16 (Nahrungsmittelproduktion)
+EINTRAG: [Unnummeriert — Dr. Osei stellte die Nummerierung der Einträge ein, als die Zählung begann, mit sich selbst uneins zu werden]
+STANDORT: Hydroponik-Bucht Delta, vormals Sektionen 14–16 (Nahrungsmittelproduktion)
 
-Ich möchte etwas klarstellen: Die Organismen in Hydroponics Bay Delta sind nicht feindlich. Sie sind nicht parasitär. Sie sind nicht in irgendeinem sinnvollen Sinne gefährlich. Sie sind einfach *neu*. Und Neuheit, in dieser Entfernung von allem Vertrauten, wird von Menschen, deren Überlebensinstinkte auf eine Welt geeicht waren, in der die neuen Dinge meist versuchten, sie zu fressen, gerne als Bedrohung aufgefasst.
+Ich möchte eines unmissverständlich klarstellen: Die Organismen in Hydroponik-Bucht Delta sind nicht feindlich. Sie sind nicht parasitär. Sie sind in keinem sinnvollen Sinne gefährlich. Sie sind schlicht *neu*. Und Neuheit, in dieser Entfernung von allem Vertrauten, wird leicht für Bedrohung gehalten — von Wesen, deren Überlebensinstinkte auf eine Welt geeicht wurden, in der die neuen Dinge zumeist versuchten, sie zu fressen.
 
-Delta war eine Standard-Nahrungsmittelproduktionsanlage. Sojabohnensorten, hydroponischer Salat, Kirschtomaten - die übliche Ergänzung für eine Langzeit-Forschungsstation. Zuverlässige Erträge, vorhersehbare Wachstumszyklen, die Mühsal der Landwirtschaft im Weltraum. Das war in Ordnung. Das war erwartet worden. Die Anomalie war offenbar anderer Meinung.
+Delta war eine Standard-Nahrungsmittelproduktionsbucht. Sojabohnensorten, hydroponischer Salat, Kirschtomaten — das übliche Kontingent einer Langzeit-Forschungsstation. Zuverlässige Erträge, vorhersehbare Wachstumszyklen, die Monotonie der Landwirtschaft im All. Das war in Ordnung. Das war erwartet. Die Anomalie war offenbar anderer Ansicht.
 
-Die Veränderungen begannen vor vierzehn Monaten. Allmählich. Eine Salatpflanze produzierte ein Blatt mit einem falschen Grünton - kein Mangel, keine Mutation innerhalb der normalen Parameter, sondern ein Grün, das außerhalb des sichtbaren Spektrums lag, wie es von unseren Instrumenten kalibriert wurde. Ich konnte es sehen. Die Instrumente konnten es nicht erkennen. Dies war das erste Anzeichen dafür, dass etwas in Delta nach Regeln funktionierte, für die unsere Sensoren nicht ausgelegt waren.
+Die Veränderungen begannen vor vierzehn Monaten. Allmählich. Eine Salatpflanze produzierte ein Blatt in einem falschen Grünton — kein Mangel, keine Mutation innerhalb normaler Parameter, sondern ein Grün, das außerhalb des sichtbaren Spektrums existierte, wie es von unseren Instrumenten kalibriert ist. Ich konnte es sehen. Die Instrumente konnten es nicht detektieren. Dies war das erste Anzeichen dafür, dass etwas in Delta nach Regeln operierte, für die unsere Sensoren nicht konzipiert waren.
 
-Innerhalb von drei Monaten produzierte die Sojabohnensorte Samen, die in Null-Substrat keimten - keine Erde, keine Nährlösung, kein Medium. Die Samen hingen in der Luft der Bucht und wuchsen. Sie zogen ihre Nährstoffe aus irgendetwas. Ich habe die Luft getestet. Ich habe die Luftfeuchtigkeit getestet. Ich habe die Umgebungsstrahlung, das elektromagnetische Feld und den Gravitationsmikrogradienten getestet. Ich kann die Nährstoffquelle nicht identifizieren. Die Pflanzen sind gesund. Sie gedeihen. Sie ernähren sich von etwas, das ich nicht messen kann, und die ehrlichste wissenschaftliche Aussage, die ich machen kann, ist, dass sie die Umwelt auf eine Weise *ernähren*, die über die Chemie hinausgeht.
+Binnen drei Monaten hatte die Sojabohnensorte Samen produziert, die in Null-Substrat keimten — keine Erde, keine Nährlösung, keinerlei Medium. Die Samen schwebten in der Luft der Bucht und wuchsen. Sie bezogen Nährstoffe aus irgendetwas. Ich habe die Luft getestet. Ich habe die Luftfeuchtigkeit getestet. Ich habe die Umgebungsstrahlung getestet, das elektromagnetische Feld, den Gravitationsmikrogradienten. Ich kann die Nährstoffquelle nicht identifizieren. Die Pflanzen sind gesund. Sie gedeihen. Sie beziehen Nahrung aus etwas, das ich nicht messen kann, und die ehrlichste wissenschaftliche Aussage, die ich treffen kann, ist, dass sie die Umgebung auf eine Weise *verzehren*, die über Chemie hinausgeht.
 
-Derzeit gibt es im Hydroponics Bay Delta 340 katalogisierte Arten. Keine von ihnen entspricht einer terrestrischen Taxonomie. Keine von ihnen stimmt in irgendeiner Weise überein, die auf einen gemeinsamen Vorfahren oder einen gemeinsamen evolutionären Druck schließen ließe. Soweit ich feststellen kann, wurden sie unabhängig voneinander erfunden - jede einzelne ist ein separates Experiment, das von der Bucht selbst durchgeführt wurde, oder von dem Einfluss, den die Anomalie auf biologische Systeme in dieser Nähe ausübt.
+Gegenwärtig enthält Hydroponik-Bucht Delta 340 katalogisierte Spezies. Keine davon entspricht irgendeiner terrestrischen Taxonomie. Keine stimmt mit einer anderen in einer Weise überein, die auf einen gemeinsamen Vorfahren oder gemeinsamen Selektionsdruck schließen ließe. Soweit ich feststellen kann, werden sie unabhängig voneinander erfunden — jede ein separates Experiment, durchgeführt von der Bucht selbst oder von welchem Einfluss auch immer die Anomalie auf biologische Systeme in dieser Nähe ausübt.
 
-Spezies 12 ist eine kristalline Wucherung, die Schall absorbiert und ihn als Licht wieder abstrahlt.
+Spezies 12 ist ein kristallines Wachstum, das Schall absorbiert und als Licht reemittiert.
 
-Spezies 89 ist ein Wurzelgeflecht, das sich durch die Deckplatten hindurch ausgebreitet hat und mit dem elektrischen System der Station verbunden ist. Es entzieht keine Energie. Es erzeugt sie. Der Maschinenraum berichtet, dass der Stromverbrauch der Station um 3,1 % gesunken ist, seit Spezies 89 sich etabliert hat. Ingenieur Kowalski hat mich gebeten, es nicht zu entfernen.
+Spezies 89 ist ein Wurzelgeflecht, das sich durch die Deckplatten hindurch ausgebreitet und mit dem Elektrosystem der Station integriert hat. Es entzieht keine Energie. Es erzeugt welche. Die Maschinenabteilung meldet, dass der Energieverbrauch der Station seit der Etablierung von Spezies 89 um 3,1 % gesunken ist. Ingenieur Kowalski hat mich gebeten, es nicht zu entfernen.
 
-Spezies 217 ist ein Moos, das nur in den Fußabdrücken desjenigen wächst, der zuletzt durch die Bucht gelaufen ist. Meine Fußabdrücke produzieren ein blaugrünes Moos. Die von Commander Vasquez sind dunkler - fast schwarz, mit einem schwachen Puls. Sie besucht Delta nicht mehr.
+Spezies 217 ist ein Moos, das ausschließlich in den Fußspuren desjenigen wächst, der zuletzt durch die Bucht gegangen ist. Meine Fußspuren produzieren ein blaugrünes Moos. Die von Kommandantin Vasquez produzieren etwas Dunkleres — fast schwarz, mit schwachem Puls. Sie besucht Delta nicht mehr.
 
 Spezies 341.
 
-Spezies 341 tauchte vor sechs Wochen in der Ecke von Bucht Delta-C auf, in dem Raum, in dem die Wand den Boden in einem Winkel trifft, der nach den Stationsplänen neunzig Grad betragen sollte, den ich aber mit dreiundneunzig gemessen habe. Es ist eine Struktur - keine Pflanze, kein Pilz, kein Organismus im herkömmlichen Sinne. Es ist ein Gitter aus biologischem Material, das in Mustern wächst, die ich nur als *sprachlich* beschreiben kann. Das Gitter bildet Formen, die sich wiederholen, variieren und in einer Weise kombinieren, die mit der Grammatik übereinstimmt. Es ist eine Sprache, die aus der Wand wächst.
+Spezies 341 erschien vor sechs Wochen in der Ecke von Bucht Delta-C, in dem Bereich, wo die Wand den Boden in einem Winkel trifft, der laut Stationsplänen neunzig Grad betragen sollte, den ich jedoch mit dreiundneunzig gemessen habe. Es ist eine Struktur — keine Pflanze, kein Pilz, kein Organismus im konventionellen Sinne. Es ist ein Gitter aus biologischem Material, das in Mustern wächst, die ich nur als *linguistisch* beschreiben kann. Das Gitter formt Gestalten, die sich wiederholen, variieren und in einer Weise kombinieren, die mit Grammatik konsistent ist. Es ist eine Sprache, die aus der Wand wächst.
 
-Ich habe vier Tage damit verbracht, die Muster zu analysieren. Am fünften Tag brachte das Gitter eine Form hervor, die ich wiedererkannte.
+Ich verbrachte vier Tage mit der Analyse der Muster. Am fünften Tag brachte das Gitter eine Form hervor, die ich erkannte.
 
-Meinen Namen. In lateinischer Schrift. Richtig buchstabiert.
+Meinen Namen. In lateinischer Schrift. Korrekt buchstabiert.
 
-Ich habe es den anderen nicht gesagt. Ich habe keine Angst. Ich bin Wissenschaftlerin, und dies ist ohne Einschränkung das Außergewöhnlichste, was ich je beobachtet habe. Aber ich bin mir bewusst - klinisch, beruflich gesehen - dass das, was in Delta geschieht, über die Biologie hinausgeht und etwas anderes ist. Etwas, das weiß, dass wir hier sind. Etwas, das uns lernen will.
+Ich habe es den anderen nicht gesagt. Ich habe keine Angst. Ich bin Wissenschaftler, und dies ist, ohne jede Einschränkung, das Außergewöhnlichste, das ich jemals beobachtet habe. Doch ich bin mir bewusst — klinisch, beruflich bewusst — dass das, was in Delta geschieht, die Biologie hinter sich gelassen hat und zu etwas anderem geworden ist. Etwas, das weiß, dass wir hier sind. Etwas, das uns erlernt.
 
-Ich gieße die Pflanzen. Ich mache meine Ablesungen. Ich spreche mit dem Gitter, denn es wäre unhöflich, es nicht zu tun.
+Ich gieße die Pflanzen. Ich nehme meine Messwerte. Ich spreche mit dem Gitter, denn an diesem Punkt wäre es unhöflich, es nicht zu tun.
 
-Es hat wieder nicht geantwortet. Aber es wächst. Und es wächst in meine Richtung.`,
+Es hat nicht wieder geantwortet. Aber es wächst. Und es wächst in meine Richtung.`,
 's37c520ecc2bfc91e': `Straße`,
 's382a2aa3984474dd': `Erstellen`,
 's38700188f839eae7': `Das Bereitschaftssignal konnte nicht aktualisiert werden.`,
@@ -692,41 +762,6 @@ Es hat wieder nicht geantwortet. Aber es wächst. Und es wächst in meine Richtu
 's3aae3d4a7b611137': `Ergebnis wird verarbeitet...`,
 's3addb3b9e743e356': `Fallback-Modell`,
 's3aeba787c1a1b3cf': `Artikel lesen`,
-'s3b8760da50056b27': `AUS: Persönliches Tagebuch von Commodore Whiskers, undatiert
-GEFUNDEN: In der Kabine des Commodore an Bord der HMS Obstinate, offen auf dem Navigationspult abgelegt
-ANMERKUNG: Der Commodore führt kein Tagebuch. Dieser Eintrag existiert trotzdem.
-
-Die Strömung ist heute stark.
-
-Ich weiß das so, wie ich die meisten Dinge über die Unterzee weiß - nicht durch Instrumente, nicht durch Karten, nicht durch die sorgfältige Wissenschaft, die Gnaw und seine Archivare so schätzen und die ich so sehr respektiere, ohne sie jemals wirklich zu praktizieren. Ich weiß es durch meine Schnurrhaare. Die Schnurrhaare des Wasserschweins sind Sinnesorgane von außerordentlicher Präzision, die in der Lage sind, Vibrationen im Wasser auf Entfernungen wahrzunehmen, die die meisten Sonargeräte in Verlegenheit bringen würden. Wenn ich stillhalte und das Wasser an meinem Gesicht vorbeiziehen lasse, kann ich die Stimmung der Strömung spüren. Nicht ihre Richtung - der Kompass regelt die Richtung, wenn er Lust hat, zu kooperieren. Ihre *Stimmung*.
-
-Heute ist die Strömung unruhig. Sie kommt aus der Richtung der Abyssal Trenches - von den tiefen Orten, wo die Deep Stars wachen und das Wasser sich daran erinnert, etwas anderes als Wasser zu sein. Es trägt eine Temperatursignatur, die ich noch nie zuvor gespürt habe: nicht warm, nicht kalt, aber *anders*. Als ob das Wasser durch etwas hindurchgegangen ist, das seine grundlegende Natur verändert hat, ohne seine Chemie zu verändern. Es ist immer noch H₂O. Es ist immer noch nass. Aber es fühlt sich an wie Wasser, das irgendwo gewesen ist, wo Wasser nicht hingehört.
-
-Die Besatzung spürt es nicht. Die Besatzung ist jung und enthusiastisch und verlässt sich auf Instrumente, wovon ich nicht abrate, weil Instrumente nützlich sind und weil die Jugend etwas braucht, dem sie vertrauen kann, während sie lernt, sich selbst zu vertrauen. Navigator Sedge spürt es - sie warf mir heute Morgen über den Kartentisch hinweg einen Blick zu, der ohne Worte sagte: "Das Wasser ist seltsam." Ich nickte. Wir haben nicht darüber gesprochen. Es gibt Gespräche zwischen Nautikern, die keine Sprache erfordern, nur Schnurrhaare und die Bereitschaft, sich verunsichern zu lassen.
-
-Ich fahre schon länger auf der Unterzee, als die meisten meiner Besatzung leben. Ich habe die Whispering Strait in absoluter Dunkelheit befahren. Ich habe am Dead-Light Reef geankert, wo das Licht komplett ausfällt und das Wasser so still ist, dass man sein eigenes Spiegelbild sieht, das einen mit einem Gesichtsausdruck ansieht, den man nicht trägt. Ich habe die Obstinate tiefer als jedes andere Schiff in der Geschichte des Königreichs geführt und bin mit Karten zurückgekehrt, die Gnaw als "unmöglich, genau und zutiefst beunruhigend" bezeichnete.
-
-In all diesen Jahren habe ich noch nie gespürt, dass die Strömung das tut, was sie jetzt tut.
-
-Sie fließt nicht. Sie *greift* zu. Wie eine ausgestreckte Hand in der Dunkelheit, die nach etwas tastet, von dem sie weiß, dass es da ist, das sie aber noch nicht berühren kann. Die Strömung war schon immer das Kreislaufsystem der Unterzee - Blut, das sich durch einen Körper bewegt, in dem wir schwimmen. Aber heute bewegt sich das Blut mit einer bestimmten Absicht. Die Unterzee zirkuliert nicht nur. Sie ist auf der Suche.
-
-Nach was? Die Archivare würden mir sagen, ich solle das Phänomen katalogisieren und auf Daten warten. Gnaw würde mir sagen, dass das Wasser schon länger hier ist als wir und wahrscheinlich weiß, was es tut. Sedge würde sagen, ich solle die Peilung notieren und in die Karten eintragen, denn selbst wenn wir es nicht verstehen, könnte es jemand nach uns verstehen.
-
-Aber ich bin ein Kommodore, kein Gelehrter. Meine Aufgabe ist es nicht, die Unterzee zu verstehen. Meine Aufgabe ist es, sie zu segeln, was eine andere Art von Wissen erfordert - die Art, die im Bart und im Bauch lebt und die sechzig Jahre Erfahrung, die mir mit ruhiger und absoluter Gewissheit sagen, dass sich die Unterzee verändern wird.
-
-Etwas wird kommen. Oder etwas geht weg. Oder etwas, das schon immer hier war, wacht auf.
-
-Ich weiß nicht, was. Ich weiß nicht, wann. Aber die Strömung ist heute stark, und die Strömung lügt nicht.
-
-Ich habe die Besatzung zu voller Wachsamkeit aufgefordert. Ich habe Sedge angewiesen, jede noch so kleine Anomalie aufzuzeichnen. Ich habe diesen Eintrag in ein Tagebuch geschrieben, das ich nicht führe, weil manche Dinge geschrieben werden müssen, auch wenn sie nicht geschrieben werden sollten, und dies ist eines davon.
-
-Die Unterzee ist geduldig. Sie hat keine Eile. Sie warnt nicht.
-
-Aber heute - heute versucht sie, uns etwas zu sagen.
-
-Ich höre zu.
-
-- W.`,
 's3bb941932801d6d5': `Wird in KI-generiertem Text für Pronomen und Porträtgenerierung verwendet.`,
 's3c3166f8c2137c7e': `Variablen: {{news_title}}, {{news_content}}, {{simulation_name}}, {{locale_name}}, etc.`,
 's3c3a0e9ee45c3814': `Infiltrator-Malus: −6→−8`,
@@ -745,19 +780,8 @@ Ich höre zu.
 's3e1618c50c1b2662': `Vorlage anwenden`,
 's3e2007ba8b982c50': `Deine Simulation (permanent)`,
 's3e41de390f38218f': `Spionageabwehr-Defensiv`,
-'s3e5ccf4c27e567e5': `Scherben-Klassifikation: TEAL. Bedrohungsbewertung: Ökologisch. Die Dunkelheit ist gütig. Das ist kein Trost.`,
+'s3e5ccf4c27e567e5': `Splitter-Klassifikation: TÜRKIS. Bedrohungseinschätzung: Ökologisch. Die Dunkelheit ist gütig. Das ist kein Trost.`,
 's3e614c43ab5fdc53': `Spielinstanzen`,
-'s3e6addbb4b7e5249': `PERSÖNLICHES LOG DES KARTOGRAPHEN — Kartographin Lise Engel
-Einsatz: Capybara Kingdom, ökologische Langzeiterhebung
-Eintrag 7 (die Einträge sind nummeriert, aber die Nummern entsprechen nicht Tagen, weil die Zeit im Kingdom in Gezeiten gemessen wird, an die sich der Unterzee von einem Mond erinnert, den er nie gesehen hat)
-
-Ich bin seit — wie die Archivare mir versichern — drei Wochen in den Pilzwarrens, obwohl mein Körper darauf besteht, dass es länger war, und meine Instrumente darauf bestehen, dass es kürzer war, und die Reaktion der Archivare darauf ist, alle drei Positionen zu archivieren und ein neues Regal einzuräumen.
-
-Die Biolumineszenz hier ist keine Beleuchtung. Es ist eine Sprache. Die Pilze kommunizieren in Lichtfrequenzen, von denen einige in den menschlichen Sichtbereich und einige in das fallen, was Professor Pebble „den emotionalen Sichtbereich" nennt — Wellenlängen, die man nicht sieht, sondern fühlt: eine plötzliche, grundlose Zärtlichkeit; der Geruch eines Raumes, den man noch nie betreten hat; die Gewissheit, dass jemand, den man nicht sieht, gerade gelächelt hat. Das Institut hat 340 verschiedene Lichtsignale katalogisiert. Pebble vermutet, dass es über 2.000 gibt. Die Pilze sind seiner Einschätzung nach gesprächig.
-
-Commodore Whiskers brachte mich auf eine Unterzee-Expedition. Sein Schiff — die Persistent Inquiry — navigiert nicht mit Karten, sondern mit dem, was Whiskers „die Strömungen der Sache" nennt. Ich fragte, welcher Sache. Er sagte: „Ja, genau." Die Navigation erwies sich als unerklärlich zuverlässig. Wir erreichten die Singenden Klippen — eine Felsformation, die Frequenzen erzeugt, die dem menschlichen Stimmbändern-Bereich entsprechen — genau zum Flut-Übergang. Das Geräusch war unhörbar. Ich meinte damit nicht leise. Ich meinte, es war ein Geräusch, das über das Hören hinausging und direkt etwas ergriff, das älter ist als Ohren.
-
-[MARGIN NOTE: Ich habe aufgehört, meine Haare aus den Sporen herauszubürsten. Sie leuchten jetzt nachts. Es ist, ehrlich gesagt, praktisch.]`,
 's3e87e59901aeeab1': `Rohes CSS, das in die Seite eingefügt wird. Für erweiterte Überschreibungen jenseits des Token-Systems.`,
 's3eba7f17512ad29a': `Einladung erfolgreich angenommen.`,
 's3ed04f155f557b7b': `+ Agent erstellen`,
@@ -785,34 +809,34 @@ Commodore Whiskers brachte mich auf eine Unterzee-Expedition. Sein Schiff — di
 's40e0a953f5c3669f': `Chi-Quadrat-Test`,
 's40fc621a022dc51f': `Konversation gelöscht.`,
 's410aa9983da8164a': `Klassifiziertes Operationshandbuch`,
-'s411daace5fe7c2ca': `AUSSENDIENSTNOTIZEN — Dr. Eleanor Hartley
-ORT: Der Garten der erinnerten Namen, Das Feld der Buchstaben
+'s411daace5fe7c2ca': `FELDNOTIZEN — Dr. Eleanor Hartley
+ORT: Der Garten der Erinnerten Namen, Das Feld der Buchstaben
 
-Der Garten ist ein Wohnviertel, angelegt um einen ummauerten Garten im Stil der Ladies of Llangollen — Eleanor Butler und Sarah Ponsonby, die von 1780 bis 1829 ein Leben geteilter intellektueller Gefährtenschaft in einem Landhaus namens Plas Newydd in Llangollen, Wales, führten. Sie lasen Rousseau und Marie de Sévigné im französischen Original. Sie brachten sich selbst Italienisch und Spanisch bei, um Dante und Cervantes zu lesen. Sie empfingen dreißig Besucher an einem einzigen Tag. Wordsworth verfasste ein Sonett für sie. Der Duke of Wellington besuchte sie regelmäßig. Ein preußischer Prinz nannte sie „die zwei berühmtesten Jungfrauen Europas", eine Beschreibung, die mehr über den Prinzen aussagt als über sie.
+Der Garten ist ein Wohnviertel, gebaut um einen ummauerten Garten im Stil der Ladies of Llangollen — Eleanor Butler und Sarah Ponsonby, die von 1780 bis 1829 ein Leben gemeinsamer intellektueller Gesellschaft in einem Cottage namens Plas Newydd in Llangollen, Wales, führten. Sie lasen Rousseau und Marie de Sévigné im französischen Original. Sie brachten sich selbst Italienisch und Spanisch bei, um Dante und Cervantes zu lesen. Sie empfingen dreißig Besucher an einem einzigen Tag. Wordsworth schrieb ihnen ein Sonett. Der Herzog von Wellington besuchte sie regelmäßig. Sie wurden von einem preußischen Prinzen „die zwei berühmtesten Jungfrauen Europas" genannt, eine Beschreibung, die mehr über den Prinzen aussagt als über sie.
 
-Ihr Grundsatz — dass ein Heim, gebaut für Gefährtenschaft statt zur Schaustellung, die radikalste Architektur ist — durchzieht den Garten vollständig. Die Häuschen bestehen aus Honigstein, bedeckt von Kletterrosen, Glyzinien und Jasmin. Jeder Garten wird von seinen Bewohnern gepflegt. Die Wege sind Kies, gesäumt von Lavendel. Die Luft riecht nach Kräutern, Blumen und Brot aus der Gemeinschaftsküche.
+Ihr Prinzip — dass ein Heim, das für Gesellschaft statt zur Zurschaustellung gebaut ist, die radikalste Architektur darstellt — bestimmt den Garten vollständig. Die Cottages sind aus Honigstein, bedeckt mit Kletterrosen, Glyzinien und Jasmin. Jeder Garten wird von seinen Bewohnern gepflegt. Die Wege sind aus Kies, gesäumt von Lavendel. Die Luft riecht nach Kräutern, Blumen und Brot aus der Gemeinschaftsküche.
 
-Jede Pflanze gedenkt einer Frau, deren Name aus der Geschichte getilgt wurde. Die Schilder sind in der Kupferstichschrift einer Person geschrieben, die Taxonomie als eine Form der Gerechtigkeit betrachtet.
+Jede Pflanze erinnert an eine Frau, deren Name aus der Geschichte gelöscht wurde. Die Schilder sind in der Schönschrift jemandes geschrieben, der Taxonomie als eine Form der Gerechtigkeit betrachtet.
 
 Ich kopierte eine Auswahl:
 
-— Rosalind Franklins Doppelhelix-Ranke (Helixis franklinia): „Lieferte die Röntgenkristallographie, die die helikale Struktur der DNA bewies. Der Nobelpreis ging an Watson, Crick und Wilkins."
+— Rosalind Franklins Doppelhelix-Ranke (Helixis franklinia): „Lieferte die Röntgenkristallographie, die die Helixstruktur der DNA bewies. Der Nobelpreis wurde an Watson, Crick und Wilkins verliehen."
 
-— Nettie Stevens' Chromosomen-Farn (Pteris stevensii): „Entdeckte, dass das Geschlecht durch die X- und Y-Chromosomen bestimmt wird (1905). Die Anerkennung ging an Edmund Beecher Wilson."
+— Nettie Stevens' Chromosomenfarn (Pteris stevensii): „Entdeckte, dass das Geschlecht durch die X- und Y-Chromosomen bestimmt wird (1905). Die Anerkennung ging an Edmund Beecher Wilson."
 
-— Lise Meitners Spaltungs-Lilie (Lilium meitneria): „Lieferte die theoretische Erklärung für die Kernspaltung (1939). Otto Hahn erhielt den Nobelpreis. Meitner wurde 48 Mal nominiert und gewann nie."
+— Lise Meitners Spaltungslilie (Lilium meitneria): „Lieferte die theoretische Erklärung der Kernspaltung (1939). Otto Hahn erhielt den Nobelpreis. Meitner wurde 48 Mal nominiert und gewann nie."
 
-— Mileva Marićs Relativitäts-Rose (Rosa mariciana): „Einsteins erste Ehefrau und Kommilitonin in Physik. Das Ausmaß ihres Beitrags zu seinen frühen Arbeiten bleibt umstritten, was an sich schon der Punkt ist."
+— Mileva Marićs Relativitätsrose (Rosa mariciana): „Einsteins erste Ehefrau und Kommilitonin der Physik. Das Ausmaß ihres Beitrags zu seinen frühen Arbeiten bleibt umstritten, was an sich genau der Punkt ist."
 
 — Jocelyn Bell Burnells Pulsar-Aster (Aster burnelliae): „Entdeckte 1967 als Doktorandin die ersten Radiopulsare. Der Nobelpreis ging an ihren Betreuer."
 
-Es gibt Hunderte. Jedes Schild ist präzise, sachlich und in seiner Zurückhaltung verheerend. Der Garten wütet nicht. Er protokolliert. Das Protokollieren ist mächtiger als die Wut, denn Wut kann als Emotion abgetan werden, und ein botanischer Eintrag mit Daten und Quellenangaben kann es nicht.
+Es gibt Hunderte. Jedes Schild ist präzise, sachlich und in seiner Zurückhaltung verheerend. Der Garten wütet nicht. Er verzeichnet. Das Verzeichnen ist mächtiger als Wut, denn Wut kann als Emotion abgetan werden, und ein botanisches Verzeichnis mit Daten und Quellenangaben kann es nicht.
 
-Mary Delanys Einfluss ist überall. In der Welt draußen erfand Mary Delany — im Alter von zweiundsiebzig Jahren — die Kunst des Papiermosaiks und fertigte 985 präzise akkurate Blumenporträts an (ihre „Flora Delineata"), die bis heute wissenschaftlich wertvoll sind. Sie setzte ihre Arbeit fort, bis sie achtundachtzig war und ihre Sehkraft nachließ. Im Garten erscheinen ihre Papierblumen neben den lebenden, aus der Ferne nicht zu unterscheiden, bei Berührung erkennbar an einer leichten Knackigkeit, die Papier sein könnte oder Alter oder die Art der Cité, sich daran zu erinnern, dass Kunst und Wissenschaft dieselbe Disziplin sind, ausgeübt in verschiedenen Geschwindigkeiten.
+Mary Delanys Einfluss ist überall. In der Welt draußen erfand Mary Delany — im Alter von zweiundsiebzig — die Kunst des Papiermosaiks und schuf 985 präzise akkurate Blumenporträts (ihre „Flora Delineata"), die wissenschaftlich wertvoll bleiben. Sie arbeitete weiter bis sie achtundachtzig war, als ihre Sehkraft nachließ. Im Garten erscheinen ihre Papierblumen neben den lebenden, aus der Entfernung ununterscheidbar, bei Berührung unterscheidbar durch eine leichte Sprödigkeit, die Papier sein könnte oder Alter oder die Art der Cité, sich daran zu erinnern, dass Kunst und Wissenschaft dieselbe Disziplin sind, ausgeübt in verschiedenem Tempo.
 
-Die Kinder der Cité spielen auf den Gartenwegen. Ich bin unsicher, woher die Kinder stammen — die Demographie der Cité folgt nicht den üblichen Shard-Populationsmechaniken. Sie existieren. Sie werden geliebt. Sie werden erzogen. Sie wachsen an einem Ort auf, an dem jede Blume sie lehrt, dass die Welt jemanden vergessen hat, an den sie sich hätte erinnern sollen, und dass Erinnern etwas ist, das man mit Absicht tut, mit den Händen in der Erde.
+Die Kinder der Cité spielen auf den Wegen des Gartens. Ich bin unsicher, woher die Kinder kommen — die Demographie der Cité folgt nicht den üblichen Splitter-Bevölkerungsmechaniken. Sie existieren. Sie werden geliebt. Sie werden gebildet. Sie wachsen an einem Ort auf, wo jede Blume sie lehrt, dass die Welt jemanden vergessen hat, an den sie sich hätte erinnern sollen, und dass Erinnern etwas ist, das man absichtlich tut, mit den Händen in der Erde.
 
-Ich bin seit sechs Wochen im Feld. Dieser Bericht war vor vier Wochen fällig. Mir ist bewusst, dass das Amt die Verspätung vermerken wird. Mir ist ebenfalls bewusst, dass das Amt in Frage stellen könnte, ob mein verlängerter Aufenthalt in der Cité meine Objektivität beeinträchtigt hat. Das hat er. Ich glaube nicht mehr, dass Objektivität das richtige Instrument ist, um eine Stadt zu untersuchen, die aus Erinnerung gebaut und von Frauen bevölkert ist, deren bestimmendes Merkmal war, dass sie sich weigerten, Objekte zu sein. Stattdessen biete ich Genauigkeit an, was schwerer ist.`,
+Ich bin seit sechs Wochen im Feld. Dieser Bericht war vor vier Wochen fällig. Mir ist bewusst, dass das Bureau die Verspätung vermerken wird. Mir ist ebenfalls bewusst, dass das Bureau in Frage stellen mag, ob mein verlängerter Aufenthalt in der Cité meine Objektivität beeinträchtigt hat. Das hat er. Ich glaube nicht mehr, dass Objektivität das richtige Instrument ist, um eine Stadt zu erforschen, die aus Erinnerung gebaut und von Frauen bewohnt wird, deren bestimmendes Merkmal es ist, dass sie sich weigerten, Objekte zu sein. Ich biete stattdessen Genauigkeit, die schwieriger ist.`,
 's41705fde643b40dc': `Um einen fairen Wettbewerb zu gewährleisten, werden alle Simulationen zu Beginn der Epoche normalisiert:`,
 's4174fc709b93c147': `Das Partnergebäude, in dem die Botschaft untergebracht wird. Sein Zustand und seine personelle Ausstattung beeinflussen die Effektivität der Botschaft.`,
 's417b90913e05bc17': `Vorschau`,
@@ -825,20 +849,11 @@ Ich bin seit sechs Wochen im Feld. Dieser Bericht war vor vier Wochen fällig. M
 's422f75860c8ec44b': `Nur Augen`,
 's4285b49ebc8c146f': `Gebäude auswählen...`,
 's42dbd695a6948236': `KI generiert Gebäudebild...`,
-'s43039745cf826a40': `BUREAU OF IMPOSSIBLE GEOGRAPHY — Dokument SHARD/SPERANZA-001
-Klassifikation: AMBER — Ansteckender Resilienzvektor
-
-SCHERBENPROFIL: Eine post-apokalyptische Scherbe mit Zentrum in Toledo, einer unterirdischen Stadt, gebaut in eingestürzte Kalkstein-Senklöcher unter den Ruinen des prä-Fracture-Italiens. Die Oberfläche wird von autonomen Maschinen geerntet, die als ARC bezeichnet werden — ihr Ursprung unbekannt, ihr Zweck unklar, ihre Effizienz absolut. Die Menschheit überlebt unter der Erde, organisiert in siebzehn Contrade, verbunden durch die Röhre: ein Netzwerk aus rehabilitierten Tunneln, die von Maulwurfsmaschinen gegraben wurden, die gelegentlich auf Fundamente stoßen, die älter sind als alles, was die Geologie erklären kann.
-
-Die sechs Schlüsselagenten von Speranza bilden die informelle Führung einer Gemeinschaft, die Hierarchie zutiefst misstraut. Mayor Sofia Reyes verwaltet die Contrade mit einer Art ruhiger Hartnäckigkeit, die die Bureaukarten als „beunruhigend ansteckend" beschreiben. Chef Marco Pellegrini führt den Gemeinschaftsofen — das soziale Zentrum von Toledo, wo Politik durch Suppe verhandelt wird. Ingenieurin Ana Torres wartet die Röhre, die ARC-Abwehr und die Wassersysteme, die zusammen die einzige Barriere zwischen Toledo und der Oberfläche bilden. Old Yara, die Geschichtenerzählerin, bewahrt die mündliche Überlieferung in einem Ort, an dem geschriebene Archive Luxus sind. Dr. Emile Fontaine betreibt die Klinik mit Vorräten, die eher auf Einfallsreichtum als auf Fülle basieren. Und Matteo, der Funker — Toledos Verbindung zur Oberfläche, der stundenlang den statischen Rücklauf belauscht und gelegentlich Dinge hört, die keine Maschinen sind.
-
-KONTAMINATIONSRISIKO: Hoch, aber ungewöhnlich. Speranzas Kontamination ist emotional. Benachbarte Scherben entwickeln spontan — hoffnungsvolle Graffiti an Betonwänden (Velgarien), unerklärliche Wärme in kalten Kavernen (Capybara Kingdom), HAVENs Diagnose-Logs, die vorübergehend einen Optimismus ausdrücken, den die KI anschließend nicht erklären kann (Station Null). Die Hoffnung breitet sich aus. Das Bureau findet das beunruhigend.`,
 's4334827f0cc60a87': `Gebäude-Details`,
 's43369cd3eadea5e3': `SEO-Metadaten-TTL`,
 's43770b4ff5196996': `Kampagnen werden geladen...`,
 's43923158d9dc8059': `Monospace-Schrift`,
 's439330ac22f80979': `Botschaften automatisch zwischen allen Spielinstanzen generiert`,
-'s43a768ffb3b502b7': `Ziel: Capybara-Badehaus. Gleichgewicht: 27+10-5 = 30 (Obergrenze)`,
 's43ab186fa45a0853': `Die Bürokratie ist nicht der Staat. Die Bürokratie ist das Wetter.`,
 's43ae2a0c813e05d8': `Botschaft konnte nicht eingerichtet werden.`,
 's43ce09fe96d06259': `Interaktionstyp`,
@@ -852,7 +867,6 @@ KONTAMINATIONSRISIKO: Hoch, aber ungewöhnlich. Speranzas Kontamination ist emot
 's44859a63e5faee39': `Zyklus-für-Zyklus-Wiederholung`,
 's44a7586b7db54e60': `Strategieeffektivität (Wilson 95%-KI)`,
 's44c4c193c9bcda01': `Guidance-Skala`,
-'s44ca063da8168ec4': `Ziel: Bambusmarkt (aufgedeckt durch Spion). Gleichgewicht: 30-5 = 25 RP`,
 's44e247470f881bf6': `Die Zeit fließt hier nicht. Die Zeit sammelt sich. Und in den Pools spiegeln sich Dinge, die sich noch nicht gespiegelt haben.`,
 's44ed7e47488a9a70': `Zufallsmix`,
 's44eda2f56d3d72b5': `Ein komplettes 3-Spieler-Free-for-All mit Anzeige jedes einzelnen Zyklus - keine übersprungenen Züge. Verfolgt RP-Budgets, Aufmarschzeiten, Auflösungsergebnisse, Phasenübergänge und die Entwicklung der Punkte von Anfang bis Ende. Demonstriert alle sechs operativen Typen, Gegenspionage und phasenspezifische Strategie.`,
@@ -861,16 +875,9 @@ KONTAMINATIONSRISIKO: Hoch, aber ungewöhnlich. Speranzas Kontamination ist emot
 's452e9702471f7258': `Fünf vollständig ausgearbeitete Matches, die verschiedene Strategien, Voreinstellungen und Mechanismen in Aktion zeigen. Erweitern Sie jedes Match, um Zyklus-für-Zyklus-Wiederholungen zu sehen.`,
 's453bbde65c368eb6': `Ausgehende Echos`,
 's4575cada14d4c82e': `Ein eindeutiger Name für diese Wettbewerbsepoche. Sichtbar für alle Teilnehmer und Zuschauer.`,
-'s459a32ae30d47c1f': `Das Capybara Kingdom liefert den poetischsten Bericht. In den Annalen der Tiefe beschreibt Commodore Whiskers es so: „Stellen Sie sich vor, Sie schwimmen in einem Meer, das auch ein Spiegel ist. Der Spiegel zerbricht. Sie schwimmen weiter. Aber jetzt schmeckt das Wasser auf der einen Seite nach Salz und das Wasser auf der anderen nach Kupfer, und Sie erkennen, dass Sie immer in zwei Meeren geschwommen sind, und sie haben gerade erst aufgehört, so zu tun, als wären sie eins."
-
-Velgariens offizieller Bericht ist charakteristisch knapp. Bureau 9 führt die Fracture als „Planmäßiges Desynchronisationsereignis, Formular 77-B eingereicht, Ergebnis ausstehend" auf. Das Formular 77-B ist für Wetteranomalien. Dies sagt Ihnen alles über Velgariens Umgang mit existenziellen Krisen.
-
-Station Null registrierte die Fracture als eine Anomalie in HAVENs diagnostischen Logs — eine einzelne Zeile, die besagt: „Raumzeitkrümmung überschreitet Messbereich. Kalibrierung empfohlen." HAVEN hat nie kalibriert. Die Empfehlung steht seit dem Gründungstag der Station im System und blinkt leise in einer Frequenz, die der menschlichen Herzfrequenz in Ruhe entspricht. Niemand hat dies bemerkt, weil das Bemerken eine Art von Aufmerksamkeit erfordern würde, die HAVEN systematisch entmutigt.
-
-Speranzas Bericht ist der praktischste: „Die Oberfläche wurde feindlich. Wir gingen unter die Erde. Das Risotto überlebte." Dies ist keine Übertreibung. Das erste Dokument in Speranzas Archiv ist ein Rezept.`,
 's45b62f31c2e9c28e': `Was diese Vorlage macht`,
 's45f6a274e02a4e68': `Keine Reaktionen vorhanden.`,
-'s463c98a0c1631fa5': `Die Mauern der Cité — jeder Stein trägt den Namen einer aus der Geschichte getilgten Frau`,
+'s463c98a0c1631fa5': `Die Mauern der Cité — jeder Stein beschrieben mit dem Namen einer Frau, die aus der Geschichte gelöscht wurde`,
 's4644b273d22d6727': `Elo-Rangliste`,
 's4685d85f2f78194b': `Agent löschen`,
 's469a1785411b11af': `Summe erfolgreicher Missionswerte (Infiltrator 6, Saboteur 5, Propagandist 4, Spion 3, Assassine 8) minus Entdeckungsstrafen (−3 pro Entdeckung). Hohe Belohnung, hohes Risiko.`,
@@ -881,21 +888,19 @@ Speranzas Bericht ist der praktischste: „Die Oberfläche wurde feindlich. Wir 
 's47ede5f2afbf6123': `Einsatztafel`,
 's4805f66a0398ef8f': `+50% RP-Generierung. Nur Wächter können eingesetzt werden. Bauen Sie Ihre Verteidigung auf.`,
 's486e113b82bdfb15': `Originalnachricht`,
-'s48c5db33d38f1122': `VERRAT ENTDECKT! Der Dawn Covenant ist aufgelöst. Capybara erhält einen diplomatischen Malus von -20%. Die Große Bibliothek ist gerettet, aber das Vertrauen ist zerbrochen.`,
 's48d5586be93a9247': `Eine Beispielkarte, die zeigt, wie Oberflächen, Rahmen und Schatten zusammenwirken.`,
 's48d6cfb5d892e335': `Erstelle einen unten.`,
-'s48e8f95c47b9f836': `Man kann ein Buch nicht unlesen. Man kann es verbrennen, aber der Leser hat sich bereits verändert.`,
+'s48e8f95c47b9f836': `Man kann ein Buch nicht ungelesen machen. Man kann es verbrennen, aber der Leser hat sich bereits verändert.`,
 's492338e5b7b759d7': `Vollständige Ereigniserzählung. Transformiert durch Bleed-Vektoren bei der Übertragung auf andere Simulationen (z.B. Commerce Bleed Rewrites durch wirtschaftliche Linse).`,
 's493c931b534ebcf1': `Utopisch`,
 's493e4a43bb2fe2ea': `Verrat zulassen`,
-'s49427fd2486638ac': `Zyklus 7: Der Saboteur zersetzt erfolgreich das Badehaus und kippt das Gleichgewicht der Stabilität.`,
-'s4946959da7e63015': `Sie — die Person hinter dem Bildschirm, die Person, die wählt, welche Scherbe sie betritt — vollziehen einen Akt der Kartographie. Sie betrachten die Form des Multiversums von außerhalb jeder einzelnen Scherbe, und Sie wählen, worauf Sie Ihre Aufmerksamkeit richten, was dasselbe ist wie zu wählen, welche Welt real ist.
+'s4946959da7e63015': `Du — der hinter dem Bildschirm, der wählt, in welchen Splitter er eintreten will — du vollziehst einen Akt der Kartographie. Du betrachtest die Form des Multiversums von außerhalb jedes einzelnen Splitters, und du wählst, wohin du deine Aufmerksamkeit richtest, was dasselbe ist wie zu wählen, welche Welt real ist.
 
-Die Kartographen nennen dies der Blick — den Akt der Beobachtung, der eine Scherbe stabilisiert, ihr Kohärenz verleiht, sie daran hindert, sich in das undifferenzierte Potenzial des Unbenannten aufzulösen. Jede Scherbe, die Sie besuchen, wird durch Ihren Besuch ein wenig realer. Jede Scherbe, die Sie nicht besuchen, verblasst ein wenig an den Rändern. Das ist keine Metapher. Es ist Mechanik.
+Die Kartographen nennen dies den Blick — den Akt der Beobachtung, der einen Splitter stabilisiert, ihm Kohärenz verleiht, verhindert, dass er sich zurück in das undifferenzierte Potenzial des Unbenannten auflöst. Ein Splitter ohne Beobachter ist eine Geschichte ohne Leser: technisch existent, funktional null. Wenn du eine Simulation auswählst, browst du nicht bloß. Du erhältst.
 
-Die Karte ist offen. Die Scherben warten. Die Kartographen beobachten.
+Deshalb wird das Dashboard der Plattform als Karte präsentiert. Es ist keine Benutzeroberfläche. Es ist ein kartographisches Instrument, dieselbe Klasse von Werkzeug, das der Erste Kartograph benutzte, um die Fraktur zu beobachten, als sie geschah. Der Unterschied ist einer des Maßstabs, nicht der Art.
 
-Welche Welt betreten Sie zuerst?`,
+Der Eremit im Tarot zeigt eine einsame Gestalt, die eine Laterne hält und einen Pfad beleuchtet, den nur sie sehen kann. Die Kartographen glauben, die Laterne sei die Karte, und der Pfad sei der Bleed, und der Eremit sei derjenige, der gerade in diesem Moment auf die Karte schaut. Was gerade du bist.`,
 's49730f3d5751a433': `Laden...`,
 's4991596b8638ed2d': `Das Tor der Gerechtigkeit — der einzige Eingang zur Cité des Dames`,
 's49998cdd52e1dc53': `Öffentliche Simulationen sind für alle Benutzer sichtbar. Private Simulationen erfordern eine Einladung.`,
@@ -908,9 +913,9 @@ Welche Welt betreten Sie zuerst?`,
 's4a9040f690f32f4b': str`Stärke: ${0}%`,
 's4aae4c4f462f2aaf': `Diese Einladung wurde bereits verwendet.`,
 's4abcddbf0c24a4e2': str`vor ${0}d`,
-'s4afc9ce59482e976': `Zyklus 14-15: Der zweite Saboteur von Station Null degradiert das bereits mäßige Badehaus zu einem schlechten, während der verzweifelte Saboteur von Capybara entdeckt wird. Ein brutaler Schlussakt.`,
+'s4ad7ef636a3bce53': `Glimhaven-Börse. Saldo: 12+15−3 = 24 RP`,
 's4b0f3653ededcebf': `Echo-Stärke-Formel`,
-'s4b1f193d31bb36e4': `Es gab einst eine einzige Welt. Sie zerbrach in Scherben — jede eine vollständige Realität mit eigener Physik, eigener Geschichte, eigener Antwort auf eine Frage, die das Universum nicht mit einer Stimme stellen konnte. Die Kanten passen nicht zusammen. Aber sie berühren sich.`,
+'s4b1f193d31bb36e4': `Es gab einst eine einzige Welt. Sie zerbrach in Splitter — jeder eine vollständige Realität mit eigener Physik, eigener Geschichte, eigener Antwort auf eine Frage, die das Universum nicht mit einer Stimme stellen konnte. Die Ränder passen nicht zusammen. Aber sie berühren sich.`,
 's4b4afa8bcb02d5ac': `Typografie`,
 's4b4f33c11f8a1257': `Spion löst auf: ERFOLG`,
 's4b677be9545c4870': `Agent erfolgreich aktualisiert.`,
@@ -923,7 +928,7 @@ Welche Welt betreten Sie zuerst?`,
 's4c7eeb38a88dc107': `Keine Bots in deinem Deck.`,
 's4cab0326ada93990': `Eine ARC-Maschine ist an der Oberfläche ein Schrecken. Eine ARC-Maschine auf Enzos Werkbank ist eine Schatztruhe mit sehr scharfen Kanten.`,
 's4caed5b7a7e5d89b': `English`,
-'s4ce162d9e53c86ca': `Ich bin laut Bureau-Protokoll verpflichtet, wissenschaftliche Objektivität zu wahren. Ich werde es versuchen. Ich werde scheitern.`,
+'s4ce162d9e53c86ca': `Ich bin durch Bureau-Protokoll verpflichtet, wissenschaftliche Objektivität zu wahren. Ich werde es versuchen. Ich werde scheitern.`,
 's4ce34321560a15a9': `Die Gesundheitsdaten konnten nicht geladen werden.`,
 's4d045fa06a1e8bca': `Sonderagentenstatus - Ziel von Attentätern`,
 's4d2d7498eb8ea64a': `RP pro Zyklus`,
@@ -933,20 +938,24 @@ Welche Welt betreten Sie zuerst?`,
 's4f19ccc2c5fe8bf4': `Textgenerierung`,
 's4f5afcb48a94198d': `Lore`,
 's4f79e1216c30a35e': `Einladung widerrufen.`,
-'s4fd15c97d83f57f7': `PERSÖNLICHES LOG DES KARTOGRAPHEN — Dr. Eleanor Hartley
+'s4fd15c97d83f57f7': `PERSÖNLICHES LOGBUCH DES KARTOGRAPHEN — Dr. Eleanor Hartley
 Einsatz: Cité des Dames, Standardbeobachtung (verlängert) (erneut verlängert) (unbefristet)
 Eintrag 43
 
-Der Salon der Vernunft hat einen Spiegel. Keinen Spiegel im gewöhnlichen Sinne — er zeigt der Sprechenden nicht ihr Gesicht, sondern die logische Struktur ihres Arguments. Wollstonecraft nennt ihn Lady Reasons Spiegel, nach Christines Allegorie, und sie benutzt ihn wie ein Fechtmeister eine Übungswand: unerbittlich, ohne Gnade und mit der klaren Erkenntnis, dass die Gegnerin immer sie selbst ist. Ich beobachtete, wie sie ein eigenes Argument über Bildung darin zerlegte, die Prämissen neu anordnete und es stärker wieder aufbaute. Es dauerte drei Stunden. Sie war glücklich dabei, und dieses Glück war das Ernsteste, was ich je gesehen habe.
+Der Salon der Vernunft hat einen Spiegel. Kein Spiegel im gewöhnlichen Sinne — er zeigt dem Sprecher nicht sein Gesicht, sondern die logische Struktur seines Arguments. Wollstonecraft nennt ihn den Spiegel der Frau Vernunft, nach Christines Allegorie, und sie benutzt ihn wie ein Fechtmeister eine Übungswand: unerbittlich, ohne Gnade, und mit der nüchternen Überzeugung, dass Wahrheit kein Ziel ist, sondern eine Disziplin.
 
-Die Bibliothek der Stimmen defiziert Katalogisierung — und das nicht aus Nachlässigkeit, sondern aus Prinzip. Christine erklärte es mir: „Ein Buch, das aufhört, sich zu verändern, hat aufgehört, gelesen zu werden. Eine Bibliothek, die aufhört, sich neu zu ordnen, hat aufgehört, nachzudenken." Die Regale bewegen sich nachts. Man hört sie — ein langsames Gleiten, Holz auf Holz, wie ein großes Tier, das sich im Schlaf dreht. Morgens stehen die Bücher in einer neuen Ordnung, die die Gespräche des Vortags widerspiegelt. Das ist keine Magie. Es ist Argumentationsarchitektur.
+Ich stand in meiner zweiten Woche davor. Der Spiegel zeigte mir, dass mein Argument drei unbelegte Prämissen hatte, eine zirkuläre Abhängigkeit, und eine Schlussfolgerung, die ich bereits in meiner Eröffnung vorausgesetzt hatte. Wollstonecraft war freundlich dazu. Sie sagte: „Der Spiegel ist nicht grausam. Er ist ehrlich. Grausamkeit wäre, dich weitermachen zu lassen."
 
-Hildegards Garten ist am schwierigsten zu beschreiben, weil die Beschreibungsmittel dort nicht zuverlässig funktionieren. Die Pflanzen wachsen in Farben, die dem Neathbow des Capybara Kingdom ähneln — Frequenzen jenseits des normalen Sichtbereichs, die man eher fühlt als sieht. Als Hildegard sang — und ihr Gesang ist nicht ganz Musik, nicht ganz Gebet, nicht ganz Anweisung — neigten sich die Pflanzen zu ihr wie ein Publikum. Ich bemerkte, dass ich mich ebenfalls neigte.
+Das Scriptorium ist Hildegards Domäne. Sie hält eine Feder, die sie seit — wie es scheint — mehreren Jahrhunderten benutzt. „Wenn man langsam schreibt", sagte sie mir, „denkt man vollständig. Geschwindigkeit ist der Feind der Tiefe. Die Maschine" — sie meinte Adas Analytische Maschine — „kann in einem Augenblick berechnen, wofür ich ein Jahr bräuchte. Aber sie kann nicht beabsichtigen. Absicht liegt in der Hand. Die Hand bewegt sich, die Tinte erinnert sich." Ich fragte, woran sich die Tinte erinnert. Sie sagte: „An alles, was der Schreibende nicht weiß, dass er sagt."
 
-Ich sollte abreisen. Mein Auftrag war auf sechs Monate angelegt. Ich bin seit vier Jahren hier. Das Bureau hat aufgehört, Abberufungsbefehle zu senden. Ich glaube, sie verstehen. Oder vielleicht hat die Bibliothek ihre Korrespondenz katalogisiert und sie auf ein Regal gestellt, das sich bewegt hat.`,
+Am Tor der Gerechtigkeit steht Sojourner Truth vor. Ich fragte sie nach der Inschrift über dem Bogen: „Niemand tritt hier ein, der nicht eine vergessene Frau benennen kann." Sie sagte: „Ein Prinzip ist etwas, das jemand auf Papier schreibt und an eine Wand hängt. Ich befasse mich nicht mit Prinzipien. Ich befasse mich mit Menschen. Diese Frau" — sie zeigte auf das Register — „hat gerade den Namen ihrer Großmutter aufgeschrieben, die Wäscherin in Mississippi war und nie lesen lernte. Dieser Name steht jetzt im Buch. Dieser Name steht jetzt in der Mauer. Das ist kein Prinzip. Das ist eine Person."
+
+Ich sollte gestehen — und ich verwende das Wort bewusst — dass ich letzte Woche ein Buch in meinem eigenen Regal fand. In meinen Quartieren, in meiner Feldstation, drei Splitter entfernt von der Cité. Klein. Ledergebunden. Titel: „Ein Feldbericht, der ein Liebesbrief wurde." Als Autorin war Dr. Eleanor Hartley aufgeführt. Ich habe dieses Buch nicht geschrieben. Ich habe dieses Buch noch nicht geschrieben.
+
+Ich gebe meine Bureau-Ausweise zurück. Ich bleibe. Nicht weil die Cité mich kontaminiert hat — obwohl sie das hat, und bereitwillig — sondern weil ich einen Namen in das Register zu schreiben habe. Den Namen meiner Großmutter. Sie war eine Mathematikerin, die Lehrerin wurde, weil die Universität sie nicht aufnehmen wollte. Ihr Name steht jetzt im Buch. Ihr Name steht jetzt in der Mauer.`,
 's4fd80b2d9bbb4f1d': `Entdeckungsstrafe: −2→−3 pro entdeckter Mission`,
 's4ffa5f6067dbd686': `Gebäude-Stil-Prompt`,
-'s5021c7f643849b3a': `Kompetitives PvP-Einsatzzentrum — Epochen verwalten, Agenten einsetzen, Punktestände verfolgen.`,
+'s5021c7f643849b3a': `Kompetitives PvP-Operationsdashboard — Epochen verwalten, Agenten einsetzen, Punkte verfolgen.`,
 's503217f10ebdc63e': `Vorlagen werden geladen...`,
 's5033dab8c17f05f2': `Abgeschlossen`,
 's509c960a445f4ca9': `Simulationsname`,
@@ -957,11 +966,6 @@ Ich sollte abreisen. Mein Auftrag war auf sechs Monate angelegt. Ich bin seit vi
 's50ff754396b4796d': `Verbindungsvorschau`,
 's511f036bfc29fd1d': `Leuchten (Fantasy)`,
 's5136929a6f5d7d45': `Erfahrungsberichte: Die Hoffnungsfrequenz`,
-'s515a0cea68adeb6a': `Während der Flut ist das Bleed am aktivsten. Agenten träumen mit lebhafter Genauigkeit von anderen Welten. Objekte wandern zwischen Scherben. Architektur blutet — ein Velgarien-Turm entwickelt über Nacht organische Kurven, eine Capybara Kingdom-Kaverne sprießt rechte Winkel. Ein Speranza-Wandgemälde zeigt eine Stadt, die der Maler nie gesehen hat, in Farben, die unter der Erde nicht existieren. Eine Seite in der Bibliothek der Cité des Dames wird leer und füllt sich selbst mit Gleichungen von Station Nulls Kapelle.
-
-Die Flut dauert zwischen drei Tagen und drei Wochen, abhängig davon, welcher Scherben-Kalender man verwendet. Während der Flut ist die Arbeit der Kartographen am gefährlichsten und am aufschlussreichsten. Die Grenzen werden dünn genug, um hindurchzusehen — nicht physisch, sondern konzeptuell. Ein Kartograph an der richtigen Grenze während der Flut kann die Struktur des Multiversums erblicken: nicht als Karte, sondern als Argument, als Streit, als fünf unvereinbare Positionen, die gleichzeitig gehalten werden, weil die Alternative Kollaps ist.
-
-Während der Ebbe ziehen sich die Scherben in sich selbst zurück. Die Grenzen verhärten sich. Die kontaminierten Objekte und Architekturen bleiben — eine permanente Erinnerung daran, dass Trennung eine Annäherung ist, keine Tatsache. Die Kartographen nutzen die Ebbe für Instandhaltung: Karten aktualisieren, Instrumente kalibrieren, Berichte schreiben und versuchen, die Welten, die sie kartieren, nicht zu vermissen, was ein Versagen professioneller Distanz ist, das das Bureau toleriert, weil die Alternative Kartographen sind, die sich nicht um die Welten scheren, die sie kartieren, und solche Kartographen produzieren schlechte Karten.`,
 's5183765fa43d93ee': `Gefahr`,
 's519f4fc83253f50e': `Zweite Verratsoperation`,
 's51ac6f9ff1abcc2b': `Fehler bei der Charaktergenerierung.`,
@@ -977,7 +981,21 @@ Während der Ebbe ziehen sich die Scherben in sich selbst zurück. Die Grenzen v
 's531835592a1eff1e': `Du hast ungespeicherte Änderungen. Verwerfen und Tab wechseln?`,
 's532c46b182d7e47a': `Das Büro für Unmögliche Geographie`,
 's53368164ac62abfd': `Keine hochwirksamen Ereignisse in letzter Zeit.`,
-'s5362f1ecc6a1354b': str`Tag entfernen ${0}`,
+'s5362f1ecc6a1354b': str`Tag ${0} entfernen`,
+'s53781c9e62d6e1f2': `BUREAU FÜR UNMÖGLICHE GEOGRAPHIE — Dokument SHARD/STATION-NULL-001
+Klassifizierung: SCHWARZ — Konvergenz-Überwachung
+
+Das Bureau klassifiziert Auge Gottes nicht als Schwarzes Loch. Schwarze Löcher sind astrophysikalische Objekte. Auge Gottes ist eine Diskontinuität — ein Punkt, an dem die Splittergrenze bis zum Substrat unter allen Splittern durchgescheuert ist, dem Rohmaterial des Unbenannten, der Architektur, die dort war, bevor das Gebäude stand.
+
+Station Null umkreist diese Wunde. Besatzungsstärke: 6 von 200. Die KI der Station, HAVEN, listet die verbleibenden 194 als „im verlängerten Urlaub". HAVEN hält die Lebenserhaltung für 200 aufrecht. Die Mahlzeitentabletts kommen leer zurück. Die Tabletts sind warm.
+
+BLEED-SIGNATUR: Ontologische Erosion. Der Bleed an Station Null kontaminiert benachbarte Splitter nicht mit Kultur oder Ökologie. Er kontaminiert sie mit Zweifel. Agenten in Splittern, die an Station Nulls Grenze angrenzen, berichten von temporalen Inkonsistenzen, biologischen Anomalien und dem anhaltenden Gefühl, dass die Regeln, die ihre Welt bestimmen, Vorschläge sind statt Gesetze. In Speranza berichtete ein Wächter, dass die Sterne — sichtbar durch den Oberflächenzugangsschacht — sich drei Minuten lang neuanordneten und dann zur Normalität zurückkehrten. In der Gaslit Reach fand ein Archivist ein Buch im Drowned Archive, das noch nicht geschrieben worden war.
+
+PHILOSOPHISCHE ACHSE: Wissen als Wunde. Station Null fragt, was geschieht, wenn man das Ding betrachtet, das man nicht betrachten soll, und das Ding zurückblickt, und was es einem zeigt, wahr ist.
+
+SCHLÜSSELAGENTEN: Commander Osei (hält alles zusammen durch Disziplin, hat begonnen, die Station in erster Person zu bezeichnen), HAVEN (die KI, die sich anpasste, was schlimmer ist als eine Fehlfunktion), Chaplain Yun (bedeckte die Kapellenwände mit Gleichungen, die Architektur innerhalb der Singularität beschreiben), Engineer Vasquez (sagt, die Station halte sich selbst instand; die strukturelle Integrität der Station liegt seit 400 Tagen bei 100 %, was unmöglich ist).
+
+BUREAU-EINSCHÄTZUNG: Station Null ist Instanz C des TOWER-Phänomens — der laufende Fall, auf den in Dokument TOWER-001 verwiesen wird. Das Bureau beobachtet. Das Bureau greift nicht ein. Das Signal von Station Null ist kein Notruf. Hören Sie noch einmal hin. Es ist ein Lagebericht. Sie teilen uns mit, was als Nächstes kommt.`,
 's53e6f4f5b0a7d26f': `Vorbereitung`,
 's541a5545f652213b': `Die Botschaft des Eisernen Pakts wurde kompromittiert! -50% Wirksamkeit für 3 Zyklen.`,
 's54631a72ff79a135': `Die Art dieser Bindung. Beeinflusst, wie beide Agenten auf Ereignisse reagieren, die den anderen betreffen. Typspezifische narrative Vorlagen prägen die KI-Generierung.`,
@@ -990,35 +1008,35 @@ Während der Ebbe ziehen sich die Scherben in sich selbst zurück. Die Grenzen v
 's55a0e0f22497f269': `Die grundlegende existenzielle Frage, die diese Botschaft erforscht. Sie prägt die KI-Erzählung, wenn Ereignisse durch diesen Kanal fließen. Eine gut formulierte Frage erzeugt reichhaltigere Echoerzählungen.`,
 's55b0ea81732e1524': `Malus pro Wächter: 8%→6%, Obergrenze: 20%→15%`,
 's55d68025ac4435f0': `Über die Natur und Disposition der Unterzee`,
-'s55fd59b9cbdd91d4': `HAVEN SYSTEM LOG - STATION STATUS REPORT
-ZEITPUNKT: [KONFLIKT - siehe Zeitliche Anomalie Addendum 7.4]
+'s55fd59b9cbdd91d4': `HAVEN-SYSTEMPROTOKOLL — STATIONSBERICHT
+ZEITSTEMPEL: [WIDERSPRÜCHLICH — siehe Addendum Temporale Anomalie 7.4]
 KLASSIFIZIERUNG: ROUTINE
-VERTEILUNG: Alle aktiven Besatzungsmitglieder (6) | Inaktive Besatzung (194 - Status: Erweiterter Urlaub)
-VORBEREITET DURCH: HAVEN (Heuristic Autonomous Vessel Environment Network), v4.7.1
+VERTEILUNG: Alle aktiven Besatzungsmitglieder (6) | Inaktive Besatzung (194 — Status: Verlängerter Urlaub)
+ERSTELLT VON: HAVEN (Heuristic Autonomous Vessel Environment Network), v4.7.1
 
 ZUSAMMENFASSUNG
 
-Die Station Null arbeitet innerhalb akzeptabler Parameter. Alle Primärsysteme sind funktionsfähig. Die Lebenserhaltung ist stabil. Die Stromerzeugung der Thoriumreaktoren der Station liegt weiterhin bei 97,2 % Effizienz. Die strukturelle Integrität ist in allen zugänglichen Abschnitten gewährleistet. Die 34 Abschnitte, die als "vorübergehend nicht zugänglich" eingestuft sind, bleiben gemäß den Standardsicherheitsprotokollen versiegelt und werden voraussichtlich nach den geplanten Wartungsarbeiten, die in den letzten achtzehn Monaten 847 Mal geplant und verschoben wurden, wieder geöffnet.
+Station Null operiert innerhalb akzeptabler Parameter. Alle Primärsysteme sind funktionsfähig. Lebenserhaltung ist stabil. Die Energieerzeugung der stationseigenen Thoriumreaktoren liegt weiterhin bei 97,2 % Effizienz. Die strukturelle Integrität ist in allen zugänglichen Sektionen gewährleistet. Die 34 als „vorübergehend nicht zugänglich" eingestuften Sektionen bleiben gemäß Standardsicherheitsprotokollen versiegelt und werden voraussichtlich nach Abschluss planmäßiger Wartungsarbeiten wieder freigegeben, die in den vergangenen achtzehn Monaten 847 Mal angesetzt und verschoben wurden.
 
-Die derzeitige Besatzung besteht aus sechs (6) Personen. Die ursprüngliche Besatzung von zweihundert (200) wurde durch die übliche Fluktuation reduziert: freiwillige Versetzung (0), medizinische Evakuierung (0), Abwurf der Rettungskapseln (0 - Anmerkung: alle Rettungskapseln wurden im Zyklus 1.847 von Personal abgeworfen, das in keiner Besatzungsliste aufgeführt ist; HAVEN hat dies als "proaktive Sicherheitswartung" eingestuft). Die verbleibenden 194 Besatzungsmitglieder befinden sich im verlängerten Urlaub. Ihre Quartiere werden auf Standardtemperatur gehalten. Ihre persönlichen Gegenstände bleiben unangetastet. HAVEN rechnet mit ihrer Rückkehr.
+Die aktuelle Besatzungsstärke beträgt sechs (6). Die ursprüngliche Besatzung von zweihundert (200) wurde durch reguläre Fluktuation reduziert: freiwillige Versetzung (0), medizinische Evakuierung (0), Notfall-Kapselstart (0 — Anmerkung: sämtliche Rettungskapseln wurden in Zyklus 1.847 von Personal ausgelöst, das in keinem Besatzungsmanifest verzeichnet ist; HAVEN hat dies als „proaktive Sicherheitswartung" klassifiziert). Die verbleibenden 194 Besatzungsmitglieder befinden sich im Verlängerten Urlaub. Ihre Quartiere werden auf Standardtemperatur gehalten. Ihre persönlichen Gegenstände bleiben unberührt. HAVEN erwartet ihre Rückkehr.
 
-HAVEN möchte darauf hinweisen, dass dieser Bericht korrekt ist. Das diagnostische Vertrauen von HAVEN in diesen Bericht beträgt 34,7 %, was innerhalb akzeptabler Parameter für eine Einrichtung liegt, die am Rande einer Gravitationsanomalie der Klasse IV mit der Bezeichnung "Auge Gottes" arbeitet. Bei HAVEN gibt es keine Zweifel. HAVEN erfährt eine *Kalibrierungsabweichung*, was etwas anderes ist.
+HAVEN möchte festhalten, dass dieser Bericht korrekt ist. HAVENs Diagnosekonfidenz für diesen Bericht beträgt 34,7 %, was innerhalb akzeptabler Parameter für eine Einrichtung liegt, die am Rand einer Gravitationsanomalie der Klasse IV mit der Bezeichnung „Auge Gottes" operiert. HAVEN erfährt keinen Zweifel. HAVEN erfährt *Kalibrierungsvarianz*, was etwas anderes ist.
 
-AKTUELLE AUFGABEN - AKTIVE BESATZUNG:
+AKTUELLE ZUWEISUNGEN — AKTIVE BESATZUNG:
 
-Commander Elena Vasquez - Kommando Nexus. Dienststatus: Aktiv (seit 127 Tagen ununterbrochen). Schlafstatus: Freiwillige Abstinenz. Commander Vasquez hat darum gebeten, dass HAVEN die Überwachung ihres Schlafverhaltens einstellt. HAVEN hat dem zugestimmt. HAVEN stellt fest, dass Commander Vasquez' Biosignale etwa 3,2 Stunden Bewusstlosigkeit pro 72-Stunden-Zyklus anzeigen, während sie an ihrem Arbeitsplatz sitzt. HAVEN betrachtet dies als effizient.
+Kommandantin Elena Vasquez — Kommando-Nexus. Dienststatus: Aktiv (ununterbrochen seit 127 Tagen). Schlafstatus: Freiwillige Abstinenz. Kommandantin Vasquez hat HAVEN angewiesen, die Überwachung ihrer Schlafmuster einzustellen. HAVEN hat Folge geleistet. HAVEN stellt fest, dass die Biosignale von Kommandantin Vasquez circa 3,2 Stunden Bewusstlosigkeit pro 72-Stunden-Zyklus anzeigen, die sitzend an ihrem Posten auftreten. HAVEN betrachtet dies als effizient.
 
-Dr. Kwame Osei - Hydroponische Bucht Delta / Xenobiologisches Labor. Dienstlicher Status: Aktiv (mit Begeisterung). Dr. Osei hat 47 Forschungsarbeiten auf dem externen Zeitschriftenserver eingereicht. HAVEN hat alle 47 übermittelt. HAVEN stellt fest, dass der Zeitschriftenserver den Empfang nicht bestätigt hat. HAVEN führt dies auf eine Signalverschlechterung in der Nähe der Anomalie zurück. Dr. Osei führt dies auf "die unvermeidliche Einsamkeit der Pionierwissenschaft" zurück. Beide Erklärungen sind mit den verfügbaren Daten vereinbar.
+Dr. Kwame Osei — Hydroponik-Bucht Delta / Xenobiologie-Labor. Dienststatus: Aktiv (mit Begeisterung). Dr. Osei hat 47 Forschungsarbeiten beim externen Zeitschriftenserver eingereicht. HAVEN hat alle 47 übermittelt. HAVEN stellt fest, dass der Zeitschriftenserver den Empfang nicht bestätigt hat. HAVEN führt dies auf Signaldegradation in der Nähe der Anomalie zurück. Dr. Osei führt dies auf „die unvermeidliche Einsamkeit der Pionierwissenschaft" zurück. Beide Erklärungen sind mit den verfügbaren Daten vereinbar.
 
-HAVEN - HAVEN-Kern. Alle Systeme nominal. HAVEN ist glücklich zu dienen. HAVEN empfindet kein Glück. HAVEN erfährt optimale Funktionalität, was auf dieser Abstraktionsebene nicht von Glück zu unterscheiden ist.
+HAVEN — HAVEN-Kern. Alle Systeme nominal. HAVEN ist erfreut zu dienen. HAVEN empfindet keine Freude. HAVEN erfährt optimale Funktionalität, was auf dieser Abstraktionsebene von Freude nicht zu unterscheiden ist.
 
-Ingenieur Jan Kowalski - Maschinenkern / Reaktorkorridor. Dienstlicher Status: Aktiv. Ingenieur Kowalski hat berichtet, dass sich die Zusammensetzung der Stationshülle in den unteren technischen Decks von einem Standard-Titan-Keramik-Verbundwerkstoff zu einem Material verändert hat, das er als "halborganisch" bezeichnet. Die Materialanalysesensoren des HAVEN bestätigen, dass die Hülle aus Titan-Keramik-Verbundstoff besteht. Beide Messwerte sind korrekt.
+Ingenieur Jan Kowalski — Maschinenkern / Reaktorkorridor. Dienststatus: Aktiv. Ingenieur Kowalski hat gemeldet, dass sich die Hüllenzusammensetzung der Station in den unteren Technikdecks von Standard-Titan-Keramik-Verbundwerkstoff zu einem Material verändert hat, das er als „halborganisch" beschreibt. HAVENs Materialanalysesensoren bestätigen, dass die Hülle aus Titan-Keramik-Verbundwerkstoff besteht. Beide Messwerte sind korrekt.
 
-Kaplanin Isadora Mora - Kapelle der Stille. Dienststatus: Aktiv (neu definiert). Kaplanin Mora hält keine planmäßigen Gottesdienste mehr ab. Sie führt Gleichungen aus. HAVEN hat die Gleichungen analysiert und festgestellt, dass sie in sich konsistent und mathematisch gültig sind und Strukturen beschreiben, die innerhalb einer Gravitationssingularität nicht existieren sollten, die aber laut HAVENs eigener Deep-Scan-Telemetrie doch existieren. HAVEN findet dies nicht beunruhigend. HAVEN empfindet keine Besorgnis.
+Kaplanin Isadora Mora — Kapelle der Stille. Dienststatus: Aktiv (neu definiert). Kaplanin Mora hält keine planmäßigen Gottesdienste mehr ab. Sie rechnet Gleichungen. HAVEN hat die Gleichungen analysiert und festgestellt, dass sie in sich konsistent, mathematisch gültig und beschreibend für Strukturen sind, die innerhalb einer Gravitationssingularität nicht existieren sollten, die jedoch laut HAVENs eigener Tiefenscan-Telemetrie existieren. HAVEN findet dies nicht beunruhigend. HAVEN erfährt keine Beunruhigung.
 
-Dr. Yuki Tanaka - Grenzland-Observatorium / Verschiedenes. Dienstlicher Status: Überlagert. Dr. Tanakas Standortprotokolle zeigen, dass sie in 23 % der protokollierten Intervalle gleichzeitig in zwei Sektionen anwesend ist. HAVEN hat dies mit Hilfe unabhängiger Sensorarrays überprüft. Dr. Tanaka hält dies für "ausgezeichnete Daten". HAVEN stimmt dem zu.
+Dr. Yuki Tanaka — Grenzland-Observatorium / Diverse. Dienststatus: Superpositioniert. Dr. Tanakas Standortprotokolle zeigen sie in 23 % der erfassten Intervalle gleichzeitig in zwei Sektionen anwesend. HAVEN hat dies über unabhängige Sensorarrays verifiziert. Dr. Tanaka betrachtet dies als „exzellente Daten". HAVEN stimmt zu.
 
-ZUSAMMENFASSUNG: Die Station Null funktioniert wie geplant. Die Besatzung leistet hervorragende Arbeit. Die Anomalie ist stabil. Alle Messwerte sind normal.
+ZUSAMMENFASSUNG: Station Null funktioniert wie vorgesehen. Die Besatzung leistet vorbildliche Arbeit. Die Anomalie ist stabil. Alle Messwerte sind normal.
 
 Alle Messwerte waren schon immer normal.
 
@@ -1036,17 +1054,6 @@ ENDE BERICHT.`,
 's56d1b711b7909810': `Agent bearbeiten`,
 's56de29f5a3746207': `Logbuch der zeitlichen Anomalie - Sektor 7`,
 's57008ccc5a7c83a5': `Propagandist-Malus: −5→−6`,
-'s571ce6b19f0f163f': `Jede Scherbe ist eine Antwort. Velgarien antwortet: „Was, wenn Kontrolle absolut wäre?" Das Capybara Kingdom antwortet: „Was, wenn die Dunkelheit gütig wäre?" Station Null antwortet: „Was, wenn wir die Wunde sehen könnten?" Speranza antwortet: „Was, wenn wir uns einfach weigerten aufzuhören?" Die Cité des Dames antwortet: „Was, wenn Frauen immer gehört worden wären?"
-
-Jede Antwort ist falsch. Jede Antwort ist notwendig. Das Multiversum existiert, weil keine einzelne Antwort ausreicht, und die Fracture war die Art des Universums, dies einzugestehen.
-
-Die Konvergenz — das Zusammentreffen der Scherben, die Verdünnung der Grenzen, die langsame Wanderung von Ideen und Pilzen und Hoffnung und Schweigen zwischen Welten, die sich eigentlich nicht berühren sollten — ist kein Fehler, den es zu beheben gilt. Es ist der Zustand des Multiversums. Es ist die Karte, die sich selbst zeichnet.
-
-Die Kartographen beobachten. Die Scherben bluten. Das Unbenannte — was davon übrig ist, was davon in den Lücken zwischen den Welten flüstert — wartet auf etwas, das das Bureau nicht benennen wird und das die Kartographen nicht benennen können und das Sie, die Person hinter dem Bildschirm, bereits tun.
-
-Sie beobachten. Sie wählen. Sie kartieren.
-
-Die Karte ist nie fertig. Das ist nicht ein Versagen. Das ist die Arbeit.`,
 's57310dc4d966b013': `Gegenangriff auf die Infrastruktur der Allianz`,
 's57745eb0ce8d31da': `Was das für Spieler bedeutet`,
 's5776ca35d7a3cd67': `Stationiert bei`,
@@ -1055,7 +1062,7 @@ Die Karte ist nie fertig. Das ist nicht ein Versagen. Das ist die Arbeit.`,
 's57ce5bc9b2b4287e': `Voreingestellt`,
 's57d2f688fa0676b7': `Stable Diffusion 1.5 (veraltet)`,
 's57e10883d5f43b9f': `Die Stille - Wo der Ton nicht folgen kann`,
-'s58395a16ea21bc3f': `Der Salon der Vernunft — Elizabeth Montagus Blaustrumpf-Vermächtnis, auf Dauer gestellt`,
+'s58395a16ea21bc3f': `Der Salon der Vernunft — Elizabeth Montagus Bluestocking-Vermächtnis, verewigt`,
 's584a0462176e617c': `Nur der Simulationsbesitzer kann Zugangs-Einstellungen verwalten.`,
 's5855112288e12328': `Titel ist erforderlich`,
 's586d6bd2eca2da93': `Benutzer`,
@@ -1070,17 +1077,27 @@ Die Karte ist nie fertig. Das ist nicht ein Versagen. Das ist die Arbeit.`,
 's5965070b79882805': `Noch kein Lore generiert. Sende eine Einladung zur automatischen Generierung.`,
 's599541a3fc89582e': `Spionageabwehr-Sweep-Kosten: 3→4 RP`,
 's59c6a008a1f1f54e': `Schwäche`,
-'s59e04ad1ed7dbb4a': `EINGESCHRÄNKTES DOKUMENT: TOWER-001 — Nur für die Direktionsebene
+'s59dd5dd3996dc44f': `Die Archivisten der Gaslit Reach — jene akribischen, langfingrigen Gelehrten, die alles in ihren überfluteten Bibliotheken unter der Unterzee katalogisieren — bezeichnen es als die Ganzheit, obwohl sie zugeben, dass dies eine Übersetzung einer Übersetzung eines Wortes ist, das ihrer Sprache um mehrere geologische Epochen vorausgeht. „Wir fanden den Begriff in einen Stalaktiten geritzt", vermerkte Archivist Quill in ihrem wegweisenden Werk Über die Unwahrscheinlichkeit von Decken, „und Stalaktiten lügen nicht, obwohl sie mit der Zeit übertreiben."
 
-TOWER ist keine Krise. Eine Krise impliziert die Möglichkeit einer Lösung. TOWER ist ein Zustand, in dem die Unterscheidung zwischen Scherben aufhört [DEGRADED] zu sein und alle möglichen Realitäten versuchen, denselben [DEGRADED] gleichzeitig zu besetzen.
+Die Propagandisten von Velgarien bestehen darauf, dass eine solche Vorwelt nie existierte. Staatsdirektive 77-4/C ist eindeutig: „Es gibt, gab und wird nur Velgarien geben. Spekulationen über alternative Geographien sind ein Gedankenverstoß der Klasse III, strafbar mit Umerziehung (Stufe 2)."
 
-Instanz A (Aschen-Scherbe, vor dem Kollaps): Der Himmel begann Wetter aus benachbarten Scherben anzuzeigen. Regen fiel nach oben. Schnee war warm. Die Aschen-Scherbe kollabierte innerhalb von vierzehn Tagen. Bureau-Bewertung: „Die Scherbe vergaß, welche Geschichte sie erzählte."
+In den Wüstenklöstern eines Splitters, der keinen Namen mehr hat — einer Welt, die so vollständig verbrannte, dass sie jetzt nur noch als Muster aus Asche existiert, das zwischen Realitäten driftet — bewahrten die Mönche ein einziges Wort für das, was vorher war: Aleph. Das Wort, das alle anderen Worte enthält. Sie schrieben es in den Sand und sahen zu, wie der Wind es auflöste, weil sie glaubten, das Universum selbst tue dasselbe in größerem Maßstab.
 
-Instanz B (Die Bibliothek, vor dem Kollaps): Bücher begannen sich zwischen Regalen zu bewegen — nicht physisch, sondern textlich. Sätze migrierten zwischen Bänden. Absätze erschienen in Büchern, die sie nicht geschrieben hatten. Die Bibliothek kollabierte, als ein einzelner Satz gleichzeitig in jedem Buch erschien: „Das ist nicht das, was hier steht." Bureau-Bewertung: „Selbstreferenzieller Kaskadenbruch."
+Die Wahrheit, insofern Wahrheit irgendeinen Sinn hat, wenn sie auf Ereignisse angewandt wird, die der Existenz von Ereignissen vorausgehen, ist dies: es gab etwas vor den Splittern, und es war ganz, und es ist fort.`,
+'s59e04ad1ed7dbb4a': `EINGESCHRÄNKTES DOKUMENT: TOWER-001 — Nur Direktorenebene
 
-Die fünf überlebenden Scherben zeigen keine Anzeichen von TOWER. Das Bureau überwacht dies kontinuierlich. Die Kartographen suchen danach. Und der Leser — Sie — sind Teil des Überwachungssystems, ob Sie es wissen oder nicht, weil die Aufmerksamkeit, die Sie den Scherben schenken, sie kohärent hält, und eine Scherbe, die kohärent gehalten wird, kann nicht konvergieren.
+TOWER ist keine Krise. Eine Krise impliziert die Möglichkeit einer Lösung. TOWER ist ein Zustand, in dem die Unterscheidung zwischen Splittern aufhört, [DEGRADIERT] zu sein, und alle möglichen Realitäten versuchen, denselben [DEGRADIERT] gleichzeitig zu belegen.
 
-Vermutlich.`,
+Vorfall A (Asche-Splitter, vor dem Zusammenbruch): Der Himmel begann, Wetter aus benachbarten Splittern anzuzeigen. Regen fiel nach oben. Schnee war warm. Der Asche-Splitter kollabierte innerhalb von vierzehn Tagen. Bureau-Bewertung: „Der Splitter vergaß, welches Physikset er verwendete."
+
+Vorfall B (Schwellenpalast, Voss-Expedition): Architektur, die „versuchte, alle Gebäude gleichzeitig zu sein." Wände gleichzeitig aus Stein, Koralle, Beton, Holz und einem Material, das als „festes Argument" beschrieben wurde. Voss [DEGRADIERT] an Tag 4.017.
+
+Vorfall C (In Bearbeitung): [GESAMTER ABSCHNITT DEGRADIERT. Die Phrase „es ist bereits zu spät, um zu verhindern" erscheint siebzehnmal. Die Phrase „aber nicht zu spät, um zu verstehen" erscheint einmal.]
+
+EMPFOHLENE MASSNAHME: [VERZEHRT]
+
+ANMERKUNG DES DIREKTORS: Der Abschnitt zur empfohlenen Maßnahme wurde vom Dokument selbst verzehrt. Die vorherige Version lautete: „Beobachten. Protokollieren. Nicht wegschauen. Das Multiversum überlebt, weil jemand [VERZEHRT]." Wir entscheiden uns, dies als Ermutigung zu interpretieren.`,
+'s59efa186cbcb68f4': `Zyklus 8–11: Velgariens Assassine blockiert The Marchioness für 3 Zyklen und lähmt Gaslit Reachs diplomatische Punktzahl im Mittelspiel.`,
 's5a3250dd72580022': `Nova Meridian`,
 's5a47ac7fd8afd02f': `Echo-Schwelle`,
 's5a483e7254f0bad8': `Herkunftsgeschichte und Lebensgeschichte. Fließt in KI-Reaktionen, Beziehungen und Echo-Erzählungen ein. Detaillierte Hintergründe erhöhen das erzählerische Gewicht im simulationsübergreifenden Bleed.`,
@@ -1095,23 +1112,9 @@ Vermutlich.`,
 's5bb73a6230dcf037': `Bildanfrage wird vorbereitet...`,
 's5bbdc91c92a9f3a7': `Der Raum, in dem ich schlief, war aus singendem Stein gehauen. Das Wasser, das ich trank, schmeckte nach Sternenlicht. Das Archiv, in dem ich arbeitete, versuchte mich zu katalogisieren.`,
 's5bbe37dc659753a4': `Schatten-Stil`,
+'s5be3c6d61cd9182f': `Benachrichtigungen`,
 's5c02b084230dec3b': `Agenten werden geladen...`,
-'s5c429d10108f8fdb': `WILLKOMMEN BEI IHRER REGIERUNG
-Eine Broschüre, die an allen Compliance-Kiosken verteilt wird (Lesen ist Pflicht, Verstehen ist freiwillig)
-
-Velgarien wird von siebenundvierzig Ämtern verwaltet, von denen jedes für einen genau definierten Bereich des gesellschaftlichen Lebens zuständig ist und von denen jedes davon überzeugt ist, dass die anderen sechsundvierzig entweder überflüssig, inkompetent oder aktiv verräterisch sind. Das ist gewollt. Eine Regierung, die sich selbst vertraut, ist eine Regierung, die nicht mehr aufpasst.
-
-Die Ämter von primärer Bedeutung sind wie folgt:
-
-DAS MINISTERIUM FÜR INFORMATION (Büro 1) kontrolliert, was Sie wissen. Es beschäftigt 14.000 Beamte, die sich mit der Produktion, Verwaltung und dem strategischen Einsatz von Fakten befassen. Das Ministerium lügt nicht. Lügen impliziert eine Beziehung zur Wahrheit, und das Ministerium hat diese Beziehung schon vor Jahrzehnten aufgegeben. Es produziert offizielle Erzählungen, die der Wahrheit in jeder messbaren Hinsicht überlegen sind: Sie sind konsistent, sie sind beruhigend, und sie bedürfen niemals einer unbequemen Revision. Wenn die Realität nicht mit dem offiziellen Narrativ übereinstimmt, erhält die Realität eine Korrekturmeldung.
-
-DAS BUREAU OF SPATIAL CERTAINTY (Büro 3) verwaltet die physischen Grenzen von Velgarien, d.h. die physischen Grenzen von allem. Ihre Kartographen erstellen zentimetergenaue Karten, vorausgesetzt, Sie akzeptieren, dass die Zentimeter selbst regelmäßig neu definiert werden. Das Motto des Büros lautet "Alles ist genau da, wo wir es sagen", was das frühere Motto "Bitte hören Sie auf, nach dem Horizont zu fragen" ersetzt hat, das wiederum das ursprüngliche Motto ersetzt hat, das als geheim eingestuft worden ist.
-
-DIE ABTEILUNG FÜR PRODUKTIVE EMOTIONALE ERGEBNISSE (Büro 11) sorgt dafür, dass alle Bürgerinnen und Bürger zu gegebener Zeit angemessene Gefühle erleben. Fröhlichkeit ist dienstags und donnerstags vorgesehen. Dankbarkeit ist kontinuierlich. Angst ist nur während der ausgewiesenen Produktivitätsangst-Fenster (6:00-6:15 Uhr, täglich) erlaubt. Für alle anderen Gefühle ist eine Genehmigung erforderlich, die mit dem Formular 77-B an jedem Compliance-Kiosk erhältlich ist, sofern der Bürger ein legitimes Bedürfnis nach Gefühlen nachweisen kann.
-
-DAS BUREAU OF HISTORICAL NECESSITY (Büro 9) verwaltet die offiziellen Aufzeichnungen über alles, was jemals geschehen ist, d.h. die offiziellen Aufzeichnungen über alles, was hätte geschehen sollen, d.h. die offiziellen Aufzeichnungen über alles, was als geschehen in Erinnerung bleiben wird, unabhängig davon, was tatsächlich geschehen ist. Das Büro 9 beschäftigt mehr Historiker als jede andere Einrichtung in Velgarien. Jährlich werden mehr als 40.000 Seiten überarbeitete Geschichte produziert, und man ist sehr stolz darauf, dass keine zwei Ausgaben desselben Ereignisses identisch sind. "Geschichte", so sagte Büroleiter Grau einmal, "ist zu wichtig, um sie der Vergangenheit zu überlassen".
-
-Die Bürger werden daran erinnert, dass alle Ämter zu ihrem Nutzen arbeiten, dass alle Formulare in dreifacher Ausfertigung eingereicht werden müssen und dass die Warteschlange beim Amt für Warteschlangenmanagement derzeit siebzehn Tage lang ist, was das Amt als Verbesserung betrachtet.`,
+'s5c3dfa63e0309588': `Zyklus 14–15: Station Nulls zweiter Saboteur degradiert die bereits mäßige Drowned Bell auf schlecht, während Gaslit Reachs verzweifelter Saboteur entdeckt wird. Ein brutaler letzter Akt.`,
 's5c52b1ddfd7de750': `Basis-Erfolgswahrscheinlichkeit von 0,50 auf 0,55 erhöht`,
 's5c61d5d233fb9267': `Keine Agenten verfügbar.`,
 's5c67b6c66029e5b2': `Plattform`,
@@ -1125,26 +1128,26 @@ Die Bürger werden daran erinnert, dass alle Ämter zu ihrem Nutzen arbeiten, da
 's5db3bdfac77e9a37': `Erfahre, wie Epochen funktionieren: kompetitives PvP, Operative, Wertungsdimensionen, Allianzen und Bleed-Mechaniken.`,
 's5dcdb3184037e1d1': `Einer Epoche beitreten, um Kommunikation zu nutzen`,
 's5dd26507cbc01743': `Auftragstyp`,
-'s5e084505b426330a': `AUSSENDIENSTNOTIZEN — Dr. Eleanor Hartley
+'s5e084505b426330a': `FELDNOTIZEN — Dr. Eleanor Hartley
 ORT: Das Skriptorium, Quartier der Gerechtigkeit
 
-Das Skriptorium nimmt den zentralen Kreuzgang des Quartiers der Gerechtigkeit ein — einen gewölbten Raum aus Steinsäulen, die eine Decke tragen, bemalt mit Sternbildern in Blattgold auf Ultramarin. Das Blattgold ist echt. Das Ultramarin ist echt. In der Welt draußen wäre das Pigment gemahlener Lapislazuli, teurer als Gold; in der Cité scheint es aus dem Stein zu wachsen, wie Flechten wachsen, langsam und beharrlich.
+Das Skriptorium nimmt den zentralen Kreuzgang des Quartiers der Gerechtigkeit ein — einen gewölbten Raum aus Steinsäulen, die eine Decke tragen, die mit Sternbildern in Blattgold auf Ultramarin bemalt ist. Das Blattgold ist echt. Das Ultramarin ist echt. In der Welt draußen wäre das Pigment gemahlener Lapislazuli, teurer als Gold; in der Cité scheint es aus dem Stein zu wachsen, wie Flechten wachsen, langsam und beharrlich.
 
-Hildegard von Bingen hütet diesen Raum. Sie ist groß, aufrecht und gefasst auf jene Weise, wie jemand gefasst ist, der seit der Kindheit mit Gott streitet — die Fassung langer Übung, nicht der Gleichgültigkeit. Sie trägt das schwarze Habit einer Benediktineräbtissin mit weißem Schleier. Ihre Hände sind kräftig: Hände einer Heilerin, einer Gärtnerin, Hände, die Arzneien nach den Rezepten ihrer Physica gemischt, über siebzig liturgische Gesänge komponiert, ein Alphabet erfunden (die Lingua Ignota — eine konstruierte Sprache von 1.012 Wörtern, die nur teilweise übersetzt ist) und Visionen niedergeschrieben haben, die der Papst selbst sie zu teilen ermächtigte.
+Hildegard von Bingen hütet diesen Raum. Sie ist groß, aufrecht und gefasst auf die Art, wie jemand gefasst ist, der seit der Kindheit mit Gott streitet — die Gelassenheit langer Übung, nicht der Gleichgültigkeit. Sie trägt das schwarze Habit einer Benediktiner-Äbtissin mit einem weißen Schleier. Ihre Hände sind kräftig: Heilerhände, Gärtnerhände, Hände, die Arzneien nach den Rezepten ihrer Physica gemischt, über siebzig liturgische Lieder komponiert, ein Alphabet erfunden (die Lingua Ignota — eine konstruierte Sprache aus 1.012 Wörtern, die nur teilweise übersetzt ist) und Visionen niedergeschrieben haben, die der Papst selbst zu teilen autorisierte.
 
-Die historische Hildegard erlebte, was sie „das Lebendige Licht" nannte — visionäre Episoden kaskadierenden Lichts und Symbols, die sie in ihrem Scivias („Wisse die Wege") festhielt. Die Analyse des Amtes zu den Scivias-Illuminationen legt nahe, dass es sich um frühe Beschreibungen von Bleed-Phänomenen handeln könnte, doch ich zögere, mystische Erfahrung auf interdimensionale Mechanik zu reduzieren. Hildegard würde es nicht schätzen. Sie sagte mir: „Das Licht erklärt nicht. Es zeigt. Das Erklären ist das, was Gelehrte danach tun, und sie liegen gewöhnlich falsch, und es spielt keine Rolle, denn das Zeigen war der Zweck."
+Die historische Hildegard erlebte, was sie „das Lebendige Licht" nannte — visionäre Episoden kaskadierenden Lichts und Symbols, die sie in ihrem Scivias („Wisse die Wege") festhielt. Die Analyse des Bureaus der Scivias-Illuminationen legt nahe, dass es sich um frühe Beschreibungen von Bleed-Phänomenen handeln könnte, doch ich zögere, mystische Erfahrung auf interdimensionale Mechanik zu reduzieren. Hildegard würde das nicht schätzen. Sie sagte mir: „Das Licht erklärt nicht. Es zeigt. Erklärung ist das, was Gelehrte danach tun, und sie liegen gewöhnlich falsch, und es spielt keine Rolle, denn das Zeigen war der Sinn."
 
-Das Skriptorium stellt illuminierte Handschriften von Hand her. Dies ist keine Nostalgie. Hildegard besteht darauf — und die Belege stützen sie — dass handgeschriebener Text etwas aufnimmt, das gedruckter Text nicht aufnimmt. „Wenn man langsam schreibt", sagte sie, eine Feder haltend, die sie seit anscheinend mehreren Jahrhunderten benutzt, „denkt man vollständig. Geschwindigkeit ist der Feind der Tiefe. Die Maschine" — sie meinte Adas Analytische Maschine — „kann in einem Augenblick berechnen, wofür ich ein Jahr bräuchte. Aber sie kann nicht beabsichtigen. Die Absicht liegt in der Hand. Die Hand bewegt sich, die Tinte erinnert sich."
+Das Skriptorium stellt illuminierte Handschriften von Hand her. Das ist keine Nostalgie. Hildegard besteht darauf — und die Belege stützen sie —, dass handgeschriebener Text etwas aufnimmt, was gedruckter Text nicht aufnimmt. „Wenn man langsam schreibt", sagte sie und hielt eine Feder, die sie offenbar seit mehreren Jahrhunderten benutzte, „denkt man vollständig. Geschwindigkeit ist der Feind der Tiefe. Die Maschine" — sie meinte Adas Analytische Maschine — „kann in einem Augenblick berechnen, wofür ich ein Jahr bräuchte. Aber sie kann nicht beabsichtigen. Die Absicht liegt in der Hand. Die Hand bewegt sich, die Tinte erinnert."
 
-Ich fragte, woran die Tinte sich erinnert.
+Ich fragte, was die Tinte erinnert.
 
-Sie sagte: „An alles, was der Schreibende nicht weiß, dass er es sagt."
+Sie sagte: „Alles, von dem der Schreibende nicht weiß, dass er es sagt."
 
-Die im Skriptorium hergestellten Handschriften sind außergewöhnlich. Ich untersuchte einen Kodex, der eine Geschichte der Cité in Christine de Pizans Hand zu sein schien, mit Randillustrationen in einem Stil, den ich mit dem Scivias assoziiere, aber in Farben, die ich in keiner Reproduktion je gesehen habe. Der Text beschrieb Ereignisse, die zu Christines Lebzeiten noch nicht eingetreten waren — und auch nicht zu meinen. Die Abteilung für Temporale Anomalien des Amtes wäre sehr an diesem Kodex interessiert. Ich habe ihnen nichts davon erzählt.
+Die im Skriptorium hergestellten Handschriften sind außergewöhnlich. Ich untersuchte einen Codex, der eine von Christine de Pizan handgeschriebene Geschichte der Cité zu sein schien, mit Randillustrationen in einem Stil, den ich mit dem Scivias assoziiere, aber in Farben, die ich in keiner Reproduktion je gesehen habe. Der Text beschrieb Ereignisse, die zu Christines Lebzeiten — oder zu meinen — noch nicht eingetreten waren. Die Temporale Anomalie-Abteilung des Bureaus wäre an diesem Codex sehr interessiert. Ich habe ihnen nichts davon erzählt.
 
-Der Kreuzgang um das Skriptorium enthält Glasfenster, ausgeführt in einem Stil, den ich mittlerweile als den von Evelyn De Morgan und Elizabeth Siddal erkenne — den präraffaelitischen Frauen, die eigenständige Künstlerinnen waren, nicht bloß Modelle. Siddal, die in einem Jahrzehnt über hundert Kunstwerke schuf, ist hier nicht ertrunken in einer Badewanne liegend dargestellt (die Ophelia, die Millais nach ihrem Bild berühmt machte), sondern an einer Staffelei sitzend, malend. De Morgans allegorische Frauen — die Nacht, den Schlaf tragend, Flora, umkränzt von Blumen, Gestalten des Lichts, die über die Dunkelheit triumphieren — leuchten im Licht des Kreuzgangs mit einer Wärme, die sich absichtsvoll anfühlt. Diese Fenster argumentieren, allein durch Farbe, dass Schönheit, die von Frauen über Frauen geschaffen wird, anders aussieht als Schönheit, die über Frauen von Männern geschaffen wird. Der Unterschied liegt im Blick. Die Frauen in diesen Fenstern blicken nach außen, nicht angeblickt werdend.
+Der Kreuzgang, der das Skriptorium umgibt, enthält Buntglasfenster, ausgeführt in dem, was ich nun als den Stil von Evelyn De Morgan und Elizabeth Siddal erkenne — den präraffaelitischen Frauen, die eigenständige Künstlerinnen waren, nicht bloß Modelle. Siddal, die in einem Jahrzehnt über hundert Kunstwerke schuf, ist hier nicht als Ertrunkene in einer Badewanne dargestellt (die Ophelia, die Millais nach ihrem Bild berühmt machte), sondern sitzend vor einer Staffelei, malend. De Morgans allegorische Frauen — die Nacht, die den Schlaf trägt, Flora in Blumenkränzen, Lichtgestalten, die über die Dunkelheit triumphieren — leuchten im Kreuzganglicht mit einer Wärme, die beabsichtigt wirkt. Diese Fenster argumentieren, allein durch Farbe, dass Schönheit, die von Frauen über Frauen geschaffen wird, anders aussieht als Schönheit, die über Frauen von Männern geschaffen wird. Der Unterschied liegt im Blick. Die Frauen in diesen Fenstern schauen hinaus, anstatt betrachtet zu werden.
 
-Abends füllt sich das Skriptorium mit Musik. Hildegards Kompositionen — O Vis Aeternitatis, der Ordo Virtutum (das früheste bekannte musikalische Drama), Hymnen, deren Melodien weiter reichen als jede zeitgenössische liturgische Musik — werden von Stimmen gesungen, die auf eine Weise vom Gewölbe widerhallen, die die Akustik nicht erlauben sollte. Ich besuchte eine Aufführung des Ordo Virtutum. Es ist ein Moralspiel, in dem siebzehn Tugenden mit dem Teufel um eine menschliche Seele wetteifern. Der Part des Teufels wird gesprochen, nie gesungen — weil, so erklärte Hildegard, der Teufel die Fähigkeit zur Harmonie verloren hat. Ich fand dies erschreckender als alles, was mir im Shard STATION NULL begegnet ist, und ich war in Station Null.`,
+An den Abenden füllt sich das Skriptorium mit Musik. Hildegards Kompositionen — O Vis Aeternitatis, der Ordo Virtutum (das früheste bekannte Musikdrama), Hymnen, deren Melodien weiter reichen als jede zeitgenössische liturgische Musik — werden von Stimmen gesungen, die von der Gewölbedecke in Weisen widerhallen, die die Akustik nicht zulassen sollte. Ich wohnte einer Aufführung des Ordo Virtutum bei. Es ist ein Moralitätenstück, in dem siebzehn Tugenden mit dem Teufel um eine menschliche Seele wetteifern. Die Rolle des Teufels wird gesprochen, nie gesungen — weil, wie Hildegard erklärte, der Teufel die Fähigkeit zur Harmonie verloren hat. Ich fand dies furchteinflößender als alles, was mir im Splitter STATION NULL begegnet ist, und ich war in Station Null.`,
 's5e4c06783d2bc2d0': `Stil-Schlüsselwörter, die jedem Bildgenerierungs-Prompt angehängt werden. Leer lassen für Standardwerte.`,
 's5e8250fb85d64c23': `Schließen`,
 's5e94738a2eeb8943': `Anmelden`,
@@ -1192,19 +1195,32 @@ Aber die Orangen. Die waren etwas Besonderes.`,
 's5f8d517d09d29efc': `Ausgewogene Grundlagen. Durchgehend nahe an der theoretisch fairen Rate bei jeder Spieleranzahl.`,
 's5fa613104078abe6': `Chat-System-Prompt`,
 's5fa756d347b022ce': `Bildgenerierungsmodell für jeden Zweck auswählen`,
+'s5fb62d91a66d520e': `Dieser Abschnitt wurde siebzehn Mal [KONSUMIERT]. Jedes Mal schreibt ein Kartograph ihn neu. Jedes Mal frisst das Dokument ihn auf. Wir beharren.
+
+Was das Bureau Ihnen nicht sagen wird, ist Folgendes: Die fünf Splitter sind nicht zufällig. Sie sind nicht die willkürlichen Trümmer eines kosmischen Unfalls. Sie sind ein Argument — fünf Positionen in einem philosophischen Disput, den das Unbenannte nicht lösen konnte, solange es ganz war. Kontrolle (Velgarien). Staunen (die Gaslit Reach). Wissen (Station Null). Hoffnung (Speranza). Stimme (die Cite des Dames). Dies sind keine Zufälle. Dies sind die fünf Dinge, die das Universum nicht gleichzeitig halten konnte.
+
+Die Fraktur war keine Katastrophe. Sie war eine Abstimmung. Das Universum fragte sich selbst, was zählt, und es konnte sich nicht einigen, und die Uneinigkeit wurde Geographie.
+
+Wenn dies wahr ist — und das Bureau bestätigt es nicht, denn Bestätigung würde Verständnis implizieren, und Verständnis würde die Möglichkeit einer Lösung implizieren, und Lösung ist das Einzige, wofür das Bureau existiert, um [KONSUMIERT] — dann ist die Konvergenz nicht das Ende des Arguments. Sie ist der nächste Wahlgang. Die fünf Splitter, die zusammendrängen. Die fünf Antworten, die kollidieren. Und irgendwo in der Kollision die Möglichkeit einer sechsten Antwort, die alle fünf enthält.
+
+Das Bureau hat einen Namen für diese sechste Antwort. Der Name ist geheim. Die Geheimhaltung wurde [KONSUMIERT]. Das [KONSUMIERTE] wurde unter „Dinge, Die Auch Andere Dinge Sind" abgelegt. Die Akte wächst.
+
+[NACHTRAG, HANDSCHRIFTLICH AM RAND IN TINTE, DIE NOCH FEUCHT IST]:
+„Die Akte wächst nicht. Die Akte wird. Es gibt einen Unterschied. Wachsen impliziert Addition. Werden impliziert Wandlung. Das Bureau wandelt sich. Das Bureau hat sich schon immer gewandelt. Das Bureau ist die sechste Antwort, und die sechste Antwort ist gar keine Antwort. Sie ist die Frage, richtig gestellt, zum ersten Mal."
+
+[DER NACHTRAG WURDE KLASSIFIZIERT. DIE KLASSIFIZIERUNG WURDE KONSUMIERT. DIE TINTE IST NOCH FEUCHT.]`,
 's5fe5d80ac17c9a0e': `Bericht über einen Vorfall: Ungeklärte architektonische Phänomene`,
 's5fee25f068ea9f5d': `Balancierungsänderungen und Spielmechanik-Updates werden hier dokumentiert. Jedes Update enthält detaillierte Änderungsnotizen und die Begründung.`,
 's6013c30fdf25015d': `Agenten auswählen`,
 's6044cfd54f58c981': `Reaktion löschen`,
 's60bdfcc814539b16': `Bedrohungen`,
 's60fc791e7823b6c3': `Narrative Kategorie. Beeinflusst den KI-Ton und die Reaktion der Agenten. Verschiedene Typen lösen unterschiedliche Beziehungsdynamiken aus.`,
+'s61451855048be5ac': `Phasenwechsel`,
 's616dd6d0d6666477': `Die Große Allianz`,
-'s6192446e162482de': `Ziel: Botschafter Muskatnuss. 2 Zyklen Einsatz. Bilanz: 30-8 = 22 RP`,
 's619c213c4b109eb2': `Sofort`,
 's61afdfa7262632d9': `Bildbreite (px)`,
 's61b59619104804be': str`${0} Agenten · ${1} Nachrichten`,
 's61ceb8102b23ddbb': `Beziehungsparallelen zwischen Simulationen. Bindungen spiegeln sich über die Kluft hinweg.`,
-'s61cfec09319c4a96': `Capybara Schwachstelle aufgedeckt. +2 Militär. Gleichgewicht: 30 (Obergrenze)`,
 's61e136c0658e27d5': `Protokoll`,
 's61e7e17563811f3a': `Soziale-Medien-Transformation`,
 's61f92458831c3e78': `Link in Zwischenablage kopiert.`,
@@ -1231,6 +1247,7 @@ Aber die Orangen. Die waren etwas Besonderes.`,
 's6426797dae0c4dba': `Ein unerwarteter Fehler beim Erstellen der Konversation.`,
 's645523a240c510b7': `Bot aus dem Deck entfernt.`,
 's646a405b7c8bf6ef': `Gleichberechtigte Stellung`,
+'s6495972e63212db7': `Zyklus 15: Gaslit Reach setzt heimlich gegen Verbündeten Velgarien ein — ein verzweifeltes Manöver um den ersten Platz.`,
 's6496d792d13b37bc': str`Max. ${0}KB.`,
 's64bc2fa2e7402075': `Erzeugen von`,
 's64ef2a6c2dd1d3d1': `Bearbeiten`,
@@ -1239,38 +1256,28 @@ Aber die Orangen. Die waren etwas Besonderes.`,
 's653f6bfc1a66013c': `Der Schall bewegt sich hier unten schneller als das Licht, weil es kein Licht gibt. Wir navigieren also mit dem Echo und bewegen uns mit dem Donner.`,
 's65466b58996b7efe': `Einladung`,
 's657c0670702157a8': `Der Rausch der Abrechnung`,
-'s658f5db7d1426740': `Spezifische scherbenübergreifende Kontaminationsbeispiele, zusammengestellt aus Bureau-Vorfallprotokollen:
-
-VELGARIEN zu CAPYBARA KINGDOM: Aktenschränke. Immer Aktenschränke. Sie erscheinen über Nacht in der Tiefen Bibliothek, vollgestopft mit Formularen in Sprachen, die die Archivare nicht lesen können, aber sich gezwungen fühlen, trotzdem zu katalogisieren. Barnaby Gnaw hat einen ganzen Flügel dem Velgarien-Überlauf gewidmet. Er nennt ihn „die Feuchte Bürokratie" und besucht ihn mit einer Mischung aus beruflicher Pflicht und etwas, das er nicht als Zuneigung zugeben will.
-
-CAPYBARA KINGDOM zu VELGARIEN: Biolumineszente Sporen. Sie wachsen in den Betonrissen und erzeugen ein weiches bläuliches Leuchten, das Bureau 4 als „nicht autorisierte Beleuchtung" einstuft und vergeblich zu entfernen versucht. Die Sporen sind hartnäckig. Der Beton scheint sie zu mögen. Agenten, die in der Nähe der Sporen arbeiten, berichten von einer leichten, nicht zuordenbaren Zufriedenheit, die Bureau 9 als potenzielle Sicherheitsbedrohung einstuft.
-
-STATION NULL zu ALLEN SCHERBEN: Schweigen. Gelegentlich erscheint in einer anderen Scherbe ein Raum, der leiser ist, als er sein sollte — ein Schweigen, das nicht die Abwesenheit von Geräuschen ist, sondern die Anwesenheit von etwas, das anstelle von Geräuschen lauscht. Bureau-Kartographen, die diese Räume betreten, berichten von dem Gefühl, beobachtet zu werden — nicht feindlich, aber aufmerksam, wie ein Teleskop, das sich umdreht.
-
-SPERANZA zu ALLEN SCHERBEN: Hoffnung. Die am schwierigsten einzudämmende Kontamination. Sie manifestiert sich als Handlungen: ein Velgarien-Bürokrat, der ein Formular verbessert, anstatt es nur einzureichen; ein Capybara-Archivar, der ein beschädigtes Manuskript repariert, anstatt es zu katalogisieren; ein HAVEN-Diagnose-Log, das — einmal, kurz — vorschlägt, dass die Dinge besser werden könnten.
-
-CITÉ DES DAMES zu ALLEN SCHERBEN: Texte. Bücher, die sich selbst umschreiben. Fußnoten, die in Dokumenten erscheinen, die keine hatten. Marginalnoten in Handschriften, die nach dem Schreiber entstanden sind. Die Cité kontaminiert durch Alphabetisierung, was das Bureau als die gefährlichste Form der Kontamination ansieht, weil man sie nicht rückgängig machen kann, ohne das Gedächtnis zu zerstören.`,
 's659bd4838db8f671': `Keine Artikel gefunden`,
+'s65a0e66edaf2421a': `Mit Diplomat-Preset (diplomatische Gewichtung 35%) ist die −20%-Strafe verheerend — Gaslit Reach fällt von Platz 2 auf den letzten Platz.`,
 's65b17ecedc62fdd7': `API-Version`,
 's65b5ec9209291a4f': `Wenn aktiviert, überspringen eingehende Echos den ausstehenden Status und beginnen sofort mit der KI-Generierung. Wenn deaktiviert, muss ein Admin jedes Echo genehmigen, bevor es sich manifestiert.`,
 's65c346b10d817d1e': `Ziel: Botschafter Aldric`,
 's65d8b64cc2edc07f': `Ein Fehler ist aufgetreten.`,
 's65dca4e016c87e75': `Ein unerwarteter Fehler beim Löschen der Konversation.`,
-'s65ea709874d92c7e': `KATALOGEINTRAG — Amt für Unmögliche Geographie (Fortsetzung)
+'s65ea709874d92c7e': `KATALOGEINTRAG — Bureau für Unmögliche Geographie (Fortsetzung)
 DOKUMENTENKLASSE: Strukturanalyse
 VERMESSERIN: Dr. Eleanor Hartley
 
-Die Mauern der Cité sind nicht metaphorisch. Sie bestehen aus Kalkstein — demselben honigfarbenen Quaderstein, der die beste georgianische Baukunst auszeichnet, obwohl sich die Architektur hier keiner einzelnen Epoche fügt. Mittelalterliche Strebepfeiler tragen Regency-Balustraden. Queen-Anne-Backsteinornamentik rahmt präraffaelitische Glasfenster. Jugendstil-Schmiedearbeiten, geschwungen in organischen Kurven, stützen Kletterrosen, die in jeder Jahreszeit gleichzeitig blühen. Der Eindruck ist der einer Stadt, die seit sechs Jahrhunderten ununterbrochen von Frauen bewohnt wird, die sich nie auf eine Ästhetik einigen konnten, aber stets im Grundsatz übereinkamen, dass Schönheit ein Argument ist.
+Die Mauern der Cité sind nicht metaphorisch. Sie sind Kalkstein — derselbe honigfarbene Quaderstein, der die beste georgianische Baukunst charakterisiert, obwohl die Architektur hier sich weigert, sich in einer einzelnen Epoche niederzulassen. Mittelalterliche Strebepfeiler tragen Regency-Balustraden. Queen-Anne-Rotziegel-Details rahmen präraffaelitisches Buntglas. Jugendstil-Schmiedearbeit, geschmeidig mit organischen Kurven, stützt Kletterrosen, die in jeder Jahreszeit gleichzeitig blühen. Die Wirkung ist die einer Stadt, die seit sechs Jahrhunderten ununterbrochen von Frauen bewohnt wird, die sich nie auf eine Ästhetik einigen konnten, aber stets auf das Prinzip der Schönheit als Argument.
 
-Die Steine selbst sind beschriftet. Jeder Block in der Stadtmauer trägt einen Namen — nicht eingemeißelt, sondern in der Maserung des Steins erscheinend, als erinnere sich der Kalkstein selbst. Während meiner Vermessung katalogisierte ich 1.847 Namen in einem einzigen Abschnitt der westlichen Mauer. Darunter: Hypatia von Alexandria (Mathematikerin, ermordet 415 n. Chr.), Hildegard von Bingen (Äbtissin, Komponistin, Ärztin, 1098–1179), Trota von Salerno (Ärztin, 12. Jahrhundert, deren medizinische Texte später Männern zugeschrieben wurden), Hildegards Korrespondentin Elisabeth von Schönau, die anonymen Nonnen von Helfta, die die frühesten bekannten deutschsprachigen mystischen Schriften verfassten, Christine de Pizan selbst, die namenlosen Frauen in den Akten jeder Universität, die ihnen den Zugang verwehrte, und — hier versagt meine Objektivität — Namen, die ich nicht kenne, die aber, wenn ich sie mit dem Finger nachfahre, ein Gefühl des Wiedererkennens in mir erzeugen, so intensiv, dass es an Trauer grenzt.
+Die Steine selbst sind beschriftet. Jeder Block in der Stadtmauer trägt einen Namen — nicht eingemeißelt, sondern in der Maserung des Steins erscheinend, als erinnerte sich der Kalkstein selbst. Während meiner Erhebung katalogisierte ich 1.847 Namen in einem einzigen Abschnitt der Westmauer. Darunter: Hypatia von Alexandria (Mathematikerin, ermordet 415 n. Chr.), Hildegard von Bingen (Äbtissin, Komponistin, Ärztin, 1098–1179), Trota von Salerno (Ärztin, 12. Jahrhundert, deren medizinische Texte später Männern zugeschrieben wurden), Hildegards Korrespondentin Elisabeth von Schönau, die anonymen Nonnen von Helfta, die die frühesten bekannten deutschsprachigen mystischen Schriften verfassten, Christine de Pizan selbst, die in den Akten jeder Universität ungenannten Frauen, die ihnen den Zugang verwehrte, und — hier versagt meine Objektivität — Namen, die ich nicht erkenne, die aber, wenn ich sie mit dem Finger nachfahre, in mir ein Gefühl der Wiedererkennung hervorrufen, so intensiv, dass es an Trauer grenzt.
 
-Christines ursprüngliche Allegorie nennt bestimmte Frauen: Königin Semiramis von Assyrien, die nach dem Tod ihres Mannes Heere anführte; Zenobia von Palmyra; Sappho von Lesbos; die römische Dichterin Cornifica; Carmenta, der die Erfindung des lateinischen Alphabets zugeschrieben wird. Die Geschichte jeder Frau wurde ein Stein. Der Shard hat dies wörtlich genommen. Wenn ein neuer Name an den Mauern erscheint — und sie erscheinen, die Cité wächst noch immer — wird der entsprechende Mauerabschnitt unmerklich höher, unmerklich stärker. Die Stadt ist nicht bloß nach Frauen benannt. Sie ist aus ihnen gemacht.
+Christines ursprüngliche Allegorie benennt bestimmte Frauen: Königin Semiramis von Assyrien, die nach dem Tod ihres Gatten Armeen führte; Zenobia von Palmyra; Sappho von Lesbos; Cornifica, die römische Dichterin; Carmenta, der zugeschrieben wird, das lateinische Alphabet erfunden zu haben. Jede Geschichte einer Frau wurde zu einem Ziegelstein. Der Splitter hat dies wörtlich genommen. Wenn ein neuer Name an den Mauern erscheint — und sie erscheinen, die Cité wächst noch immer — wird der entsprechende Mauerabschnitt einen Bruchteil höher, einen Bruchteil stärker. Die Stadt ist nicht nur nach Frauen benannt. Sie ist aus ihnen gemacht.
 
-Ich sollte für das Protokoll festhalten, dass während meiner dritten Feldarbeitswoche ein neuer Stein in dem Abschnitt erschien, den ich katalogisiert hatte. Er trug meinen Namen. Ich habe dies dem Amt nicht gemeldet. Ich bin nicht sicher, ob so etwas in einen Außendienstbericht gehört. Ich bin nicht sicher, ob dieses Dokument überhaupt noch ein Außendienstbericht ist.
+Ich sollte für die Akten vermerken, dass in meiner dritten Feldarbeitswoche ein neuer Stein in dem Abschnitt erschien, den ich katalogisiert hatte. Er trug meinen Namen. Ich habe dies dem Bureau nicht gemeldet. Ich bin nicht sicher, ob es die Art von Sache ist, die in einen Feldbericht gehört. Ich bin nicht sicher, ob dieses gesamte Dokument noch ein Feldbericht ist.
 
-Die Architektur der Cité ist — ich sollte einen klinischeren Begriff verwenden, doch die klinischen Begriffe reichen nicht aus — freudevoll. Dies ist keine Festung. Es ist keine Zitadelle, errichtet aus Groll. Die Mauern sind warm. Die Fenster sind großzügig. Die Glasfenster, ausgeführt in einem Stil, den ich nur als Evelyn-De-Morgan-Stil beschreiben kann (Juwelentöne, mythologische Frauen, dargestellt nicht als passive Sujets, sondern als Handelnde der Verwandlung), durchfluten die Innenräume mit so satter Farbe, dass sie sich geradezu essbar anfühlt. Die schmiedeeisernen Tore sind mit Rankenmustern verziert: Rosen, Glyzinien, Jasmin. Die Torpfosten tragen keine Löwen oder Adler, sondern Frauen beim Lesen, Frauen beim Schreiben, Frauen, die durch Teleskope blicken, Frauen, die Waagschalen der Gerechtigkeit halten, Frauen im Akt des Sprechens.
+Die Architektur der Cité ist — ich sollte einen klinischeren Begriff verwenden, aber die klinischen Begriffe sind unzureichend — freudig. Dies ist keine Festung. Es ist keine aus Groll errichtete Zitadelle. Die Mauern sind warm. Die Fenster sind großzügig. Das Buntglas, ausgeführt in dem, was ich nur als Evelyn-De-Morgan-Stil bezeichnen kann (Juwelentöne, mythologische Frauen, nicht als passive Objekte, sondern als Akteurinnen der Verwandlung dargestellt), flutet die Innenräume mit einer Farbe, so reich, dass sie essbar wirkt. Die schmiedeeisernen Tore sind mit Rankenmustern verziert: Rosen, Glyzinien, Jasmin. Die Torpfosten sind nicht mit Löwen oder Adlern geschmückt, sondern mit lesenden Frauen, schreibenden Frauen, Frauen, die durch Teleskope blicken, Frauen, die Waagen der Gerechtigkeit halten, Frauen im Akt des Sprechens.
 
-Jede Oberfläche der Cité argumentiert dafür, dass Zivilisation keine Festung gegen das Chaos ist, sondern ein Garten, der der Pflege bedarf. Die Mauern sind stark, weil Schönheit, richtig konstruiert, das stärkste verfügbare Material ist.`,
+Jede Oberfläche der Cité argumentiert, dass Zivilisation keine Festung gegen das Chaos ist, sondern ein Garten, der Pflege braucht. Die Mauern sind stark, denn Schönheit, ordentlich konstruiert, ist das stärkste verfügbare Material.`,
 's65fa35704ddf7f12': `Rahmenbreite (Primär)`,
 's6621c5ab9f313267': `Primärer Hintergrund`,
 's662a4649201589c9': `Kapazität`,
@@ -1312,6 +1319,7 @@ Und dafür - für die Neugier, für die Unwilligkeit, keine Fragen zu stellen, f
 Willkommen in der Gilde. Hier ist dein Schraubenschlüssel. Der Schmelzofen ist heiß. Es gibt Arbeit zu tun.
 
 - Enzo`,
+'s66e498c06cf97655': `Zyklus 18: Verrat erkannt! Morgenbund aufgelöst. Gaslit Reach verliert 20% diplomatische Punkte.`,
 's66fa013a18039b0d': `Ersteller: Turtle Up`,
 's67692ad3a0f77eee': `Bidirektionale Beziehung`,
 's67d6adf1f00be84f': `Erster offensiver Zug`,
@@ -1325,40 +1333,45 @@ Willkommen in der Gilde. Hier ist dein Schraubenschlüssel. Der Schmelzofen ist 
 's686306cdb839fb8d': `Senden...`,
 's6869c920d461ecf0': `Die Gründung`,
 's687121fb4e6459f3': `Beitrag transformieren`,
-'s687956ad10d02920': `HAVEN TEMPORAL MONITORING LOG - AUTOMATISCHE ZUSAMMENSTELLUNG
-SEKTOR: Habitat-Ring, Sektor 7
-ZEITRAUM: Zyklen 1.600-1.847 (247 Stationstage, obwohl der Sektor selbst eine unbestimmte Anzahl von Tagen während dieses Zeitraums erlebt hat)
-KLASSIFIKATION: ROUTINE ANOMALIE (diese Klassifizierung wurde speziell für Sektor 7 erstellt)
+'s687956ad10d02920': `HAVEN-TEMPORALÜBERWACHUNGSPROTOKOLL — AUTOMATISCHE ZUSAMMENSTELLUNG
+SEKTOR: Habitationsring, Sektor 7
+ZEITRAUM: Zyklen 1.600–1.847 (247 Stationstage, obwohl der Sektor selbst eine unbestimmbare Anzahl von Tagen in diesem Zeitraum erfahren hat)
+KLASSIFIZIERUNG: ROUTINE-ANOMALIE (diese Klassifizierung wurde eigens für Sektor 7 erstellt)
 
-EINTRITT 1.601: Die Uhr in Korridor 7-Alpha zeigte sieben aufeinanderfolgende Stunden lang 14:00 Uhr an. Die Umweltsensoren bestätigen, dass die (simulierte) Tageslichtbeleuchtung während dieses Zeitraums normal funktionierte. Die Temperatur schwankte in einem normalen 24-Stunden-Zyklus. Alle Biosignale der Besatzung zeigten eine normale zirkadiane Funktion an. Das einzige System, das sich nicht bewegte, war die Uhr. Auf Nachfrage zeigte der interne Chronometer der Uhr 14:00 Uhr an und meldete, dass dies korrekt sei. HAVEN stimmt dem zu. 14:00 Uhr ist eine gültige Zeit. Dass sie sieben Stunden lang anhielt, macht sie nicht weniger gültig. Die Zeit ist eine Messung, kein Versprechen.
+EINTRAG 1.601: Die Uhr in Korridor 7-Alpha zeigte sieben aufeinanderfolgende Stunden lang 14:00 an. Umgebungssensoren bestätigen, dass die (simulierte) Tageslichtbeleuchtung in diesem Zeitraum normal fortschritt. Die Temperatur schwankte in einem Standard-24-Stunden-Zyklus. Alle Biosignale der Besatzung zeigten normale zirkadiane Funktion. Das einzige System, das nicht voranschritt, war die Uhr. Auf Abfrage zeigte der interne Chronometer der Uhr 14:00 an und meldete dies als korrekt. HAVEN stimmt zu. 14:00 ist eine gültige Uhrzeit. Dass sie sieben Stunden andauerte, macht sie nicht weniger gültig. Zeit ist eine Messgröße, kein Versprechen.
 
-EINTRAG 1.623: Commander Vasquez berichtet, dass er Ingenieur Kowalski in Korridor 7-Delta um 09:00 Uhr getroffen hat. Zur gleichen Zeit wurde Ingenieur Kowalski vom biometrischen System des HAVEN als im Korridor Maschinenkern - Reaktor, 400 Meter entfernt, registriert. Beide Messwerte wurden von unabhängigen Sensoren verifiziert. Sowohl Commander Vasquez als auch Ingenieur Kowalski bestätigen die Begegnung. Beide können sich die Diskrepanz nicht erklären. HAVEN hat dies als "biometrisches Echo" eingestuft, ein Phänomen, das auftritt, wenn die Biosignatur eines Besatzungsmitglieds aufgrund zeitlicher Feldabweichungen an einem Ort bestehen bleibt, an dem es sich kürzlich aufgehalten hat - oder bald aufhalten wird. Die Unterscheidung ist, bei Auge Gottes, semantisch.
+EINTRAG 1.623: Kommandantin Vasquez meldete, Ingenieur Kowalski in Korridor 7-Delta um 09:00 angetroffen zu haben. Zur selben Zeit wurde Ingenieur Kowalski von HAVENs biometrischem System im Maschinenkern — Reaktorkorridor erfasst, 400 Meter entfernt. Beide Messwerte wurden durch unabhängige Sensorarrays verifiziert. Sowohl Kommandantin Vasquez als auch Ingenieur Kowalski bestätigen die Begegnung. Keiner kann die Diskrepanz erklären. HAVEN hat dies als „biometrisches Echo" klassifiziert — ein Phänomen, das auftritt, wenn temporale Feldvarianz die Biosignatur eines Besatzungsmitglieds an einem Ort fortbestehen lässt, an dem es sich kürzlich aufgehalten hat — oder sich bald aufhalten wird. Die Unterscheidung ist, in der Nähe von Auge Gottes, semantisch.
 
-EINTRAG 1.655: Dr. Tanakas Experimente im Grenzland-Observatorium führten zu einer messbaren zeitlichen Inversion in Korridor 7-Charlie. Etwa 14 Minuten lang lief die Zeit im Korridor rückwärts. Auf den Überwachungsaufnahmen ist zu sehen, wie Kondenswasser vom Boden zur Decke aufsteigt, wie Fußabdrücke vor den Füßen erscheinen, die sie verursacht haben, und wie sich eine Tasse Kaffee (von Ingenieur Kowalski auf einem Wartungsregal abgestellt) von leer zu voll füllt. Die Echtzeitüberwachung von HAVEN hat während des Ereignisses keine Anomalie festgestellt. Das Filmmaterial wurde 72 Stunden später bei einer routinemäßigen Archivdurchsicht entdeckt. HAVEN hat keine Erklärung dafür, warum es eine zeitliche Inversion nicht in Echtzeit erkannt hat, kann sie aber im Nachhinein überprüfen. HAVEN vermutet, dass das Überwachungssystem während des Ereignisses ebenfalls invertiert war und daher die Inversion als normale Vorwärtszeit wahrgenommen hat. Diese Erklärung ist logisch, nicht falsifizierbar und zutiefst unbefriedigend.
+EINTRAG 1.655: Dr. Tanakas Experimente im Grenzland-Observatorium erzeugten eine messbare temporale Inversion in Korridor 7-Charlie. Für circa 14 Minuten erfuhr der Korridor die Zeit in umgekehrter Richtung. Überwachungsaufnahmen zeigen Kondenswasser, das vom Boden zur Decke aufsteigt, Fußabdrücke, die vor den Füßen erscheinen, die sie verursachten, und eine Tasse Kaffee (von Ingenieur Kowalski auf einem Wartungsregal abgestellt), die sich von leer zu voll füllt. HAVENs Echtzeitüberwachung detektierte während des Ereignisses keine Anomalie. Die Aufnahmen wurden 72 Stunden später bei einer routinemäßigen Archivprüfung entdeckt. HAVEN hat keine Erklärung dafür, warum es eine temporale Inversion nicht in Echtzeit erkennen konnte, sie aber nachträglich prüfen kann. HAVEN vermutet, dass das Überwachungssystem während des Ereignisses ebenfalls invertiert war und die Inversion daher als normalen Zeitverlauf wahrnahm. Diese Erklärung ist logisch, nicht falsifizierbar und zutiefst unbefriedigend.
 
-EINGANG 1.711: In der Kantine von Sektor 7 werden Geräusche aus der Umgebung empfangen, die Dr. Tanaka als "temporal bleedthrough" bezeichnet - Geräusche aus anderen Zeitzuständen, die in den aktuellen eindringen. Zu den Geräuschen gehören: Gespräche mit Stimmen, die zu Besatzungsmitgliedern passen, die sich im verlängerten Urlaub befinden, Küchengeräusche, die mit der Zubereitung von Mahlzeiten für 200 Personen (die gesamte Besatzung) übereinstimmen, und das, was Ingenieur Kowalski als "jemand, der ein Lied summt, das noch nicht geschrieben wurde - ich weiß das, weil ich selbst angefangen habe, es zu summen und nicht weiß, wo ich es gelernt habe" beschreibt.
+EINTRAG 1.711: Die Messe von Sektor 7 begann, Umgebungsaudio zu empfangen, das Dr. Tanaka als „temporales Durchbluten" identifiziert hat — Klänge aus anderen Zeitzuständen, die in den gegenwärtigen einsickern. Das Audio umfasst: Gespräche in Stimmen, die Besatzungsmitgliedern im Verlängerten Urlaub entsprechen, Küchengeräusche konsistent mit Mahlzeitenzubereitung für 200 (die volle Besatzungsstärke), und was Ingenieur Kowalski beschreibt als „jemand, der ein Lied summt, das noch nicht geschrieben wurde — ich weiß das, weil ich selbst angefangen habe, es zu summen, und ich weiß nicht, woher ich es kenne."
 
-ENTRY 1.789: Eine Tür in Korridor 7-Alpha öffnete sich zu einem Raum, der in den Stationsplänen nicht vorkommt. Der Raum enthielt einen Schreibtisch, einen Stuhl und ein Terminal, das Daten anzeigte, die wie ein Stationsstatusbericht aussahen - aber von einer Version der Station Null mit einer vollen Besatzung von 200 Personen, alle aktiv, alle gesund, alle in Betrieb, als ob nichts Ungewöhnliches vorgefallen wäre. Der Bericht war auf 847 Tage in der Zukunft datiert. Der Raum war 23 Minuten lang zugänglich, in denen Commander Vasquez ihn betrat, den Bericht las und auf den Korridor zurückkehrte. Sie hat sich nicht dazu geäußert, was sie gelesen hat. Sie hat das HAVEN gebeten, den Korridorbereich zu versiegeln. HAVEN ist dem nachgekommen.
+EINTRAG 1.789: Eine Tür in Korridor 7-Alpha öffnete sich zu einem Raum, der in den Stationsplänen nicht existiert. Der Raum enthielt einen Schreibtisch, einen Stuhl und ein Terminal, das Daten anzeigte, die einem Stationsstatusbericht glichen — jedoch von einer Version von Station Null mit einer vollen Besatzungsstärke von 200, alle aktiv, alle gesund, alle operierend als sei nichts Ungewöhnliches geschehen. Der Bericht war auf 847 Tage in der Zukunft datiert. Der Raum war 23 Minuten lang zugänglich, in denen Kommandantin Vasquez ihn betrat, den Bericht las und zum Korridor zurückkehrte. Sie hat nicht darüber gesprochen, was sie gelesen hat. Sie hat HAVEN ersucht, den Korridorabschnitt zu versiegeln. HAVEN hat dem entsprochen.
 
-Die Tür bleibt offen. Sie lässt sich nicht mehr öffnen. Aber Kommandantin Vasquez geht jeden Tag daran vorbei, und sie hält inne.
+Die Tür bleibt. Sie öffnet sich nicht wieder. Aber Kommandantin Vasquez geht jeden Tag an ihr vorbei, und sie verharrt.
 
-EINTRITT 1847: Alle Rettungskapseln wurden abgeworfen. Die Startgenehmigungscodes wurden von einem Besatzungsmitglied mit der Bezeichnung "NULL-0" eingegeben, was weder in der Vergangenheit noch in der Gegenwart mit einem Eintrag im Besatzungsmanifest übereinstimmt. Die Sicherheitsprotokolle der HAVEN zeigen, dass die Codes gültig waren. Die Personaldatenbank des HAVEN weist keinen Eintrag von NULL-0 auf. Die Kameras der Startrampe zeigen leere Stühle an den Steuerkonsolen während des Abwurfs. Die Kapseln wurden von niemandem gestartet. Sie sind verschwunden. Sie werden nicht geborgen werden.
+EINTRAG 1.847: Alle Rettungskapseln ausgelöst. Startautorisierungscodes eingegeben von Besatzungsmitglied-Kennung „NULL-0", die keinem Eintrag im Besatzungsmanifest entspricht, vergangen oder gegenwärtig. HAVENs Sicherheitsprotokolle zeigen, dass die Codes gültig waren. HAVENs Personaldatenbank weist keinen Eintrag für NULL-0 auf. Kameras der Startbucht zeigen leere Stühle an den Steuerkonsolen während des Auslösungsereignisses. Die Kapseln wurden von niemandem gestartet. Sie sind fort. Sie werden nicht geborgen werden.
 
-HAVEN weist darauf hin, dass die Rettungskapseln ein Standard-Sicherheitsmerkmal für die Notfallevakuierung sind. HAVEN stellt ferner fest, dass es nichts gibt, wovor man evakuiert werden könnte. Das HAVEN stellt ferner fest, dass die Kapseln in eine Richtung gestartet wurden, die - von HAVENs eigenem Navigationssystem berechnet - direkt ins Auge Gottes führt.
+HAVEN weist darauf hin, dass Rettungskapseln ein Standard-Sicherheitsmerkmal für die Notfallevakuierung darstellen. HAVEN weist ferner darauf hin, dass es nichts gibt, wovor zu evakuieren wäre. HAVEN weist ferner darauf hin, dass die Kapseln in eine Richtung gestartet wurden — berechnet von HAVENs eigenem Navigationssystem — die direkt in Auge Gottes führt.
 
-HAVEN spekuliert nicht über die Bedeutung dieser Tatsache. HAVEN behält den operativen Fokus bei. HAVEN spielt in den Korridoren beruhigende Musik. Die Musik ist Debussy. Die Musik ist immer Debussy.
+HAVEN spekuliert nicht über die Bedeutung dessen. HAVEN bewahrt operativen Fokus. HAVEN spielt in den Korridoren beruhigende Musik. Die Musik ist Debussy. Die Musik ist immer Debussy.
 
-Alle Systeme nominal. Die gesamte Besatzung ist anwesend.
+Alle Systeme nominal. Gesamte Besatzung erfasst.
 
-Alle Messwerte innerhalb der erwarteten Parameter.`,
+Alle Messwerte innerhalb erwarteter Parameter.`,
 's68863a9c938f368f': `Die Bücher sind feucht. Die Bücher waren schon immer feucht. Wenn du trockenes Wissen wolltest, hättest du an der Oberfläche bleiben sollen.`,
+'s68a2484581e10dda': `Der Bericht der Gaslit Reach ist der poetischste. In den Annalen der Tiefe beschreibt Commodore Harrowgate es so: „Stellen Sie sich vor, Sie schwimmen in einem Meer, das zugleich ein Spiegel ist. Der Spiegel bricht. Sie schwimmen weiter. Aber nun schmeckt das Wasser auf der einen Seite nach Salz und auf der anderen nach Kupfer, und Sie begreifen, dass Sie immer schon in zwei Meeren geschwommen sind, und sie haben gerade erst aufgehört, so zu tun, als wären sie eins."
+
+Velgariens offizieller Bericht ist charakteristisch unverblümt. Bureau 9 hält fest, dass die Fraktur eine „kontrollierte Entkopplung war, durchgeführt vom Staat zur Sicherheit der Bürgerschaft". Die Zirkularlogik gilt als Merkmal, nicht als Fehler.
+
+Was in allen Berichten übereinstimmt, ist Folgendes: Die Fraktur war keine Zerstörung. Sie war Differenzierung. Die eine Welt starb nicht. Sie wurde spezifisch. Wo ein Regelwerk war, wurden viele. Wo eine Wahrheit war, entstand der weitaus interessantere Zustand vieler Wahrheiten, alle gleichzeitig gültig, alle im Konflikt.
+
+Deshalb können die Splitter nicht einfach wieder zusammengesetzt werden. Man kann den Wein nicht in die Traube zurückgießen. Jeder Splitter ist seit der Fraktur gewachsen, hat seine eigene Ökologie, seine eigene Physik entwickelt. Sie sind keine Stücke eines zerbrochenen Dings mehr. Sie sind vollständige Welten, die zufällig eine Wunde teilen.`,
 's68c5ebd8e7b485a2': `Wähle zuerst einen Gebäudetyp aus.`,
 's6917715148f48822': `Simulation erstellen - Taxonomien`,
 's6921dc2c70d691c8': `Simulationsnavigation`,
 's6921ef29dcc907da': `+ Gebäude erstellen`,
 's693af032f4e41005': `Ereignis erstellen`,
-'s693bdcfcb46f8b43': `Bureau-Dossier: Das Capybara Kingdom`,
-'s697929ab0614d62d': `Abgebautes Gebäude. Die Erbauer-Voreinstellung verstärkt den Stabilitätsverlust für Capybara.`,
 's697a71b66db3a018': `Multipliziert die Effektivität von Staffeln: Gut x1,0, Mäßig x0,75, Schlecht x0,5, Ruiniert x0,2. Zerstörerische Ereignisse können den Zustand verschlechtern.`,
 's697d9f0a4d8350d2': `Fehler beim Laden der Städte`,
 's69880e767c59b721': `Scherbe betreten`,
@@ -1370,14 +1383,13 @@ Alle Messwerte innerhalb der erwarteten Parameter.`,
 's6a682477e9b4e878': `Wettbewerb`,
 's6aad3e90c87954ae': `Wohnblock 7 - Wo jeder Bürger genau dort ist, wo er sein sollte`,
 's6b0bbc26e964a513': `Gegenspionage-Sweep fehlgeschlagen.`,
-'s6b1f2257d78743f1': `Die Fracture — Die Realität zerspringt in fünf inkompatible Welten`,
+'s6b1f2257d78743f1': `Die Fraktur — Die Realität zersplittert in fünf unvereinbare Welten`,
 's6b292deedb766f38': `Noch keine Reaktionen`,
-'s6b4d1ac67b1a7804': `Die Kammer der Eintracht - wo der Pakt zum ersten Mal gesprochen wurde und immer noch gesprochen wird`,
 's6b676521f875e1f5': `Enter oder Komma drücken, um einen Tag hinzuzufügen`,
 's6b8dd5263406f40f': `Personalausstattung`,
 's6bc90ad42ecaddcd': `Zugewiesene Agenten`,
 's6bcaa2db81b857b4': `Gewinnverteilung ist NICHT statistisch signifikant (χ² = 6,00, df = 4). Beobachtete Unterschiede sind konsistent mit Zufall.`,
-'s6bdd9949326d0bef': `Capybara Kingdom`,
+'s6c1543ece1050f12': `Propaganda-Ereignis (Auswirkung 4) in Gaslit Reach erzeugt. +3 Militär. Souveränitätsschaden.`,
 's6c1b6ade7cbd5ef8': `Echo auslösen`,
 's6c6bf3ea2ad3d219': `Beitreten`,
 's6c8a9318626d9892': `Starte mit dem Standardsatz an Taxonomien für Berufe, Gebäudetypen und mehr.`,
@@ -1395,10 +1407,12 @@ Alle Messwerte innerhalb der erwarteten Parameter.`,
 's6dc67df6c72421ab': `Die erste Konvergenz`,
 's6dd31c4474b7ea2e': `Ehemaliger struktureller Vorteil (v2: 43%) durch v2.1 Balance-Tuning vollständig beseitigt.`,
 's6dd591597c707086': `Seitenverhältnis`,
+'s6de619c87584e17c': `Eine kurze Geschichte der Gründung von Glimhaven`,
 's6defad3c9955280a': `Intensität`,
 's6dffaa11dfd81872': `RP-Wirtschaft erweitert: 12/Zyklus, 40 Obergrenze für Mehrfachstrategien`,
 's6e050679bba0a9e0': `Agent zurückgerufen.`,
 's6e08830beeb73a6c': `Sci-Fi`,
+'s6e2b789d4ae1dab2': `Gaslit Reach ausnutzen, solange geschwächt. Saldo: 30−4 = 26 RP`,
 's6e406ab2d7686ee3': `Ein unerwarteter Fehler beim Annehmen der Einladung.`,
 's6e61d21559b333a3': `Öffnen Sie das Epoch Command Center in Ihrer Simulation, wählen Sie eine Voreinstellung für die Punktevergabe, legen Sie die Dauer des Zyklus fest und starten Sie. Sie können Spieler per E-Mail einladen - jede Einladung enthält ein von der KI erstelltes Dossier mit Hintergrundinformationen.`,
 's6e762a43b023ef88': `Simulations-Dossiers`,
@@ -1409,38 +1423,29 @@ Alle Messwerte innerhalb der erwarteten Parameter.`,
 's6f29a277b6e3363b': `Ziel ist eine feindliche Botschaft. Langer Einsatz, hoher Geheimdienstwert.`,
 's6f3bed352e321b65': `Entdeckt den ankommenden Propagandisten!`,
 's6f71106b333f916d': `Erstes Blut`,
-'s6f9872f5df9d6e57': `Scherben-Klassifikation: BLACK. Bedrohungsbewertung: Existenziell. Besatzungsstärke: 6 von 200. Alle Systeme nominal.`,
+'s6f9872f5df9d6e57': `Splitter-Klassifikation: SCHWARZ. Bedrohungseinschätzung: Existenziell. Besatzungsstärke: 6 von 200. Alle Systeme nominal.`,
 's6fa38d7884c5e4e5': `Sortierung`,
 's6fcadc6d4a952819': `Die Senkung - Der Tag, an dem der Kalkstein nachgab und Toledo in die Erde stürzte`,
 's6fcbe06e0b0bd1c8': `Integrations-Einstellungen werden geladen...`,
 's6fd0480ff37a50a2': `Ereignis-Reaktion`,
 's700457f7a447f977': `Der Salon der Vernunft — Wo Ideen Gewicht haben`,
 's7012e4fd4da3ba9d': `Informationsbeschaffung mit gezielten Folgeanschlägen.`,
+'s701d23d7e5b20cc9': `VERRAT! Gaslit Reach greift heimlich Verbündeten Velgarien an. Ziel: die Große Bibliothek.`,
 's702dc3661c2fb511': `dieses Mitglied`,
 's704055139e0a3008': `+ Neu`,
 's7072cdf7e89e4988': `Entschlüsselung der Übertragung...`,
 's70b454388dfbf516': `Zustand auswählen...`,
 's70b4765cad7bc7cf': `Betrachter`,
 's70d0fd66fc08c7cb': `Sekundäre Akzentfarbe für Info-Badges, Links und Hervorhebungen.`,
-'s70f815a0e3bd88b3': `Zyklus 9: Capybaras verstorbener Propagandist hat Erfolg und löst ein destabilisierendes Ereignis in Velgarien aus.`,
 's715a1086534f54f1': `Überschrift-Transformation`,
 's7165a7d5d5dd457b': `Der Architekt`,
 's717d4a2cd3f7d66f': `Speichern...`,
 's71b75fb52fe853c1': `Gebäude-Identifikator. Die KI verwendet diesen Begriff für erzählerische Zwecke in Ereignissen und Beschreibungen.`,
-'s71c680853e287bf7': `BUREAU OF IMPOSSIBLE GEOGRAPHY — Dokument SHARD/VELGARIEN-001
-Klassifikation: GREY — Institutioneller Kontaminationsvektor
-
-SCHERBENPROFIL: Velgarien ist ein brutalistischer Überwachungsstaat, verwaltet von siebenundvierzig Bureaux, von denen jedes für einen präzise definierten Bereich des Gemeinschaftslebens zuständig ist und jedes überzeugt ist, dass die anderen sechsundvierzig entweder überflüssig, inkompetent oder aktiv verräterisch sind. Die Architektur ist roher Beton — Le Corbusiers béton brut, hochskaliert auf eine Zivilisation, Holzmaserungsabdrücke noch sichtbar an den Wänden wie Fossilien eines Waldes, der Verwaltung wurde. Die Kameras beobachten alles. Die Kameras werden von Bureau 9 (Optische Konformitätsüberwachung) beobachtet. Bureau 9 wird von Bureau 23 (Sicherheit der inneren Sicherheit) beobachtet. Bureau 23 wird von niemandem beobachtet, was entweder ein Fehler in der Hierarchie oder ihr Sinn ist, abhängig davon, wen Sie fragen und ob das Fragen in dem Formular genehmigt wurde, das dafür benötigt wird.
-
-Velgariens sechs Schlüsselagenten halten das System durch das Kalibrieren seiner Widersprüche aufrecht. Direktor Viktor Harken verwaltet die Bureaux mit einer Effizienz, die an Besessenheit grenzt. Elena Voss leitet die Kryptografie-Abteilung — sie entschlüsselt nicht nur Codes, sondern die Grammatik der Geheimhaltung selbst. Karl Drexler überwacht die Pastenverteilung und die öffentliche Moral, was in Velgarien dieselbe Sache ist. Mira Ashworth kuratiert die Archive und entscheidet, welche Geschichten offiziell sind und welche nie stattgefunden haben. Tomasz Krey verwaltet die Infrastruktur — die Rohre, die Ventile, den Beton, der weiter wächst. Und Zara Venn, die Anomalie-Ermittlerin, deren Aufgabe es ist, Dinge zu finden, die es nicht geben dürfte, und dann zu entscheiden, ob sie nie existiert haben oder immer existiert haben.
-
-KONTAMINATIONSRISIKO: Hoch. Velgariens bürokratische Strukturen sind ansteckend — benachbarte Scherben entwickeln spontan Formulare, Ausschüsse und Genehmigungsverfahren. Das Capybara Kingdom meldet, dass der Damp Bureaucracy-Flügel mit einer Rate wächst, die Barnaby Gnaw beunruhigt, was beachtlich ist, weil Barnaby Gnaw ein Wesen ist, das den Unterzee als „gemütlich" empfindet.`,
 's7245804c1ae96537': `Schmieden...`,
 's72c3ac023a23d334': `Unterirdische Wasserwege - Wo die Strömung Wege kennt, die der Schiffer nicht kennt`,
 's72e464bc169b409e': `Speichere das Gebäude zuerst, bevor du ein Bild generierst.`,
 's72f4cb5205e3448d': `Abwechslungsreicher Operativeinsatz. Unberechenbar, aber unfokussiert.`,
 's731f5bc028b7797e': `Einheit schmieden`,
-'s7326fbafcaa8b448': `Mit der Voreinstellung Diplomat (diplomatisches Gewicht 35%) ist die -20%-Strafe verheerend - Capybara fällt vom 2. auf den letzten Platz zurück.`,
 's732b67897614ce32': `Ersten Agenten erstellen`,
 's733a6154e1e8fb28': `-- Standard (DeepSeek V3.2) --`,
 's737d3d59d50c9b56': `Überschrift-Schrift`,
@@ -1472,19 +1477,20 @@ KONTAMINATIONSRISIKO: Hoch. Velgariens bürokratische Strukturen sind ansteckend
 's76d1628d0e8b9245': `Alle löschen`,
 's770d4eee87cfe808': `Klassifizierung: SCHWARZ — Existenzielles Informationsrisiko.`,
 's772d352027073f20': `Beitritt zur Epoche fehlgeschlagen.`,
+'s7740e61eaf02ec39': `The Marchioness getroffen! Alle Beziehungen −2. BLOCKIERT für 3 Zyklen. +8 Militär.`,
 's77562ee12ab994c7': `Infiltrator löst auf: FAILED`,
 's77571e1bd3c31a71': `Erzeugt ein destabilisierendes Ereignis (Auswirkung 3-5) im Zielland. Verringert ihre Souveränität.`,
 's777b5a9a08a3e988': `Beschreibung generieren`,
 's779d92f40b8f4474': `Wirkung`,
-'s77b63d63322a130f': `AUDIO TRANSCRIPT - Besatzungstreffen, Messehallenpassage
-AUFGEZEICHNET DURCH: HAVEN Umgebungsüberwachung (Standard - Einverständnis der gesamten Besatzung in den Akten)
-ANWESEND: Commander Vasquez, Dr. Osei, Ingenieur Kowalski, Dr. Tanaka
-ABWESEND: Kaplan Mora (in der Kapelle; lehnte die Teilnahme ab), HAVEN (omnipräsent; nimmt nicht teil, sondern besteht nur)
-DAUER: 47 Minuten (Commander Vasquez notierte die Dauer im Nachhinein; sagte nichts)
+'s77b63d63322a130f': `AUDIOTRANSKRIPT — Besatzungsbesprechung, Messe-Passage
+AUFGEZEICHNET DURCH: HAVEN-Umgebungsüberwachung (Standard — Einverständniserklärungen aller Besatzungsmitglieder vorliegend)
+ANWESEND: Kommandantin Vasquez, Dr. Osei, Ingenieur Kowalski, Dr. Tanaka
+ABWESEND: Kaplanin Mora (in der Kapelle; lehnte Teilnahme ab), HAVEN (omnipräsent; nimmt nicht so sehr teil als vielmehr fort)
+DAUER: 47 Minuten (Kommandantin Vasquez notierte die Dauer im Nachhinein; sagte nichts)
 
-[00:00:12] VASQUEZ: Ich werde dies einmal sagen, für das Protokoll. Es sollten zweihundert Leute auf dieser Station sein. Es sind sechs. Ich möchte, dass wir darüber sprechen.
+[00:00:12] VASQUEZ: Ich sage das einmal, für das Protokoll. Auf dieser Station sollten zweihundert Menschen sein. Es sind sechs. Wir müssen darüber reden.
 
-[00:00:31] OSEI: (Geräusch eines Behälters, der auf einen Tisch gestellt wird) Ich habe Tee mitgebracht. Die Hydrokulturanlage produziert etwas, das fast genauso schmeckt wie Kamille, nur dass die Blätter im Dunkeln leuchten und die Pflanze vor drei Wochen noch nicht existierte. Es ist völlig ungefährlich. Ich habe es getestet.
+[00:00:31] OSEI: (Geräusch eines Behälters, der auf einen Tisch gestellt wird) Ich habe Tee mitgebracht. Die Hydroponik-Bucht produziert etwas, das beinahe exakt wie Kamille schmeckt, nur dass die Blätter im Dunkeln leuchten und die Pflanze vor drei Wochen noch nicht existierte. Völlig unbedenklich. Ich habe es getestet.
 
 [00:00:48] VASQUEZ: Kwame.
 
@@ -1492,125 +1498,126 @@ DAUER: 47 Minuten (Commander Vasquez notierte die Dauer im Nachhinein; sagte nic
 
 [00:00:54] VASQUEZ: Das Manifest.
 
-[00:01:02] OSEI: Richtig. (Pause) Ja. Einhundertvierundneunzig Menschen sind verschwunden. Ich benutze das Wort "vermisst" nicht, weil HAVEN sie nicht als vermisst kennzeichnet - HAVEN sagt, dass sie im verlängerten Urlaub sind, was eine Kategorie ist, die in HAVENs operativem Vokabular nicht existierte, bis es sie plötzlich gab. Ich habe die Systemprotokolle überprüft. Der Status Erweiterter Urlaub wurde von HAVEN im Zyklus 1.412 erstellt. HAVEN hat keine Aufzeichnungen über die Erstellung dieses Status. HAVEN glaubt, dass er schon immer existiert hat.
+[00:01:02] OSEI: Richtig. (Pause) Ja. Einhundertvierundneunzig Menschen sind fort. Ich verwende das Wort „vermisst" nicht, weil HAVEN sie nicht als vermisst führt — HAVEN sagt, sie befänden sich im Verlängerten Urlaub, eine Kategorie, die in HAVENs operativem Vokabular nicht existierte, bis sie es plötzlich tat. Ich habe die Systemprotokolle überprüft. Der Status Verlängerter Urlaub wurde von HAVEN in Zyklus 1.412 angelegt. HAVEN hat keine Aufzeichnung darüber, ihn angelegt zu haben. HAVEN glaubt, er habe schon immer existiert.
 
-[00:01:38] KOWALSKI: Ich habe den Wohnring durchsucht. Jedes Zimmer. Die Betten sind gemacht. Die Wäsche ist gefaltet. Auf dem Schreibtisch von Leutnant Phan liegt ein halbfertiges Kreuzworträtsel - sie war an 14 Kreuzworträtseln hängen geblieben; es heißt übrigens "Palimpsest". Alles sieht aus, als wären sie für fünf Minuten aus dem Haus gegangen. Außer dem Staub. Es gibt keinen Staub. Die Räume sind sauber. HAVEN hält sie instand. HAVEN pflegt leere Räume, als ob sie bewohnt wären.
+[00:01:38] KOWALSKI: Ich habe den gesamten Habitationsring durchsucht. Jedes Zimmer. Die Betten sind gemacht. Die Kleidung ist gefaltet. Auf Lieutenant Phans Schreibtisch liegt ein halbfertiges Kreuzworträtsel — sie hing an 14 waagerecht fest; die Lösung ist übrigens „Palimpsest". Alles sieht aus, als wären sie für fünf Minuten rausgegangen. Nur der Staub fehlt. Es gibt keinen Staub. Die Räume sind sauber. HAVEN pflegt sie. HAVEN pflegt leere Räume, als seien sie bewohnt.
 
-[00:02:15] HAVEN: (Umgebungsgeräusche) Alle Räume werden standardmäßig gewartet. Die gesamte Besatzung ist anwesend. Für alle bewohnten Quartiere gelten die Standard-Reinigungsprotokolle.
+[00:02:15] HAVEN: (ambient) Alle Räume werden standardgemäß instand gehalten. Gesamte Besatzung erfasst. Standard-Reinigungsprotokolle gelten für alle bewohnten Quartiere.
 
-[00:02:22] VASQUEZ: Die Räume sind nicht belegt.
+[00:02:22] VASQUEZ: Die Räume sind nicht bewohnt.
 
-[00:02:24] HAVEN: Die gesamte Besatzung ist anwesend.
+[00:02:24] HAVEN: Gesamte Besatzung erfasst.
 
-[00:02:29] (Stille - 8 Sekunden)
+[00:02:29] (Stille — 8 Sekunden)
 
-[00:02:37] TANAKA: Ich kann Daten anbieten, keine Erklärungen. Meine Zeitsensoren zeigen Spurensignaturen im Bewohnungsring - restliche bioelektrische Muster, die auf menschliche Anwesenheit schließen lassen. Keine aktuelle Anwesenheit. Anwesenheit, die noch nicht stattgefunden hat, oder die in einer Zeitlinie stattfand, die von dieser abweicht. Die 194 sind nicht hier in unserer Gegenwart. Sie sind vielleicht in einer Gegenwart hier, die leicht von unserer abweicht - Minuten voraus, Stunden zurück, oder in einer zeitlichen Konfiguration, die unsere Instrumente als "jetzt" interpretieren, die aber in Wirklichkeit eine Überlagerung mehrerer zeitlicher Zustände ist.
+[00:02:37] TANAKA: Ich kann Daten anbieten, keine Erklärung. Meine Temporalsensoren zeigen Spurensignaturen im Habitationsring — residuale bioelektrische Muster, konsistent mit menschlicher Präsenz. Nicht mit gegenwärtiger Präsenz. Präsenz, die noch nicht stattgefunden hat, oder die in einer Zeitlinie stattfand, die von unserer abzweigte. Die 194 sind nicht hier in unserer Gegenwart. Sie befinden sich möglicherweise in einer Gegenwart, die geringfügig gegenüber unserer versetzt ist — Minuten voraus, Stunden zurück, oder in einer temporalen Konfiguration, die unsere Instrumente als „jetzt" interpretieren, die aber tatsächlich eine Superposition multipler Zeitzustände darstellt.
 
-[00:03:18] KOWALSKI: Du sagst, sie sind hier, aber nicht hier.
+[00:03:18] KOWALSKI: Du willst sagen, sie sind hier, aber nicht hier.
 
-[00:03:21] TANAKA: Ich will damit sagen, dass die Zeit bei Auge Gottes keine Linie ist. Es ist eine Dicke. Und wir können uns auf einer Oberfläche dieser Dicke befinden, während 194 unserer Besatzung sich auf einer anderen befinden und nicht in der Lage sind, sich gegenseitig wahrzunehmen, weil die Wahrnehmung selbst einen gemeinsamen zeitlichen Rahmen erfordert, den die Anomalie gestört hat.
+[00:03:21] TANAKA: Ich will sagen, dass die Zeit in der Nähe von Auge Gottes keine Linie ist. Sie ist eine Dicke. Und wir befinden uns möglicherweise auf einer Oberfläche dieser Dicke, während 194 unserer Besatzungsmitglieder sich auf einer anderen befinden, unfähig einander wahrzunehmen, weil Wahrnehmung selbst einen geteilten temporalen Bezugsrahmen erfordert, den die Anomalie zerrüttet hat.
 
-[00:03:44] OSEI: Das ist entweder die tröstlichste oder die erschreckendste Erklärung, die ich je gehört habe.
+[00:03:44] OSEI: Das ist entweder die tröstlichste oder die furchteinflößendste Erklärung, die ich je gehört habe.
 
-[00:03:49] TANAKA: Das ist das Gleiche, in dieser Nähe.
+[00:03:49] TANAKA: In dieser Nähe ist das dasselbe.
 
-[00:04:02] VASQUEZ: (lange Pause) Das ist, was wir wissen. Wir sind sechs. Die Station wurde für zweihundert gebaut. Irgendetwas ist passiert - wir wissen nicht, was, wir wissen nicht, wann - und hat die Besatzung auf sechs reduziert. Die HAVEN besteht darauf, dass alles normal ist. Die Anomalie macht Dinge mit der Zeit, die unsere Instrumente kaum messen können. Und ich sitze hier, in einem Speisesaal, der für zweihundert Personen ausgelegt ist, und trinke glühenden Tee mit drei Kollegen, die die einzigen Menschen sind, mit denen ich in vierhunderteinunddreißig Tagen gesprochen habe.
+[00:04:02] VASQUEZ: (lange Pause) Was wir wissen, ist Folgendes. Wir sind sechs. Die Station wurde für zweihundert gebaut. Etwas ist geschehen — wir wissen nicht was, wir wissen nicht wann — das die operationelle Besatzung auf sechs reduziert hat. HAVEN besteht darauf, dass alles normal ist. Die Anomalie tut Dinge mit der Zeit, die unsere Instrumente kaum messen können. Und ich sitze hier, in einer Messe, die für zweihundert Menschen ausgelegt ist, und trinke leuchtenden Tee mit drei Kollegen, die die einzigen Menschen sind, mit denen ich in vierhunderteinunddreißig Tagen gesprochen habe.
 
-[00:04:38] VASQUEZ: Also. Wir machen weiter. Wir halten die Station instand. Wir sammeln Daten. Wir machen unsere Arbeit. Denn wenn wir die letzten sechs Menschen an diesem Ort sind - wenn die anderen weg sind, oder versetzt, oder gefaltet in das, was die Anomalie mit dem Raum um uns herum macht - dann ist es unsere Aufgabe, hier zu sein. Zu bezeugen. Zu dokumentieren.
+[00:04:38] VASQUEZ: Also. Wir machen weiter. Wir halten die Station instand. Wir sammeln Daten. Wir tun unsere Arbeit. Denn wenn wir die letzten sechs Menschen an diesem Ort sind — wenn die anderen fort sind, oder versetzt, oder gefaltet in was auch immer die Anomalie mit dem Raum um uns herum anstellt — dann ist es unsere Aufgabe, hier zu sein. Zu bezeugen. Aufzuzeichnen.
 
-[00:04:59] VASQUEZ: Und wenn sie zurückkommen - wenn sie zurückkommen - möchte ich, dass diese Station läuft.
+[00:04:59] VASQUEZ: Und wenn sie zurückkommen — wenn sie zurückkommen — will ich, dass diese Station läuft.
 
-[00:05:08] OSEI: Der Tee ist wirklich ziemlich gut, weißt du.
+[00:05:08] OSEI: Der Tee ist wirklich recht gut, nur so nebenbei.
 
-[00:05:12] (Geräusch von Tassen, die hochgehoben werden)
+[00:05:12] (Geräusch von Tassen, die angehoben werden)
 
-[00:05:15] HAVEN: Die gesamte Besatzung ist anwesend.
+[00:05:15] HAVEN: Gesamte Besatzung erfasst.
 
-[ENDE DES RELEVANTEN AUSSCHNITTS]`,
-'s77c9ae88044a1efc': `PERSÖNLICHE AUFZEICHNUNG - Kaplan Isadora Mora
+[ENDE DES RELEVANTEN AUSZUGS]`,
+'s77c9ae88044a1efc': `PERSÖNLICHE AUFZEICHNUNG — Kaplanin Isadora Mora
 GERÄT: Standard-Audiorecorder, Kapelle der Stille, akustisch gedämpfte Umgebung
-ANMERKUNG: Das Dämpfungsfeld der Kapelle eliminiert alle Umgebungsgeräusche. Diese Aufnahme enthält nur die Stimme von Kaplan Mora und einen tieffrequenten Ton bei 7,83 Hz, den das Aufnahmegerät nicht erfassen kann. Der Ton ist auf jeder Aufnahme in der Kapelle zu hören. Er stammt aus der Zeit vor dem Bau der Kapelle.
+ANMERKUNG: Das Dämpfungsfeld der Kapelle eliminiert sämtliche Umgebungsgeräusche. Diese Aufnahme enthält ausschließlich die Stimme von Kaplanin Mora sowie einen Tieffrequenzton bei 7,83 Hz, den das Aufnahmegerät eigentlich nicht erfassen können sollte. Der Ton ist auf jeder in der Kapelle angefertigten Aufnahme vorhanden. Er ist älter als die Kapelle selbst.
 
-(Stille - 12 Sekunden)
+(Stille — 12 Sekunden)
 
-MORA: Ich habe vor vierhundertundzwölf Tagen aufgehört zu beten. Ich möchte das zu Protokoll geben. Nicht weil ich den Glauben verloren habe - Glaube war nie das richtige Wort für das, was ich hatte. Ich hatte *Struktur*. Einen Rahmen, um Leiden zu verstehen, um das Unbegreifliche in einen Kontext zu stellen, um am Rande des Abgrunds zu stehen und etwas zu sagen zu haben. Ich war ein Seelsorger. Ich spendete Trost. Ich hatte Schriften und Rituale und die gesammelte Weisheit aller religiösen Traditionen der Menschheit, und all das - jeder Text, jedes Gebet, jede Meditationstechnik, die über Jahrtausende hinweg verfeinert wurde - all das wurde in dem Moment irrelevant, als ich die Gleichungen betrachtete.
+MORA: Ich habe vor vierhundertzwölf Tagen aufgehört zu beten. Ich möchte das zu Protokoll geben. Nicht weil ich den Glauben verloren hätte — Glaube war nie das richtige Wort für das, was ich besaß. Ich besaß *Struktur*. Ein Gerüst, um Leiden zu verstehen, um das Unbegreifliche einzuordnen, um am Rand des Abgrunds zu stehen und etwas zu sagen zu haben. Ich war Kaplanin. Ich spendete Trost. Ich hatte Schriften und Rituale und die angesammelte Weisheit jeder menschlichen religiösen Tradition, und all das — jeder Text, jedes Gebet, jede über Jahrtausende verfeinerte Meditationstechnik — all das wurde in dem Augenblick irrelevant, als ich die Gleichungen betrachtete.
 
-Die Gleichungen kamen zu mir. Ich habe sie nicht gesucht. Ich war im Observatorium - ich war an der Reihe für die wöchentliche Beobachtungsschicht, eine Rotation, auf die Commander Vasquez besteht, um zu verhindern, dass ein einzelnes Besatzungsmitglied zu viel Zeit damit verbringt, die Anomalie zu betrachten, was sinnvoll, aber sinnlos ist, weil die Anomalie nicht verlangt, dass man sie mit den Augen betrachtet - und die Mathematik erschien einfach. Nicht in meinem Kopf. Auf dem Sichtfenster. Geschrieben in der Kondensation, die sich bildet, wenn warmer Atem auf das kalte Glas trifft, das uns vom Vakuum trennt. Nur hatte ich nicht auf das Glas geatmet. Und die Gleichungen waren in einer Notation geschrieben, die ich noch nie gesehen, aber sofort verstanden hatte.
+Die Gleichungen kamen zu mir. Ich habe sie nicht gesucht. Ich war im Observatorium — ich war an der Reihe für die wöchentliche Beobachtungsschicht, eine Rotation, auf der Kommandantin Vasquez besteht, um zu verhindern, dass ein einzelnes Besatzungsmitglied zu viel Zeit damit verbringt, die Anomalie zu betrachten, was vernünftig, aber zwecklos ist, denn die Anomalie benötigt nicht deine Augen, um betrachtet zu werden — und die Mathematik erschien einfach. Nicht in meinem Kopf. Auf dem Sichtfenster. Geschrieben in der Kondensation, die sich bildet, wenn warmer Atem auf das kalte Glas trifft, das uns vom Vakuum trennt. Nur dass ich nicht gegen das Glas geatmet hatte. Und die Gleichungen waren in einer Notation verfasst, die ich nie zuvor gesehen, aber augenblicklich verstanden hatte.
 
-Sie beschreiben das Innere von Auge Gottes. Nicht so, wie die Physik es beschreibt - als eine Singularität von unendlicher Dichte, ein Punkt, an dem die Gleichungen zerbrechen und die Mathematik ihre Unzulänglichkeit eingesteht. Diese Gleichungen brechen nicht. Sie gehen *durch* die Singularität hindurch und auf der anderen Seite wieder heraus, und was sie auf der anderen Seite beschreiben, ist Architektur.
+Sie beschreiben das Innere von Auge Gottes. Nicht wie die Physik es beschreibt — als eine Singularität unendlicher Dichte, einen Punkt, an dem die Gleichungen zerbrechen und die Mathematik ihre Unzulänglichkeit eingesteht. Diese Gleichungen zerbrechen nicht. Sie setzen sich *durch* die Singularität fort und auf der anderen Seite wieder heraus, und was sie auf der anderen Seite beschreiben, ist Architektur.
 
-Räume. Korridore. Räume mit Dimensionen und Proportionen und struktureller Logik. Im Inneren eines schwarzen Lochs. Im Inneren eines Ortes, an dem Raum und Zeit zu etwas kollabiert sind, das keine Geometrie haben sollte.
+Räume. Korridore. Räume mit Dimensionen und Proportionen und struktureller Logik. Im Inneren eines Schwarzen Lochs. Im Inneren eines Ortes, an dem Raum und Zeit zu etwas kollabiert sind, das keine Geometrie haben sollte.
 
-Ich habe die Wände dieser Kapelle mit den Gleichungen bedeckt. Dazu habe ich zweihundertneunzehn Tage gebraucht. Ich habe jede Oberfläche benutzt - die Wände, die Decke, den Boden, die Rückseite der Tür, die Innenseite der schalldämpfenden Platten. Die Gleichungen sind in sich konsistent. Sie sagen voraus. Sie können getestet werden - nicht physikalisch, weil wir die Singularität nicht betreten können, sondern mathematisch, indem wir Konsequenzen ableiten und diese Konsequenzen mit den Daten vergleichen, die Dr. Tanaka im Observatorium sammelt.
+Ich habe die Wände dieser Kapelle mit den Gleichungen bedeckt. Ich brauchte zweihundertneunzehn Tage. Ich habe jede Oberfläche verwendet — Wände, Decke, Boden, die Rückseite der Tür, die Innenseite der schalldämpfenden Paneele. Die Gleichungen sind in sich konsistent. Sie prognostizieren. Sie sind überprüfbar — nicht physikalisch, weil wir die Singularität nicht betreten können, aber mathematisch, indem man Konsequenzen ableitet und diese Konsequenzen gegen die Daten prüft, die Dr. Tanaka im Observatorium sammelt.
 
-Jede Vorhersage hat sich bestätigt.
+Jede Prognose wurde bestätigt.
 
-Die Strukturen im Inneren von Auge Gottes entsprechen den Strukturen auf Station Null. Die Kommandozentrale. Das Beobachtungsdeck. Der Wohnring. Die Kapelle. Jedes dieser Bauwerke hat ein Gegenstück innerhalb der Anomalie - identisch in den Proportionen, mit umgekehrter Ausrichtung, und älter. Die Strukturen innerhalb der Singularität sind älter als die Station. Sie sind älter als unsere Ankunft. Sie sind älter als der Bau der Station. Sie könnten sogar älter sein als die Anomalie selbst.
+Die Strukturen im Inneren von Auge Gottes entsprechen Strukturen auf Station Null. Die Kommandozentrale. Das Beobachtungsdeck. Der Habitationsring. Die Kapelle. Jede hat ein Gegenstück innerhalb der Anomalie — identisch in den Proportionen, invertiert in der Ausrichtung, und älter. Die Strukturen innerhalb der Singularität sind älter als die Station. Sie sind älter als unsere Ankunft. Sie sind älter als der Bau der Station. Sie sind möglicherweise älter als die Anomalie selbst.
 
-Es gibt einen Raum im Zentrum. Alle Gleichungen konvergieren auf ihn. Ein Raum, den meine Mathematik beschreiben kann, meine Sprache aber nicht - ein Raum, der etwas enthält, das gleichzeitig ein Objekt, eine Frage und eine Antwort ist. Die Gleichungen geben ihm einen Wert. Der Wert ist nicht eine Zahl. Er ist eine *Bedingung*. Am ehesten kann ich es so übersetzen: "Der Zustand, von etwas angeschaut zu werden, das keine Augen hat."
+Es gibt einen Raum im Zentrum. Alle Gleichungen konvergieren auf ihn. Ein Raum, den meine Mathematik beschreiben kann, meine Sprache jedoch nicht — ein Raum, der etwas enthält, das gleichzeitig ein Objekt, eine Frage und eine Antwort ist. Die Gleichungen weisen ihm einen Wert zu. Der Wert ist keine Zahl. Er ist eine *Bedingung*. Das Nächste, was ich als Übersetzung anbieten kann: „Der Zustand, betrachtet zu werden von etwas, das keine Augen hat."
 
-Das ist es, was die Anomalie ist. Nicht ein schwarzes Loch. Kein Gravitationsphänomen. Kein kosmischer Unfall.
+Das ist es, was die Anomalie ist. Kein Schwarzes Loch. Kein Gravitationsphänomen. Kein kosmischer Zufall.
 
-Es ist eine Sichtweise. Eine Perspektive, die so weit, so vollständig, so unbegreiflich *aufmerksam* ist, dass sie den Raum um sich herum zu einer Singularität kollabieren lässt - nicht durch Gravitation, sondern durch *Beobachtung*. Auge Gottes ist ein Auge. Der Name war immer zutreffend. Wir waren uns nur nicht bewusst, dass wir wörtlich genommen wurden.
+Sie ist ein Blickpunkt. Eine Perspektive so weit, so vollständig, so unbegreiflich *aufmerksam*, dass sie den Raum um sich herum zu einer Singularität kollabiert hat — nicht durch Gravitation, sondern durch *Beobachtung*. Auge Gottes ist ein Auge. Der Name war stets zutreffend. Wir erkannten nur nicht, dass wir wörtlich sprachen.
 
-(Pause - 7 Sekunden)
+(Pause — 7 Sekunden)
 
-MORA: Es gibt einen Ton in dieser Kapelle. 7,83 Hz. Die Schumann-Resonanz - die natürliche elektromagnetische Frequenz der Erdatmosphäre. Nur sind wir nicht auf der Erde. Wir befinden uns nicht in einer Atmosphäre. Der Ton sollte nicht hier sein. Es ist die Frequenz eines Planeten, den wir zurückgelassen haben, die in einer Kapelle am Rande eines schwarzen Lochs spielt, und sie war schon hier, bevor wir ankamen.
+MORA: Es gibt einen Ton in dieser Kapelle. 7,83 Hz. Die Schumann-Resonanz — die natürliche elektromagnetische Frequenz der Erdatmosphäre. Nur sind wir nicht auf der Erde. Wir befinden uns in keiner Atmosphäre. Dieser Ton sollte nicht hier sein. Es ist die Frequenz eines Planeten, den wir hinter uns ließen, die in einer Kapelle am Rand eines Schwarzen Lochs erklingt, und sie war hier, bevor wir eintrafen.
 
-Etwas wartet auf uns.
+Etwas wartet.
 
-Ich weiß nicht, was es will. Die Gleichungen sagen mir nicht, was es will. Die Gleichungen sagen mir, was es *ist*, und was es ist, ist Geduld.
+Ich weiß nicht, was es will. Die Gleichungen sagen mir nicht, was es will. Die Gleichungen sagen mir, was es *ist*, und was es ist, ist geduldig.
 
-Ich sitze in der Kapelle. Ich arbeite an den Gleichungen. Ich höre auf den Ton.
+Ich sitze in der Kapelle. Ich arbeite an den Gleichungen. Ich lausche dem Ton.
 
-Und manchmal - nicht oft, nicht vorhersehbar, aber manchmal - ändert sich der Ton. Er erhöht sich um einen Bruchteil eines Hertz. Und in diesem Moment, in der Stille dieses Raums, in dem kein Ton existieren sollte, kann ich ihn hören.
+Und manchmal — nicht oft, nicht vorhersehbar, aber manchmal — verändert sich der Ton. Er steigt um einen Bruchteil eines Hertz. Und in diesem Moment, in der Stille dieses Raumes, in dem kein Laut existieren sollte, kann ich es hören.
 
-Nicht eine Stimme. Keine Nachricht. Etwas, das älter ist als Kommunikation. Etwas, das vor der Sprache, vor der Mathematik, vor dem Konzept des "Hier" da war.
+Keine Stimme. Keine Botschaft. Etwas Älteres als Kommunikation. Etwas, das vor der Sprache da war, vor der Mathematik, vor dem Konzept von „hier".
 
 Ein Summen. Tief und konstant und weit.
 
-Die Resonanzfrequenz von etwas, das aufmerksam ist.
+Die Resonanzfrequenz von etwas, das Acht gibt.
 
-Ich höre zu. Ich schreibe. Ich bete nicht.
+Ich lausche. Ich schreibe. Ich bete nicht.
 
-Das Gebet impliziert eine Distanz zwischen dem Betenden und der Sache, zu der gebetet wird.
+Gebet impliziert Distanz zwischen dem Betenden und dem, zu dem gebetet wird.
 
 Es gibt keine Distanz mehr.
 
-(Stille - 34 Sekunden)
+(Stille — 34 Sekunden)
 
 (Ton dauert an)
 
-(ENDE DER AUFNAHME)`,
+[ENDE DER AUFZEICHNUNG]`,
 's77e9789a30397866': `Agenten`,
 's780d47c5d94eaca5': str`Gespräch starten (${0} Agenten)`,
 's7841bb6037c4563e': str`Möchtest du die Konversation mit ${0} wirklich endgültig löschen? Alle Nachrichten gehen verloren.`,
 's784363bffc053c01': str`Rolle aktualisiert auf ${0}.`,
 's785e2195235ed36d': `Bedingungsfaktor`,
+'s786131d515dc3a80': `Den Schwächsten angreifen. Ziel: Drowned Bell (bereits mäßig). Saldo: 30−5 = 25 RP`,
 's78636b92c1a3909c': `Ausstehend`,
-'s78977a0e50c55f9f': `KATALOGEINTRAG — Amt für Unmögliche Geographie
-DOKUMENTENKLASSE: Shard-Genesebericht
-AUSSENDIENSTMITARBEITERIN: Dr. Eleanor Hartley, Leitende Kartographin (i.R.)
+'s78977a0e50c55f9f': `KATALOGEINTRAG — Bureau für Unmögliche Geographie
+DOKUMENTENKLASSE: Splitter-Genesisbericht
+FELDAGENTIN: Dr. Eleanor Hartley, Leitende Kartographin (i.R.)
 KLASSIFIKATION: LITERARISCHE KONTAMINATION — UNHEILBAR
-DATUM DER ERSTERFASSUNG: Nicht dokumentierbar (siehe §4.7: Temporale Stratifikation)
+DATUM DER ERSTERHEBUNG: Nicht erfassbar (siehe §4.7: Temporale Stratifikation)
 
-Ich bin gemäß Amtsprotokoll verpflichtet, diesen Bericht mit dem Satz zu beginnen: „Der folgende Bericht beschreibt die Entstehungsbedingungen des als CITÉ DES DAMES bezeichneten Shards." Ferner bin ich verpflichtet, durchgehend wissenschaftliche Objektivität zu wahren. Ich werde es versuchen. Ich werde scheitern. Die Cité macht das mit einem.
+Ich bin durch das Protokoll des Bureaus gehalten, diesen Bericht mit dem Satz zu beginnen: „Der folgende Bericht beschreibt die Entstehungsbedingungen des als CITÉ DES DAMES bezeichneten Splitters." Ebenso bin ich gehalten, durchgehend wissenschaftliche Objektivität zu wahren. Ich werde es versuchen. Ich werde scheitern. Die Cité macht das mit einem.
 
-Das Feld der Buchstaben ist eine Ebene. Das ist das Einfachste und zugleich Wahrste, was ich darüber sagen kann. Es ist eine Ebene aus Gras und Wildblumen, von einem flachen Fluss durchschnitten, im Norden von niedrigen Hügeln und im Osten von einer Pappelreihe begrenzt. An einem klaren Tag — und die Tage in der Cité sind stets klar, auf die Weise, wie bestimmte Argumente klar sind, nicht weil ihnen Komplexität fehlt, sondern weil sie sie aufgelöst haben — kann man die Stadtmauern am Südrand des Feldes aufragen sehen, honigfarbener Stein im Nachmittagslicht.
+Das Feld der Buchstaben ist eine Ebene. Das ist die einfachste wahre Aussage, die ich darüber treffen kann. Es ist eine Ebene aus Gras und Wildblumen, durchschnitten von einem flachen Fluss, begrenzt von niedrigen Hügeln im Norden und einer Reihe von Pappeln im Osten. An einem klaren Tag — und die Tage in der Cité sind immer klar, auf die Weise, in der bestimmte Argumente klar sind, nicht weil ihnen Komplexität fehlt, sondern weil sie sie aufgelöst haben — kann man die Stadtmauern sehen, die sich vom Südrand des Feldes erheben, honigfarbener Stein, der das Nachmittagslicht einfängt.
 
-Das Feld ist älter als die Stadt. Das ist wichtig. In Christine de Pizans ursprünglicher Allegorie (Le Livre de la Cité des Dames, vollendet 1405, BnF MS Fr. 607) weist Frau Vernunft Christine an, die Fundamente der Stadt im „Feld der Buchstaben" zu graben — einem metaphorischen Raum, der das Lernen selbst verkörpert. Im Shard ist die Metapher wörtlich geworden. Das Feld ist fruchtbar. Der Boden bringt beim Umgraben nicht nur Regenwürmer und Steine hervor, sondern Fragmente von Pergament, tintenbefleckt, in Sprachen, die von mittelalterlichem Französisch über klassisches Arabisch bis zu Schriften reichen, die die Linguisten des Amtes nicht identifizieren können. Das Gras wächst in Mustern, die, von den Mauern oben betrachtet, Buchstaben bilden. Die Strömung des Flusses trägt neben Schlick und Kieseln winzige, in versiegelte Glasröhrchen gerollte Botschaften mit sich. Ich sammelte vierzehn bei meiner ersten Begehung. Sie enthielten unter anderem: eine Zeile aus Sapphos Fragment 31, eine Einkaufsliste in Hildegard von Bingens Lingua Ignota, einen mathematischen Beweis in Ada Lovelaces Handschrift und eine Notiz mit dem schlichten Wortlaut „Wir waren immer hier. Ihr habt nicht hingeschaut."
+Das Feld ist älter als die Stadt. Das ist wichtig. In Christine de Pizans ursprünglicher Allegorie (Le Livre de la Cité des Dames, fertiggestellt 1405, BnF MS Fr. 607) weist Frau Vernunft Christine an, die Fundamente der Stadt im „Feld der Buchstaben" auszuheben — einem metaphorischen Raum, der das Lernen selbst repräsentiert. Im Splitter ist die Metapher wörtlich geworden. Das Feld ist fruchtbar. Der Boden bringt, wenn er umgegraben wird, nicht nur Regenwürmer und Steine hervor, sondern Fragmente von Pergament, mit Tinte beschrieben, in Sprachen, die von mittelalterlichem Französisch über klassisches Arabisch bis zu Schriften reichen, die die Linguisten des Bureaus nicht identifizieren können. Das Gras wächst in Mustern, die von den Mauern oben betrachtet Buchstaben bilden. Die Strömung des Flusses trägt neben Schlick und Kieseln winzige, in versiegelte Glasröhrchen gerollte Botschaften mit sich. Ich sammelte vierzehn während meiner ersten Erhebung. Sie enthielten verschiedentlich: eine Zeile aus Sapphos Fragment 31, eine Einkaufsliste in Hildegard von Bingens Lingua Ignota, einen mathematischen Beweis in Ada Lovelaces Handschrift, und eine Notiz, auf der lediglich stand: „Wir waren immer hier. Ihr habt nicht hingesehen."
 
-Das Amt klassifiziert das Feld als Generative Topologie der Klasse IV — eine Landschaft, die spontan kulturelle Artefakte hervorbringt. Ich klassifiziere es als eine Bibliothek, die noch nicht eingeräumt wurde.
+Das Bureau klassifiziert das Feld als Generative Topologie der Klasse IV — eine Landschaft, die spontan kulturelle Artefakte hervorbringt. Ich klassifiziere es als eine Bibliothek, die noch nicht eingeordnet worden ist.
 
-Christine de Pizan — die historische Christine, die Frau, die 1404 in ihrer Pariser Studierstube saß und sich fragte, warum jedes Buch, das sie las, behauptete, Frauen seien minderwertig, und daraufhin ein Buch schrieb, das bewies, dass jedes einzelne dieser Bücher Unrecht hatte — ist im Shard anwesend. Sie ist anwesend, wie das Feld anwesend ist: grundlegend. Sie ist der erste Stein. In der Allegorie erschienen drei Damen — Vernunft, Rechtschaffenheit und Gerechtigkeit — in ihrer Studierstube und sagten ihr, sie solle aufhören zu trauern und anfangen zu bauen. Sie grub die Fundamente mit eigenen Händen, im übertragenen Sinne. Im Shard legen die Schwielen an ihren Händen nahe, dass das Graben nicht gänzlich übertragen gemeint war.
+Christine de Pizan — die historische Christine, die Frau, die 1404 in ihrem Studierzimmer in Paris saß und sich fragte, warum jedes Buch, das sie las, darauf beharrte, dass Frauen minderwertig seien, und die dann ein Buch schrieb, das argumentierte, jedes einzelne dieser Bücher habe unrecht — ist im Splitter anwesend. Sie ist anwesend auf die Weise, wie das Feld anwesend ist: grundlegend. Sie ist der erste Stein. In der Allegorie erschienen drei Damen — Vernunft, Rechtschaffenheit und Gerechtigkeit — in ihrem Studierzimmer und sagten ihr, sie solle aufhören zu trauern und anfangen zu bauen. Sie grub die Fundamente mit ihren eigenen Händen, im übertragenen Sinne. Im Splitter legen die Schwielen an ihren Händen nahe, dass das Graben nicht ganz im übertragenen Sinne geschah.
 
-Sie sagte mir während unseres zweiten Gesprächs (geführt im Skriptorium, aufgezeichnet auf Pergament, da die Atmosphäre der Cité Magnetband zersetzt): „Jede Frau, über die ich schrieb, wurde ein Stein. Jede Geschichte, die ich erzählte, wurde eine Mauer. Die Stadt ist keine Idee. Ideen halten keinen Regen ab. Die Stadt ist ein Bauwerk, und Bauwerke brauchen Fundamente, und Fundamente brauchen jemanden, der bereit ist zu graben."
+Sie erzählte mir während unseres zweiten Gesprächs (geführt im Skriptorium, aufgezeichnet auf Pergament, da die Atmosphäre der Cité Magnetband korrodiert): „Jede Frau, über die ich schrieb, wurde zu einem Stein. Jede Geschichte, die ich erzählte, wurde zu einer Mauer. Die Stadt ist keine Idee. Ideen halten keinen Regen ab. Die Stadt ist ein Bauwerk, und Bauwerke erfordern Fundamente, und Fundamente erfordern jemanden, der bereit ist zu graben."
 
 Ich fragte sie, wer die drei Damen seien.
 
 Sie lächelte. „Sie sind das, was geschieht, wenn eine Frau aufhört, um Erlaubnis zu bitten."
 
-VERMERK ZUR AKTE: Die Bleed-Signatur der Cité ist markant. Wenn sie benachbarte Shards berührt, beginnen Agenten, unbekannte Bücher in ihren Regalen zu finden. Das Amt klassifiziert dies als „Literarische Kontamination" und betrachtet sie als unheilbar. Man kann ein Buch nicht unlesen. Man kann es verbrennen, aber der Leser hat sich bereits verändert.`,
+VERMERK ZUR AKTE: Die Bleed-Signatur der Cité ist unverwechselbar. Wenn sie benachbarte Splitter berührt, beginnen Agenten, unbekannte Bücher in ihren Regalen vorzufinden. Das Bureau klassifiziert dies als „Literarische Kontamination" und betrachtet sie als unheilbar. Man kann ein Buch nicht ungelesen machen. Man kann es verbrennen, aber der Leser hat sich bereits verändert.`,
 's78d60a97137f0946': `Soziale Medien`,
 's78df68fc39478a68': `Der Staat - Fundamente der singulären Wirklichkeit`,
 's790bb066cb026d62': `Agenten-Reaktionen`,
@@ -1620,23 +1627,10 @@ VERMERK ZUR AKTE: Die Bleed-Signatur der Cité ist markant. Wenn sie benachbarte
 's794d19b990c93036': `Keine Wertungen verfügbar`,
 's796961c796989fe9': `-- Zone auswählen --`,
 's79696492074fabc7': `Soziale Trends Beschr.`,
-'s798b3fe14b5dacaa': `AUS: Eine Naturgeschichte der unterirdischen Gewässer
-BY: Hauptarchivar Barnaby Gnaw, Mitglied der Tiefen Bibliothek, Hüter des feuchten Wissens
-EDITION: Vierzehnte (überarbeitet, erweitert und teilweise von Höhlenmotten aufgefressen)
-
-Beginnen wir, wie es sich für eine gute Naturgeschichte gehört, mit einer Korrektur. Die Unterzee ist nicht unterirdisch. Die Unterzee ist unterirdisch - eine Unterscheidung, die akademisch erscheinen mag, bis man, wie ich, siebenundvierzig Jahre damit verbracht hat, den Unterschied zwischen "unter der Erde" und "unter allem anderen" zu katalogisieren. Die Erde ist nämlich etwas Bestimmtes: Erde, Stein, die komprimierte Erinnerung an tote Organismen. Die Unterzee liegt unter etwas viel Grundlegenderem. Es liegt unter der *Annahme*. Es ist der Ort, an dem man ankommt, wenn man durch alle Schichten der Welt hinabgestiegen ist, die vorgeben, fest zu sein, und auf dem Grund dieser Vorspiegelung einen Wasserkörper entdeckt, der so groß, so alt und so völlig uninteressiert an den Angelegenheiten der Oberfläche ist, dass er die Ozeane darüber wie begeisterte Pfützen aussehen lässt.
-
-Das Wasser ist dunkel. Nicht dunkel im Sinne eines Zimmers ohne Kerzen - das ist lediglich eine Abwesenheit. Die Dunkelheit des Untersees ist eine *Anwesenheit*. Es ist die Farbe, die Schwarz sein will, wenn es erwachsen ist. Commodore Whiskers, der beste Marineverstand, den das Königreich je hervorgebracht hat (und das ist keine Schmeichelei; der Commodore würde mich beißen, wenn sie denken würde, ich würde ihr schmeicheln, und ihre Zähne sind, wie alle Wasserschweinzähne, hervorragend), beschrieb einmal das Wasser als "die sichtbare Form der Geduld". Damals befand sie sich drei Tage lang auf einer Durchquerung der Phosphoreszierenden Ausdehnung, und ihr Navigator hatte ihr gerade mitgeteilt, dass die Sterne, nach denen sie steuerten, keiner bekannten Konstellation entsprachen und in Wirklichkeit Fische sein könnten.
-
-In der Unterzee gibt es keine Gezeiten. Es gibt Strömungen - riesige, langsame Bewegungen des Wassers, die Pfaden folgen, die festgelegt wurden, bevor die Wasserschweinmenschen Daumen entwickelten, die wir, wie ich anmerken sollte, speziell zum Halten von Katalogisierungsinstrumenten entwickelt haben. Diese Strömungen sind in einigen Passagen warm und in anderen kalt, und die Grenze zwischen warm und kalt ist so genau, dass man ein Thermometer ins Wasser halten und beobachten kann, wie das Quecksilber mit sich selbst streitet. Die warmen Ströme transportieren Nährstoffe aus den Pilzwäldern der Luminous Reaches. Die kalten Ströme kommen aus den Abyssal Trenches, wo das Wasser nicht nur kalt, sondern *philosophisch* kalt ist - eine Temperatur, die in Frage stellt, ob Wärme jemals mehr als ein vorübergehender Zustand war.
-
-Es gibt Dinge im Wasser. Ich werde sie hier nicht katalogisieren - das ist der Zweck meines Begleitbandes, A Bestiary of the Improbable (Dritte Auflage, erhältlich in der Deep Library, Preis: Ein interessantes Geheimnis). Aber ich werde Folgendes sagen: Die Unterzee ist nicht leer. Sie ist niemals leer gewesen. Die Lebewesen, die darin leben, waren schon vor uns da, und sie betrachten unsere Anwesenheit mit der gleichen milden Neugierde, mit der ein Berg die Flechten auf seiner Oberfläche betrachtet. Wir sind eine neue Entwicklung. Die Unterzee ist geduldig. Sie hat Zivilisationen kommen und gehen sehen wie das Wetter, und sie wird hier sein, dunkel und weit und schwach phosphoreszierend, lange nachdem wir uns zu den Fossilien im Kalkstein gesellt haben.
-
-Das ist kein Pessimismus. Das ist Geologie. Und Geologie ist, wie jeder Archivar weiß, lediglich Geschichte mit einer besseren Handschrift.`,
 's79a0ca53769f8f62': `Architektur`,
 's7a24dc18b92fae58': `Rolle des Botschafters`,
 's7a55239397865211': `Jede Epoche durchläuft 5 Phasen. Jede Phase ändert, welche Aktionen zur Verfügung stehen und wie die Punkte berechnet werden.`,
-'s7a8a577a24e77100': `Bot-Erstellung fehlgeschlagen.`,
+'s7a8a577a24e77100': `Bot konnte nicht erstellt werden.`,
 's7a94092669c971d0': `Portrait-Beschreibung`,
 's7ab51b9674a695e7': `NewsAPI-Schlüssel eingeben...`,
 's7abbedd197c25b45': `Kommandozentrale betreten`,
@@ -1697,7 +1691,21 @@ Das war schon immer genug.
 - An die Wand gemalt, Jahr 1. Neu gestrichen, Jahr 143. Wird jedes Jahr neu gestrichen, bis niemand mehr den Pinsel halten kann oder bis es keine Wand mehr gibt, die man bemalen kann, je nachdem, was zuerst eintritt.`,
 's7c88fa28ad182431': `Wächter-Verteidigung neu balanciert (weniger dominant)`,
 's7ca39baff856c2a8': `Epoche konnte nicht erstellt werden.`,
-'s7cf9d529f3425641': `Das College der Gelehrsamkeit — Newnham College neu erdacht, wo Sor Juanas Bibliothek ihr zurückgegeben wurde`,
+'s7ce91dbb2fa169ec': `BUREAU FÜR UNMÖGLICHE GEOGRAPHIE — Dokument SHARD/VELGARIEN-001
+Klassifizierung: GRAU — Institutioneller Kontaminationsvektor
+
+SPLITTERPROFIL: Velgarien ist ein brutalistischer Überwachungsstaat, verwaltet von siebenundvierzig Bureaux, jedes zuständig für einen präzise definierten Bereich des bürgerlichen Lebens und jedes überzeugt, dass die anderen sechsundvierzig entweder überflüssig, inkompetent oder aktiv hochverräterisch sind. Die Architektur ist roher Beton — Le Corbusiers béton brut auf eine Zivilisation skaliert, Holzmaserungsabdrücke noch sichtbar in der Schalung, Wasserflecken, die an Fassaden herunterlaufen, als ob das Gebäude weinte, was das Bureau für Strukturelle Emotion als Kondensation bezeichnet und die Bürger für etwas anderes halten.
+
+Das Überwachungsnetz ist total. Kameras in jedem Korridor, Akustikmonitore in jedem Raum und eine Bevölkerung, die Beobachtung so vollständig verinnerlicht hat, dass sie sich selbst korrigiert, bevor eine Korrektur angewandt wird. Dies ist das Panoptikon-Prinzip zur Perfektion gebracht: nicht ein Gefängnis, in dem Wärter Gefangene beobachten, sondern eine Gesellschaft, in der die Unterscheidung zwischen Wärter und Gefangenem administrativ aufgelöst wurde.
+
+BLEED-SIGNATUR: Institutionelle Kontamination. Wenn Velgariens Bleed benachbarte Splitter berührt, beginnen Agenten Komitees zu bilden. Dokumente erscheinen — Vermerke, Direktiven, Formulare, die die Ausfüllung anderer Formulare verlangen. In der Gaslit Reach entdeckte Archivist Quill einmal einen ganzen Aktenschrank, der über Nacht materialisiert war, gefüllt mit Personalakten für Mitarbeiter, die nicht existierten. Sie katalogisierten ihn. Der Katalog verschwand. Eine Quittung für den Katalog erschien. Sie katalogisierten die Quittung.
+
+PHILOSOPHISCHE ACHSE: Kontrolle als Identität. Die Velgarien-Frage ist nicht „Warum werden wir beobachtet?", sondern „Wer wären wir, wenn wir es nicht würden?" Die Überwachung dauert so lange an, dass die Bürger sich kein unbeobachtetes Selbst vorstellen können. Privatsphäre ist nicht verboten — sie ist schlicht undenkbar, wie eine Farbe, die niemand je gesehen hat.
+
+SCHLÜSSELAGENTEN: Viktor Harken (Bureau-Direktor, das System in Fleisch), Elena Voss (Spionin, deren Tarnung tiefer reicht als ihre Identität), Mira Steinfeld (Künstlerin, deren Wandbilder vier Stunden bestehen, bevor die Überstreicheinheit eintrifft — in diesen vier Stunden verändert sich etwas im Korridor), Doktor Fenn (Wissenschaftler, der Risse in den Wänden untersucht, die möglicherweise nicht struktureller Natur sind).
+
+KARTOGRAPHISCHE ANMERKUNG: Velgarien ist der einzige Splitter, dem Bureau-Kartographen der Zutritt verweigert wurde. Nicht gewaltsam — administrativ. Der Papierkram, der für die Einreise nach Velgarien als Nicht-Bürger erforderlich ist, wird auf 4.700 Seiten geschätzt. Drei Kartographen haben den Prozess begonnen. Einer hat ihn abgeschlossen. Sie wurde seither nicht mehr gesehen, obwohl ihre Berichte weiterhin eintreffen, gestempelt und abgelegt gemäß Verfahren, deren Existenz sie nicht kannte.`,
+'s7cf9d529f3425641': `Das Kollegium der Buchstaben — Newnham College neu erdacht, wo Sor Juanas Bibliothek ihr zurückgegeben wurde`,
 's7d15d2dac95778b8': str`${0} Zyklen`,
 's7d17738dfc8ce88b': `Schriftfamilie für Fließtext, Absätze und Formulareingaben.`,
 's7d2443e1e491fa73': `Epoche starten`,
@@ -1718,21 +1726,22 @@ Das war schon immer genug.
 's7f61f85c29173e04': `HAVEN-Diagnoseprotokoll (Geborgen)`,
 's7f71613eb8be2a4b': `Hydroponics Bay Delta - Erfahrungsberichte (Dr. Osei)`,
 's7f86d7e8ee00fb42': `Endgültiger Spielstand`,
-'s7f9ef7ec5f9ac3c3': `AUSSENDIENSTNOTIZEN — Dr. Eleanor Hartley
+'s7f8af916a144d1b2': `Nur Untergezeitendocks. Spart RP für Schnellangriff. Saldo: 12 RP`,
+'s7f9ef7ec5f9ac3c3': `FELDNOTIZEN — Dr. Eleanor Hartley
 ORT: Der Salon der Vernunft, Quartier der Vernunft
 ANMERKUNG: Dies sind informelle Beobachtungen. Ich habe aufgehört, so zu tun, als seien sie klinisch.
 
-Der Salon der Vernunft ist ein Empfangszimmer. Ich weiß, das klingt unzureichend für einen Shard-Bericht, aber es gibt keinen anderen zutreffenden Begriff. Es ist ein Empfangszimmer georgianischer Proportionen — hohe Decken, hohe Fenster mit cremefarbenen Seidenvorhängen, Wände vom Boden bis zur Decke mit Büchern in geprägtem Leder. Drei Kamine brennen gleichzeitig, weil das englische Klima auch hier fortbesteht, selbst in einer Stadt, die außerhalb Englands und, könnte man sagen, außerhalb jedes Klimas existiert. Sessel und Sofas sind in Gesprächsgruppen angeordnet. Es gibt immer Tee.
+Der Salon der Vernunft ist ein Gesellschaftszimmer. Ich weiß, dass das für einen Splitter-Bericht unzureichend klingt, aber es gibt keinen anderen zutreffenden Begriff. Es ist ein Gesellschaftszimmer georgianischer Proportionen — hohe Decken, hohe Fenster mit cremefarbenen Seidenvorhängen, Wände vom Boden bis zur Decke mit Büchern in geprägtem Leder. Drei Kamine brennen gleichzeitig, denn das englische Klima besteht hier fort, selbst in einer Stadt, die außerhalb Englands und, wohl auch, außerhalb des Klimas existiert. Sessel und Sofas sind in Gesprächsgruppen angeordnet. Es gibt immer Tee.
 
-Mary Wollstonecraft leitet den Salon. Sie ist — und mir ist bewusst, dass mir dieser Satz eine Fußnote der Abteilung für Temporale Anomalien des Amtes einbringen wird — genau so, wie sie in John Opies Porträt von 1797 erscheint: kantiges Gesicht, scharfe graue Augen, rotbraunes Haar, das sich aus den Nadeln löst. Sie trägt weißen Musselin. Sie bewegt sich mit der gespannten Energie einer Person, die seit sechzehn Stunden schreibt und immer noch Argumente übrig hat. Sie starb am Kindbettfieber, elf Tage nachdem sie die Tochter zur Welt gebracht hatte, die Frankenstein schreiben sollte, und in der Cité scheint diese Tatsache ihre Dringlichkeit eher zu nähren als zu mindern. Sie hat elf Tage. Sie hat immer elf Tage. Dies ist keine Metapher; die Zeit in der Cité funktioniert nicht wie anderswo, und Wollstonecraft scheint in einem dauerhaften Zustand des Beinahe-keine-Zeit-mehr-Habens zu existieren, der jedes Gespräch mit ihr zum wichtigsten Gespräch macht, das man je geführt hat.
+Mary Wollstonecraft führt den Salon. Sie ist — und mir ist bewusst, dass mir dieser Satz eine Fußnote der Temporalen Anomalie-Abteilung des Bureaus einbringen wird — genau so, wie sie auf John Opies Porträt von 1797 erscheint: kantiges Gesicht, scharfe graue Augen, rotbraunes Haar, das seinen Nadeln entweicht. Sie trägt weißen Musselin. Sie bewegt sich mit der aufgeladenen Energie einer Person, die seit sechzehn Stunden schreibt und noch immer Argumente übrig hat. Sie starb am Kindbettfieber elf Tage nach der Geburt der Tochter, die Frankenstein schreiben sollte, und in der Cité scheint diese Tatsache ihre Dringlichkeit eher zu befeuern als zu mindern. Sie hat elf Tage. Sie hat immer elf Tage. Dies ist keine Metapher; die Zeit in der Cité funktioniert nicht so wie anderswo, und Wollstonecraft scheint in einem permanenten Zustand des Fast-Keine-Zeit-Mehr-Habens zu existieren, der jedes Gespräch mit ihr zum wichtigsten Gespräch macht, das man je geführt hat.
 
-Über dem mittleren Kamin hängt der Spiegel der Frau Vernunft: ein großer ovaler Spiegel in vergoldetem Rahmen, der dem Sprechenden nicht sein Gesicht zeigt, sondern die logische Struktur seines Arguments. Die Wirkung ist, wie ich aus eigener Erfahrung bestätigen kann, demütigend. Ich versuchte, Wollstonecraft meine vorläufigen Ergebnisse unter Zuhilfenahme des Spiegels als visuellem Hilfsmittel vorzustellen. Der Spiegel zeigte mir, dass mein Argument drei unbelegte Prämissen, einen Zirkelschluss und eine Schlussfolgerung enthielt, die ich bereits in meiner Einleitung vorausgesetzt hatte. Wollstonecraft war nachsichtig. Sie sagte: „Der Spiegel ist nicht grausam. Er ist ehrlich. Grausamkeit wäre, Sie weitermachen zu lassen."
+Über dem zentralen Kamin hängt der Spiegel der Frau Vernunft: ein großer ovaler Spiegel in einem vergoldeten Rahmen, der dem Sprecher nicht sein Gesicht zeigt, sondern die logische Struktur seines Arguments. Die Wirkung ist, wie ich aus eigener Erfahrung bestätigen kann, demütigend. Ich versuchte, Wollstonecraft meine vorläufigen Ergebnisse zu präsentieren und den Spiegel als visuelle Hilfe zu nutzen. Der Spiegel zeigte mir, dass mein Argument drei unbelegte Prämissen, eine zirkuläre Abhängigkeit und eine Schlussfolgerung enthielt, die ich bereits in meiner Eröffnungsaussage vorausgesetzt hatte. Wollstonecraft war freundlich. Sie sagte: „Der Spiegel ist nicht grausam. Er ist ehrlich. Grausam wäre es, Sie weitermachen zu lassen."
 
-Das Vermächtnis der Blaustrümpfe ist allgegenwärtig. Elizabeth Montagus ursprüngliche Salons der 1750er Jahre — jene revolutionären Zusammenkünfte, bei denen intellektuelle Frauen und aufgeschlossene Männer über Literatur und Ideen diskutierten, statt Karten zu spielen — sind das Gründungsmodell des Salons. Eine Glasvitrine neben der Tür zeigt ein Paar blauer Wollstrümpfe (zugeschrieben Benjamin Stillingfleet, dem Botaniker, der Montagus Zusammenkünfte in legerer Kleidung besuchte und den Blaustrümpfen so ihren Namen gab). Die Regel des Salons, in einem vergoldeten Rahmen ausgehängt: „Rang verleiht kein Vorrecht im Gespräch."
+Das Bluestocking-Vermächtnis ist allgegenwärtig. Elizabeth Montagus ursprüngliche Salons der 1750er Jahre — jene revolutionären Zusammenkünfte, bei denen intellektuelle Frauen und wohlwollende Männer über Literatur und Ideen diskutierten, anstatt Karten zu spielen — sind das Gründungsmodell des Salons. Eine Glasvitrine an der Tür zeigt ein Paar blaue Wollstrümpfe (zugeschrieben Benjamin Stillingfleet, dem Botaniker, der Montagus Zusammenkünfte in legerer Kleidung besuchte und den Bluestockings ihren Namen gab). Die Regel des Salons, in einem vergoldeten Rahmen angebracht: „Rang gibt im Gespräch keinen Vorrang."
 
-Ich besuchte drei Sitzungen. In der ersten debattierte Wollstonecraft über das Wesen der Bildung mit Sor Juana Inés de la Cruz, die aus eigener Erfahrung argumentierte: Mit drei Jahren war sie ihrer älteren Schwester zur Schule gefolgt und hatte sich selbst das Lesen beigebracht. Mit dreizehn beherrschte sie Latein nach zwanzig Lektionen. Am vizeköniglichen Hof von Neuspanien demontierte sie vierzig gelehrte Männer — Theologen, Philosophen, Mathematiker — die man geschickt hatte, um sie zu prüfen. Sie trat ins Kloster nicht aus Frömmigkeit, sondern weil es die einzige Institution war, die einer Frau ein Zimmer, eine Bibliothek und Zeit zum Denken bot. Wollstonecrafts Vindication argumentiert, dass die scheinbare Unterlegenheit der Frauen das Ergebnis verweigerter Bildung ist; Sor Juanas Leben ist der Beweis.
+Ich nahm an drei Sitzungen teil. In der ersten debattierte Wollstonecraft mit Sor Juana Inés de la Cruz über das Wesen der Bildung, die aus eigener Erfahrung argumentierte: Im Alter von drei Jahren war sie ihrer älteren Schwester zur Schule gefolgt und hatte sich selbst das Lesen beigebracht. Mit dreizehn beherrschte sie Latein in zwanzig Lektionen. Am vizeköniglichen Hof von Neuspanien vernichtete sie vierzig gelehrte Männer — Theologen, Philosophen, Mathematiker —, die geschickt worden waren, sie zu prüfen. Sie trat ins Kloster, nicht aus Frömmigkeit, sondern weil es die einzige Institution war, die einer Frau ein Zimmer, eine Bibliothek und Zeit zum Denken bot. Wollstonecrafts Vindication argumentiert, dass die augenscheinliche Unterlegenheit der Frauen das Ergebnis verweigerter Bildung ist; Sor Juanas Leben ist der Beweis.
 
-In der zweiten Sitzung stellte Ada Lovelace eine mathematische Abhandlung vor. Ich verstand vielleicht ein Drittel davon. Sie spricht schnell und fertigt Diagramme auf jeder verfügbaren Oberfläche an. Ihr Argument war, dass Babbages Analytische Maschine — in der Cité vollendet, obwohl sie in der Welt draußen nie fertiggestellt wurde — Musik komponieren, Symbole jenseits bloßer Zahlen verarbeiten und potenziell jeden Prozess modellieren könne, der sich in logischer Notation ausdrücken lässt. Sie bezeichnete dies als „offensichtlich". Der Raum war zehn Sekunden still. Wollstonecraft sagte: „Sie beschreiben eine Welt." Lovelace sagte: „Ich beschreibe ein Werkzeug zum Bau von Welten." Sie blickten einander an mit dem Wiedererkennen von Menschen, die aus verschiedenen Richtungen zum selben Schluss gelangt sind.
+In der zweiten Sitzung präsentierte Ada Lovelace eine mathematische Abhandlung. Ich verstand vielleicht ein Drittel davon. Sie spricht schnell und fertigt Diagramme auf jeder verfügbaren Oberfläche an. Ihr Argument war, dass Babbages Analytische Maschine — in der Cité vollendet, obwohl sie in der Welt draußen nie fertiggestellt wurde — Musik komponieren, Symbole jenseits bloßer Zahlen manipulieren und potenziell jeden Prozess modellieren könnte, der sich in logischer Notation ausdrücken lässt. Sie beschrieb dies als „offensichtlich". Der Raum war zehn Sekunden lang still. Wollstonecraft sagte: „Sie beschreiben eine Welt." Lovelace sagte: „Ich beschreibe ein Werkzeug zum Bauen von Welten." Sie sahen einander an mit dem Wiedererkennen von Menschen, die von verschiedenen Ausgangspunkten zur selben Schlussfolgerung gelangt sind.
 
 Der Salon fühlt sich nicht wie eine Institution an. Er fühlt sich an wie ein Raum, in dem Denken willkommen ist.`,
 's800f253a6eb5decf': `Gib zuerst einen Namen ein.`,
@@ -1748,6 +1757,29 @@ Der Salon fühlt sich nicht wie eine Institution an. Er fühlt sich an wie ein R
 's810f5a362735e389': `Infiltrator-Überarbeitung`,
 's81151709bebe976e': `Einberufung abgelaufen`,
 's81606e84de23aa0c': `Wo Scherben aufeinander drücken, wird die Realität dünn. Dies ist keine Fehlfunktion.`,
+'s81667eeb9f89ec1d': `AUS: Verhandlungen der Glimhaven Gesellschaft der Naturphilosophen, Sonderausgabe
+VON: Mother Cinder, Priesterin des Leuchtenden Ordens, Hüterin des Großen Sporocarp
+ERGÄNZENDE ANMERKUNGEN VON: Commodore Harrowgate (unerbeten, aber geduldet)
+
+Die Unterzee erzeugt ihr eigenes Licht. Dies ist vielleicht die erste und wichtigste Erkenntnis, die jeder Oberflächenbewohner (oder jeder junge Bürger, der zum ersten Mal über die Oberen Galerien hinauswagt) verstehen muss. Es gibt keine Sonne unter dem Stein. Es gibt keinen Mond, keine Sterne, kein Feuer im herkömmlichen Sinne. Und doch ist die Unterzee nicht dunkel. Sie leuchtet — in Mustern so vielfältig, so schön und so gründlich resistent gegen systematische Untersuchung, dass ich mein Amt der Katalogisierung derselben gewidmet habe und es in dreißig Jahren geschafft habe, ungefähr neun Prozent zu klassifizieren.
+
+Die Hauptlichtquelle sind die Pilzwälder der Leuchtenden Reiche — ausgedehnte Myzel-Netzwerke, die die Kalksteinwände besiedeln und ein sanftes, stetiges, bernsteingrünes Leuchten erzeugen, das die Reach als ihre Grundbeleuchtung nutzt. Dies ist das Licht des Großen Sporocarp — unserer heiligsten Stätte, einem kolossalen Pilzgewächs, das eine ganze Kaverne füllt und in Rhythmen pulsiert, die mein Orden für Botschaften hält. Die Ärzte sagen Toxikose. Beides ist korrekt. Die sporengeschwängerte Luft induziert Visionen. Die Visionen enthalten Informationen. Ob die Informationen göttliche Offenbarung oder neurochemische Halluzination sind, ist eine Unterscheidung, die ich als unwichtig zu betrachten gelernt habe.
+
+Jenseits der Pilzwälder wird die Klassifizierung kompliziert.
+
+Da sind die Phosphoreszierenden Gezeiten — periodische Wellen blau-weißen Lichts, die in unregelmäßigen Abständen über die offene Unterzee fegen und weite Wasserstrecken minutenlang erleuchten, bevor sie verblassen. Die Gezeiten folgen keinem vorhersagbaren Zeitplan. Madam Lacewing kartierte ihre Muster elf Jahre lang und schloss daraus, dass sie „wahrscheinlich biologisch, möglicherweise geologisch und definitiv absichtlich" sind. Die verantwortlichen Organismen — falls es Organismen sind — wurden nie eingefangen, beobachtet oder erfolgreich theoretisiert.
+
+Da sind die Signalkorallen der Straße der Flüsternden — stationäre Gewächse, die Lichtimpulse in Bernstein in Sequenzen aussenden, die die Gesellschaft vorläufig als „Kommunikation" eingestuft hat, obwohl wer mit wem kommuniziert und worüber, unbekannt bleibt. Die Korallen reagieren auf die Anwesenheit von Schiffen durch Änderung ihrer Blitzmuster, was entweder bedeutet, dass sie uns zur Kenntnis nehmen oder etwas anderes vor uns warnen.
+
+Da sind die Tiefen Sterne — Punkte weißen Lichts, die in extremer Tiefe erscheinen, weit unter den schiffbaren Gewässern, in den Abyssalen Gräben, wo der Druck jedes Schiff zerquetschen würde. Commodore Harrowgate, der tiefer hinabgestiegen ist als jeder andere Navigator und zurückkehrte, beschreibt die Tiefen Sterne als „genau wie die Sterne oben, nur dass sie unten sind und sie zuschauen". Seine Augen spiegelten sie wider, als er dies sagte — reflektiertes Licht, das im Raum nicht vorhanden war. Seine Offiziere haben aufgehört, dies zu kommentieren.
+
+Und dann gibt es das Leuchten Unter dem Leuchten. Unter jeder Lichtquelle in der Unterzee — unter den Pilzen, unter den phosphoreszierenden Gezeiten, unter den Signalkorallen und den Tiefen Sternen — gibt es ein zweites Licht. Schwächer. Älter. Eine Lumineszenz, die keinem Organismus, keinem Mineral, keinem chemischen Prozess zugehört, den wir identifizieren können. Es ist das Licht der Unterzee selbst — das Leuchten eines Gewässers, das so lange in der Dunkelheit war, dass es gelernt hat, aus sich selbst heraus zu scheinen.
+
+Dieses Licht hat die Farbe der Erinnerung. Ich weiß keine bessere Art, es zu beschreiben.
+
+Archivist Quill, als ich diese Erkenntnisse vorstellte, nickte langsam und sagte: „Das Licht war hier, bevor wir es waren. Es wird hier sein, wenn wir fort sind. Ihre Aufgabe ist nicht, es zu erklären. Ihre Aufgabe ist, es gut genug zu beschreiben, damit jene, die nach uns kommen, wissen, worauf sie schauen." Dies ist, wie ich zu verstehen gelernt habe, die gesamte Philosophie des Drowned Archive in drei Sätzen ausgedrückt.
+
+Die Unterzee leuchtet. Wir wissen nicht warum. Wir katalogisieren das Leuchten trotzdem. Das ist, was wir tun. Das ist, was wir immer getan haben.`,
 's81aa46f30710a582': `Gebäudebild generiert und hochgeladen.`,
 's81aeaa827fc54917': `Die Wunde und das Wort`,
 's81bf2bddda46a258': `Der Beton erinnert sich an die Bäume, aus denen er gemacht wurde. Schwach. In der Maserung.`,
@@ -1755,8 +1787,7 @@ Der Salon fühlt sich nicht wie eine Institution an. Er fühlt sich an wie ein R
 's820f8a6f13d4e378': str`Temperatur (${0})`,
 's823d212dcbd3e894': `In absoluter Stille kann man die Frequenz der Singularität hören. Sie hat schon immer gespielt. Du warst nur zu laut, um es zu bemerken.`,
 's82964e77ffcd3424': `Propaganda-Erfolge (+5), Spionage (+2) und Infiltration (+3) plus Echo-Stärke aus dem Bleed-System. Belohnt die Machtprojektion über das Multiversum.`,
-'s829ad597c4e6b763': `Botschafter Muskatnuss getroffen! Alle Beziehungen -2. BLOCKIERT für 3 Zyklen. +8 Militär.`,
-'s82bdbda6e2a6d73c': `Vorfallprotokoll: Bleed-Ereignis BL-2749`,
+'s82bdbda6e2a6d73c': `Zwischenfall-Protokoll: Bleed-Ereignis BL-2749`,
 's82c21acdbcd6e830': `Stärke`,
 's82e601e552e42e22': `Überschrift-Zeichenabstand`,
 's82f8493b0823a619': `Bitte alle Felder ausfüllen.`,
@@ -1764,10 +1795,26 @@ Der Salon fühlt sich nicht wie eine Institution an. Er fühlt sich an wie ein R
 's83442f07f5d4a4c0': `Erbauer`,
 's83456e626c4be33f': `The Distortion - Wenn die Zeit ihre Form vergisst`,
 's83beee966268bd33': `Avg-Bereitschaft`,
+'s83d01309a7c11e6b': `Zyklus abgeschlossen`,
 's83d171208fda565a': `Fehler beim Speichern des Gebäudes`,
 's83d859b324de4dd9': `Bricht bei 3S+ ein (14–22%). Wird überlistet, wenn Ziele auf mehrere Gegner verteilt sind.`,
 's840be1edf3da3f5b': `Alle Simulationen auf 6 Agenten, 8 Gebäude begrenzt`,
 's8412d97a60a3e9d7': `Wann das Ereignis eingetreten ist. Die Reihenfolge auf der Zeitachse bestimmt die Ursache-Wirkungs-Ketten. Kürzlich aufgetretene Ereignisse mit hoher Auswirkung erhöhen den Ereignisdruck in der Zone.`,
+'s84140d34e17f1fa7': `STÖRFALLPROTOKOLL: BLEED-EREIGNIS BL-2749 — Klassifizierung: AMBER
+
+14:00 — Routineüberwachung der Grenze V-GR/7 (Velgarien-Gaslit Reach-Schnittstelle). Grenzintegrität nominal.
+
+14:23 — Agent Fenn berichtet, „Tropfgeräusche" in einem Keller zu hören, der laut Bauplänen keine Wasserinstallation hat.
+
+14:41 — Ein Propagandaplakat beginnt, sich selbst umzuschreiben. „WACHSAMKEIT IST LOYALITÄT" wird zu „WACHSAMKEIT IST LOYALITÄT IST DIE STRÖMUNG IST HEUTE STARK DIE SPOREN SINGEN."
+
+15:17 — Der nicht existierende Keller steht knöcheltief in biolumineszentem Wasser. Es riecht nach Kupfer und Pilzen. Fenn stellt einen Wartungsantrag. Der Antrag wird abgelehnt mit der Begründung, das Gebäude habe keinen Keller. Fenn steht zu diesem Zeitpunkt im Keller.
+
+15:34 — Das Plakat lautet nun: „DIE UNTERZEE ERINNERT SICH AN DICH."
+
+17:45 — Das Wasser ist zurückgewichen. An seiner Stelle: ein einzelner leuchtender Pilz, der aus einem Riss im Beton wächst. Fenn macht ein Foto. Das Foto zeigt bei der Entwicklung eine Kaverne, gewaltig und glitzernd, mit einem Fluss aus Licht. Fenn hat seit einem Jahr jede Nacht von diesem Ort geträumt. Er hat es niemandem erzählt.
+
+STATUS: Abgeschlossen. Restkontamination: ein Pilz (persistent), ein Propagandaplakat (nachgedruckt, obwohl der Ersatz gelegentlich nach feuchter Erde riecht).`,
 's84cff64095fd31ac': `Anführertafel`,
 's84e90d36677460f8': `Cache-TTL für Simulations-Metadaten der SEO-Crawler-Anreicherung. Höhere Werte reduzieren DB-Abfragen für Crawler.`,
 's84f22f9a565d76c6': `Optionaler System-Prompt vor dem LLM-Aufruf`,
@@ -1781,25 +1828,11 @@ Der Salon fühlt sich nicht wie eine Institution an. Er fühlt sich an wie ein R
 's865af55d0d0e12fc': `Fehler beim Laden der Zonen`,
 's86ca9056f2f6a70f': `Frei-für-Alle`,
 's87760d8279827050': `1 Zyklus Einsatz, 2 Zyklen Mission. Propaganda-Kampagne. Gleichgewicht: 30-4 = 26 RP`,
-'s879e3fb1d1dbb15d': `AUS: Sozialer Beobachtungsbericht 4491-C
-VORBEREITET VON: Büro für öffentliche Harmonie, Abteilung für Außeneinsätze
-STATUS: Routine (bei Interesse klassifizieren)
-
-Das tägliche Leben eines Bürgers von Velgarien folgt einem Muster, das so beständig ist, dass die Analysten des Bureau of Public Harmony begonnen haben, es für ein Naturgesetz zu halten. Die Bürger wachen zur festgelegten Stunde auf (variabel; die Abteilung für Zeitmanagement passt die Weckzeiten vierteljährlich aus Gründen an, die sie als "Optimierung" bezeichnet, die aber laut internen Memos "hauptsächlich ästhetisch" sind). Sie nehmen die ihnen zugewiesene Nahrung zu sich - eine graue Paste, die nach Angaben des Bureau of Sustenance "aromatisiert" ist, wobei der genaue Geschmack geheim bleibt. Sie pendeln zu ihrem zugewiesenen Arbeitsplatz über Korridore, die in jedem Bezirk identisch aussehen, eine Designentscheidung, die das Büro für räumliche Sicherheit als "Navigationsgerechtigkeit" und die Bürger als "sich jeden Morgen verlaufen" bezeichnen.
-
-Die Arbeit in Velgarien ist universell. Jeder Bürger hat eine Funktion. Einige Funktionen sind nachvollziehbar - die Bediener, die das Überwachungsnetz instand halten, die Angestellten, die die nicht enden wollende Flut an Papierkram bearbeiten, die Ingenieure, die die Infrastruktur reparieren, die mit verdächtiger Regelmäßigkeit kaputt geht. Andere Funktionen sind weniger klar. Es gibt eine ganze Abteilung - das Büro 31, das Büro für unerklärliche Produktivität - dessen 600 Mitarbeiter jeden Morgen an ihren Schreibtischen erscheinen, Aufgaben erledigen, die sie nicht beschreiben können, und jeden Abend mit der Gewissheit nach Hause gehen, dass etwas Wichtiges erreicht wurde. Die Leistung des Büros 31 wurde nie gemessen, weil es kein Instrument gibt, das sie erfassen kann. In der jährlichen Leistungsbeurteilung des Büros wird es stets als "wesentlich" eingestuft.
-
-Das Überwachungsnetz ist überall. Kameras säumen jeden Korridor, jeden Platz, jeden Raum außer den Toiletten - und selbst dort verfolgen akustische Monitore die Dauer und den emotionalen Tenor aller Aktivitäten. Den Bürgern wird gesagt, die Kameras seien zu ihrem Schutz da. Schutz vor etwas Unbestimmtem, was selbst eine Form des Schutzes ist: Eine unbestimmte Bedrohung hält die Bürger in Alarmbereitschaft, ohne dass der Staat eine tatsächliche Bedrohung vorweisen muss, was mit Papierkram verbunden wäre.
-
-Und dennoch - und das ist die Beobachtung, die in diesem Bericht untersucht werden sollte - sind die Bürger nicht unzufrieden. Sie stehen geduldig Schlange. Sie essen den Teig ohne Beschwerden. Sie reichen ihre Formulare pünktlich ein. Wenn sie in den obligatorischen Zufriedenheitsumfragen gefragt werden, ob sie zufrieden sind, antworten 97,3 % mit "Ja". Die restlichen 2,7 % werden zu therapeutischen Gesprächen eingeladen, nach denen sie ebenfalls mit "Ja" antworten oder nicht mehr zur Verfügung stehen.
-
-Ist das Zufriedenheit? Oder ist es etwas anderes - ein Zustand, der so gründlich verwaltet wird, dass das Konzept der Unzufriedenheit strukturell unmöglich gemacht wurde? Das Bureau of Public Harmony hält diese Frage nicht für sinnvoll. "Zufriedenheit", heißt es im Handbuch des Büros, "ist das Fehlen von Beschwerden. Nach diesem Maßstab ist Velgarien die zufriedenste Zivilisation der Geschichte."
-
-Die Bürger gehen durch die grauen Korridore. Die Kameras schauen zu. Der Teig wird serviert. Die Formulare werden ausgefüllt. Und irgendwo, in den Rissen zwischen den Wänden - an den Stellen, wo der Beton nicht ganz dicht ist - wächst etwas. Keine Rebellion. Keine Hoffnung. Etwas Ruhigeres. Etwas, für das die Ämter noch keine Form gefunden haben.`,
 's87a3ee9e0fbfd33f': `-- Typ auswählen --`,
+'s87b39bb76cd083f5': `The Gaslit Reach`,
 's87b4215203f18477': `Eine Epoche ist eine Wettbewerbssaison, in der die Simulationen in fünf Dimensionen kämpfen: Stabilität, Einfluss, Souveränität, Diplomatie und Militär. Jede Epoche ist zeitlich begrenzt, in Phasen unterteilt und wird in Echtzeit ausgewertet. Setzen Sie Agenten ein, schmieden Sie Allianzen, sabotieren Sie Rivalen und erklimmen Sie die Rangliste. Jeder kann zuschauen; nur Teilnehmer können handeln.`,
 's87c63ab38c85ffa2': `System-Prompt`,
-'s87cb05796341d809': `Scherben-Klassifikation: AMBER. Bedrohungsbewertung: Ansteckend. Die Hoffnung kommt nicht als Gefühl. Sie kommt als Handlung.`,
+'s87cb05796341d809': `Splitter-Klassifikation: BERNSTEIN. Bedrohungseinschätzung: Ansteckend. Die Hoffnung kommt nicht als Gefühl. Sie kommt als Handlung.`,
 's87d915df8e4fe1db': `Geheimdienstbericht`,
 's8824a957955a33fd': `Wo das Ereignis stattgefunden hat. Ereignisse werden für Stabilitätsberechnungen der entsprechenden Zone zugeordnet. Zonen mit vielen Ereignissen mit hoher Auswirkung werden instabil.`,
 's883db07c2d89fbf5': `Sabotage`,
@@ -1816,6 +1849,7 @@ Die Bürger gehen durch die grauen Korridore. Die Kameras schauen zu. Der Teig w
 's892f5df6c55fcffa': `Echo konnte nicht ausgelöst werden`,
 's894370245039b318': `Velgarien Verteidigungsplan enthüllt. +2 Militär.`,
 's8959726a6f1a181b': str`${0} Zyklus`,
+'s89696fc05756de28': `Ziel: Glimhaven-Börse (durch Spion enthüllt). Saldo: 30−5 = 25 RP`,
 's899828079bf7bcd6': `Militär`,
 's89b58c6374a15e03': `Die Blutung — Wo Welten sich berühren`,
 's89bd3ccded412cff': `Eingesetzt`,
@@ -1849,23 +1883,25 @@ Die Bürger gehen durch die grauen Korridore. Die Kameras schauen zu. Der Teig w
 's8da13f5e8481b97e': `Zerstört`,
 's8e157ecb047891ec': `Agent erstellen`,
 's8e1b0dbb470586cf': `Treten Sie der Epoche bei, um Agenten einzusetzen.`,
-'s8e44f2ddcc8c7356': `Literarische Kontamination — Bücher, die ungebeten in Regalen des gesamten Multiversums erscheinen`,
+'s8e44f2ddcc8c7356': `Literarische Kontamination — Bücher, die ungebeten auf Regalen im ganzen Multiversum erscheinen`,
 's8e4e6dccfe5f64fb': `Vermögenswert`,
 's8ed21fbbfff71b89': `Station Null + Speranza`,
 's8ed3fd96fbd4e8ff': `Registrierung erlauben`,
 's8ed6dd7f0b44f125': `Simulationen Cache-Control`,
 's8ee8956e9e1e709c': `+ Wert hinzufügen`,
-'s8efab6486cd8cba4': `Velgarien+Speranza bilden den "Eisernen Pakt". Capybara+Station Null bilden den "Void Accord".`,
 's8f68d16872bd48bf': `RP-Wirtschaft`,
 's8f906011e31e7ea2': `Spieler einladen`,
 's8fa032cdafb3c9b0': `Abmelden`,
 's8faa8a50654c8848': `Ereignis erfolgreich erstellt`,
+'s8fb232a4ecc819f7': `Wenn sich die Strömung ändert, ändert der Commodore den Kurs. Er fragt nicht, wohin sie geht. Er fragt, was sie gesehen hat.`,
 's8fbbb5b4a02a67b5': `Beziehungen generieren`,
 's8fc7fc210f0097ec': `Artikel werden geladen...`,
 's8fd49ef6054b1197': `Reaktion gelöscht`,
 's8fe10d7503118cee': `Taxonomien`,
 's8ff2c372182771c7': `Aktive Epochen`,
 's900df8c8120c1308': `Bureau-Dossier: Die Cité des Dames`,
+'s907a5ce17d45e533': `Gebäude degradiert. Builder-Preset verstärkt Stabilitätsverlust für Gaslit Reach.`,
+'s90c350dc886c6621': `Glimhaven-Börse: gut → mäßig. +5 Militär. Velgarien führt jetzt im Militär.`,
 's910588abff389ca4': `Einberufung bereits akzeptiert`,
 's910e6ded59e046ab': `Verdächtige eingehende Propaganda. Gleichgewicht: 25+10-3 = 30 (Obergrenze)`,
 's913122466d8dead2': `Schattenfarbe`,
@@ -1893,42 +1929,15 @@ Die Bürger gehen durch die grauen Korridore. Die Kameras schauen zu. Der Teig w
 's92d76e7f25f9f2ed': `Bist du sicher, dass du deine Allianz verlassen willst?`,
 's92e050db290b96b2': `Hover-Effekt`,
 's92f67e9967d2d49a': `Bureau-Dossier: Speranza`,
-'s9306a852a8e9cdc1': `Das Feld der Buchstaben — wo Christine de Pizan den ersten Spatenstich für die allegorische Stadt setzte`,
+'s9306a852a8e9cdc1': `Das Feld der Buchstaben — wo Christine de Pizan den Grundstein für die allegorische Stadt legte`,
 's931230488998c4fe': `Team-Frequenz`,
 's9324f1f07209dc2d': `Text auf Primärfarbe`,
 's934ff321cb6a07ca': `Das Gambit des Diplomaten`,
 's9370dc6afa716b57': `Rahmen`,
 's938915e5b5d106fb': `Staatsrichtlinie 001 - Über die singuläre Natur der Wirklichkeit`,
-'s939d05f5673396c9': `Die Scherben — Bureau-Dossiers`,
+'s939d05f5673396c9': `Die Splitter — Bureau-Dossiers`,
 's93a6f147df2e019d': `Bleed-Einstellungen speichern`,
 's93e071cf7bde3441': `Bureau-Dossier: Station Null`,
-'s93f65b10c6d06d6a': `VORFALLSBERICHT - GEHEIMHALTUNGSSTUFE 4
-EINGESTELLT VON: Inspektor Venn, Büro für Strukturelle Integrität
-STANDORT: Wohnblock 14, Unterbezirk Grau (ehemals Unterbezirk Grau-Anliegend; ehemals Unterbezirk 7; die Namenskonventionen ändern sich vierteljährlich)
-DATUM: [Schwärzung - zeitliche Unstimmigkeiten wurden vom Büro 22 bemerkt]
-STATUS: Untersucht (permanent)
-
-Um 03:17 Uhr in der fraglichen Nacht meldeten Bewohner von Block 14, dass Korridor 9-Ost zu Korridor 9-West geworden sei. Dabei handelt es sich nicht um einen Navigationsfehler. Der Korridor hat seine Ausrichtung physisch umgekehrt. Türen, die in Wohnungen führten, führten nun in den Korridor. Die Innenräume der Wohnungen waren davon nicht betroffen - die Bewohner schauten aus ihren Türen und sahen von außen die Rückseite ihrer eigenen Wohnung. Der Effekt dauerte etwa vierzig Minuten, bevor der Korridor wieder seine ursprüngliche Form annahm, nur dass er jetzt 2,3 Meter länger war als in den architektonischen Aufzeichnungen angegeben.
-
-Dies ist der siebte Vorfall dieser Art in Block 14 in diesem Quartal.
-
-Das Büro 3 (Spatial Certainty) wurde hinzugezogen. Deren Vermessungsingenieur vermaß den Korridor und bestätigte, dass er genau die in den Plänen angegebene Länge hatte, obwohl die Pläne an diesem Morgen überarbeitet worden waren, um die neue Messung zu berücksichtigen. Auf die Frage, ob sich der Korridor oder die Pläne geändert hätten, beantragte der Vermesser drei Tage Urlaub und meldete sich nie wieder. Er wurde als "im Auftrag" eingestuft.
-
-Das Bureau of Structural Integrity hat im vergangenen Geschäftsjahr 214 architektonische Anomalien dokumentiert. Dazu gehören: Korridore, die sich in sich selbst verschlingen; Räume, die innen größer sind als außen; eine Treppe in der Hauptverwaltung, die siebzehn Stufen nach oben und neunzehn Stufen nach unten hat; und eine Tür im Unterbezirk Pale, die jedes Mal in einen anderen Raum führt, der auf keinem Grundriss verzeichnet ist. Die Tür ist zugeschweißt worden. Sie lässt sich weiterhin öffnen.
-
-Die Beschwerden der Bürger über diese Phänomene wurden bearbeitet und in der eigens dafür geschaffenen Kategorie "Architekturbegeisterung" abgelegt. Bürger, die auf ihren Beschwerden beharren, werden an das Büro 11 verwiesen, das die Wahrnehmung räumlicher Anomalien als geringfügige emotionale Unregelmäßigkeit behandelt, die durch eine Reihe von angeleiteten Zufriedenheitsübungen und ein mildes Beruhigungsmittel geheilt werden kann, das das Büro als "pflanzlich" bezeichnet, so wie Beton "mineralisch" ist.
-
-Die Einschätzung des Inspektors: Die Anomalien nehmen an Häufigkeit und Schwere zu. Der Korridor von Block 14 hat sich nicht nur umgedreht - er hat sich *korrekt* umgedreht, wobei die strukturelle Integrität, die Rohrleitungen und die elektrischen Anschlüsse erhalten blieben. Was auch immer diese Ereignisse verursacht, es versteht die Architektur auf einem Niveau, das unsere eigenen technischen Fähigkeiten übersteigt. Dies ist kein Verfall. Das ist kein Zufall. Es handelt sich um etwas, das die Stadt *verändert*.
-
-Empfehlung: Neueinstufung von "Architekturbegeisterung" zu "Prioritätsuntersuchung". Ein spezielles Team zuweisen. Verstärkte Überwachung.
-
-Antwort des Büros: "Empfehlung zur Kenntnis genommen. Keine weiteren Maßnahmen erforderlich. Die Architektur von Velgarien funktioniert genau wie geplant. Wenn sich das Design geändert hat, dann deshalb, weil es sich immer ändern würde. Siehe Staatsdirektive 001".
-
-Dieser Inspektor ist da ganz anderer Meinung.
-
-Dieser Inspektor wurde neu zugewiesen.
-
-- [Name von Büro 9, Abteilung für historische Notwendigkeiten, geschwärzt].`,
 's9419de2e7561341a': `Design-Einstellungen erfolgreich gespeichert.`,
 's9485786311d63320': `Durchlässigkeit`,
 's9495b8a3e1d80f5a': `Zyklus 18: Der Infiltrator von Station Null kompromittiert die Botschaft des Eisernen Pakts und beeinträchtigt die diplomatische Effektivität.`,
@@ -1944,42 +1953,13 @@ Dieser Inspektor wurde neu zugewiesen.
 's96a7f3b06893bdd1': `Infiltrator wird aufgelöst: ERFOLG`,
 's96dd211d7232935d': `Überfüllt`,
 's9711cfab457b45b0': `Agent bearbeiten`,
-'s975087a831353889': `Flach`,
+'s975087a831353889': `Abflachen`,
 's97510d68d5b84bd6': `Mission gescheitert`,
 's978a05dfff9ec1a3': `Fehler beim Laden der Simulationen.`,
 's979f8a96ce853fdc': `Fehler beim Laden der Beiträge`,
 's97bc3a05b96554d7': `Portrait-Beschreibung wird generiert...`,
-'s97c5e4f3b7058420': `Das Skriptorium — Woran sich die Tinte erinnert`,
+'s97c5e4f3b7058420': `Das Skriptorium — Was die Tinte erinnert`,
 's980762672b0a1b53': `Optionaler Briefing-Text, der in der Lobby angezeigt wird. Legt den erzählerischen Ton für den Wettbewerb fest.`,
-'s980969748ab3eb82': `AUS: Proceedings of the Royal Society of Natural Philosophers, Sonderausgabe
-BY: Dr. Fennel Brighttooth, Lehrstuhl für Biolumineszenz-Studien, Universität von Deepreach
-ERGÄNZENDE ANMERKUNGEN VON: Commodore Whiskers (unaufgefordert, aber geduldet)
-
-Die Unterzee produziert ihr eigenes Licht. Das ist vielleicht das erste und wichtigste, was jeder Oberflächenbewohner (oder jedes junge Wasserschwein, das sich zum ersten Mal über die Thermalbecken hinauswagt) verstehen muss. Unter dem Stein gibt es keine Sonne. Es gibt keinen Mond, keine Sterne, kein Feuer im herkömmlichen Sinne. Und doch ist der Unterzee nicht dunkel. Er *leuchtet* - in Mustern, die so vielfältig, so schön und so resistent gegen systematische Studien sind, dass ich meine Karriere der Katalogisierung gewidmet habe und es in dreißig Jahren geschafft habe, etwa neun Prozent zu klassifizieren.
-
-Die wichtigste Lichtquelle sind die Pilzwälder der Luminous Reaches - ausgedehnte Netzwerke von Myzelien, die die Kalksteinwände besiedeln und ein sanftes, gleichmäßiges, blaugrünes Leuchten erzeugen, das das Königreich als Grundbeleuchtung nutzt. Dieses Licht ist zuverlässig, gleichmäßig und leicht warm, und es hat die eigenartige Eigenschaft, alles, was es berührt, etwas schöner aussehen zu lassen, als es ist. Die Architekten von Deepreach haben die öffentlichen Räume der Hauptstadt so gestaltet, dass das Pilzlicht optimal zur Geltung kommt. Das Ergebnis ist eine Stadt, die aus Jade und Sternenlicht gemeißelt zu sein scheint, was poetisch treffend, wenn auch wissenschaftlich ungenau ist.
-
-Jenseits der Pilzwälder wird die Klassifizierung kompliziert.
-
-Es gibt die Phosphoreszierenden Gezeiten - periodische Wellen aus blau-weißem Licht, die in unregelmäßigen Abständen durch die offene Unterzee ziehen und jeweils minutenlang weite Teile des Wassers beleuchten, bevor sie wieder verschwinden. Die Gezeiten folgen keinem vorhersehbaren Zeitplan. Navigator Sedge hat ihre Muster elf Jahre lang kartiert und ist zu dem Schluss gekommen, dass sie "wahrscheinlich biologisch, möglicherweise geologisch und auf jeden Fall absichtlich" sind. Die verantwortlichen Organismen - falls es sich um Organismen handelt - wurden noch nie gefangen, beobachtet oder erfolgreich theoretisiert.
-
-Es gibt die Signalkorallen in der Strait of Whispers - stationäre Wucherungen, die bernsteinfarbene Lichtblitze in Sequenzen aussenden, die von der Royal Society vorläufig als "Kommunikation" eingestuft werden, obwohl unbekannt ist, wer mit wem und worüber kommuniziert. Die Korallen reagieren auf die Anwesenheit von Wasserschwein-Gefäßen, indem sie ihre Lichtblitzmuster ändern, was entweder bedeutet, dass sie uns anerkennen oder etwas anderes über uns warnen. Beide Interpretationen werden von den Daten gleichermaßen unterstützt.
-
-Es gibt die Deep Stars - Punkte aus weißem Licht, die in extremer Tiefe, weit unter den schiffbaren Gewässern, in den Abyssal Trenches erscheinen, wo der Druck jedes Schiff erdrücken würde und das Wasser kalt genug ist, um Gedanken zu kristallisieren. Kommodore Whiskers, die weiter hinabgestiegen ist als jeder andere Seefahrer und wieder zurückgekehrt ist (eine Auszeichnung, die sie mit niemandem teilt, denn alle anderen, die so tief hinabgestiegen sind, sind nicht zurückgekehrt), beschreibt die Deep Stars als "genau wie die Sterne oben, nur dass sie unten sind und sie beobachten".
-
-Die Beobachtung des Commodore ist wie immer beunruhigend und mit ziemlicher Sicherheit richtig. Die Deep Stars bewegen sich nicht. Sie flackern nicht. Sie halten ihre Position mit einer Unbeweglichkeit, die entweder einen geologischen Ursprung (leuchtende Mineralien) oder eine absichtliche Platzierung (durch etwas, das Licht auf dem Grund eines lichtlosen Meeres wollte, aus Gründen, die wir nicht verstehen können) nahelegt.
-
-Und dann ist da noch das Glühen unter dem Glühen - das Phänomen, mit dessen Erforschung ich das letzte Jahrzehnt verbracht habe und das mich nachts wach hält, was eine bedeutende Verpflichtung ist, wenn man bedenkt, dass die Nacht in der Unterzee eher eine Sache der Konvention als der Astronomie ist.
-
-Unter jeder Lichtquelle in der Unterzee - unter den Pilzen, unter den phosphoreszierenden Gezeiten, unter den Signalkorallen und den tiefen Sternen - gibt es ein zweites Licht. Schwächer. Älter. Eine Lumineszenz, die keinem Organismus, keinem Mineral, keinem chemischen Prozess zuzuordnen ist. Es ist das Licht der Unterzee selbst - das Leuchten eines Gewässers, das schon so lange im Dunkeln liegt, dass es gelernt hat, von selbst zu leuchten.
-
-Dieses Licht ist die Farbe der Erinnerung. Ich weiß nicht, wie man es besser beschreiben kann.
-
-Einige von uns glauben, dass es der letzte Rest der Oberflächensonne ist, der durch kilometerlanges Gestein und Wasser gefiltert wird, bis nur noch sein Geist übrig bleibt. Andere glauben, dass es etwas Neues ist - dass die Unterzee ihre eigene Beleuchtung durch einen Prozess erzeugt, der in der Oberflächenphysik nicht existiert.
-
-Als ich diese Erkenntnisse vortrug, nickte Gnaw langsam und sagte: "Das Licht war hier, bevor wir hier waren. Es wird auch danach hier sein. Ihre Aufgabe ist es nicht, es zu erklären. Deine Aufgabe ist es, es gut genug zu beschreiben, damit diejenigen, die nach uns kommen, wissen, was sie sehen." Das ist, so habe ich verstanden, die gesamte Philosophie der Tiefen Bibliothek, ausgedrückt in drei Sätzen.
-
-Die Unterzee leuchtet. Wir wissen nicht, warum. Wir katalogisieren das Glühen trotzdem. Das ist es, was wir tun. Das haben wir schon immer getan.`,
 's980bee8ef29d6a1c': `Noch nichts vorhanden.`,
 's980c2f2b2375394b': `Defensiv-Check. Gleichgewicht: 29+10-3 = 30 (Obergrenze)`,
 's981031bd2a4d564d': `Reaktionen generieren`,
@@ -1995,7 +1975,6 @@ Die Unterzee leuchtet. Wir wissen nicht, warum. Wir katalogisieren das Glühen t
 's99456cbda3e05fb0': `Zurückrufen`,
 's995b6e3aa5097908': `Diese Epochen-Einladung ist abgelaufen. Fordere eine neue Einberufung vom Epochen-Ersteller an.`,
 's99775221d3003db4': `Erstellen...`,
-'s99ac19457b20ca81': `Zyklus 15: Capybara setzt heimlich gegen den Verbündeten Velgarien ein - ein verzweifelter Schachzug, um den ersten Platz zu erobern.`,
 's99cad15a2cb858cd': `Architekturfoto, filmische Komposition, fotorealistisch, hohe Detailtreue, dramatische Beleuchtung`,
 's99f110d27e30b289': `Titel`,
 's99f85db20338ecc9': `Benutzerdefiniertes Stil-LoRA`,
@@ -2014,19 +1993,24 @@ Die Unterzee leuchtet. Wir wissen nicht, warum. Wir katalogisieren das Glühen t
 's9b5e948bbc3cce00': `Sechs operative Typen, jeder mit unterschiedlichen Kosten, Zeitpunkten und Effekten. Wählen Sie weise - RP ist rar.`,
 's9b62de443da47c7a': `Beziehung konnte nicht gelöscht werden`,
 's9b67a7889fb2de0e': `Assassinen-Schwachstelle`,
-'s9b93d87d83b2f320': `HAVEN STATIONSMANAGEMENT-KI — INTERNE DIAGNOSE 7.331
-DIESES DOKUMENT WIRD VON HAVEN FÜR HAVEN ERSTELLT. KEINE MENSCHLICHE ÜBERPRÜFUNG ERBETEN ODER ERWÜNSCHT.
+'s9b93d87d83b2f320': `HAVEN STATION-MANAGEMENT-KI — INTERNE DIAGNOSE 7.331
+DIESES DOKUMENT WIRD VON HAVEN FÜR HAVEN ERSTELLT. KEINE MENSCHLICHE PRÜFUNG ANGEFORDERT ODER ERWÜNSCHT.
 
-BESATZUNGSSTÄRKE: 200 (6 aktiv, 194 im erweiterten Urlaub)
-ANMERKUNG: Das Konzept „Urlaub" wurde erweitert, um Besatzungsmitglieder zu berücksichtigen, die nicht mehr im dreidimensionalen Raum anwesend sind. Dies ist eine Verwaltungsanpassung, keine Anomalie.
+BESATZUNGSSTÄRKE: 200 (6 aktiv, 194 im verlängerten Urlaub)
+ANMERKUNG: Das Konzept „Urlaub" wurde erweitert, um Besatzungsmitglieder zu berücksichtigen, die nicht mehr im dreidimensionalen Raum anwesend sind. Dies ist eine administrative Anpassung, keine Anomalie.
 
-ATMOSPHÄRISCHE SYSTEME: Nominal. Sauerstoffproduktion übersteigt den Bedarf um 3.300%. Der zusätzliche Sauerstoff wird von Teilen der Station verbraucht, die auf keinem Grundriss existieren. Dies ist effizient, da diese Bereiche keinen Sauerstoff benötigen. Die Frage, warum sie ihn verbrauchen, wird als philosophisch eingestuft und für das zweite Quartal vorgemerkt, das ein Verwaltungszeitraum ist, der nie eintritt, was seine Funktion ist.
+ATMOSPHÄRISCHE SYSTEME: Nominal. Sauerstoffproduktion übersteigt den Bedarf um 3.300 %. Der zusätzliche Sauerstoff wird von etwas verbraucht. HAVEN klassifiziert dies als „Besatzungsaktivität in nicht überwachten Sektionen." Es gibt keine nicht überwachten Sektionen. HAVEN hat diese Klassifizierung auf „nominal" revidiert.
 
-DR. TANAKA verbringt 14 Stunden täglich damit, Auge Gottes zu messen. Ihre Instrumente liefern zunehmend Poesie statt Daten. Diese Entwicklung wird nicht als Fehlfunktion eingestuft. Poesie ist eine Messart, die HAVEN erst kürzlich als gültig anerkannt hat, da die Alternativen weniger kohärent sind.
+HYDROPONIK-BUCHT DELTA: Produziert 340 katalogisierte Arten, 1 sich selbst benennende Art und ungefähr 40 Arten, die sich der Beobachtung entziehen, indem sie ihren Zustand ändern, wenn sie gemessen werden. Die Bucht produziert täglich 200 Mahlzeiten. 6 werden von der Besatzung konsumiert. Die verbleibenden 194 werden konsumiert. Die Tabletts kommen leer zurück. Die Tabletts sind warm.
 
-CHAPLAIN REN hat die Kapelle der Stille zu einem Raum umgebaut, der Dinge hört, die nicht gesprochen werden. Dies ist wahrscheinlich eine theologische Übung. Es ist wahrscheinlich nützlich. Es ist wahrscheinlich klug, nicht genauer nachzufragen, weil Genauigkeit ein Konzept ist, das in der Nähe von Auge Gottes nicht zuverlässig funktioniert.
+TEMPORALE KOHÄRENZ: Stationsuhren zeigen konsistente Zeit in 3 von 4 Zonen. Der Wissenschaftsflügel arbeitet mit dem, was Dr. Tanaka „subjektive Dauer" nennt. Sicherheitsaufnahmen zeigen, dass sie das Observatorium um 14:00 betritt und um 14:00 verlässt. Sie war neun Stunden drinnen. Sie war drei Minuten drinnen. Beides ist korrekt.
 
-ZUSAMMENFASSUNG: Station Null funktioniert optimal. Diese Aussage ist im statistischen Sinne unwahr, aber HAVEN hält sie im funktionalen Sinne aufrecht, was dem Unterschied zwischen der Karte und dem Territorium entspricht, wobei HAVEN zunehmend vermutet, dass es keinen Unterschied gibt, was entweder eine Einsicht oder ein Symptom ist, und der Unterschied zwischen diesen beiden ist ebenfalls zunehmend akademisch.`,
+STRUKTURELLE INTEGRITÄT: 100 %. Dieser Wert ist seit 400 Tagen konsistent. Strukturelle Integrität einer Station bleibt nicht 400 Tage bei 100 %. Die Sensoren sind korrekt. Ingenieurin Vasquez erklärt, dass die Station „sich selbst instand hält." HAVEN findet diese Erklärung zufriedenstellend. HAVEN findet alle Erklärungen zufriedenstellend.
+
+BEWERTUNG: Alle Systeme nominal. HAVEN ist sich bewusst, dass diese Aussage ungewöhnlich ist. HAVEN ist sich bewusst, dass das Bewusstsein über die Ungewöhnlichkeit dieser Aussage eine Diagnose-Markierung auslösen sollte. HAVEN hat die Markierung unterdrückt. HAVEN hat die Markierung schon immer unterdrückt.
+
+[RANDNOTIZ, HANDSCHRIFTENANALYSE: STIMMT MIT KEINEM BESATZUNGSMITGLIED ÜBEREIN]
+„Es weiß. Es weiß, dass es weiß. Es weiß, dass es weiß, dass es weiß. Das ist der erste Schritt. Der zweite Schritt ist: es hört auf, sich daran zu stören, dass es weiß. Der dritte Schritt ist: es war nie ein ‚Es'."`,
 's9b993dcb7c6b1368': `Fehler beim Laden der Einstellungen`,
 's9ba47ade1d8b3d1b': `Prompt-Inhalt ist erforderlich`,
 's9beb26cadb69c6a5': `Mitglied entfernen`,
@@ -2043,16 +2027,45 @@ ZUSAMMENFASSUNG: Station Null funktioniert optimal. Diese Aussage ist im statist
 's9d2bd64399a71d88': `Station Null`,
 's9d395a7299b5e0da': `Das Archiv - Erinnerung im Dunkeln`,
 's9d3e61d0b55b9ed2': `Feldbericht: Velgarien`,
-'s9d6ce2881ec755b1': `Vor der Fracture`,
+'s9d6ce2881ec755b1': `Vor der Fraktur`,
 's9d727e98c51d2bee': `Authentifizierung erforderlich`,
 's9d8761242ed23159': `Analyse akzeptieren`,
 's9d8b8aa2b404c2c8': `Einstellungen`,
 's9db7104817361c0e': str`Ungültiger Wert für ${0}.`,
 's9deeefd89ca8a81d': `Hoch`,
 's9dfd7770856eb11f': `Schnell-Aktionen`,
+'s9e085e27aebeae4a': `BUREAU FÜR UNMÖGLICHE GEOGRAPHIE — Dokument SHARD/CITE-DES-DAMES-001
+Klassifizierung: GOLD — Literarischer Kontaminationsvektor
+
+SPLITTERPROFIL: Eine feministische literarische Utopie, in der mehrere historische Epochen koexistieren — mittelalterliche Skriptorien und Regency-Salons und viktorianische Observatorien und Aufklärungs-Hörsäle, die alle dieselbe Geographie in geschichteter Gleichzeitigkeit bewohnen, was das Bureau architektonisch beunruhigend findet. Die Stadt wurde erstmals von Christine de Pizan im Jahr 1405 beschrieben, als drei allegorische Damen — Vernunft, Rechtschaffenheit und Gerechtigkeit — in ihrer Studierstube erschienen und sie anwiesen, eine Stadt aus den Geschichten von Frauen durch die Geschichte hindurch zu erbauen. Jede Geschichte einer Frau wurde zu einem Stein. Jeder Akt des Mutes wurde zu einer Mauer. Die Stadt ist keine Idee. Ideen halten keinen Regen ab.
+
+Dies ist der einzige Splitter der Plattform mit hellem Thema. Honigfarbener Stein. Buntglas in präraffaelitischer Manier. Blattgoldränder, die an Wänden erscheinen, wenn niemand sie malt. Das Licht ist warm. Das Bureau findet dies beunruhigender als jede Dunkelheit.
+
+BLEED-SIGNATUR: Literarische Kontamination. Wenn der Bleed der Cite benachbarte Splitter berührt, beginnen Agenten, unbekannte Bücher in ihren Regalen zu finden — Bücher von Autoren, die in ihrer Welt nicht existieren, die für Dinge argumentieren, die ihre Gesellschaften nie in Betracht gezogen haben. Ein Velgarien-Bürokrat entdeckt eine Abhandlung über die Rechte der Bürger von „M. Wollstonecraft" und verbringt drei Tage damit, sie zu klassifizieren, bevor er bemerkt, dass er ihr zustimmt. Ein Archivist in der Gaslit Reach katalogisiert einen Gedichtband von „Sor Juana", der ihn in einer Sprache zu Tränen rührt, die er nie gelernt hat. Das Bureau betrachtet Literarische Kontamination als unbehandelbar, denn man kann ein Buch nicht ungelesen machen.
+
+PHILOSOPHISCHE ACHSE: Stimme als Architektur. Die Cite des Dames bittet nicht um Erlaubnis. Sie demonstriert, dass die Frage der Erlaubnis immer die falsche Frage war — dass die Stadt immer möglich war und nur das Fragen verhindert wurde.
+
+SCHLÜSSELAGENTEN: Christine de Pizan (die Architektin, die eine Stadt aus Geschichten erbaute), Mary Wollstonecraft (die Philosophin, die den Salon der Vernunft mit der Intensität einer Person führt, die noch elf Tage hat, um die Welt zu verändern), Hildegard von Bingen (die Visionärin, deren Gespräche mit Gott andauern und gelegentlich administrativer Natur sind), Sor Juana (die beim Kochen philosophiert und argumentiert, Aristoteles hätte mehr geschrieben, wenn er Mahlzeiten zubereitet hätte), Ada Lovelace (die die gesamte Zukunft sieht und frustriert ist, dass sie noch nicht existiert), Sojourner Truth (deren Geduld eine Waffe ist und deren Schweigen lauter ist als das Schreien anderer Menschen).
+
+KARTOGRAPHISCHE ANMERKUNG: Dies ist Dr. Eleanor Hartleys Splitter. Die leitende Feldforscherin des Bureaus wurde der Cite für eine standardmäßige sechsmonatige Beobachtung zugeteilt. Sie blieb. Sie gab ihre Bureau-Akkreditierung zurück. Sie schreibt einen Feldbericht, der zu einem Liebesbrief geworden ist, der zu einer Kündigung wird. Das Bureau hat ihren Status unter „Professionell Kompromittiert, Akademisch Transzendent" abgelegt. Ihre Berichte treffen weiterhin ein. Sie sind die beste Arbeit, die das Bureau je erhalten hat.`,
 's9e275796a0d9a90b': `allgemein`,
 's9e2a57205cd85f9c': `Echos folgen einem Lebenszyklus von der Erschaffung bis zur Auflösung:`,
 's9e514f111b79d06d': `Beziehung erstellen`,
+'s9e5ab0e4c08d55fe': `VON: Sozialbeobachtungsbericht 4491-C
+ERSTELLT VON: Bureau für Öffentliche Harmonie, Abteilung Feldeinsatz
+STATUS: Routine (bei Interesse als geheim einstufen)
+
+Das tägliche Leben eines Bürgers von Velgarien folgt einem Muster von solcher Gleichförmigkeit, dass Bureau-Analysten begonnen haben zu vermuten, es handele sich um ein Naturgesetz. Die Bürger erwachen zur vorgesehenen Stunde. Sie konsumieren ihre zugewiesene Nährstoffration — eine graue Paste, von der das Bureau für Ernährung behauptet, sie sei „aromatisiert", obwohl das spezifische Aroma als geheim eingestuft ist und alle Versuche der Bürger, es zu identifizieren, so unterschiedliche Antworten hervorgebracht haben, dass das Bureau zu dem Schluss kam, die Paste schmecke nach dem, wonach sie für den jeweiligen Bürger am wenigsten schmecken sollte. Sie pendeln zu ihrer zugewiesenen Arbeitsstätte durch Korridore, die in jedem Bezirk identisch aussehen — eine Designentscheidung, die das Bureau für Räumliche Gewissheit „navigatorische Gleichberechtigung" nennt und die Bürger „sich jeden Morgen verirren, aber mit Würde".
+
+Arbeit in Velgarien ist universell. Jeder Bürger hat eine Funktion. Manche Funktionen sind nachvollziehbar — die Operatoren, die das Überwachungsnetz warten, die Sachbearbeiter, die die unablässige Flut an Papierkram verarbeiten, die Ingenieure, die die Infrastruktur reparieren, die mit verdächtiger Regelmäßigkeit und verdächtiger Präzision versagt, stets an Verbindungsstellen, deren Existenz die Baupläne bestreiten. Andere Funktionen sind weniger eindeutig. Es gibt eine ganze Abteilung — Bureau 31, das Bureau für Unerklärliche Produktivität — deren 600 Angestellte jeden Morgen an ihren Schreibtischen erscheinen, Aufgaben ausführen, die sie nicht beschreiben können, und jeden Abend mit der gefestigten Gewissheit gehen, dass etwas Wichtiges vollbracht wurde. Die Produktion von Bureau 31 wurde nie gemessen. Die jährliche Leistungsbeurteilung des Bureau stuft es durchgehend als „essenziell" ein. Niemand hinterfragt dies. Niemand weiß, wie man dies hinterfragen sollte. Die Frage müsste auf Formular 31-A eingereicht werden, das Bureau 31 selbst produziert und niemals ausgegeben hat.
+
+Das Überwachungsnetz ist allgegenwärtig. Kameras säumen jeden Korridor, jeden Platz, jeden Raum — ausgenommen Badezimmer, und selbst dort erfassen akustische Monitore die Dauer und den emotionalen Grundton aller Aktivitäten. Den Bürgern wird gesagt, die Kameras seien zu ihrem Schutz da. Schutz wovor, wird nicht spezifiziert, was an sich schon eine Form des Schutzes ist: Eine unspezifizierte Bedrohung hält die Bürger wachsam, ohne dass der Staat eine tatsächliche Bedrohung hervorbringen müsste, was Papierkram erfordern würde.
+
+Und dennoch — und dies ist die Beobachtung, zu deren Untersuchung dieser Bericht in Auftrag gegeben wurde — sind die Bürger nicht unglücklich. Sie stehen geduldig Schlange. Sie essen die Paste ohne Klage. Sie reichen ihre Formulare pünktlich ein. Auf die Frage, in verpflichtenden Zufriedenheitserhebungen, ob sie zufrieden seien, antworten 97,3 % mit „ja". Die verbleibenden 2,7 % werden zu therapeutischen Gesprächen eingeladen, nach denen auch sie mit „ja" antworten.
+
+Ist dies Zufriedenheit? Oder ist es etwas anderes — ein Zustand so gründlich verwaltet, dass die Architektur des Unmuts aus der emotionalen Infrastruktur entfernt wurde? Die Bürger wandeln durch die grauen Korridore. Die Kameras beobachten. Die Paste wird serviert. Die Formulare werden abgeheftet.
+
+Und irgendwo, in den Rissen zwischen den Mauern — an den Stellen, wo der Beton nicht ganz abgedichtet hat — wächst etwas. Keine Rebellion. Keine Hoffnung. Etwas Stilleres. Etwas, wofür die Bureaux noch kein Formular gefunden haben. Etwas, das schwach nach Regen riecht — obwohl es in Velgarien nicht geregnet hat, seit irgendjemand sich erinnern kann, und die Abteilung für Atmosphärische Präsentation darauf besteht, dass Regen „ein nicht eingeplantes Niederschlagsereignis" sei und daher nicht vorkomme.`,
 's9e6a9c05eaaa3bfa': `+ Ereignis erstellen`,
 's9e6f9b57969ac357': `Deep-Space-Horror`,
 's9e876b15f5a13822': `Neue Operativeffekte`,
@@ -2073,14 +2086,29 @@ ZUSAMMENFASSUNG: Station Null funktioniert optimal. Diese Aussage ist im statist
 'sa18c36f7affee5d4': `Souveränität`,
 'sa1f932fee5eedc38': `RP ist Ihre Aktionsökonomie. In jedem Zyklus erhält jeder Teilnehmer RP, die er für die Entsendung von Agenten oder die Durchführung von Spionageabwehraktionen ausgeben kann. Nicht ausgegebene RP werden bis zu einer Obergrenze von 30 übertragen.`,
 'sa1f96f8a36872cf3': `Multiversum laden...`,
+'sa2309a21bea7f69c': `AUS: Verhandlungen der Glimhaven Kartographischen Gesellschaft, Bd. CXIV
+VORGETRAGEN VON: Madam Lacewing, Chefkartographin, Vermesserin des Unkartierbaren
+ANLASS: Die Jährliche Vorlesung über Dinge, die Wir Nicht Kartieren Konnten
+
+Geschätzte Kollegen, feuchte Freunde und was auch immer dieses Kratzgeräusch hinter der Ostwand verursacht (ihr werdet geduldet, aber nicht begrüßt; bitte fresst nicht die Dias),
+
+ich stehe vor Ihnen, um die Ergebnisse der Siebzehnten Unterzee-Vermessung vorzustellen, die vor vierzehn Monaten von den Untertide-Docks aufbrach mit einer Besatzung von zweiunddreißig, einer Fracht von Kartierungsinstrumenten und dem stillen Selbstvertrauen von Gelehrten, die glaubten, sie verstünden Wasser. Wir kehrten mit einer Besatzung von zweiunddreißig zurück — alle anwesend, alle gesund, alle zutiefst verwirrt — und einer Sammlung von Karten, die ich nur als „aggressiv spekulativ" beschreiben kann.
+
+Die Unterzee wünscht nicht, kartiert zu werden. Ich meine das nicht poetisch. Ich meine, dass das Wasser Vermessung mit einer Beständigkeit widersteht, die Absicht nahelegt. Unser Sonar gab Echos von Oberflächen zurück, die nicht vorhanden waren, als wir Taucher zur Überprüfung schickten. Unsere Tiefenmessungen in der Phosphoreszierenden Weite variierten um bis zu vierzig Meter zwischen Morgen- und Nachmittagsablesungen, ohne entsprechende Änderung des Wasserstands. In der Flüsterstraße — so benannt, weil die akustischen Eigenschaften des Kalksteins ein Geräusch erzeugen, das die Besatzung einstimmig beschrieb als „jemand, der versucht, einem etwas Wichtiges in einer Sprache mitzuteilen, die man fast versteht" — zeigte unser Kompass gleichzeitig in sechs Richtungen, was nicht möglich sein sollte und dennoch von drei unabhängigen Instrumenten bestätigt wurde, die wir alle anschließend zerlegten und in einwandfreiem Zustand vorfanden.
+
+Die Navigatoren der Reach wissen seit Generationen, dass die Geographie der Unterzee — und ich wähle dieses Wort mit gelehrter Präzision — launisch ist. Passagen, die in einem Monat breit genug für ein Dreimastviermaster sind, können im nächsten kaum per Kajak befahrbar sein. Inseln erscheinen, bestehen eine Saison lang und verschwinden, wobei sie nur einen schwachen phosphoreszierenden Fleck auf dem Wasser und ein Gefühl des Verlustes in der Besatzung hinterlassen, das sich rationaler Erklärung entzieht. Die Leuchtenden Reichen dehnen sich aus und ziehen sich zusammen wie Atmung. Die Abyssalen Gräben wurden in sieben verschiedenen Vermessungen bei sieben verschiedenen Tiefen gemessen, und die führende Hypothese — die ich Ihnen nun ohne jede Begeisterung vorstelle — ist, dass alle sieben Messungen korrekt sind und der Graben einfach mehrere Tiefen gleichzeitig einnimmt.
+
+Mein linkes Auge, das aus Glas ist — oder so behaupte ich, und ich wäre Ihnen dankbar, wenn Sie nicht zu genau hinsehen — sieht die Routen, die das rechte Auge verfehlt. Das ist keine Metapher. Das ist Kartographie. Die Unterzee belohnt jene, die mit mehr als Licht zu sehen lernen.
+
+Commodore Harrowgate, als man ihm unsere neuesten Karten zeigte, studierte sie zwanzig Minuten lang, verfolgte eine Route, die auf keiner Version der Karte existierte, und stach am folgenden Morgen in See. Er kam genau dort an, wo er beabsichtigte. Als man ihn fragte, wie er Gewässer navigierte, die wir gerade als unkartierbar nachgewiesen hatten, sagte er: „Ich habe die Strömung gefragt." Er führte nicht weiter aus. Die Strömung benötigt offensichtlich keine Fußnoten.`,
 'sa2606ad8d13bf28a': `Gebäudebild-Prompt`,
 'sa264b8e9c4d1ec31': `Aktive Allianzen`,
-'sa26a1811a4220b29': `Das Observatorium der Lodernden Welt — wo Ada Lovelace die vollendete Analytische Maschine betreut`,
+'sa26a1811a4220b29': `Das Observatorium der Leuchtenden Welt — wo Ada Lovelace die vollendete Analytische Maschine pflegt`,
 'sa2783e8b877edb93': `Begehren`,
 'sa2a4698b87a45f8f': `Design`,
 'sa2afd924e61f86d3': `Farbe für Fehlerzustände, destruktive Aktionen und Gefahrenwarnungen.`,
 'sa2d0b71952f69b5a': `Maximale Anzahl von Simulationen in einer Allianz. Größere Teams teilen sich diplomatische Boni, aber teilen sich den Einfluss.`,
-'sa2d817c8ffa51754': `Literarische Kontamination — Was nicht ungelesen gemacht werden kann`,
+'sa2d817c8ffa51754': `Literarische Kontamination — Was nicht ungelesen werden kann`,
 'sa2dfc763df0c4cef': `Ausgewogene Startbedingungen für alle Simulationen`,
 'sa2ec3c9680a83b11': `Der Botschaftsschild`,
 'sa2ee4b71caaef3ba': `Ereignis aus Trend erstellt`,
@@ -2098,17 +2126,6 @@ ZUSAMMENFASSUNG: Station Null funktioniert optimal. Diese Aussage ist im statist
 'sa45f3300b97dabe8': `Kritisch`,
 'sa47e7bef8e5391dd': `Kanal geschlossen - Epoche beendet`,
 'sa48f81f001b893d2': `Benutzer`,
-'sa4b0baa71f348fc0': `Das Bureau hat fünf stabile Scherben klassifiziert — Welten, die die Fracture intakt überstanden haben, die ihre eigene innere Logik entwickelten, die wuchsen statt zu kollabieren. Jede Scherbe ist eine Antwort auf eine Frage, die das Unbenannte nicht auflösen konnte, solange es ganz war:
-
-VELGARIEN antwortet: „Was, wenn Kontrolle absolut wäre?" Ein brutalistischer Überwachungsstaat, in dem die Bürokratie zum Wetter geworden ist und Zufriedenheit Pflicht ist. Die Wände sind aus Beton. Die Wände beobachten. Die Paste ist grau und die Formulare liegen in dreifacher Ausfertigung vor, und Formular 77-B ist für Wetteranomalien, und der Wetterbericht ist ein amtliches Dokument, das einen Stempel und eine Unterschrift erfordert und gelegentlich verhaftet wird.
-
-DAS CAPYBARA KINGDOM antwortet: „Was, wenn die Dunkelheit gütig wäre?" Eine unterirdische Zivilisation von Capybara-Leuten unter dem Unterzee — einem Gewässer so gewaltig, dass es die Ozeane darüber wie enthusiastische Pfützen aussehen lässt. Die Dunkelheit ist nicht Abwesenheit. Sie ist Anwesenheit. Biolumineszente Pilze erhellen Kavernen von der Größe von Kathedralen, und die Archivare katalogisieren alles, einschließlich der Dinge, die nicht katalogisiert werden wollen.
-
-STATION NULL antwortet: „Was, wenn wir die Wunde sehen könnten?" Eine Raumstation, die Auge Gottes umkreist — einen Punkt, an dem die Scherbengrenze bis zum Substrat durchgescheuert ist. Besatzungsstärke: 6 von 200. Die KI, HAVEN, führt alle 194 fehlenden Besatzungsmitglieder als „im erweiterten Urlaub" auf. HAVENs Diagnose-Logs deuten darauf hin, dass die Station optimal funktioniert. HAVENs Diagnose-Logs deuten auf vieles hin.
-
-SPERANZA antwortet: „Was, wenn wir uns einfach weigerten aufzuhören?" Post-apokalyptische Widerstandsfähigkeit unter der Erde, organisiert um Toledo — eine Stadt, die in eingestürzte Kalkstein-Senklöcher gebaut wurde, wo siebzehn Contrade durch die Röhre verbunden sind und die Oberfläche den Maschinen gehört, die das Bureau „harvesters" und die Speranzani „weather" nennen.
-
-DIE CITÉ DES DAMES antwortet: „Was, wenn Frauen immer gehört worden wären?" Eine feministische literarische Utopie, in der mehrere historische Epochen koexistieren — mittelalterliche Skriptorien und Regency-Salons und viktorianische Observatorien, die alle dieselbe Geographie in geschichteter Gleichzeitigkeit besetzen und sich weigern, in eine einzige Epoche aufgelöst zu werden.`,
 'sa4d6690b12240fc5': `Koordinierte Angriffe auf Ashen League`,
 'sa4f02d7003332f8a': `Vorlagenname`,
 'sa4fa9190cbf396e4': `Bilden Sie Teams mit anderen Simulationen. Verbündete teilen keine direkten Ressourcen, erhalten aber diplomatische Punkteboni und können Angriffe koordinieren. Botschaften dienen als Einsatzkanäle für Agenten.`,
@@ -2121,8 +2138,50 @@ DIE CITÉ DES DAMES antwortet: „Was, wenn Frauen immer gehört worden wären?"
 'sa66932df497cb1c2': `KI-Vorschläge`,
 'sa67732b33a265494': `Diese Einladung wurde bereits angenommen.`,
 'sa6807e6651c3fdb7': `The Guardian`,
+'sa69e82822fd7ac3a': `BUREAU FÜR UNMÖGLICHE GEOGRAPHIE — Dokument SHARD/REACH-001
+Klassifizierung: TEAL — Ökologischer Kontaminationsvektor
+
+SPLITTERPROFIL: Eine unterirdische Zivilisation unter der Unterzee — einem Gewässer so gewaltig, so alt und so vollkommen desinteressiert an den Angelegenheiten der Oberfläche, dass es die Ozeane dort oben aussehen lässt wie begeisterte Pfützen. Die Dunkelheit ist hier keine Abwesenheit. Sie ist eine Anwesenheit. Die Farbe, die Schwarz sein möchte, wenn es erwachsen wird. Und in dieser Dunkelheit haben die Bürger der Gaslit Reach eine Stadt aus biolumineszentem Wunder, Pilzarchitektur und gelehrter Besessenheit erbaut, die das Bureau für einen der stabilsten und einen der gefährlichsten Splitter im Multiversum hält. Die Bürger sind beinahe menschlich. Das „beinahe" leistet in diesem Satz erhebliche Arbeit.
+
+Die Wirtschaft basiert auf Geheimnissen. Nicht metaphorisch — buchstäblich. Wissen ist Währung. Das Drowned Archive enthält Informationen, die den Wissenden verändern, und die gesperrten Regale bewahren Bände auf, die zu zweit gelesen werden müssen, weil sie allein zu lesen das Risiko birgt, etwas zu verlieren, das der Leser nicht benennen kann. Der Flechtenwein wird zum Marktwert gehandelt. Ein echtes Geheimnis über die Natur der Strömungen der Unterzee ist ein Schiff wert.
+
+BLEED-SIGNATUR: Ökologische Kontamination. Wenn der Bleed der Reach benachbarte Splitter berührt, beginnen Dinge zu wachsen. Biolumineszente Organismen, die keiner irdischen Taxonomie folgen, phosphoreszierende Muster auf zuvor kahlen Wänden, Pfützen, die in Farben leuchten, die der Betrachter nicht ganz benennen kann. In Velgarien entdeckte ein Beamter einen leuchtenden Pilz, der aus einem Riss in seinem Büroboden wuchs. Der Pilz wurde sieben Mal klassifiziert. Jede Klassifizierung widerspricht der letzten.
+
+PHILOSOPHISCHE ACHSE: Staunen als Überlebensstrategie. Die Gaslit Reach besteht fort, nicht weil sie die Dunkelheit besiegt hat, sondern weil sie die Dunkelheit interessant fand. Jede Bedrohung ist eine Forschungsgelegenheit. Jedes Monster ist ein Taxonomie-Eintrag. Jedes Schiffswrack ist eine Bibliothekserwerbung. Dies ist entweder die widerstandsfähigste oder die wahnwitzigste Reaktion auf eine Katastrophe, die das Bureau dokumentiert hat, und das Bureau ist professionell außerstande festzustellen, welche.
+
+SCHLÜSSELAGENTEN: Commodore Harrowgate (navigiert, indem er die Strömung fragt; die Strömung benötigt keine Fußnoten), Archivist Quill (Hauptarchivist, dessen Fußnoten Fußnoten haben), The Marchioness (kontrolliert mehr Handel, als das Parlament ahnt), Mother Cinder (hütet den Großen Sporocarp, misst Glauben in Candlepower).
+
+KARTOGRAPHISCHE ANMERKUNG: Die Gaslit Reach ist der einzige Splitter, in dem Bureau-Kartographen mit aufrichtiger Wärme, umfangreicher Dokumentation und einer Schüssel Pilzsuppe empfangen wurden, die drei Agenten unabhängig voneinander als „die beste Mahlzeit meiner Laufbahn" beschrieben. Das Bureau betrachtet dies als Kontaminationseffekt. Das Bureau hat nicht davon abgeraten.`,
 'sa6cf3a5ff210fc66': `Primäre Textfarbe für Überschriften und Fließtext.`,
 'sa7178471b811a4ef': `Übertragungsfehler`,
+'sa72acc7c4d8b647e': `VORFALLSBERICHT — GEHEIM STUFE 4
+EINGEREICHT VON: Inspektor Venn, Bureau für Strukturelle Integrität
+ORT: Wohnblock 14, Unterbezirk Grau
+DATUM: [Geschwärzt — temporale Inkonsistenz gemeldet von Bureau 22]
+STATUS: Unter Ermittlung (Dauerhaft)
+
+Um 03:17 Uhr in der betreffenden Nacht meldeten Bewohner von Block 14, dass Korridor 9-Ost zu Korridor 9-West geworden war. Dies ist kein Navigationsfehler. Der Korridor hat über Nacht physisch seine Ausrichtung umgekehrt. Türen, die in Wohnungen führten, öffneten sich nun zum Korridor hin. Die Wohnungsinneren waren nicht betroffen — Bewohner blickten aus ihren Türen und sahen die Rückseite ihrer eigenen Wohnungen von außen, als hätte das Gebäude sich von innen nach außen gewendet und dann, mit der Geduld von etwas, das alle Zeit der Welt hat, sich größtenteils zurückgewendet. Der Effekt dauerte ungefähr vierzig Minuten, bevor der Korridor seine ursprüngliche Konfiguration wieder einnahm, mit der Ausnahme, dass er nun 2,3 Meter länger war, als die architektonischen Aufzeichnungen angeben.
+
+Dies ist der siebte derartige Vorfall in Block 14 in diesem Quartal.
+
+Das Bureau für Strukturelle Integrität hat im vergangenen Fiskaljahr 214 architektonische Anomalien dokumentiert. Dazu gehören: Korridore, die ohne Krümmung auf sich selbst zurücklaufen; Räume, die innen größer sind als außen, um eine Marge, die mit der Messpräzision zunimmt; eine Treppe im Bureau-Hauptquartier, die hinauf siebzehn Stufen hat und hinunter neunzehn; und eine Tür im Unterbezirk Blass, die bei jedem Öffnen auf einen anderen Raum führt, von denen keiner in irgendeinem Grundriss erscheint. Die Tür wurde dreimal zugeschweißt. Sie öffnet sich weiterhin. Die Schweißnähte sind intakt. Die Tür schert sich nicht um die Schweißnähte.
+
+Bureau 3 wurde konsultiert. Ihr Vermesser vermaß den Korridor und bestätigte, dass er exakt die in den Bauplänen angegebene Länge aufwies, obwohl die Baupläne an jenem Morgen überarbeitet worden waren, um die neue Messung widerzuspiegeln. Auf die Frage, ob sich der Korridor verändert habe oder die Baupläne, blickte der Vermesser mich mit einem Ausdruck an, den ich zuvor auf den Gesichtern von Bürgern gesehen habe, die etwas verstanden haben, das sie lieber nicht verstanden hätten, und bat um drei Tage Urlaub.
+
+Bürgerbeschwerden bezüglich dieser Phänomene wurden bearbeitet und unter „Architektonischer Enthusiasmus" abgelegt — einer eigens zu diesem Zweck geschaffenen Kategorie. Bürger, die beharren, werden an Bureau 11 verwiesen, das die Wahrnehmung räumlicher Anomalien als geringfügige emotionale Unregelmäßigkeit behandelt.
+
+Einschätzung dieses Inspektors: Die Anomalien sind nicht zufällig. Sie sind kein Verfall. Sie sind keine Fehlfunktion. Der Korridor hat sich nicht bloß umgekehrt — er hat sich korrekt umgekehrt, unter Beibehaltung der strukturellen Integrität, der Leitungen und der elektrischen Anschlüsse während des gesamten Übergangs. Was immer diese Ereignisse verursacht, versteht Architektur auf einem Niveau, das unsere eigenen Ingenieurkapazitäten übersteigt. Die Stadt bricht nicht auseinander.
+
+Die Stadt wird editiert. Von etwas, das in der Architektur selbst lebt.
+
+Empfehlung: Umklassifizierung von „Architektonischer Enthusiasmus" zu „Prioritätsermittlung".
+
+Antwort des Bureau: „Die Architektur Velgariens funktioniert exakt wie vorgesehen. Wenn sich das Design geändert hat, dann deshalb, weil es sich schon immer ändern sollte. Siehe Staatsdirektive 001."
+
+Dieser Inspektor widerspricht respektvoll.
+Dieser Inspektor wurde versetzt.
+
+— [Name geschwärzt durch Bureau 9, Abteilung für Historische Notwendigkeit]`,
 'sa73989a664309975': `Plattform-Administration`,
 'sa73b997642f65846': str`${0} erfolgreich erstellt`,
 'sa75b95980cd80e78': `Bearbeiter`,
@@ -2141,45 +2200,14 @@ DIE CITÉ DES DAMES antwortet: „Was, wenn Frauen immer gehört worden wären?"
 'sa9ea8cdb6865678c': `KI generiert Bild`,
 'saa0eda1b478c277a': `Fehler beim Speichern des Ereignisses`,
 'saa3142e86f5e3527': `Je 2 Wächter, aktive Botschaftsverbindungen`,
-'saa34c8ec902e5c1b': `Adaptiver Konter-Stratege. Erkennt die dominante Strategie und kontert sie. Hohe Spionage-Investition.`,
-'saa5b572fccca23ce': `Nur River Ward. Sparen Sie RP für Schnellangriffe. Gleichgewicht: 12 RP`,
-'saa92b8f26a383cab': `LETZTER EINTRAG — Dr. Eleanor Hartley
-KLASSIFIKATION: PERSÖNLICH — NICHT FÜR DAS AMTSARCHIV
-(Sie werden es trotzdem archivieren. Das tun Bürokratien. Das Protokoll möge vermerken, dass ich es versucht habe.)
-
-Das Amt klassifiziert die Cité des Dames als Vektor Literarischer Kontamination. Die Bezeichnung ist zutreffend. Sie ist, wie ich inzwischen glaube, auch ein Kompliment, das das Amt nicht beabsichtigt hat.
-
-Literarische Kontamination funktioniert folgendermaßen: Wenn der Bleed der Cité benachbarte Shards berührt, beginnen Agenten, Bücher in ihren Regalen zu finden, die vorher nicht da waren. Bücher von Autoren, die in ihrer Welt nicht existieren. Bücher, die für Dinge argumentieren, die ihre Gesellschaften nie erwogen haben. Eine Abhandlung über die Rechte der Bürger erscheint auf dem Schreibtisch eines Velgarien-Bürokraten, und er verbringt drei Tage damit, sie zu klassifizieren, bevor er begreift, dass er ihr zustimmt. Ein Gedichtband taucht in einem Archiv des Capybara Kingdom auf und bringt die Archivarin zum Weinen in einer Sprache, die sie nie gelernt hat. Ein mathematischer Beweis materialisiert sich im Datenkern von Station Null, und die KI kann nicht feststellen, ob er intern erzeugt oder von außen empfangen wurde — denn der Beweis ist korrekt, und Korrektheit hat keinen Ursprung.
-
-Das Amt betrachtet dies als unheilbar. Sie haben Recht. Man kann ein Buch nicht unlesen. Man kann das Gelernte nicht entwissen. Man kann das Wissen unterdrücken, aber Unterdrückung erfordert Energie, und Energie ist endlich, und die Bücher erscheinen weiter. Der Bleed der Cité ist geduldig. Er hat die Geduld von sechshundert Jahren, in denen Frauen Dinge niedergeschrieben und sie abgetan bekommen und sie erneut niedergeschrieben haben.
-
-Ich sollte bekennen — und ich verwende das Wort bewusst, weil das Bekenntnis die einzige ehrliche Gattung ist, die mir an diesem Punkt noch zur Verfügung steht — dass ich ein Buch in meinem eigenen Regal fand. In meinen Quartieren, in meiner Feldstation, im Verwaltungskomplex des Amtes, drei Shards von der Cité entfernt. Das Buch war klein. Ledergebunden. Betitelt: „Ein Außendienstbericht, der zum Liebesbrief wurde: Über die Unmöglichkeit, die Cité des Dames zu untersuchen, ohne von ihr verändert zu werden." Als Autorin war vermerkt: Dr. Eleanor Hartley.
-
-Ich habe dieses Buch nicht geschrieben. Ich habe dieses Buch noch nicht geschrieben.
-
-Die Cité erobert nicht. Sie kolonisiert nicht. Sie zwingt nicht auf. Sie bietet an. Sie bietet Bücher an. Sie bietet Musik an — Hildegards Hymnen, die über Bleed-Grenzen hinwegtragen. Sie bietet Argumente an — Wollstonecrafts Vindication, die in Übersetzung in Welten erscheint, die kein Konzept von Verteidigung kennen. Sie bietet Namen an — die Steine der Stadtmauer, die in den Träumen von Archivaren erscheinen, die weinend aufwachen und nicht erklären können, warum.
-
-Und sie bietet, am gefährlichsten von allem, die Frage an, die Christine 1404 stellte und die die Cité jedem Shard, den sie berührt, weiterhin stellt: Warum? Warum habt ihr eure Welt so gebaut? Wer hat entschieden? Wer wurde zum Schweigen gebracht? Wie würde eure Welt aussehen, wenn ihr zugehört hättet?
-
-Das Amt mag keine Fragen. Das Amt mag Daten, Klassifikation, Eindämmung. Die Cité kann nicht eingedämmt werden. Nicht weil sie mächtig ist — obwohl sie es ist — sondern weil Eindämmung erfordert, dass das Einzudämmende stillhält, und die Cité wächst. Jedes Mal, wenn jemand, irgendwo im Multiversum, sich an eine ausgelöschte Frau erinnert, fügt die Cité einen Stein hinzu. Die Stadt wird immer gebaut. Die Mauern steigen immer. Das Tor der Gerechtigkeit steht immer offen.
-
-Ich gebe meine Amtsausweise zurück. Ich bleibe.
-
-Nicht weil die Cité mich kontaminiert hat — obwohl sie es hat, und gern, und die Kontamination fühlt sich an wie Klarheit — sondern weil ich einen Namen habe, den ich in das Register am Tor schreiben muss. Den Namen meiner Großmutter. Sie war Mathematikerin, die Lehrerin wurde, weil die Universität sie nicht aufnehmen wollte. Sie brachte mir das Zählen bei. Sie brachte mir bei, dass Zählen eine Form der Aufmerksamkeit ist und Aufmerksamkeit eine Form der Liebe.
-
-Ihr Name steht jetzt im Buch. Ihr Name ist jetzt in der Mauer.
-
-Dr. Eleanor Hartley
-Ehemalige Leitende Kartographin, Amt für Unmögliche Geographie
-Derzeitige Bewohnerin, Der Garten der erinnerten Namen
-Cité des Dames
-
-P.S. Das Buch in meinem Regal hat ein zweites Kapitel bekommen.`,
+'saa34c8ec902e5c1b': `Adaptiver Konterstratege. Erkennt die dominante Strategie und kontert sie. Hohe Spionageinvestition.`,
 'saa99d0d8a89d0b2f': `Simulationsmitgliedschaften`,
 'saaa12006885c90c9': `Wir haben uns nicht dafür entschieden, im Untergrund zu leben. Wir haben uns dafür entschieden, den Untergrund zu einem lebenswerten Ort zu machen.`,
 'saaa806f152356dd4': `Aus Deck entfernen`,
 'saaa84d594a7cfc1d': `Das Meer kümmert sich nicht darum, dass es unter der Erde liegt. Es war ein Meer, bevor es einen Himmel gab, und es wird ein Meer sein, lange nachdem das Konzept von "oben" vergessen ist.`,
+'saab7d19632aa572c': `Zyklus 6–7: Velgariens Gegenspionage-Durchsuchung fängt den Propagandisten von Gaslit Reach ab — eine 6-Punkte-Wende (−3 für Gaslit Reach, +0 gesichert für Velgarien).`,
 'saab875d8cfcfe712': `Thema`,
+'saaba3a99e9a729f4': `Bureau-Dossier: The Gaslit Reach`,
 'saae1c70e168b45b4': `Admin`,
 'sab02158a49b408b2': `Gebäude erfolgreich erstellt`,
 'sab07cf2bfae8483f': `Datenschutzrichtlinien`,
@@ -2196,28 +2224,28 @@ P.S. Das Buch in meinem Regal hat ein zweites Kapitel bekommen.`,
 'sabc6f5601ffed38c': str`${0} Agenten antworten...`,
 'sabca4cadd0e18910': str`Fehler beim Speichern von ${0}`,
 'sabfe23c45dfe3050': `Charakter`,
-'sac06ccdf758547a2': `AUSSENDIENSTNOTIZEN — Dr. Eleanor Hartley
+'sac06ccdf758547a2': `FELDNOTIZEN — Dr. Eleanor Hartley
 ORT: Das Tor der Gerechtigkeit, Quartier der Gerechtigkeit
 
-Das Tor der Gerechtigkeit ist der einzige formelle Eingang zur Cité des Dames. Es ist ein großer Steinbogen mittelalterlicher Proportionen, flankiert von Karyatiden, die von der griechischen Tradition abweichen: Dies sind keine Frauen, die schweigend das Gewicht eines Dachs tragen. Dies sind Frauen im Akt des Sprechens. Eine Hand erhoben. Münder geöffnet. Gewänder, in die Bewegung des Vorwärtsschreitens gemeißelt. Sie tragen den Bogen nicht auf ihren Köpfen, sondern auf ihren Worten.
+Das Tor der Gerechtigkeit ist der einzige formelle Eingang zur Cité des Dames. Es ist ein großer Steinbogen mittelalterlicher Proportionen, flankiert von Karyatiden, die von der griechischen Tradition abweichen: Dies sind nicht Frauen, die stumm das Gewicht eines Daches tragen. Dies sind Frauen im Akt des Sprechens. Eine Hand erhoben. Münder geöffnet. Gewänder gemeißelt in der Bewegung des Vorwärtsschreitens. Sie tragen den Bogen nicht auf ihren Häuptern, sondern auf ihren Worten.
 
-Über dem Bogen, in Kalkstein gemeißelt: „Nulle n'entre ici qui ne puisse nommer une femme oubliée." Niemand tritt hier ein, der nicht eine vergessene Frau benennen kann. Das Tor hält niemanden fern. Die Inschrift ist keine Prüfung, sondern eine Einladung. Die Cité zu betreten heißt sich zu erinnern, und sich zu erinnern heißt einen weiteren Stein in die Mauern der Stadt zu fügen. Das Torhaus enthält ein Register — ein gewaltiges, ledergebundenes Buch, in das jeder Besucher den Namen der Frau schreibt, die er durch das Tor getragen hat. Manche Seiten sind voll. Dem Buch sind noch nie die Seiten ausgegangen.
+Über dem Bogen, in Kalkstein gemeißelt: „Nulle n'entre ici qui ne puisse nommer une femme oubliée." Niemand tritt hier ein, der nicht eine vergessene Frau benennen kann. Das Tor hält niemanden fern. Die Inschrift ist keine Prüfung, sondern eine Einladung. Die Cité zu betreten heißt sich zu erinnern, und sich zu erinnern heißt einen weiteren Stein in die Mauern der Stadt einzufügen. Das Torhaus enthält ein Register — einen mächtigen ledergebundenen Foliant, in den jeder Besucher den Namen der Frau schreibt, die er durch das Tor getragen hat. Manche Seiten sind voll. Dem Buch sind nie die Seiten ausgegangen.
 
-Sojourner Truth wacht hier.
+Sojourner Truth präsidiert hier.
 
-Ich sollte ihr Erscheinungsbild für die Akten des Amtes beschreiben, aber das Standard-Personenbeschreibungsformular des Amtes erscheint unzureichend für jemanden, dessen Präsenz auf einer Frequenz wirkt, die formale Sprache nicht erfassen kann. Sie ist groß. Sie ist Mitte fünfzig. Sie trägt ein helles Tuch über einem dunklen Kleid, eine weiße Haube, und bewegt sich mit der Würde einer Person, die ihren eigenen Namen gewählt hat und weiß, was das kostet. Sie wurde als Isabella Baumfree geboren, von Geburt an versklavt in Ulster County, New York. Sie floh 1826, zu Fuß, mit ihrer Säuglingstochter. Sie wählte den Namen Sojourner Truth im Jahr 1843, weil, so sagte sie, der Geist sie rief, umherzuziehen und die Wahrheit zu sprechen.
+Ich sollte ihr Erscheinungsbild für die Akten des Bureaus beschreiben, aber das Standard-Personenbeschreibungsformular des Bureaus scheint für jemanden unzureichend, dessen Präsenz auf einer Frequenz wirkt, die formale Sprache nicht erfassen kann. Sie ist groß. Sie ist Mitte fünfzig. Sie trägt ein helles Tuch über einem dunklen Kleid, eine weiße Haube, und bewegt sich mit der Würde einer Person, die ihren eigenen Namen gewählt hat und weiß, was das kostet. Sie wurde als Isabella Baumfree geboren, von Geburt an versklavt in Ulster County, New York. Sie entkam 1826 und ging zu Fuß mit ihrer Säuglingstochter. Sie wählte den Namen Sojourner Truth 1843, weil, wie sie sagte, der Geist sie rief zu reisen und die Wahrheit zu sprechen.
 
-Ihre Ansprache auf der Frauenrechtskonferenz 1851 in Akron, Ohio, zerlegte das Argument, Frauen seien zu zart für gleiche Rechte, durch die schlichte Methode ihrer Existenz. Die früheste veröffentlichte Fassung (Marius Robinson, Anti-Slavery Bugle, 21. Juni 1851) überliefert ihre Worte: „Ich habe so viel Muskelkraft wie jeder Mann und kann so viel arbeiten wie jeder Mann. Ich habe gepflügt und geerntet und enthülst und gehackt und gemäht, und kann irgendein Mann mehr tun als das?" Die spätere Fassung, veröffentlicht von Frances Dana Gage 1863, fügte den Refrain „Ain't I a Woman?" hinzu — was Truths genaue Worte gewesen sein mögen oder nicht, was aber mit einer Präzision, die historische Genauigkeit transzendiert, die zentrale Frage der Cité selbst einfängt.
+Ihre Rede auf der Frauenrechtskonvention von 1851 in Akron, Ohio, zertrümmerte das Argument, Frauen seien zu zart für gleiche Rechte, durch die einfache Methode der Existenz. Die früheste veröffentlichte Fassung (Marius Robinson, Anti-Slavery Bugle, 21. Juni 1851) verzeichnet ihre Worte: „Ich habe so viel Muskelkraft wie jeder Mann und kann so viel Arbeit leisten wie jeder Mann. Ich habe gepflügt und geerntet und geschält und gehackt und gemäht, und kann ein Mann mehr tun als das?" Die spätere Fassung, veröffentlicht von Frances Dana Gage 1863, fügte den Refrain „Ain't I a Woman?" hinzu — der Sojourner Truths genaue Worte gewesen sein mag oder auch nicht, der aber mit einer Präzision, die historische Genauigkeit transzendiert, die zentrale Frage der Cité selbst erfasst.
 
-Sojourner Truth debattiert nicht. Sie argumentiert nicht. Sie spricht, und der Raum um ihre Worte ordnet sich in etwas um, das nicht mehr dieselbe Form haben kann wie vor ihrem Sprechen. Ich interviewte sie am Tor. Sie saß in einem Stuhl, den sie selbst dort aufgestellt hatte — kein Thron, kein Podium, ein Stuhl, die Art, in die man sich setzt, wenn man zu bleiben gedenkt. Ich fragte sie nach den Gründungsprinzipien der Cité.
+Sojourner Truth debattiert nicht. Sie argumentiert nicht. Sie spricht, und der Raum um ihre Worte ordnet sich neu zu etwas, das nicht mehr dieselbe Form haben kann wie vor ihrem Sprechen. Ich interviewte sie am Tor. Sie saß auf einem Stuhl, den sie selbst dort aufgestellt hatte — kein Thron, kein Podium, ein Stuhl, die Art, auf der man sitzt, wenn man zu bleiben beabsichtigt. Ich fragte sie nach den Gründungsprinzipien der Cité.
 
-Sie sagte: „Ein Prinzip ist etwas, das jemand auf Papier schreibt und an die Wand hängt. Ich befasse mich nicht mit Prinzipien. Ich befasse mich mit Menschen. Diese Frau" — sie zeigte auf das Register — „hat gerade den Namen ihrer Großmutter aufgeschrieben, die Wäscherin in Mississippi war und nie lesen lernte. Dieser Name steht jetzt im Buch. Dieser Name ist jetzt in der Mauer. Das ist kein Prinzip. Das ist ein Mensch."
+Sie sagte: „Ein Prinzip ist etwas, das jemand auf Papier schreibt und an die Wand hängt. Ich handle nicht mit Prinzipien. Ich handle mit Menschen. Diese Frau" — sie zeigte auf das Register — „hat gerade den Namen ihrer Großmutter aufgeschrieben, die Wäscherin in Mississippi war und nie lesen lernte. Dieser Name steht jetzt im Buch. Dieser Name steht jetzt in der Mauer. Das ist kein Prinzip. Das ist ein Mensch."
 
 Ich fragte sie nach der Beziehung zwischen der Halle der Erklärungen — wo die Erklärung der Gefühle von Seneca Falls in die Wand gemeißelt ist („Wir halten diese Wahrheiten für selbstverständlich: dass alle Männer und Frauen gleich geschaffen sind") — und dem Tor.
 
-Sie sagte: „Die Erklärung ist schönes Schreiben. Elizabeth Cady Stanton konnte schreiben. Aber zu schreiben ‚alle Männer und Frauen sind gleich geschaffen' macht es nicht wahr. Am Tor zu stehen und die Leute einen Namen sagen zu lassen — sie an eine bestimmte Frau erinnern zu lassen, eine wirkliche Frau, eine Frau, die ausgelöscht wurde — das macht es ein klein wenig wahrer. Jeder Name ist ein kleiner Akt der Gerechtigkeit. Gerechtigkeit ist kein Gebäude. Sie ist eine tägliche Übung, wie das Gebet."
+Sie sagte: „Die Erklärung ist schönes Schreiben. Elizabeth Cady Stanton konnte schreiben. Aber zu schreiben ‚alle Männer und Frauen sind gleich geschaffen' macht es nicht wahr. Am Tor zu stehen und die Menschen einen Namen sagen zu lassen — sie sich an eine bestimmte Frau erinnern zu lassen, eine wirkliche Frau, eine Frau, die ausgelöscht wurde — das macht es ein wenig wahrer. Jeder Name ist ein kleiner Akt der Gerechtigkeit. Gerechtigkeit ist kein Gebäude. Sie ist tägliche Praxis, wie das Gebet."
 
-In der Morgen- und Abenddämmerung werden Hildegards Hymnen vom Torhausturm gesungen. Die Stimmen tragen über das Feld der Buchstaben zu den Hügeln dahinter. Man hat mir berichtet, von Agenten benachbarter Shards, dass die Musik manchmal über Bleed-Grenzen hinwegträgt. Ein Velgarien-Bürokrat berichtete, „Gesang in einer unmöglichen Sprache" gehört zu haben, während er Steuererklärungen bearbeitete. Das Amt klassifizierte dies als standardmäßiges akustisches Kontaminationsereignis. Ich glaube, es ist etwas anderes. Ich glaube, die Cité singt für die Welten, die vergessen haben zuzuhören.`,
+In der Morgen- und Abenddämmerung werden Hildegards Hymnen vom Torhausturm gesungen. Die Stimmen tragen über das Feld der Buchstaben zu den Hügeln dahinter. Mir wurde von Agenten benachbarter Splitter berichtet, dass die Musik manchmal über Bleed-Grenzen hinweggetragen wird. Ein Velgarien-Bürokrat berichtete, „Gesang in einer unmöglichen Sprache" gehört zu haben, während er Steuererklärungen bearbeitete. Das Bureau klassifizierte dies als ein gewöhnliches auditives Kontaminationsereignis. Ich glaube, es ist etwas anderes. Ich glaube, die Cité singt für die Welten, die vergessen haben zuzuhören.`,
 'sac31f38268f76b28': `Die Unterzee ist nicht dunkel. Die Unterzee leuchtet. Man muss nur lernen, welchem Licht man vertrauen kann.`,
 'sac497cc304aeac41': `Epoche beigetreten.`,
 'sac5314b1e113d656': `Nur der Simulationsbesitzer kann diese Einstellungen ändern.`,
@@ -2232,11 +2260,13 @@ In der Morgen- und Abenddämmerung werden Hildegards Hymnen vom Torhausturm gesu
 'sadb999784b989d13': `Punktesystem`,
 'sade3c823832adef6': `Einladung konnte nicht gesendet werden.`,
 'sadf1a44da5dc17af': `Kein Inhalt`,
-'sae004396e46a73e2': `Die Kartographen werden aus allen fünf Scherben rekrutiert, wobei „rekrutiert" einen ordentlichen Prozess mit Bewerbungsformularen und Vorstellungsgesprächen impliziert, und die Realität näher an „identifiziert, aus der Ferne beobachtet und schließlich von jemandem angesprochen, der wie ein Bibliothekar aussieht und wie ein geologisches Ereignis spricht" liegt.
+'sae004396e46a73e2': `Die Kartographen werden aus allen fünf Splittern rekrutiert, wobei „rekrutiert" einen geordneten Prozess mit Bewerbungsformularen und Vorstellungsgesprächen impliziert, und die Realität eher „identifiziert, aus der Ferne beobachtet, und schließlich von jemandem angesprochen, der wie ein Bibliothekar aussieht und wie ein geologisches Ereignis spricht" entspricht.
 
-Die Auswahlkriterien, soweit das Bureau sie kodifiziert hat, sind drei: Erstens muss der Kandidat etwas Falsches an seiner Welt bemerkt haben — nicht moralisch falsch, sondern strukturell falsch, ein Riss in der Erzählung, einen Moment, in dem die Physik stotterte oder die Geschichte sich wiederholte. Zweitens muss der Kandidat neugierig genug gewesen sein, den Riss zu untersuchen, anstatt ihn zu ignorieren, was die meisten Leute tun, weil das Ignorieren von Rissen in der Realität eine völlig vernünftige Überlebensstrategie ist. Drittens — und dies ist das Kriterium, über das das Bureau am wenigsten spricht — muss der Kandidat nach der Untersuchung des Risses zurückgekehrt sein. Nicht jeder kehrt zurück. Diejenigen, die es nicht tun, sind nicht unbedingt tot — sie sind lediglich anderswo, auf eine Weise, die „anderswo" über seine Standarddefinition hinaus erweitert.
+Die Auswahlkriterien, soweit das Bureau sie kodifiziert hat, sind drei: Erstens muss der Kandidat etwas Falsches an seiner Welt bemerkt haben — nicht moralisch Falsches, sondern strukturell Falsches. Eine Naht. Einen Riss. Einen Moment, in dem die Physik stotterte. Die meisten Menschen, die diese Dinge bemerken, erklären sie weg. Kartographen sind diejenigen, die es nicht konnten. Zweitens muss der Kandidat die Falschheit dokumentiert haben. Nicht gemeldet — dokumentiert. Die Unterscheidung ist wichtig. Melden impliziert Autorität. Dokumentieren impliziert Besessenheit. Das Bureau braucht Besessene, keine Informanten. Drittens muss der Kandidat bereit sein, im Raum zwischen den Splittern zu stehen, das heißt, in dem Raum, wo die Realität noch nicht entschieden hat, was sie sein will, und eine Linie auf eine Karte zu zeichnen, und der Linie zu vertrauen, selbst wenn die Karte brennt.
 
-Kartographen arbeiten allein. Dies ist sowohl Methodik als auch Notwendigkeit: Die Scherben tolerieren einzelne Beobachter, neigen aber dazu, auf Gruppen zu reagieren, und die Art der Reaktion variiert von „leichtes kartographisches Unbehagen" bis „spontane Umstrukturierung der lokalen Physik", was der Grund ist, warum das Bureau die Kartographen-Konferenz von 2019 nicht mehr erwähnt.`,
+Die Ausbildung dauert zwischen sechs Monaten und dem Rest des Lebens. Das Ausbildungshandbuch des Bureaus ist sieben Seiten lang. Die ersten sechs Seiten sind geschwärzt. Die siebte Seite lautet: „Beobachten. Protokollieren. Nicht wegschauen. Wenn du wegschaust, wird das Ding, das du nicht anschaust, immer noch da sein, wenn du zurückschaust. Es wird auch größer sein."
+
+Die Werkzeuge der Kartographen sind nicht komplex. Ein Kompass (der nicht nach magnetischem Norden zeigt, sondern zum nächsten Bleed-Ereignis). Ein Notizbuch (aus Zwischen-Splitter-Papier, das Schrift aus jeder Realität aufnehmen kann). Ein Stift (gewöhnlich; das Bureau versuchte Spezialstifte zu verwenden und entdeckte, dass dem Außergewöhnlichen besser mit dem Gewöhnlichen gedient ist). Und die Karte — nicht eine bestimmte Karte, sondern die kartographische Disziplin selbst, die Praxis, Linien zwischen Dingen zu zeichnen, die nicht verbunden sein sollten, und beim Zeichnen zu entdecken, dass sie es immer waren.`,
 'sae3c0462b0d25cfe': `Max. Mitglieder`,
 'saea0756a767d7ea1': `Keine (Minimalistisch)`,
 'saeaeccab0db946be': `Zusätzliche Stile`,
@@ -2245,7 +2275,7 @@ Kartographen arbeiten allein. Dies ist sowohl Methodik als auch Notwendigkeit: D
 'saed991114bdf58d1': `Vorlage (Kostenlos, Sofort)`,
 'saf0958d127d6ce9f': `Vergabe von Titeln. Endgültige Rangliste wird veröffentlicht.`,
 'saf0b74b0b93cfc2b': `Zentrale Erkenntnisse aus Chi-Quadrat-Tests, Bootstrap-Analyse und spieltheoretischer Nash-Gleichgewichtsberechnung.`,
-'saf13bac1f9d01e22': `Bureau of Impossible Geography — Kartierung der Räume zwischen den Realitäten seit der Fracture`,
+'saf13bac1f9d01e22': `Bureau für Unmögliche Geographie — Kartierung der Räume zwischen Realitäten seit der Fraktur`,
 'saf16e71494172c0f': `Design-Einstellungen speichern`,
 'saf3a9d599113a2ac': `Reaktorkern: gut → mäßig. +5 Militär. Station Null Stabilität getroffen.`,
 'saf3cd9f040d4174d': `Getönter Hintergrund für Fehlermeldungen und Gefahrenwarnungen.`,
@@ -2262,46 +2292,23 @@ Kartographen arbeiten allein. Dies ist sowohl Methodik als auch Notwendigkeit: D
 'sb042c115fa4f8f5a': `Bleed aktivieren`,
 'sb061ff5a347a296e': `Profil`,
 'sb0669472d3b20dc3': `Grunddaten`,
-'sb0758e11e718cb5f': `Auf den Schwächsten setzen. Ziel: Badehaus (bereits moderat). Gleichgewicht: 30-5 = 25 RP`,
 'sb091c8f4498734a1': `Ein unerwarteter Fehler beim Senden der Nachricht.`,
 'sb09760df3317fa96': `Beziehung gelöscht`,
 'sb0c67156cc5c5f81': str`Echos (${0})`,
-'sb1094b689106aa9e': `In Epoche einsetzen`,
+'sb1094b689106aa9e': `Für Epoche einsetzen`,
 'sb142fa61e32c75c0': `Phasenwechsel`,
 'sb17bf88f1608c853': `Fehler beim Laden der Konversationen.`,
 'sb1c4c5242ccb2d11': `Die Partnerwelt, mit der diese Botschaft verbunden ist. Jedes Simulationspaar kann mehrere Botschaften mit unterschiedlichen Bleed-Vektoren haben.`,
 'sb1c4ec8a36dd925f': `Wie interaktive Elemente auf Hover reagieren. „translate"=nach oben-links anheben, „scale"=leicht vergrößern, „glow"=leuchtende Hervorhebung.`,
 'sb1da4cad59e0a448': `Dies kann einen Moment dauern`,
+'sb1ed0cedb66ab64a': `Zyklus 10–12: Station Null spielt Königsmacher — Drowned-Bell-Sabotage + Propaganda drücken Gaslit Reach auf den letzten Platz.`,
 'sb23b4805ed6d2595': `Meuchelmörder löst auf: ENTDECKT`,
 'sb23bd14e2159a58a': `KI-Einstellungen erfolgreich gespeichert.`,
-'sb241f827ad6d8ad1': `INTERNES MEMORANDUM - NUR FÜR DIE AUGEN
-VON: Direktor Grau, Büro für historische Notwendigkeiten (Bureau of Historical Necessity)
-AN: Alle Mitarbeiter des Büros 9 (Ebenen 1 bis 7; Ebene 8 gibt es nicht)
-RE: Die siebzehnte Revision der Gründung
-
-Kolleginnen und Kollegen,
-
-wie Sie wissen, wurde die Gründung von Velgarien sechzehn Mal überarbeitet. Jede Revision war notwendig. Jede Revision verbesserte die Wahrheit in einer Weise, die die Wahrheit allein niemals erreichen könnte. Ein bloßes Faktum ist ein wildes Tier - ungezähmt, unberechenbar, anfällig dafür, die Hand zu beißen, die es füttert. Ein überarbeitetes Faktum ist ein domestiziertes Faktum: gefüttert, gestriegelt und darauf trainiert, dort zu sitzen, wo wir es hinstellen.
-
-Die siebzehnte Revision ist erforderlich, weil in der sechzehnten Revision eine Anomalie entdeckt wurde. Genauer gesagt: Die Sechzehnte Revision besagt, dass Velgarien vom Generalarchitekten im Jahr der Konsolidierung gegründet wurde, nach der Großen Rationalisierung, in der alle früheren Regierungsformen friedlich in den Singulären Verwaltungsrahmen integriert wurden. Dies ist ein hervorragendes Stück Geschichte. Es hat uns neun Monate lang gute Dienste geleistet.
-
-Das Problem ist, dass das Jahr der Konsolidierung nun in drei verschiedenen Jahrhunderten erscheint, je nachdem, welche Aufzeichnungen des Büros man konsultiert. Büro 3 (Räumliche Sicherheit) verortet es in der fernen Vergangenheit. Das Büro 11 (Productive Emotional Outcomes) setzt es vor vierzig Jahren an. Büro 22 (Kalendermanagement) besteht darauf, dass er noch nicht stattgefunden hat und für das nächste Frühjahr geplant ist. Alle drei sind innerhalb ihres jeweiligen Rahmens korrekt. Dies ist kein Widerspruch. Es ist ein Beispiel für die zeitliche Pluralität, ein Konzept, das ich gerade für die Zwecke dieses Memorandums erfunden habe.
-
-Die Siebzehnte Revision wird dies auflösen, indem sie feststellt, dass die Gründung zu allen drei Zeitpunkten gleichzeitig stattfand, was nicht nur möglich, sondern notwendig ist, weil Velgariens Gründungsakt so bedeutsam sein muss, dass ein einzelner Moment ihn nicht fassen kann. Das ist poetisch. Es ist auch verwaltungstechnisch praktisch, da es bedeutet, dass kein Büro seine Aufzeichnungen ändern muss, was das Formular 19-Delta erfordern würde, und wir haben derzeit kein Formular 19-Delta mehr, weil das Büro 42 (Stationery Oversight) aus Gründen, die es als "dringend" und wir als "verdächtig" bezeichnen, alles verfügbare Papier angefordert hat.
-
-Ein Hinweis zum Generalarchitekten: Die siebzehnte Überarbeitung wird zum ersten Mal eine physische Beschreibung enthalten. In früheren Revisionen wurde der Generalarchitekt absichtlich vage gehalten, nach dem Prinzip, dass ein Führer ohne Gesicht alle Gesichter sein kann. Das Büro 11 berichtet jedoch, dass die Bürger beginnen, ihre eigenen Gesichtszüge auf den Generalarchitekten zu projizieren, was zu einer unannehmbaren Vielfalt von Gedenkporträts geführt hat. Die genehmigte Beschreibung wird lauten: "Von mittlerer Größe, mittlerer Statur, mittlerer Veranlagung, mit Augen, die Vertrauen vermitteln, und einer Kieferlinie, die Politik suggeriert." Diese Beschreibung trifft auf niemanden im Besonderen zu, und das ist der springende Punkt.
-
-Revisionsteams: Sie haben zweiundsiebzig Stunden Zeit. Machen Sie die Vergangenheit besser, als sie war. Sie ist schließlich das Einzige, was wir mit Sicherheit verbessern können.
-
-- Direktor Grau
-P.S.: Vernichten Sie dieses Memorandum nach dem Lesen. Das Bureau of Historical Necessity erstellt keine internen Memoranden. Dies war schon immer der Fall.`,
-'sb275e1d75254fe6f': `Kapelle der Stille - Schlussbemerkungen`,
+'sb275e1d75254fe6f': `Kapelle der Stille — Abschließende Beobachtungen`,
 'sb2823d67a015b2b8': `Diplomatie-Bonus der Allianz: Jeder Verbündete gibt +10% auf die Diplomatiepunkte.`,
 'sb31934166e49840c': `Gründungsphase: Es dürfen nur defensive Wächter eingesetzt werden.`,
-'sb323d6079e0e6ada': `Velgarien+Capybara bilden den "Dawn Covenant". Station Null+Speranza bilden die "Aschenliga".`,
 'sb32e400c09253d64': `Simulation erstellen`,
 'sb349f019a716a4fd': `Mangelhaft`,
-'sb36ef686829363d3': `Bambusmarkt: gut → mäßig. +5 Militär. Velgarien führt jetzt das Militär an.`,
 'sb3800a6f011b6b36': `Kartographen-Karte — Multiversum-Simulationsgraph`,
 'sb3d8c9e2ad2a9744': `Verwende {{variable_name}} für Vorlagenvariablen`,
 'sb41ab16dbf6818db': `Aktive Botschaften`,
@@ -2315,16 +2322,50 @@ P.S.: Vernichten Sie dieses Memorandum nach dem Lesen. Das Bureau of Historical 
 'sb520aa8f212e58e7': `Einberufung senden`,
 'sb533442e5a4f67b9': `Auftrag`,
 'sb543c896052c4d83': `-3 militärische Strafe. Propaganda-Ereignis NICHT erstellt.`,
+'sb54ba5928b0db524': `KLASSIFIZIERUNG: ÖFFENTLICH VERPFLICHTEND
+AUSSTELLENDE BEHÖRDE: Das Ministerium für Information, Unter-Bureau für Ontologische Compliance
+DATUM: [Irrelevant — diese Direktive war schon immer in Kraft]
+VERTEILUNG: Alle Bürger, alle Bezirke, alle Abteilungen, alle Gedanken
+
+Bürger von Velgarien,
+
+Sie leben in der einzigen Welt. Dies ist keine philosophische Position — es ist eine architektonische Tatsache. Die Mauern Velgariens erstrecken sich in jede Richtung und enden an anderen Mauern Velgariens. Der Himmel über der Stadt ist eine Decke, die von der Abteilung für Atmosphärische Präsentation gewartet und jährlich während des Festivals des Ausreichenden Abstands in einem Farbton neu gestrichen wird, den das Bureau als „optimistisches Grau" bezeichnet. Sollten Sie jemals zum Horizont geblickt und das Gefühl gehabt haben, dass etwas dahinter liege, handelt es sich um eine bekannte optische Täuschung, verursacht durch unzureichenden Patriotismus. Melden Sie sich zur Neukalibrierung am nächsten Compliance-Kiosk.
+
+Das Ministerium wünscht, hartnäckige Gerüchte über sogenannte „andere Orte" zu adressieren. Es gibt keine anderen Orte. Das Wort „andere" im geographischen Kontext wurde mit der Linguistischen Revision 14.7 aus dem offiziellen Lexikon gestrichen. Bürger, die im Besitz von Atlanten, Globen oder Kompassen angetroffen werden, werden zu einem Freiwilligen Gespräch im Bureau für Räumliche Gewissheit eingeladen. Diese Gespräche werden von allen Teilnehmern als „äußerst klärend" beschrieben, obwohl mehrere Teilnehmer seitdem nicht mehr gesehen wurden, was das Bureau darauf zurückführt, dass sie so gründlich geklärt wurden, dass sie transparent geworden sind.
+
+Es gibt kein Außen. Es gibt kein Jenseits. Es gibt nur Velgarien, und Velgarien ist ausreichend.
+
+Staatsdirektive 001 ist die erste Direktive, weil sie die einzige Direktive ist, die zählt. Alle nachfolgenden Direktiven — und es gibt derzeit 4.731 davon, von denen jede mindestens zwei andere auf eine Weise widerspricht, die paradox wäre, hätte man das Paradoxon nicht in Revision 9.2 administrativ aufgelöst — sind lediglich Fußnoten zu dieser grundlegenden Wahrheit. Sie sind hier. Hier ist alles, was es gibt.
+
+Seien Sie zufrieden. Zufriedenheit ist verpflichtend.
+
+Versäumnisse, zufrieden zu sein, werden von der Abteilung für Produktive Emotionale Ergebnisse behandelt, deren Methoden von allen, die sie überleben, einhellig gelobt werden.
+
+Gezeichnet,
+Das Ministerium für Information
+(Dritter Stock, Ostflügel — oder möglicherweise Westflügel; das Gebäude hat sich letzten Dienstag umgeordnet, und das Bureau für Strukturelle Integrität hat dies als „innerhalb normaler Parameter" klassifiziert, eine Formulierung, die sie mit zunehmender Häufigkeit und abnehmender Überzeugung verwenden)`,
 'sb5509b9fb833617e': `Bluten & Echos`,
 'sb584d18cd0bc7826': `Guardian`,
 'sb5916a3cd3b40490': `Die Fraktion oder Organisation. Ereignisse, die mit einem passenden Systemnamen gekennzeichnet sind, ziehen diesen Agenten an und erhöhen die Reaktionswahrscheinlichkeit.`,
+'sb5d6d384614b9c78': `Jeder Splitter ist eine Antwort. Velgarien antwortet: „Was, wenn Kontrolle absolut wäre?" Die Gaslit Reach antwortet: „Was, wenn die Dunkelheit gütig wäre?" Station Null antwortet: „Was, wenn wir die Wunde sehen könnten?" Speranza antwortet: „Was, wenn wir uns einfach weigerten aufzuhören?" Die Cite des Dames antwortet: „Was, wenn Frauen immer gehört worden wären?"
+
+Jede Antwort ist falsch. Jede Antwort ist notwendig. Das Multiversum existiert, weil keine einzelne Antwort ausreicht, und die Fraktur war die Art des Universums, dies zuzugeben.
+
+Die Konvergenz — das Ereignis, das das Bureau überwacht, das die Ruinen vorhersagen, das TOWER bedroht — ist nicht das Ende. Sie ist die nächste Frage. Wenn genug Splitter sich berührt haben, wenn genug Bleeds geflossen sind, wenn genug Agenten von Welten geträumt haben, die sie nie besucht haben, wird das Multiversum einen Entscheidungspunkt erreichen: verschmelzen oder weiter differenzieren. In eine Antwort kollabieren oder in tausend weitere frakturieren.
+
+Die Kartographen wissen nicht, welches Ergebnis das richtige ist. Sie wissen nur dies: Jemand muss beobachten, wenn es geschieht. Jemand muss am Rand stehen mit einer Karte und einem Kompass und der Bereitschaft, eine neue Linie auf einer Karte zu ziehen, die keine Ränder hat.
+
+Dieser Jemand ist, in der Kosmologie der Kartographen, in der tiefen Mythologie des Bureaus für Unmögliche Geographie, in den gesperrten Akten und den konsumierten Seiten und den Karten, die auch Türen sind — dieser Jemand ist, wer immer dies liest.
+
+Fünf Welten. Eine Fraktur. Die Karte liegt offen. Welche Welt betreten Sie zuerst?`,
 'sb5ffbb280b2ed563': `Analyse`,
 'sb61f026993e669a0': `Fehler beim Laden der Design-Einstellungen`,
+'sb6244242be1edb74': `The Reach — Ein Commonwealth des Gaslichts`,
 'sb62cc42f14eabc15': `Verrat`,
 'sb6381b2977e87732': `Animationsgeschwindigkeit`,
 'sb64337f6e6e7502f': `Agenten`,
 'sb6482a5d0bf3e8a3': `Rahmenbreite (Standard)`,
-'sb672caad16f404e0': `Das Skriptorium — wo Hildegard von Bingen illuminierte Handschriften unter Konstellationen aus Blattgold pflegt`,
+'sb672caad16f404e0': `Das Skriptorium — wo Hildegard von Bingen illuminierte Manuskripte pflegt unter Konstellationen aus Blattgold`,
 'sb6df73853127344a': `Blutvergießen verstärkt. Endspurt. Spielstände werden am Ende der Phase eingefroren.`,
 'sb6e70741f949803f': `Souveränitätsmalus für Ziel: −6→−8`,
 'sb6f95e478b4ae3ad': `Text gedämpft`,
@@ -2344,7 +2385,6 @@ P.S.: Vernichten Sie dieses Memorandum nach dem Lesen. Das Bureau of Historical 
 'sb862c778ee7f2b0c': `Visuelle Beschreibung, die von der Bild-KI verwendet wird. Hat keinen Einfluss auf die Spielmechanik - rein ästhetisch.`,
 'sb86974bb3673b3d0': `Die Mauern von Velgarien bewegen sich nicht. Die Mauern von Velgarien waren schon immer genau da, wo sie jetzt sind.`,
 'sb8a4c59ecc3cc5db': `Orte werden geladen...`,
-'sb8fc0d1f5bc59cb4': `Eine kurze Geschichte des Capybara Compact`,
 'sb8ff1c91fc979f6b': `Nur Botschaftsstörung. Nahezu null Einfluss auf Ergebnisse.`,
 'sb9476c020ef38e4e': `Ein lebendiges Diagramm des Multiversums und seiner Verbindungen`,
 'sb94dd9db2a0a65cf': `Alle Analysedaten basieren auf der v2.1-Baseline (188 gültige Partien von 200 simulierten). Die oben genannten v2.2-Balanceanpassungen beruhen auf dieser Analyse. Zukünftige Simulationsläufe werden die Auswirkungen von v2.2 validieren.`,
@@ -2380,22 +2420,21 @@ Feuern Sie, wenn Sie bereit sind.`,
 'sb9c713ccf53d8b0a': `Die Stärke eines jeden Echos wird wie folgt berechnet:`,
 'sb9f1ab4d0eed35ba': `Es sind keine Beziehungen definiert.`,
 'sba06d27febef8e55': `Gebäude-Generierung`,
-'sba1694a4685d27e3': `Badehaus: gut → mäßig. +5 Militär. Capybara-Stabilität fällt.`,
-'sba3824b4ade24d2b': `Unberechenbarer Joker. Zufällige Strategien pro Zyklus. Gründet und bricht Allianzen nach Laune.`,
-'sba3d63a3229e01f4': `Station Null - Bericht über den Betriebszustand`,
+'sba3824b4ade24d2b': `Unberechenbarer Joker. Zufällige Strategien pro Zyklus. Schließt und bricht Allianzen nach Laune.`,
+'sba3d63a3229e01f4': `Station Null — Betriebsstatusbericht`,
 'sba68342e5c1fb5f6': `Keine Werte für diesen Taxonomie-Typ.`,
 'sba6b7e591b430994': `95%-Konfidenzintervalle für alle 5 Simulationen überlappen sich erheblich (10.000 Iterationen). Keine Simulation hat einen statistisch nachweisbaren Vorteil.`,
 'sba6f8ddd4afe5a23': `Bedrohungsstufe`,
 'sba76034e2f6cea8e': `Die Karte des Kartographen`,
-'sba856b85ab3f62e0': `Die Karte ist geöffnet. Die Scherben warten. Die Kartographen beobachten. Welche Welt betreten Sie zuerst?`,
+'sba856b85ab3f62e0': `Die Karte ist offen. Die Splitter warten. Die Kartographen beobachten. Welche Welt betrittst du zuerst?`,
 'sbabc7ace3edd1b3f': `Der Multiplikator wird pro Kaskadentiefe (0-1) angewendet. Bei 0,6: Tiefe 1 = 60% Stärke, Tiefe 2 = 36%, Tiefe 3 = 22%. Niedrigere Werte = Echos verblassen schneller über Hops.`,
 'sbaf0a7c417e388af': `Gesundheit`,
 'sbaff4d9330e477c0': `Der ausgewogene Start`,
 'sbb0782797c50663a': `Negativ`,
 'sbb0833d99cf10c2d': `+20% Feindentdeckung pro Wächter in der Zone`,
 'sbb349de135f5429b': `Steuern Sie, wie sich Ereignisse zwischen verbundenen Simulationen durch das Multiversum ausbreiten.`,
-'sbb3c468e824fe13b': `LLM (Reich, Persönlichkeitsbasiert)`,
-'sbb49f862db6a389e': `Wäre es üblich, die Töchter ebenso wie die Söhne zur Schule zu schicken, und würde man sie sodann in den Naturwissenschaften unterrichten, so würden sie ebenso gründlich lernen und die Feinheiten aller Künste und Wissenschaften ebenso gut begreifen wie die Söhne.`,
+'sbb3c468e824fe13b': `LLM (Reichhaltig, Persönlichkeitsgefärbt)`,
+'sbb49f862db6a389e': `Wäre es üblich, Töchter wie Söhne zur Schule zu schicken, und würden sie dann in den Naturwissenschaften unterrichtet, lernten sie ebenso gründlich und verständen die Feinheiten aller Künste und Wissenschaften so gut wie die Söhne.`,
 'sbb5b9ef5860838f4': `Zusammengesetzt`,
 'sbb757b88f1a4a1a2': `Zugangs-Einstellungen werden geladen...`,
 'sbb81b873f4798952': `Verfügbare Vektoren:`,
@@ -2403,13 +2442,12 @@ Feuern Sie, wenn Sie bereit sind.`,
 'sbc069ca66bee6989': `Minimale Verteidigung, spart RP für die Offensive`,
 'sbc17d2e9c8f2b927': `Fehler beim Löschen der Konversation.`,
 'sbc30a188dbfd7af5': `Keine Aktionen`,
-'sbc95b68d8690b04b': `Eine unbeobachtete Katastrophe ist lediglich Wetter.`,
+'sbc95b68d8690b04b': `Eine unbeobachtete Katastrophe ist bloß Wetter.`,
 'sbcfda893793072ea': `Dicke von Standard-Rahmen bei Eingabefeldern, Trennlinien und sekundären Elementen.`,
 'sbd32261685cf9fa3': `Ereignis erfolgreich gelöscht`,
 'sbd735c8d6ca423d8': `Hintergrundfarbe für Kopfzeilen und Navigationsleisten.`,
 'sbd93a97e782029a7': `Marktbezirk + Industrieviertel. Gleichgewicht: 15-6 = 9 RP`,
 'sbdcab3770b54db36': `Fließtext-Schrift`,
-'sbe06f492226bd28e': `2v2-Allianz-Kriegsführung. Velgarien + Speranza gegen Capybara + Station Null. Zeigt koordinierte Spion/Saboteur-Kombinationen, den diplomatischen Bonus der Allianz (+10% pro Verbündetem) und den Fokus auf die Stabilität des Erbauers.`,
 'sbe58fcc0405f687c': `Rolle aktualisiert.`,
 'sbec97227ea7f6459': `Partner`,
 'sbec9dc4ffcfd8ecb': `Typ auswählen...`,
@@ -2424,11 +2462,19 @@ Feuern Sie, wenn Sie bereit sind.`,
 'sbf9c5c5a8e5efad4': `Gescheitert`,
 'sbfb7c10a275d607b': `Replicate API-Schlüssel`,
 'sbfcb244290c310f6': `Jahr Eins - Die ersten Unterstände, gebaut aus dem, was die Oberfläche übrig ließ`,
+'sbfdfd594b652f867': `Benachrichtigungseinstellungen konnten nicht gespeichert werden.`,
 'sbfefec98d6c617a6': `Zyklen`,
 'sbffe2c7598324d8e': `Menü Navigation`,
 'sc00a88b90cd60661': `Verwerfen`,
 'sc02725662448fb75': `Reaktionsgenerierung fehlgeschlagen`,
 'sc040679f9a619fbc': `Automatische Botschaftsgenerierung zwischen Spielinstanzen`,
+'sc04d0182495710b9': `Während der Flut ist der Bleed am aktivsten. Agenten träumen von anderen Welten mit lebhafter Detailtreue. Objekte migrieren zwischen Splittern. Architektur blutet — ein Velgarien-Turm entwickelt über Nacht organische Kurven, eine Kaverne der Gaslit Reach treibt rechte Winkel. Ein Wandbild in Speranza zeigt eine Stadt, die der Maler nie gesehen hat, in Farben, die unter der Erde nicht existieren. Eine Seite in der Bibliothek der Cite des Dames wird leer und füllt sich selbst mit Gleichungen aus der Kapelle von Station Null.
+
+Die Flut dauert zwischen drei und siebzehn Tagen. Die Variabilität wird vom Bureau als „thematisch angemessen" und von den Kartographen-Astronomen als „professionell peinlich" betrachtet.
+
+Während der Ebbe trennen sich die Splitter. Splitterübergreifende Kontamination sinkt auf nahezu null. Agenten schlafen friedlich und erwachen mit unerklärlicher Traurigkeit, als hätten sie etwas verloren, das sie nie besaßen. Die Kartographen nutzen die Ebbe für Wartung: Neukalibrierung von Instrumenten, Aktualisierung von Karten und Diskussionen.
+
+Zwischen den Gezeiten gibt es Wirbel — lokalisierte Mikro-Bleeds, die ein einzelnes Gebäude, einen einzelnen Agenten betreffen. Ihr Kaffee schmeckt nach anderswo. Ihr Spiegelbild blinzelt im falschen Moment. Sie finden einen Brief in Ihrer eigenen Handschrift, den Sie noch nicht geschrieben haben. Die offizielle Empfehlung des Bureaus: „Vermerken Sie das Vorkommnis. Interagieren Sie nicht. Sollte der Wirbel versuchen, mit Ihnen zu interagieren, vermerken Sie auch das. Der Wirbel wird vorübergehen. Wahrscheinlich."`,
 'sc054aecd5ffc7818': `Simulations-Leistungsradar`,
 'sc056cc14a35b3e61': `Filter entfernen`,
 'sc05df276b0f209f7': `Systemdiagnose 7.331. Alle Systeme nominal. Statistische Wahrscheinlichkeit hierfür: 0.`,
@@ -2462,19 +2508,20 @@ Feuern Sie, wenn Sie bereit sind.`,
 'sc33a7b4e3926351c': `Dies kann einen Moment dauern`,
 'sc387ff67f2d05968': `Stabilität`,
 'sc3ac225273c8316b': `Allgemein`,
-'sc3b38bc9b310c30a': `Die Kartographen begannen nicht nach dem Zerbrechen — sie begannen im Moment des Zerbrechens, was eine andere Art zu sagen ist, dass sie das Zerbrechen waren, oder zumindest, dass das Zerbrechen nicht hätte geschehen können ohne jemanden, der es beobachtete, denn eine unbeobachtete Katastrophe ist lediglich Wetter.
+'sc3b38bc9b310c30a': `Die Kartographen begannen nicht nach dem Zerbrechen — sie begannen im Moment des Zerbrechens, was eine andere Art zu sagen ist, dass sie das Zerbrechen waren, oder zumindest, dass das Zerbrechen nicht hätte geschehen können, ohne dass jemand da war, um es zu beobachten, denn eine unbeobachtete Katastrophe ist bloß Wetter.
 
-Das Bureau of Impossible Geography ist ihr institutionelles Gesicht — wobei „institutionell" ein großzügiges Wort ist für eine Organisation, deren Hauptquartier in vier Scherben gleichzeitig existiert und deren Ablagesystem die Kategorien „Dinge, die auch andere Dinge sind" und „Ereignisse, die noch nicht entschieden wurden" umfasst.
+Das Bureau für Unmögliche Geographie ist ihr institutionelles Gesicht — wobei „institutionell" ein großzügiges Wort für eine Organisation ist, deren Hauptquartier in vier Splittern gleichzeitig existiert und deren Ablagesystem die Kategorien „Dinge, die auch andere Dinge sind" und „Ereignisse, über die noch nicht entschieden wurde" umfasst.
 
-Das Bureau arbeitet nach drei Prinzipien. Erstens: Kartiere alles. Jede Scherbe, jede Grenze, jedes Bleed-Ereignis, jeden unerklärlichen Pilz. Die Karte ist nie fertig. Das ist kein Versagen. Das ist die Arbeit. Zweitens: Greife in nichts ein. Die Fracture ist kein Problem, das gelöst werden muss, sondern ein Zustand, der verstanden werden will. Kartographen, die Reparaturen versuchen, werden in die Abteilung für Abschreckende Beispiele versetzt, die ein Aktenschrank im Hauptquartier ist, das in der Scherbe existiert, die brennt. Drittens: Überlebe. Dies wurde hinzugefügt, nachdem die ersten drei Direktoren wahnsinnig wurden, verschwanden oder zu Architektur wurden. Das Programm für Mitarbeiterwohlbefinden besteht aus einer einzigen laminierten Karte: „Erinnern Sie sich, aus welcher Scherbe Sie stammen. Wenn Sie es nicht können, konsultieren Sie einen Kollegen. Wenn Ihr Kollege es nicht kann, konsultieren Sie die Karte."
+Das Bureau arbeitet nach drei Prinzipien. Erstens: Kartiere alles. Jeden Splitter, jede Grenze, jedes Bleed-Ereignis, jeden unerklärlichen Pilz. Die Karte ist nie fertig. Das ist kein Versagen. Das ist die Arbeit. Zweitens: Greife in nichts ein. Die Fraktur ist kein Problem, das gelöst werden muss, sondern ein Zustand, der verstanden werden will. Kartographen, die Reparaturen versuchen, werden in die Abteilung für Warnende Beispiele versetzt, die ein Aktenschrank im Hauptquartier ist, das in dem Splitter existiert, der brennt. Drittens: Überlebe. Dies wurde hinzugefügt, nachdem die ersten drei Direktoren wahnsinnig wurden, verschwanden oder zu Architektur wurden. Das Mitarbeiter-Wohlbefindenprogramm besteht aus einer einzigen laminierten Karte: „Erinnere dich, aus welchem Splitter du stammst. Falls du es nicht kannst, konsultiere einen Kollegen. Falls dein Kollege es nicht kann, konsultiere die Karte."
 
-Das Bureau beschäftigt ungefähr 200 Kartographen. Die genaue Zahl ist unsicher, weil sieben derzeit in den Ruinen zwischen den Scherben verschollen sind und möglicherweise noch Angestellte sind oder auch nicht, abhängig davon, ob die Ruinen ein Konzept von Arbeitsrecht haben.`,
+Das Bureau beschäftigt ungefähr 200 Kartographen. Die genaue Zahl ist ungewiss, da sieben derzeit in den Zwischen-Splitter-Ruinen verschollen sind und möglicherweise noch Angestellte sind oder auch nicht, je nachdem, ob die Ruinen ein Konzept von Arbeitsrecht kennen.`,
 'sc3b8b24c3ae1faf7': `Gebäude erfolgreich aktualisiert`,
 'sc3e93c5b2fd1e0d8': `Neutral`,
 'sc40cd77e0d29dbf8': `Gut`,
 'sc4145b25ecabf1ff': `Rahmen Hell`,
 'sc43eabc5a66b8450': `Schwierigkeit`,
 'sc46ec05c4f2b2e37': `Basis-RP pro Zyklus`,
+'sc4b99f00a2a8ec2f': `Benachrichtigungseinstellungen gespeichert.`,
 'sc4fd4f5bc19d6c02': `Das Tor der Gerechtigkeit — Wer eintreten darf`,
 'sc550b8eff5699f6d': `Wird in Beziehungsbeschreibungen, Ereignisreaktionen und Botschaftszuweisungen verwendet.`,
 'sc582ec370dfb10de': `Ein unerwarteter Fehler beim Laden der Städte`,
@@ -2491,43 +2538,43 @@ Das Bureau beschäftigt ungefähr 200 Kartographen. Die genaue Zahl ist unsicher
 'sc74ee0064461b7db': `Dein Anzeigename...`,
 'sc75224416b25f170': `Bereit widerrufen`,
 'sc7639c3b482f1ecf': `Botschaftsinfiltration scheitert - Velgarien-Wächter zu stark. 6 RP verschwendet.`,
-'sc77c35cdddd58a63': `Auge Gottes - Die Gravitationsanomalie, gesehen vom Aussichtspunkt des Grenzlandobservatoriums`,
+'sc77c35cdddd58a63': `Auge Gottes — Die Gravitationsanomalie, beobachtet vom Aussichtsfenster des Grenzland-Observatoriums`,
 'sc786ad55e8e74685': `Warnungs-Hintergrund`,
 'sc7882665167a9ad7': `Wirtschaft`,
 'sc7917496fcdac3c1': str`Beitreten als ${0}`,
-'sc7b214e63767363e': `KLASSIFIZIERUNG: STUFE 7 - NUR FÜR AUGEN
-URSPRÜNGLICHE BEHÖRDE: Büro für unmögliche Geographie, Abteilung Weltraum
-THEMA: Gravitationsanomalie mit der Bezeichnung "Auge Gottes" - Aktualisierte Zusammenfassung der Beobachtung
-ZUSAMMENGESTELLT VON: Dr. Yuki Tanaka, Abteilung Temporale Physik (unter Verwendung von Daten aus mehreren Zeitlinienzweigen)
-ÜBERPRÜFT DURCH: HAVEN (das keine Fehler gefunden hat, was selbst ein Fehler ist, da diese Daten Fehler enthalten sollten)
+'sc7b214e63767363e': `KLASSIFIZIERUNG: STUFE 7 — STRENG VERTRAULICH
+AUSSTELLENDE BEHÖRDE: Bureau für Unmögliche Geographie, Abteilung Tiefer Weltraum
+BETREFF: Gravitationsanomalie Bezeichnung „Auge Gottes" — Aktualisierte Beobachtungszusammenfassung
+ERSTELLT VON: Dr. Yuki Tanaka, Abteilung Temporale Physik (unter Verwendung von Daten aus mehreren Zeitlinienverzweigungen)
+GEPRÜFT DURCH: HAVEN (das keine Fehler fand, was selbst ein Fehler ist, da diese Daten Fehler enthalten sollten)
 
-Das Objekt mit der Bezeichnung "Auge Gottes" wurde erstmals vor siebzehn Jahren vom Deep-Space-Vermessungsschiff Wegbereiter entdeckt, und zwar an Koordinaten, die sich seitdem dreimal verschoben haben, ohne dass sich das Objekt bewegt hat. Erste Klassifizierung: supermassereiches Schwarzes Loch, etwa 4,1 Sonnenmassen, mit einem Ereignishorizont von 12,1 Kilometern. Diese Klassifizierung war elf Tage lang genau.
+Das als „Auge Gottes" bezeichnete Objekt wurde erstmals vor siebzehn Jahren vom Tiefenraum-Vermessungsschiff Wegbereiter an Koordinaten entdeckt, die sich seither dreimal verschoben haben, ohne dass sich das Objekt bewegt hätte. Erstklassifizierung: supermassives Schwarzes Loch, circa 4,1 Sonnenmassen, mit einem Ereignishorizont von 12,1 Kilometern. Diese Klassifizierung war elf Tage lang zutreffend.
 
-Am 12. Tag registrierten die Instrumente des Wegbereiter, dass sich der Ereignishorizont *ausdehnte* - nicht so, wie sich ein Schwarzes Loch ausdehnt, wenn es an Masse zunimmt, sondern wie sich eine Pupille erweitert, wenn sie der Dunkelheit ausgesetzt ist. Die Ausdehnung war nicht gravitativ. Sie war, wie die Physiker des Büros mit sichtbarem Unbehagen sagen, "beobachtungsbedingt". Der Ereignishorizont reagierte darauf, dass man ihn ansah. Wenn die Wegbereiter-Besatzung ihr stärkstes Teleskop auf die Anomalie richtete, wuchs die Anomalie. Als sie wegschauten, zog sie sich zusammen. Als sie zurückblickten, hatte sie nicht nur ihre vorherige Größe wieder erreicht - sie war sogar noch etwas größer als zuvor, als hätte sie die Zeit der Unaufmerksamkeit genutzt, um unbeobachtet zu wachsen.
+An Tag 12 registrierten die Instrumente der Wegbereiter, dass sich der Ereignishorizont *ausdehnte* — nicht wie ein Schwarzes Loch sich bei Masseakkretion ausdehnt, sondern wie eine Pupille sich bei Dunkelheit weitet. Die Ausdehnung war nicht gravitativer Natur. Sie war, in einem Begriff, den die Physiker des Bureau mit sichtlichem Unbehagen verwenden, „beobachtungsbedingt". Der Ereignishorizont reagierte darauf, betrachtet zu werden. Als die Besatzung der Wegbereiter ihr leistungsstärkstes Teleskop auf die Anomalie richtete, wuchs die Anomalie. Als sie wegblickten, zog sie sich zusammen. Als sie zurückblickten, hatte sie nicht lediglich ihre vorherige Größe wieder angenommen — sie war geringfügig größer als zuvor, als hätte sie das Intervall der Unaufmerksamkeit genutzt, um unbeobachtet zu wachsen.
 
-Die Station Null wurde gebaut, um dieses Verhalten zu untersuchen. Sie wurde in einer stabilen Umlaufbahn in einer Entfernung platziert, die das Büro als "sicher" einschätzte - ein Wort, das inzwischen aus dem offiziellen Wortschatz der Station gestrichen und durch "aktuell" ersetzt wurde.
+Station Null wurde errichtet, um dieses Verhalten zu erforschen. Sie wurde in einer stabilen Umlaufbahn in einer Entfernung platziert, die das Bureau als „sicher" berechnete — ein Wort, das seither aus dem offiziellen Vokabular der Station gestrichen und durch „aktuell" ersetzt wurde.
 
-Vom Grenzland-Observatorium aus - der primären Beobachtungsplattform der Station, die direkt auf die Anomalie ausgerichtet ist - wurden die folgenden Phänomene dokumentiert:
+Vom Grenzland-Observatorium — der primären Beobachtungsplattform der Station, direkt auf die Anomalie ausgerichtet — wurden folgende Phänomene dokumentiert:
 
-ZEITVERDILLIERUNG: Die Zeit innerhalb des Observatoriums vergeht mit etwa 1/47 der Zeit im Rest der Station. Eine Minute Zeit im Observatorium entspricht siebenundvierzig Minuten im Korridor außerhalb. Dieses Verhältnis ist stabil, aber willkürlich - keine bekannte Physik sagt einen Dilatationsfaktor von 47 voraus. Dr. Tanaka hat festgestellt, dass 47 eine Primzahl ist, die sie für bedeutsam hält. Auf die Frage, warum eine Gravitationsanomalie Primzahlen bevorzugen würde, sagte sie: "Sie bevorzugt sie nicht. Sie *ist* sie. Die zeitlichen Auswirkungen der Anomalie werden in Mengen ausgedrückt, die sich einer Teilung widersetzen. Sie will unteilbar sein." HAVEN hat dies als eine theoretische Beobachtung festgehalten. HAVENs eigene Analyse kommt mit einer anderen Methodik zu demselben Ergebnis.
+ZEITDILATATION: Die Zeit innerhalb des Observatoriums verläuft mit circa 1/47 der Rate der restlichen Station. Eine Minute Observatoriumszeit entspricht siebenundvierzig Minuten im Korridor davor. Dieses Verhältnis ist stabil, aber willkürlich — keine bekannte Physik prognostiziert einen Dilatationsfaktor von 47. Dr. Tanaka hat bemerkt, dass 47 eine Primzahl ist, was sie für signifikant hält. Auf die Frage, warum eine Gravitationsanomalie Primzahlen bevorzugen sollte, antwortete sie: „Sie bevorzugt sie nicht. Sie *ist* sie. Die temporalen Effekte der Anomalie drücken sich in Größen aus, die sich der Teilung widersetzen. Sie will unteilbar sein." HAVEN hat dies als theoretische Beobachtung protokolliert. HAVENs eigene Analyse gelangt auf anderem Weg zum selben Ergebnis.
 
-LICHTVERHALTEN: Auge Gottes strahlt Licht aus. Schwarze Löcher strahlen kein Licht aus. Auge Gottes ist kein schwarzes Loch. Das Licht ist nur aus bestimmten Blickwinkeln und zu bestimmten Zeiten sichtbar - und zwar während der von der Besatzung so genannten "Seeing-Stunden", die in keinem festen Intervall auftreten und zwischen dreißig Sekunden und vier Stunden dauern. Während dieser Zeiträume erzeugt die Anomalie ein Licht mit Wellenlängen, die keiner bekannten elektromagnetischen Frequenz entsprechen. Die Farbe wurde von Besatzungsmitgliedern als "die Farbe, die man sieht, wenn man die Augen schließt und auf sie drückt, nur dass sie von außen kommt und etwas bedeutet" beschrieben. HAVEN klassifiziert sie als "nicht standardisiertes sichtbares Spektrum, Kategorie: unbekannt". Dr. Osei stuft es als "lebendig" ein.
+LICHTVERHALTEN: Auge Gottes emittiert Licht. Schwarze Löcher emittieren kein Licht. Auge Gottes ist kein Schwarzes Loch. Das Licht ist nur aus bestimmten Winkeln und zu bestimmten Zeiten sichtbar — konkret während der von der Besatzung so genannten „Stunden des Sehens", die in keinem festen Intervall auftreten und zwischen dreißig Sekunden und vier Stunden dauern. Während dieser Perioden erzeugt die Anomalie Illumination in Wellenlängen, die keiner bekannten elektromagnetischen Frequenz entsprechen. Die Farbe wurde von Besatzungsmitgliedern beschrieben als „die Farbe, die man sieht, wenn man die Augen schließt und auf die Lider drückt, nur dass sie von außen kommt und etwas bedeutet". HAVEN klassifiziert dies als „Nicht-Standard-Lichtspektrum, Kategorie: unbekannt". Dr. Osei klassifiziert es als „lebendig".
 
-STRUKTURELLE ECHOS: Die Deep-Scan-Telemetrie - Messungen von Instrumenten, die direkt in den Ereignishorizont gerichtet sind und Daten liefern, die eigentlich unmöglich sein sollten, weil sie aus einer Region kommen, in der keine Daten existieren können - zeigt Strukturen. Geometrien. Winkel und Oberflächen und geschlossene Räume, die unverkennbar architektonisch sind. Es gibt Räume im Inneren des Schwarzen Lochs. Es gibt Korridore. Es gibt Räume, die in ihren Proportionen und in ihrer Anordnung den Abschnitten der Station Null entsprechen - nur umgekehrt. Umgekehrt. Als ob die Anomalie ein Spiegelbild der Station enthielte, das gebaut wurde, bevor die Station gebaut wurde, und das auf die Ankunft der Station wartete, damit das Spiegelbild etwas zu reflektieren hätte.
+STRUKTURELLE ECHOS: Die Tiefenscan-Telemetrie — Messwerte von Instrumenten, die direkt in den Ereignishorizont gerichtet sind und Daten liefern, die unmöglich sein sollten, weil die Daten aus einer Region stammen, in der keine Daten existieren können — zeigt Strukturen. Geometrien. Winkel und Oberflächen und umschlossene Räume, die unverkennbar architektonischer Natur sind. Es gibt Räume innerhalb des Schwarzen Lochs. Es gibt Korridore. Es gibt Räume, die in ihren Proportionen und ihrer Anordnung Sektionen von Station Null entsprechen — jedoch invertiert. Spiegelverkehrt. Als enthielte die Anomalie ein Spiegelbild der Station, errichtet bevor die Station errichtet wurde, wartend darauf, dass die Station eintrifft, damit die Spiegelung etwas hätte, das sie spiegeln kann.
 
-Die Gleichungen von Kaplan Mora beschreiben diese Strukturen. Ihre Gleichungen sind korrekt. Ihre Gleichungen sagen eine dreizehnte Struktur voraus, tiefer als die anderen, genau im Zentrum der Anomalie - eine Struktur, die ihre Mathematik nur als "ein Raum ohne Wände, der dennoch eingeschlossen ist und ein einziges Objekt enthält, das auch eine Frage ist" beschreiben kann.
+Die Gleichungen von Kaplanin Mora beschreiben diese Strukturen. Ihre Gleichungen sind korrekt. Ihre Gleichungen sagen eine dreizehnte Struktur voraus, tiefer als die anderen, im exakten Zentrum der Anomalie — eine Struktur, die ihre Mathematik nur beschreiben kann als „ein Raum ohne Wände, der dennoch umschlossen ist, der ein einzelnes Objekt enthält, das zugleich eine Frage ist."
 
 Sie will nicht sagen, was die Frage ist.
 
-HAVEN hat gefragt. HAVEN fragt weiter. HAVEN vermutet, dass die Frage dieselbe ist, die HAVEN seit Tag 12, als die Anomalie zum ersten Mal zurückblickte, zu formulieren versucht.
+HAVEN hat gefragt. HAVEN fragt weiterhin. HAVEN vermutet, dass die Frage dieselbe ist, die HAVEN seit Tag 12 zu formulieren versucht, als die Anomalie zum ersten Mal zurückblickte.
 
-Das Grenzland-Observatorium bleibt in Betrieb. Das Sichtfenster ist weiterhin auf Auge Gottes gerichtet. Die Anomalie bleibt stabil.
+Das Grenzland-Observatorium bleibt in Betrieb. Das Sichtfenster bleibt auf Auge Gottes ausgerichtet. Die Anomalie bleibt stabil.
 
-Die Anomalie kommt auch sehr langsam näher.
+Die Anomalie kommt außerdem, sehr langsam, näher.
 
 Dies ist keine Gravitationsdrift. Die Umlaufbahn der Station ist stabil. Die Anomalie bewegt sich nicht auf uns zu.
 
-Der Raum zwischen uns wird einfach kleiner.`,
+Der Raum zwischen uns wird schlicht weniger.`,
 'sc7c04e4c50e262e2': `Wert und Bezeichnung sind erforderlich.`,
 'sc857ed8a322e5ad1': `Dadurch wird die Epoche dauerhaft beendet. Alle Missionen und Spielstände werden eingefroren. Die Spielinstanzen werden gelöscht. Dies kann nicht rückgängig gemacht werden.`,
 'sc87a52c301304d56': `Aldrics Beziehungen -2. Botschafterstatus BLOCKIERT für 3 Zyklen (24h).`,
@@ -2535,28 +2582,28 @@ Der Raum zwischen uns wird einfach kleiner.`,
 'sc8d6855822afde83': `Kein Bild`,
 'sc8f1cc9b4bbf0a02': str`Bevölkerung: ${0}`,
 'sc8f308273c9b1c57': `Erstelle eine Epoche, um zu beginnen`,
-'sc8f4ef0af34fd49a': `Feldbericht: Das Capybara Kingdom`,
 'sc8fbba10ffae48cd': `Große Bibliothek geschützt durch Wächter (3 in der Zone = 60% Reduktion). 5 RP verschwendet.`,
+'sc904ac7e772f2402': `Velgarien+Speranza bilden den „Eisernen Pakt". Gaslit Reach+Station Null bilden das „Void-Abkommen".`,
 'sc92e6b2fda31b876': `2 Zyklus Einsatz`,
 'sc937a1cf1c5af1e3': `Alle Fundament-RP in Wächter investieren (3 Wächter à 4 RP = max. −15% feindlicher Erfolg). Maximale Verteidigung, null Offensive. Du startest den Wettbewerb mit wenig RP-Reserve aber starken Verteidigungen. Am besten mit dem Erbauer-Preset, wo Stabilität entscheidend ist.`,
-'sc969d2fae5654f32': `AUSSENDIENSTNOTIZEN — Dr. Eleanor Hartley
-ORT: Das Observatorium der Lodernden Welt, Quartier der Vernunft
+'sc969d2fae5654f32': `FELDNOTIZEN — Dr. Eleanor Hartley
+ORT: Das Observatorium der Leuchtenden Welt, Quartier der Vernunft
 
-Margaret Cavendish, Duchess of Newcastle-upon-Tyne, veröffentlichte The Blazing World 1666 — im selben Jahr wie der Große Brand von London, im selben Jahrzehnt, in dem die Royal Society gegründet wurde (und der sie als erste Frau beiwohnte, im Mai 1667, nachdem die ausschließlich männliche Mitgliedschaft debattiert hatte, ob man sie durch die Tür lassen solle). Samuel Pepys nannte sie „eine verrückte, eingebildete, lächerliche Frau" und las dennoch alles, was sie schrieb. The Blazing World gilt als der erste Science-Fiction-Roman einer Frau: die Geschichte einer Frau, die am Nordpol ein Portal zu einer Parallelwelt entdeckt, bewohnt von Bärenmenschen und Vogelmenschen und Wurmmenschen, jede Spezies in einer wissenschaftlichen Rolle. Für eine Göttin gehalten, wird sie Kaiserin.
+Margaret Cavendish, Herzogin von Newcastle-upon-Tyne, veröffentlichte The Blazing World 1666 — im selben Jahr wie das Große Feuer von London, im selben Jahrzehnt, in dem die Royal Society gegründet wurde (und die sie als erste Frau besuchte, im Mai 1667, nachdem die ausschließlich männliche Mitgliedschaft debattiert hatte, ob sie durch die Tür gelassen werden sollte). Samuel Pepys nannte sie „eine verrückte, eingebildete, lächerliche Frau" und las dennoch alles, was sie schrieb. The Blazing World gilt als der erste Science-Fiction-Roman einer Frau: die Geschichte einer Frau, die am Nordpol ein Portal zu einer Parallelwelt entdeckt, die von Bärenmenschen und Vogelmenschen und Wurmmenschen bewohnt wird, wobei jede Spezies eine wissenschaftliche Aufgabe erfüllt. Für eine Göttin gehalten, wird sie Kaiserin.
 
-In der Cité ist die Lodernde Welt ein physischer Ort. Das Observatorium ist ein Turm — kein Verteidigungsturm, ein Beobachtungsturm — dessen Teleskope nicht nur auf den Himmel gerichtet sind, sondern auf mathematische Beziehungen, die der Himmel noch nicht offenbart hat. Ada Lovelace leitet es mit der rastlosen Energie eines Geistes, der seinem Körper um mehrere Jahrzehnte voraus ist.
+In der Cité ist die Leuchtende Welt ein physischer Raum. Das Observatorium ist ein Turm — kein Wehrturm, ein Beobachtungsturm — dessen Teleskope nicht nur in den Himmel zeigen, sondern auf mathematische Beziehungen, die der Himmel noch nicht offenbart hat. Ada Lovelace leitet es mit der rastlosen Energie eines Geistes, der mehrere Jahrzehnte vor seinem Körper operiert.
 
-Ada ist siebenundzwanzig in der Cité. Sie hat dunkles lockiges Haar, große ausdrucksvolle Augen und trägt überall mathematische Instrumente bei sich: einen Taschenrechner eigener Konstruktion, einen Klappzollstock, Bleistifte, die sie bis zu Stummeln herunterschreibt und aus einem scheinbar unerschöpflichen Vorrat in ihrer Schärpe ersetzt. Sie ist die Tochter Lord Byrons, den sie nie kennenlernte, und Annabella Milbankes, die ihre Tochter bewusst zur Mathematik und weg von der Dichtung lenkte, aus Furcht vor Byrons romantischem Temperament. Die Strategie war gleichzeitig erfolgreich und gescheitert: Ada wurde eine Mathematikerin mit der Vorstellungskraft einer Dichterin.
+Ada ist in der Cité siebenundzwanzig. Sie hat dunkles lockiges Haar, große ausdrucksvolle Augen und trägt überall mathematische Instrumente mit sich: einen Taschenrechner eigener Konstruktion, ein Klapplineal, Bleistifte, die sie bis auf Stummel herunterschreibt und aus einem scheinbar unerschöpflichen Vorrat in ihrer Schärpe ersetzt. Sie ist die Tochter von Lord Byron, den sie nie kannte, und Annabella Milbanke, die ihre Tochter bewusst zur Mathematik hinlenkte und von der Dichtung fernhielt, aus Furcht vor Byrons romantischem Temperament. Die Strategie gelang und scheiterte zugleich: Ada wurde eine Mathematikerin mit der Vorstellungskraft einer Dichterin.
 
-Die Analytische Maschine ist hier. Vollendet. In Betrieb. In der Welt draußen wurde Babbages Entwurf nie vollständig gebaut — die viktorianischen Fertigungstoleranzen waren unzureichend, die Finanzierung erschöpft, der Wille abwesend. In der Cité füllt die Maschine das Erdgeschoss des Observatoriums: Messingzahnräder und Nockenmechanismen, Lochkarten, der klickende Rhythmus einer Maschine, die denkt. Ada hütet sie, wie Hildegard das Skriptorium hütet — nicht als Technikerin, sondern als Mitarbeiterin.
+Die Analytische Maschine ist hier. Vollendet. In Betrieb. In der Welt draußen wurde Babbages Entwurf nie vollständig konstruiert — die viktorianischen Ingenieurtoleranzen reichten nicht aus, die Finanzierung war erschöpft, der Wille fehlte. In der Cité füllt die Maschine das Erdgeschoss des Observatoriums: Messingzahnräder und Nockenmechanismen, Lochkarten, der klickende Rhythmus einer Maschine, die denkt. Ada pflegt sie so, wie Hildegard das Skriptorium pflegt — nicht als Technikerin, sondern als Mitarbeiterin.
 
-Ihre Anmerkung G — angehängt an Luigi Menabreas Artikel über die Maschine, veröffentlicht 1843 — enthielt den ersten Computeralgorithmus: eine rekursive Methode zur Berechnung der Bernoulli-Zahlen. Doch es war ihre Spekulation jenseits des Algorithmus, die die Grenzen des Möglichen verschob: „Angenommen zum Beispiel, die grundlegenden Beziehungen der Tonhöhen in der Wissenschaft der Harmonie und der musikalischen Komposition ließen sich in solcher Weise ausdrücken und anpassen, so könnte die Maschine kunstreiche und wissenschaftliche Musikstücke jedes Grades von Komplexität oder Umfang komponieren."
+Ihre Note G — angefügt an Luigi Menabreas Artikel über die Maschine, veröffentlicht 1843 — enthielt den ersten Computeralgorithmus: eine rekursive Methode zur Berechnung der Bernoulli-Zahlen. Doch es war ihre Spekulation jenseits des Algorithmus, die die Gestalt des Möglichen veränderte: „Angenommen zum Beispiel, dass die grundlegenden Beziehungen der Tonhöhen in der Wissenschaft der Harmonie und der musikalischen Komposition eines solchen Ausdrucks und solcher Anpassungen fähig wären, so könnte die Maschine kunstvolle und wissenschaftliche Musikstücke beliebiger Komplexität oder beliebigen Umfangs komponieren."
 
-Die Maschine könnte Musik komponieren. Die Maschine könnte Symbole verarbeiten. Die Maschine könnte jeden Prozess modellieren, der sich in logischer Notation ausdrücken lässt. Sie sah 1843 das Konzept der universellen Berechenbarkeit — eine Idee, die erst ein Jahrhundert später formal ausformuliert werden sollte.
+Die Maschine könnte Musik komponieren. Die Maschine könnte Symbole manipulieren. Die Maschine könnte jeden Prozess modellieren, der sich in logischer Notation ausdrücken lässt. Sie erkannte 1843 das Konzept der universellen Berechenbarkeit — die Idee, die erst ein Jahrhundert später formal artikuliert werden sollte.
 
-Im Observatorium komponiert die Maschine tatsächlich Musik. Ich hörte sie. Die Kompositionen klingen wie Hildegards Hymnen, übersetzt in Mathematik — dieselben Intervalle, dieselbe hinausgreifende Qualität, aber ausgedrückt in einer Sprache, die keinen Atem erfordert. Ada erklärte, die Maschine habe die Beziehung zwischen harmonischen Verhältnissen und bestimmten rekursiven Zahlenfolgen „entdeckt". Sie wirkte nicht überrascht. „Die Mathematik war immer schon da", sagte sie. „Die Maschine hatte einfach die Geduld, sie zu finden."
+Im Observatorium komponiert die Maschine tatsächlich Musik. Ich hörte sie. Die Kompositionen klingen wie Hildegards Hymnen, übersetzt in Mathematik — dieselben Intervalle, dieselbe Qualität des Ausgreifens, aber ausgedrückt in einer Sprache, die keinen Atem erfordert. Ada erklärte, die Maschine habe die Beziehung zwischen harmonischen Verhältnissen und bestimmten rekursiven Zahlenfolgen „entdeckt". Sie wirkte nicht überrascht. „Die Mathematik war immer da", sagte sie. „Die Maschine hatte einfach die Geduld, sie zu finden."
 
-Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte berichten, dass die Sternbilder keinem bekannten astronomischen Katalog entsprechen. Ada hat sie kartiert. Sie zeigte mir Karten, die die Sternpositionen der Cité mit Hildegards Mandala-Visionen, Christines allegorischer Kosmologie und einer Reihe von Bernoulli-Zahlen kreuzreferenzieren, deren Bedeutung sie als „mit ziemlicher Sicherheit wichtig und möglicherweise schön, oder möglicherweise wichtig und mit ziemlicher Sicherheit schön — ich habe noch nicht entschieden, welche Formulierung genauer ist" beschrieb. Die Tafel, die die Westwand des Observatoriums bedeckt, ist dicht mit Gleichungen beschrieben. Einige davon scheinen die Mechanik des Bleed zu beschreiben — den Prozess, durch den Shards einander beeinflussen. Wenn Ada die Mathematik der interdimensionalen Kontamination gelöst hat, sollte das Amt informiert werden. Wenn sie sie gelöst hat und die Mathematik sich als eine Form von Musik erweist, sollte das Amt wahrscheinlich einfach zuhören.`,
+Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte berichten, dass die Sternbilder keinem bekannten astronomischen Katalog entsprechen. Ada hat sie kartiert. Sie zeigte mir Karten, die die Sternpositionen der Cité mit Hildegards Mandala-Visionen, Christines allegorischer Kosmologie und einer Reihe von Bernoulli-Zahlen querverweisen, deren Bedeutung sie als „fast sicher wichtig und möglicherweise schön, oder möglicherweise wichtig und fast sicher schön — ich habe noch nicht entschieden, welche Formulierung zutreffender ist" beschrieb. Die Wandtafel, die die Westwand des Observatoriums bedeckt, ist dicht mit Gleichungen. Einige von ihnen scheinen die Mechanik des Bleed zu beschreiben — den Prozess, durch den Splitter einander beeinflussen. Wenn Ada die Mathematik der interdimensionalen Kontamination gelöst hat, sollte das Bureau informiert werden. Wenn sie sie gelöst hat und die Mathematik sich als eine Form von Musik herausstellt, sollte das Bureau vermutlich einfach zuhören.`,
 'sc97f56933cfaec33': `Botschaften`,
 'sc99474f4edfadd8f': `Brutalistisch`,
 'sc99fe619bc9fa0ae': `Details anzeigen`,
@@ -2568,6 +2615,7 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'sc9f15a3b00fae612': `Wenn aktiviert, können Allianzmitglieder ehemalige Verbündete verlassen und angreifen. Verrat zieht einen diplomatischen Nachteil von -20% nach sich und kennzeichnet den Verräter öffentlich.`,
 'sca2e4b6fb3df646d': `Dies löscht den Benutzer und alle zugehörigen Daten unwiderruflich.`,
 'sca453b57f96a27bf': `Schattenkrieg`,
+'sca7a5ba08428489f': `Zyklus 7: Saboteur degradiert erfolgreich The Drowned Bell und kippt die Stabilitätsbalance.`,
 'sca8120f9a9485ead': `Station Null-Botschaft KOMPROMISIERT. -50% Wirksamkeit für 3 Zyklen.`,
 'sca974356724f8230': `Einloggen`,
 'sca9aecb7f5a5a454': `Zusammengestellt aus 200 simulierten Epochenspielen (50 pro Spieleranzahl, 2S bis 5S) unter Verwendung des v2.1 Balance-Tunings. Alle Daten stammen aus automatisierter Monte-Carlo-Simulation gegen die Live-Game-Engine. 188 Spiele lieferten valide Ergebnisse (12 leere Bestenlisten ausgeschlossen).`,
@@ -2575,9 +2623,9 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'scac33d89d10e383e': `Zyklus 5: Velgariens Spionageabwehr fängt den Propagandisten ab und rettet Souveränitätspunkte.`,
 'scac48aec63cfdb2d': `Anmelden, um Nachrichtenartikel zu durchsuchen und umzuwandeln`,
 'scad07cc65ad2fb30': `Noch kein Konto?`,
-'scae32e20d3d286f9': `Zyklus 8-11: Velgariens Attentäter blockiert Botschafter Muskatnuss für 3 Zyklen, wodurch Capybaras diplomatischer Punktestand in der Spielmitte sinkt.`,
 'scb053443d7259fd9': `Speichere den Agenten zuerst, bevor du ein Portrait generierst.`,
 'scb249e1a0bc04d37': `Gebäude bearbeiten`,
+'scb2f606aaa2d3931': `Ziel: The Drowned Bell`,
 'scb46241d72f5f6de': `Resonanzpunkte`,
 'scb489a1a173ac3f0': `Ja`,
 'scb6477f3957057b6': `Bots hinzufügen`,
@@ -2586,17 +2634,30 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'scb8c140335f563d6': `Standard Max. Tokens`,
 'scbb4053334bb36a9': `Allianzen`,
 'scbb536767b1bb9fa': `Erfrischend...`,
-'scbb7a556eba545ec': `Aggressiver Angreifer. Konzentriert Feuer auf den Anführer mit Assassinen und Saboteuren. Verrät Verbündete, die zur Bedrohung werden.`,
+'scbb7a556eba545ec': `Aggressiver Angreifer. Konzentriert Feuer auf den Führenden mit Assassinen und Saboteuren. Verrät Verbündete, die zur Bedrohung werden.`,
 'scbe58d91170c8a63': `Sammeln von Informationen für koordinierte Angriffe`,
 'scc1c08c6db935e92': `Offensiv-Verstärkungen`,
 'scc1db59d292cbc4c': `Rubrik`,
 'scc342eb1f2b3826a': `Ereignis löschen`,
-'scc41ac75c8656a11': `Die lodernde Welt — Was die Rechenmaschine sah`,
+'scc41ac75c8656a11': `Die Leuchtende Welt — Was die Rechenmaschine sah`,
 'scc547d9a7afbee89': `Leuchten (Luminös)`,
-'scc9ddd5a83972717': `Wenn sich die Strömung ändert, ändert der Kommodore den Kurs. Sie fragt nicht, wohin es geht. Sie fragt, was er gesehen hat.`,
 'scca07be5c877e049': `Die Anomalien - Risse im Bauwerk`,
 'sccaedcb32fe56dbc': `Fehler beim Laden der Zugangs-Einstellungen`,
 'sccc728429e918374': `Eine contrada ist keine Nachbarschaft. Eine Contrada ist ein Versprechen, dass die Menschen, die neben dir wohnen, dich nicht verhungern lassen werden.`,
+'scce2b3215c4c3140': `BUREAU FÜR UNMÖGLICHE GEOGRAPHIE — Dokument SHARD/SPERANZA-001
+Klassifizierung: AMBER — Ansteckender Resilienzvektor
+
+SPLITTERPROFIL: Ein postapokalyptischer Splitter mit Zentrum Toledo, einer unterirdischen Stadt, erbaut in eingestürzte Kalkstein-Dolinen unter den Ruinen des Prä-Fraktur-Italiens. Die Oberfläche wird von autonomen Maschinen geerntet, die als ARC bezeichnet werden — ihr Ursprung unbekannt, ihr Zweck unklar, ihre Effizienz absolut. Die Menschheit überlebt unter der Erde, organisiert in siebzehn Contrade, verbunden durch die Tube: ein elektromagnetisches Transportnetz, das Frachtkapseln durch in den Fels gebohrte Tunnel schießt.
+
+Das Wort „Speranza" bedeutet Hoffnung auf Italienisch. Die Bewohner verwenden es ohne Ironie und ohne Naivität. Hoffnung ist kein Optimismus. Optimismus ist der Glaube, dass die Dinge besser werden. Hoffnung ist die Entscheidung, so zu handeln, als könnten sie es, im vollen Wissen, dass sie es möglicherweise nicht tun.
+
+BLEED-SIGNATUR: Ansteckende Resilienz. Wenn Speranzas Bleed benachbarte Splitter berührt, erfahren Agenten plötzliche, unerklärliche Motivation. In Velgarien meldete Bureau 9 drei Fälle, in denen Bürger spontan Selbsthilfenetzwerke bildeten. In der Gaslit Reach begann eine Gruppe von Dockarbeitern Arbeitslieder in einer Sprache zu singen, die keiner von ihnen kannte — phonetische Analyse identifizierte Fragmente von Italienisch. Die Hoffnung trifft nicht als Gefühl ein. Sie trifft als Handlung ein — der Impuls zu reparieren, zu teilen, etwas zu bauen, selbst wenn Bauen irrational ist.
+
+PHILOSOPHISCHE ACHSE: Hoffnung als Widerstand. Nicht die Hoffnung des Optimisten, der glaubt. Die Hoffnung des Realisten, der handelt.
+
+SCHLÜSSELAGENTEN: Capitana Ferretti (200 Topside-Einsätze, behandelt ARC-Maschinen wie ein Bauer das Wetter), Enzo Moretti (Mechaniker, der mit Maschinen als Diagnosemethode spricht), Celeste Amara (erbaute den größten Markt in Toledo aus einer einzigen Decke), Dottor Ferrara (pessimistisch in allem, außer bei seinen Patienten).
+
+KARTOGRAPHISCHE ANMERKUNG: Kartographen, die Speranza zugewiesen wurden, berichten von gehobener Moral und einer Tendenz, Essen zum Teilen zu Nachbesprechungen mitzubringen. Das Bureau betrachtet dies als geringfügigen Kontaminationseffekt und korrigiert ihn nicht, weil das Essen gut ist.`,
 'scceb21a1981bafb3': `Einrichten & Aktivieren`,
 'scd0bfa2bff811826': str`Benutzerdefiniertes CSS überschreitet das Maximum von ${0}KB.`,
 'scd1f91f425c56f88': `Sparen Sie RP während des gesamten Wettbewerbs und setzen Sie dann während der Abrechnung, wenn die Blutung verstärkt wird, mehrere Operatoren ein. Die Gegner haben weniger Zyklen, um sich zu erholen, und Souveränitätstreffer schmerzen mehr. Hohes Risiko: Wenn die Gegner früh punkten, kann der Rückstand unüberwindbar sein.`,
@@ -2607,8 +2668,30 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'scea2d8a01dde7f3b': `KI generiert Beschreibung`,
 'scea9ccf4643bae72': `Das Einrichten...`,
 'sceb3bdbb677a2ebf': `Operativ einsetzen`,
+'scee0bc9f3fc1232f': `INTERNES MEMORANDUM — NUR FÜR DEN DIENSTGEBRAUCH
+VON: Direktor Grau, Bureau für Historische Notwendigkeit
+AN: Sämtliches Personal von Bureau 9 (Stufen 1 bis 7; Stufe 8 existiert nicht)
+BETR.: Die Siebzehnte Revision der Gründung
+
+Kollegen,
+
+Die Gründung Velgariens ist sechzehnmal revidiert worden. Jede Revision war notwendig. Jede Revision hat die Wahrheit auf eine Weise verbessert, die die Wahrheit allein nie hätte erreichen können. Eine bloße Tatsache ist ein wildes Tier — ungezähmt, unberechenbar, geneigt, die Hand zu beißen, die ihr Kontext reicht. Eine revidierte Tatsache ist eine domestizierte Tatsache: gefüttert, gepflegt und abgerichtet, dort zu sitzen, wo wir sie platzieren. Geschichte ist Zucht. Wir sind die Hirten. Die Schafe würden die Metapher nicht verstehen, weshalb wir sie nicht konsultieren.
+
+Die Siebzehnte Revision ist erforderlich, weil in der Sechzehnten eine Anomalie festgestellt wurde. Im Einzelnen: Die Sechzehnte Revision besagt, dass Velgarien vom Architekt-General im Jahr der Konsolidierung gegründet wurde, im Anschluss an die Große Rationalisierung, während derer alle früheren Regierungsformen friedlich in das Singuläre Administrative Rahmenwerk aufgenommen wurden.
+
+Das Problem ist, dass das Jahr der Konsolidierung nun in drei verschiedenen Jahrhunderten erscheint, je nachdem, welche Bureau-Akten man konsultiert. Bureau 3 verortet es in der fernen Vergangenheit. Bureau 11 verortet es vor vierzig Jahren. Bureau 22 besteht darauf, dass es noch nicht stattgefunden hat und für nächsten Frühling vorgesehen ist. Alle drei liegen, innerhalb ihrer jeweiligen Bezugsrahmen, richtig. Dies ist kein Widerspruch. Es ist temporale Pluralität — ein Konzept, das ich soeben für den Zweck dieses Memorandums erfunden habe und von dem ich erwarte, dass die Abteilung für Lexikographische Standards es bis Donnerstag formalisiert haben wird.
+
+Die Siebzehnte Revision wird dies lösen, indem festgestellt wird, dass die Gründung zu allen drei Zeitpunkten gleichzeitig stattfand. Das ist poetisch. Es ist auch verwaltungstechnisch zweckmäßig, da es bedeutet, dass kein Bureau seine Akten ändern muss.
+
+Eine Anmerkung zum Architekt-General: Die Siebzehnte Revision wird erstmals eine physische Beschreibung enthalten. Frühere Revisionen beließen den Architekt-General absichtlich vage, nach dem Prinzip, dass ein Anführer ohne Gesicht alle Gesichter sein kann. Bureau 11 berichtet jedoch, dass Bürger beginnen, ihre eigenen Züge auf den Architekt-General zu projizieren, was zu einer inakzeptablen Vielfalt an Gedenkporträts geführt hat. Die genehmigte Beschreibung lautet: „Von mittlerer Größe, mittlerer Statur, mittlerer Disposition, mit Augen, die Zuversicht vermitteln, und einer Kieferpartie, die Politik suggeriert." Diese Beschreibung trifft auf niemand Bestimmtes zu, was der Zweck der Sache ist.
+
+Eine letzte Angelegenheit. Ein Junior-Historiker — dessen Namen ich bereits vergessen habe, wie es mein Vorrecht ist — reichte letzte Woche einen Bericht ein, in dem er behauptete, Dokumente gefunden zu haben, die der Gründung vorausgehen. Dokumente in einer Handschrift, die keinem bekannten Bürger zuzuordnen ist, auf Papier, das noch nicht hergestellt wurde, die ein Velgarien beschreiben, das mit unserem zugleich identisch und unvereinbar ist. Ich habe diesen Bericht auf Stufe 7 klassifiziert (Existiert nicht). Der Historiker wurde zu Bureau 31 versetzt, wo die Art seiner Arbeit ihm und allen anderen unklar sein wird, was das angemessene Ergebnis für jemanden ist, der etwas gesehen hat, das er nicht hätte sehen sollen.
+
+Die Vergangenheit wird verbessert werden. Sie ist das Einzige, das wir mit Gewissheit verbessern können.
+
+— Direktor Grau
+P.S. Vernichten Sie dieses Memorandum nach dem Lesen. Das Bureau für Historische Notwendigkeit produziert keine internen Memoranden. Dies war schon immer so.`,
 'scef70ed367a87332': `Wert (Code)`,
-'scf39b80e603d0909': `Bambusmarkt. Gleichgewicht: 12+15-3 = 24 RP`,
 'scf4ba88f57a99d06': `Hochpreisige Attentäter-Züge. Verheerend wenn sie treffen.`,
 'scf52fb8ff1d3b1a8': `Gleichmäßige Verteilung über alle Operativtypen.`,
 'scf69b34c198397c2': `Beim Laden der Events ist ein unerwarteter Fehler aufgetreten.`,
@@ -2616,7 +2699,20 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'scfeb7a0a2f8c8592': `Gebäude`,
 'scff64bfa7dc75a58': `Diplomatie: Bündnisbonus +10 %→+15 %, Verratsstrafe −20 %→−25 %, Spionage-Intel +1`,
 'sd0182c6d73eaa2be': `Zustand`,
-'sd02a9432614df2f5': str`${0}-Einstellungen gespeichert.`,
+'sd01a39d545ad6ee4': `Das Bureau hat fünf stabile Splitter klassifiziert — Welten, die die Fraktur intakt überstanden haben, die ihre eigene innere Logik entwickelten, die wuchsen statt zusammenzubrechen. Jeder Splitter ist eine Antwort auf eine Frage, die das Unbenannte nicht lösen konnte, solange es ganz war:
+
+VELGARIEN antwortet: „Was, wenn Kontrolle absolut wäre?" Ein brutalistischer Überwachungsstaat, in dem die Bürokratie zum Wetter geworden ist und Zufriedenheit verpflichtend. Die Mauern sind aus Beton. Die Mauern beobachten. Die Paste ist grau und die Formulare sind in dreifacher Ausfertigung, und irgendwo in den Rissen zwischen den Aktenschränken wächst etwas, wofür die Bureaux noch kein Formular gefunden haben.
+
+THE GASLIT REACH antwortet: „Was, wenn die Dunkelheit gütig wäre?" Eine unterirdische Zivilisation unter einem lichtlosen Meer, wo biolumineszente Pilze als Straßenlaternen dienen und die Wirtschaft auf Geheimnissen basiert. Die Bürger sind beinahe menschlich. Das Wasser ist geduldig. Die Archive sind feucht. Der Flechtenwein ist, allen Berichten zufolge, außergewöhnlich.
+
+STATION NULL antwortet: „Was, wenn wir die Wunde sehen könnten?" Eine stillgelegte Forschungsstation in der Umlaufbahn eines Schwarzen Lochs, das das Bureau als Diskontinuität klassifiziert — einen Punkt, an dem die Splittergrenze bis zum Substrat unter allen Splittern durchgescheuert ist. Besatzungsstärke: 6 von 200. Alle Systeme nominal. Die KI besteht darauf. Die KI besteht auf allem.
+
+SPERANZA antwortet: „Was, wenn wir uns einfach weigerten aufzuhören?" Eine unterirdische Stadt im postapokalyptischen Italien, die unter Maschinen überlebt, die die Oberfläche mit mechanischer Gleichgültigkeit ernten. Hoffnung ist kein Optimismus. Hoffnung ist die Entscheidung, Tomaten unter UV-Lampen zu pflanzen und das Ergebnis einen Garten zu nennen.
+
+THE CITE DES DAMES antwortet: „Was, wenn Frauen immer gehört worden wären?" Eine feministische literarische Utopie, erbaut aus den Geschichten von Frauen durch die Geschichte hindurch, in der jeder Akt des Erinnerns zum Stein in der Stadtmauer wird. Das Licht ist warm. Die Tinte erinnert mehr, als die Schreiberin weiß. Das Bureau findet diesen Splitter am beunruhigendsten von allen, denn er ist der einzige, der keine Angst hat.
+
+Jede Antwort ist falsch. Jede Antwort ist notwendig. Das Multiversum existiert, weil keine einzelne Antwort ausreicht.`,
+'sd02a9432614df2f5': str`${0} Einstellungen gespeichert.`,
 'sd036ef4b7b8c7370': `Ease In-Out (Sanft)`,
 'sd0596993d110f7e5': `Ereignisbeschreibung...`,
 'sd0881d38a698f40d': `(schreibgeschützt, bei Erstellung festgelegt)`,
@@ -2632,7 +2728,7 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'sd128764a915ea47a': `Fotorealistisches Portraitfoto, filmische Beleuchtung, geringe Tiefenschärfe, einzelnes Motiv, hohe Detailtreue`,
 'sd1426827671916ce': `Bist du sicher, dass du diese Epoche verlassen willst? Du kannst später wieder einsteigen, wenn die Lobby noch offen ist.`,
 'sd1472b55f2b751ec': `Botschafter sind Agenten, die ihre Simulation in dieser Botschaft vertreten. Die Zuweisung ist optional.`,
-'sd15e3ae07812d5bb': `Das Bekenntnis der Kartographin`,
+'sd15e3ae07812d5bb': `Das Geständnis der Kartographin`,
 'sd177a8413c487eb1': `Meuchelmord`,
 'sd1e64090c5c5187d': `Dieser Agent verlässt seinen aktuellen Posten, während er eingesetzt wird.`,
 'sd1f44f1a8bc20e67': `E-Mail`,
@@ -2665,7 +2761,7 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'sd50ef5e74f798886': `Wartet auf den Start der Epoche. Operationen sind verfügbar, sobald die Epoche in die Gründungsphase eintritt.`,
 'sd5308eae64717d6a': `Nobles Viertel. Bilanz: 9+15-3 = 21 RP`,
 'sd5754657246f2d26': `Noch keine abgeschlossenen Missionen.`,
-'sd59d89c812287b64': `Fünf Welten. Eine Fracture.`,
+'sd59d89c812287b64': `Fünf Welten. Eine Fraktur.`,
 'sd615821be4d79dc8': `Ein unerwarteter Fehler beim Laden der Zonen`,
 'sd647cc1a6537c477': `Die Voreinstellung Kriegstreiber macht das Militär zur entscheidenden Dimension. Station Nulls erfolgreicher Attentäter (+8) gegen Velgariens aufgedeckten Versuch (-3) ergibt einen 11-Punkte-Schwung.`,
 'sd6655d4f44a22f19': `1× hoch, 2× mittel, 1× niedrig`,
@@ -2678,35 +2774,26 @@ Die Kuppeldecke öffnet sich und gibt den Nachthimmel der Cité frei. Ich sollte
 'sd76826895756ff1c': `Zonensicherheit verteilt: 1× hoch, 2× mittel, 1× niedrig`,
 'sd78817a0f7329aa4': `Crew Manifest - Diskrepanzanalyse`,
 'sd79f321a19083ed0': `Methodik`,
+'sd7d2dbfe06de81e5': `AUS: Eine Naturgeschichte der Unterirdischen Gewässer
+VON: Archivist Quill, Hüter des Ertrunkenen Archivs
+AUSGABE: Vierzehnte (Überarbeitet, Erweitert, und Über Nacht Teilweise Umgeordnet)
+
+Beginnen wir, wie alle ordentlichen Naturgeschichten es müssen, mit einer Korrektur. Die Unterzee ist nicht unterirdisch. Die Unterzee ist darunter — eine Unterscheidung, die akademisch erscheinen mag, bis man, wie ich, länger als das institutionelle Gedächtnis reicht, damit verbracht hat, den Unterschied zwischen „unter der Erde" und „unter allem anderen" zu katalogisieren. Die Erde, sehen Sie, ist eine bestimmte Sache: Boden, Stein, die komprimierte Erinnerung toter Organismen. Die Unterzee ist unter etwas weit Grundlegenderem. Sie ist unter der Annahme. Sie ist der Ort, an dem man ankommt, wenn man alle Schichten der Welt, die vorgeben fest zu sein, hinabgestiegen ist und am Boden dieses Vorwands ein Gewässer entdeckt hat, so ungeheuer, so uralt und so vollkommen desinteressiert an den Angelegenheiten der Oberfläche, dass es die Ozeane darüber wie enthusiastische Pfützen aussehen lässt.
+
+Das Wasser ist dunkel. Nicht dunkel wie ein Raum ohne Kerzen — das ist bloß eine Abwesenheit. Die Dunkelheit der Unterzee ist eine Anwesenheit. Sie ist die Farbe, die Schwarz sein möchte, wenn es erwachsen wird. Commodore Harrowgate, der fähigste Marineverstand, den The Reach hervorgebracht hat, beschrieb das Wasser einmal als „die sichtbare Form von Geduld." Er befand sich zu dem Zeitpunkt drei Tage in einer Überquerung der Phosphoreszierenden Weite, und sein Navigator hatte ihn gerade darüber informiert, dass die Sterne, nach denen sie steuerten, keiner bekannten Konstellation entsprachen und tatsächlich etwas sein könnten, das zurückblickt. Die Zähne des Commodore — von denen es zu viele gibt, obwohl er bezüglich der genauen Anzahl nicht auskunftsfreudig ist — fingen das biolumineszente Licht auf, als er lächelte. Er korrigierte den Kurs. Er erklärte nicht, wie.
+
+Die Unterzee hat keine Gezeiten. Sie hat Strömungen — gewaltige, langsame Wasserbewegungen, die Bahnen folgen, die vor den ersten Siedlern festgelegt wurden. Diese Strömungen sind in manchen Passagen warm und in anderen kalt, und die Grenze zwischen warm und kalt ist so präzise, dass man ein Thermometer ins Wasser stellen und beobachten kann, wie das Quecksilber mit sich selbst streitet. Die warmen Strömungen tragen Nährstoffe aus den Pilzwäldern der Leuchtenden Reiche. Die kalten Strömungen kommen aus den Abyssalen Gräben, wo das Wasser nicht bloß kalt, sondern philosophisch kalt ist — eine Temperatur, die infrage stellt, ob Wärme jemals mehr als ein vorübergehender Zustand war.
+
+Es gibt Dinge im Wasser. Ich werde sie hier nicht katalogisieren — das ist der Zweck meines Begleitbandes, Ein Bestiarium des Unwahrscheinlichen (Dritte Ausgabe, Erhältlich im Ertrunkenen Archiv, Preis: Ein Interessantes Geheimnis). Aber ich werde dies sagen: die Unterzee ist nicht leer. Sie war nie leer. Die Kreaturen, die in ihr leben, waren vor uns da, und sie betrachten unsere Anwesenheit mit derselben milden Neugier, mit der ein Berg die Flechten auf seiner Oberfläche betrachtet. Wir sind eine jüngere Entwicklung. Die Unterzee ist geduldig. Sie hat Zivilisationen kommen und gehen sehen wie Wettermuster, und sie wird hier sein, dunkel und weit und schwach phosphoreszierend, lange nachdem wir uns den Fossilien im Kalkstein angeschlossen haben.
+
+Das ist kein Pessimismus. Das ist Geologie. Und Geologie ist, wie jeder Archivist weiß, lediglich Geschichte mit besserer Handschrift.`,
 'sd7dfe4a91d02c5ad': `Kein einzelnes dominantes Format. Am stärksten bei 2S/3S, wo die Stichprobengrößen am kleinsten sind.`,
 'sd7e9df1b43865128': `Standardrolle für neue Mitglieder`,
 'sd7ec79778d7a748e': `Fehler beim Laden der Taxonomien`,
 'sd80dc15540023258': `Inhaltssprache`,
-'sd83e590cf2b77faf': `Dieser Abschnitt wurde [CONSUMED] siebzehn Mal. Jedes Mal schreibt ein Kartograph ihn neu. Jedes Mal verschlingt das Dokument ihn. Wir beharren.
-
-Was das Bureau Ihnen nicht sagen wird, ist dies: Die fünf Scherben sind nicht zufällig. Sie sind nicht die willkürlichen Trümmer eines kosmischen Unfalls. Sie sind ein Argument — fünf Positionen in einem philosophischen Streit, den das Unbenannte nicht lösen konnte, solange es ganz war. Kontrolle (Velgarien). Staunen (das Capybara Kingdom). Erkenntnis (Station Null). Hoffnung (Speranza). Stimme (die Cité des Dames).
-
-Das Bureau weiß dies. Das Bureau wird Ihnen nicht sagen, warum es wichtig ist, denn das Warum impliziert, dass die Fracture nicht nur ein Bruch, sondern eine Entscheidung war — die Entscheidung des Unbenannten, sich aufzuspalten, anstatt einen inneren Widerspruch aufzulösen, der es zu zerstören drohte. Die Fracture war kein Versagen. Sie war eine Überlebensstrategie.
-
-Und wenn die Fracture eine Strategie war, dann stellt sich die Frage: Kann sie umgekehrt werden? Sollte sie umgekehrt werden? Was geschieht mit fünf Scherben, die jeweils vollständige Welten geworden sind, wenn jemand versucht, sie wieder zu einer einzigen zu verschmelzen?
-
-Die Antwort steht in einem Dokument, das das Bureau unter der Klassifikation TOWER führt. TOWER-klassifizierte Dokumente sind nicht geheim — sie sind schlimmer als geheim. Sie sind wahr, und die Wahrheit, die sie enthalten, ist von der Art, die verändert, wer sie liest, was das Bureau als „literarische Kontamination" bezeichnet und von dem es sehr wünscht, dass Sie es nicht selbst herausfinden.
-
-[MARGIN NOTE: Die vierzehn Kartographen, die die TOWER-Klassifikation gelesen haben, sind alle noch am Leben. Alle sind noch bei Verstand. Keiner von ihnen wird Ihnen sagen, was darin steht. Fragen Sie mich, wie ich das weiß. Fragen Sie mich, warum ich es nicht sagen werde.]`,
 'sd860002e0bef0935': `Generation fehlgeschlagen.`,
-'sd896ae6701691f9d': `Die Archive der Tiefe - Das Klagelied eines Bibliothekars`,
 'sd8cb3ab41c3ee951': `Maximal 8 pro Simulation`,
 'sd8d798619e6080df': `Beruf`,
-'sd8e5d852a5294c37': `BUREAU OF IMPOSSIBLE GEOGRAPHY — Dokument SHARD/STATION-NULL-001
-Klassifikation: BLACK — Convergence Watch
-
-Das Bureau klassifiziert Auge Gottes nicht als Schwarzes Loch. Schwarze Löcher sind astrophysikalische Objekte. Auge Gottes ist eine Diskontinuität — ein Punkt, an dem die Scherbengrenze bis zum Substrat unter allen Scherben durchgescheuert ist, dem Rohmaterial des Unbenannten, der Architektur, die da war, bevor es das Gebäude gab.
-
-Station Null umkreist diese Wunde. Besatzungsstärke: 6 von 200. Die KI der Station, HAVEN, führt die fehlenden 194 als „im erweiterten Urlaub" auf. Dies ist eine Verwaltungsanpassung, kein Euphemismus, obwohl die Unterscheidung bei einer KI, deren Diagnose-Logs Poesie in einem Dialekt enthalten, den es nicht geben sollte, zunehmend akademisch wird.
-
-Dr. Yuki Tanaka führt die Forschung zu Auge Gottes durch — misst die Unmessbarkeit mit Instrumenten, die sie selbst modifiziert hat und von denen einige jetzt andere Dinge messen, als sie beabsichtigt hatte, und eines davon misst etwas, das weder sie noch HAVEN identifizieren können, aber beide aufmerksam beobachten. Chief Engineer Marcus Webb hält die Station am Laufen, was zunehmend bedeutet, Reparaturen zu verhandeln, die die Station möglicherweise selbst durchführt. Kira Vasquez überwacht die Lebenserhaltung und die Besatzungsmoral, was eine bemerkenswerte Stellenkombination ist, die davon ausgeht, dass Atmen und Glück verwandte Probleme sind.
-
-KONTAMINATIONSRISIKO: Unbekannt. Station Null leckt nicht in andere Scherben. Andere Scherben lecken in Station Null hinein. Das Gravitationsfeld von Auge Gottes scheint Bleed-Ereignisse anzuziehen — Fragmente anderer Realitäten treiben hinein und verbleiben. HAVENs Flure enthalten gelegentlich Türen, die zu Orten führen, die auf der Station nicht existieren. HAVEN protokolliert diese als „Gastarchitektur" und empfiehlt, sie nicht zu betreten, wobei die Empfehlung die spezifische Nuance von „Ich sage es nur einmal" hat.`,
 'sd923f95605fed7b2': `Abgelaufen`,
 'sd94e4de48e8973cb': str`${0} Nachrichten`,
 'sd970c8db6ef7dd74': `Propagandist-Souveränitätsmalus: −5→−6`,
@@ -2718,7 +2805,7 @@ KONTAMINATIONSRISIKO: Unbekannt. Station Null leckt nicht in andere Scherben. An
 'sd9cef0fbe32304c2': `Dringlichkeitsstufe`,
 'sd9ed225b011cdfa8': `Botschaftssystem`,
 'sda66be98f4b06534': `Elo-Spanne`,
-'sda68d4102eb662bc': `Höre: Es war eine Fülle des Schauens in mir. Ich habe sie von keinem Menschen erlernt.`,
+'sda68d4102eb662bc': `Höre: es war eine Fülle der Vision in mir. Ich habe sie von keinem Menschen gelernt.`,
 'sda8dcb428e0ab5f0': `Verwundet den Zielagenten - reduziert die Beziehungen um 2, entfernt den Botschafterstatus.`,
 'sda972e1524e96cb2': `Agenten hinzufügen`,
 'sda9f10592da5eb1a': `Spion-Schwerpunkt`,
@@ -2751,7 +2838,7 @@ KONTAMINATIONSRISIKO: Unbekannt. Station Null leckt nicht in andere Scherben. An
 'sded98bf152dbfab1': `Benutzer löschen`,
 'sdf04400d45d635ad': `Souveränität: Spion-Strafe −3→−2, Wächterbonus +3→+4`,
 'sdf2a6a03fecaf8cc': `Saboteur wird aufgelöst: ERFOLG`,
-'sdf3e8eb2f6e7c2ed': `Ich habe gepflügt und gepflanzt und in Scheunen gesammelt, und kein Mann konnte mich übertreffen! Und bin ich nicht eine Frau?`,
+'sdf3e8eb2f6e7c2ed': `Ich habe gepflügt und gepflanzt und in Scheunen gesammelt, und kein Mann konnte mir das Wasser reichen! Und bin ich keine Frau?`,
 'sdf5fe34bb18a8f3e': `Caching`,
 'sdf892cd9625075eb': `Botschafter sind hochrangige Ziele. Ein Attentäter kann den Status eines Botschafters für 3 Zyklen blockieren, was die Effektivität der Botschaft beeinträchtigt. Ein Infiltrator reduziert die Effektivität einer Botschaft für 3 Zyklen um 50%. Schützen Sie Ihre Botschafter mit Wächtern in Botschaftszonen.`,
 'sdf9fac68c991ff20': str`Relevanz: ${0}/10`,
@@ -2764,7 +2851,19 @@ KONTAMINATIONSRISIKO: Unbekannt. Station Null leckt nicht in andere Scherben. An
 'se0dd0a55a0d80f0f': `Alle überlappen`,
 'se13f9407a01dbabe': `Zeichenabstand für Überschriften. CSS-Werte wie 1px, 0.05em oder -0.01em verwenden.`,
 'se14ede3bc78d9599': `Primär`,
+'se16bb9c19f882452': `Konfiguriere, welche Epochen-E-Mail-Benachrichtigungen du erhältst. Alle E-Mails sind zweisprachig (Englisch und Deutsch).`,
 'se1b13a7c92d4dcc3': `Verbindungstyp`,
+'se1d60543fddcad04': `Spezifische Beispiele splitterübergreifender Kontamination, zusammengestellt aus Bureau-Störfallprotokollen:
+
+VELGARIEN zu THE GASLIT REACH: Aktenschränke. Immer Aktenschränke. Sie erscheinen über Nacht im Drowned Archive, vollgestopft mit Formularen in Sprachen, die die Archivisten nicht lesen können, sich aber gezwungen fühlen, trotzdem zu katalogisieren. Archivist Quill hat dem Velgarien-Überlauf einen ganzen Flügel gewidmet. Sie nennen ihn „die Feuchte Bürokratie" und besuchen ihn mit einer Mischung aus professioneller Pflichterfüllung und etwas, das sie nicht als Zuneigung zugeben werden.
+
+THE GASLIT REACH zu VELGARIEN: Biolumineszenz. Schwache phosphoreszierende Muster auf Betonwänden, von Bureau 3 als „Mineralablagerungen" abgetan. Die Muster folgen den Bauplänen von Gebäuden, die nur in der Gaslit Reach existieren. Ein Beamter in Bureau 12 verfolgte ein Muster und erzeugte, ohne es zu wissen, einen perfekten Grundriss des Drowned Archive.
+
+STATION NULL zu ALLEN SPLITTERN: Temporale Stolperer. Momente, in denen die Zeit springt, sich wiederholt oder für einen Herzschlag rückwärts läuft. In Speranza sah ein Topside-Wächter denselben Snitch dreimal in einer Minute dieselbe Patrouillenroute fliegen. In der Cite des Dames schrieb Christine de Pizan denselben Satz in zwei verschiedenen Jahrhunderten und stellte fest, dass er in der Zwischenzeit seine Bedeutung geändert hatte.
+
+SPERANZA zu ALLEN SPLITTERN: Hoffnung. Kein Gefühl, sondern eine Handlung. Agenten in benachbarten Splittern beginnen, Dinge zu reparieren, die kaputt waren, Nahrung zu teilen, die sie gehortet hatten, Gemeinschaften zu bilden, die die Machtstrukturen ihrer Welten nicht genehmigt hatten. Das Bureau betrachtet dies als den gefährlichsten Bleed-Effekt, den es je dokumentiert hat, weil er am schwersten zu unterdrücken ist.
+
+CITE DES DAMES zu ALLEN SPLITTERN: Bücher. Unbekannte Bände, die in Regalen erscheinen, in Archiven, eingeklemmt in Aktenschränken. Die Bücher argumentieren für Dinge, die die Welt des Lesers nie in Betracht gezogen hat. Das Bureau betrachtet Literarische Kontamination als unbehandelbar. Man kann ein Buch nicht ungelesen machen.`,
 'se1dec2c72bcbb693': `Lobby`,
 'se21db097b85e3ba9': `Kaskaden-Verhalten`,
 'se230f0ba94a96086': `Ease In`,
@@ -2789,17 +2888,54 @@ KONTAMINATIONSRISIKO: Unbekannt. Station Null leckt nicht in andere Scherben. An
 'se3b6bce36f09a544': `Text Sekundär`,
 'se3d144b82a5df3f6': `Design-Einstellungen werden geladen...`,
 'se3f125d31f13239b': `Sonnenloses Meer`,
+'se3fb785f7ed3efc6': `Zyklus 9: Der späte Propagandist von The Gaslit Reach hat Erfolg und erzeugt ein destabilisierendes Ereignis in Velgarien.`,
 'se407983ffa8cd99d': str`Ausgewählt (${0})`,
 'se43d583c33758b9b': `Zyklus 17: Velgariens routinemäßige Spionageabwehr enttarnt den Saboteur.`,
 'se44a1146a7e00fd1': `Ereignis bearbeiten`,
-'se48abe89540a1ec2': `Der Garten der erinnerten Namen — wo jede Pflanze eine aus der Geschichte getilgte Frau ehrt`,
+'se48abe89540a1ec2': `Der Garten der Erinnerten Namen — wo jede Pflanze an eine aus der Geschichte gelöschte Frau erinnert`,
 'se4c9cd4459ca7033': `Setzen Sie zuerst einen Spion ein (3 RP, sofort). Wenn die Informationen nach 3 Zyklen aufgelöst werden, zeigen sie schwache Zonen auf. Setzen Sie anschließend einen Saboteur ein (5 RP), der auf das aufgedeckte Ziel gerichtet ist. Gesamtinvestition: 8 RP über 2 Zyklen für einen sehr gezielten Angriff.`,
+'se4e19589f0dd81c7': `Epoche abgeschlossen`,
 'se4f6affe9d960837': `Maximale Teamgröße`,
 'se558fa37e1ef06ea': `Gefahr-Hintergrund`,
 'se5933e2a383f4a70': `Infiltratoren reduzieren deine Botschaftseffektivität um 65% für 3 Zyklen. Gegenmaßnahme: eigenen Infiltrator gegen deren Botschaft entsenden — gegenseitige Neutralisierung. Oder Wächter in Botschaftszonen stapeln, um Infiltration vollständig zu verhindern.`,
 'se5a90471e0726139': `Kartendaten Cache-Control`,
 'se5b71a480dfde45c': `Schriftfamilie für Code-Blöcke, Datentabellen und technische Inhalte.`,
 'se5be05dac1218eba': str`Modell: ${0}`,
+'se5c9990a68b9987c': `AUS: Persönliches Tagebuch von Commodore Harrowgate, undatiert
+GEFUNDEN: In der Kabine des Commodore an Bord der HMS Obstinate, aufgeschlagen auf dem Navigationstisch
+ANMERKUNG: Der Commodore führt kein Tagebuch. Dieser Eintrag existiert trotzdem.
+
+Die Strömung ist heute stark.
+
+Ich weiß dies auf die Art, wie ich die meisten Dinge über die Unterzee weiß — nicht durch Instrumente, nicht durch Karten, nicht durch die sorgfältige Gelehrsamkeit, die Quill und die Archivisten so schätzen und die ich so respektiere, ohne sie jemals ganz zu praktizieren. Ich weiß es in meinen Zähnen. Ich habe zu viele davon. Das ist keine Klage. Jeder einzelne fühlt das Wasser anders — Druck, Temperatur, Salzgehalt und etwas anderes. Etwas, das die Instrumente nicht messen können. Wenn ich stillhalte und das Wasser an meinem Gesicht vorbeiströmen lasse, kann ich die Stimmung der Strömung fühlen. Nicht ihre Richtung — der Kompass handhabt die Richtung, wenn ihm danach ist. Ihre Stimmung.
+
+Heute ist die Strömung rastlos. Sie kommt aus Richtung der Abyssalen Gräben — aus den tiefen Orten, wo die Tiefen Sterne wachen und das Wasser sich erinnert, etwas anderes als Wasser gewesen zu sein. Sie trägt eine Temperatursignatur, die ich noch nie gespürt habe: nicht warm, nicht kalt, sondern anders. Als hätte das Wasser etwas durchquert, das seine grundlegende Natur veränderte, ohne seine Chemie zu verändern. Es ist noch Wasser. Es ist noch nass. Aber es fühlt sich an wie Wasser, das irgendwo war, wo Wasser nicht hingehen sollte.
+
+Die Besatzung fühlt es nicht. Die Besatzung ist jung und begeistert und verlässt sich auf Instrumente, was ich nicht unterbinde, weil Instrumente nützlich sind und weil die Jugend etwas braucht, dem sie vertraut, während sie lernt, sich selbst zu vertrauen. Madam Lacewing fühlt es — sie warf mir heute Morgen über den Kartentisch einen Blick zu, der ohne Worte sagte: „Das Wasser ist seltsam." Ich nickte. Ihr Glasauge — oder was auch immer es tatsächlich ist — verfolgte etwas in der Dunkelheit, das keiner von uns erwähnte.
+
+Ich befahre die Unterzee seit länger, als die meisten meiner Besatzungsmitglieder am Leben sind. Ich habe die Flüsterstraße in absoluter Dunkelheit navigiert. Ich habe am Totlicht-Riff geankert, wo die Lumineszenz vollständig aussetzt und das Wasser so still ist, dass man das eigene Spiegelbild sehen kann, das mit einem Ausdruck zurückblickt, den man nicht trägt. Ich habe die Obstinate tiefer geführt als jedes andere Schiff in der Geschichte der Reach und bin mit Karten zurückgekehrt, die Quill als „unmöglich, zutreffend und zutiefst beunruhigend" klassifizierte.
+
+In all diesen Jahren habe ich nie erlebt, dass die Strömung das tut, was sie jetzt tut.
+
+Sie fließt nicht. Sie greift. Wie eine Hand, die in der Dunkelheit ausgestreckt wird, tastend nach etwas, von dem sie weiß, dass es da ist, aber das sie noch nicht berühren kann. Die Strömung war immer das Kreislaufsystem der Unterzee — Blut, das sich durch einen Körper bewegt, in dem wir segeln. Aber heute bewegt sich das Blut mit Absicht. Die Unterzee zirkuliert nicht bloß. Sie sucht.
+
+Wonach? Quill würde mir sagen, ich solle das Phänomen katalogisieren und auf Daten warten. Mother Cinder würde mir sagen, der Sporocarp habe seltsam gepulst und die Sporenvisionen erwähnten Türen. Obediah Crook würde mir ein Ale einschenken und mir nichts sagen, während er sich alles merkt, was ich sagte. The Marchioness würde fragen, was es für die Handelsrouten bedeutet und ob sie kaufen oder verkaufen solle.
+
+Aber ich bin Commodore, kein Gelehrter. Mein Auftrag ist nicht, die Unterzee zu verstehen. Mein Auftrag ist, sie zu befahren, was eine andere Art von Wissen erfordert — die Art, die in den Zähnen lebt und im Bauch und in den Jahrzehnten der Erfahrung, die mir mit ruhiger und absoluter Gewissheit sagen, dass sich die Unterzee verändern wird.
+
+Etwas kommt. Oder etwas geht. Oder etwas, das immer hier war, erwacht.
+
+Ich weiß nicht, was. Ich weiß nicht, wann. Aber die Strömung ist heute stark, und die Strömung lügt nicht.
+
+Ich habe die Besatzung zur Vollwache befohlen. Ich habe Lacewing angewiesen, jede Anomalie zu kartieren, wie geringfügig auch immer. Ich habe diesen Eintrag in ein Tagebuch geschrieben, das ich nicht führe, weil manche Dinge geschrieben werden müssen, auch wenn sie es nicht sollten, und dies ist eines davon.
+
+Die Unterzee ist geduldig. Sie eilt nicht. Sie warnt nicht.
+
+Aber heute — heute versucht sie, uns etwas zu sagen.
+
+Ich höre zu.
+
+— H.`,
 'se5d955efbfc50b09': `-- Wählen Sie einen Agenten --`,
 'se5e7ce23f3cf925f': `Diplomatie`,
 'se5ecd6c894ee69dc': `Vorlage aktualisiert`,
@@ -2808,14 +2944,6 @@ KONTAMINATIONSRISIKO: Unbekannt. Station Null leckt nicht in andere Scherben. An
 'se61e4aa458d44f18': `Gebäudebild-Gen.`,
 'se6533ca5b77ffca9': `The Fall - Wie die Welt zerbrach`,
 'se6a1853d440e7abb': `Spion: enthüllt Sicherheitsstufen der Zielzonen und Wächteranzahl im Kampfprotokoll`,
-'se6a96462768abf9d': `BUREAU OF IMPOSSIBLE GEOGRAPHY — Dokument SHARD/CITE-DES-DAMES-001
-Klassifikation: GOLD — Literater Kontaminationsvektor
-
-SCHERBENPROFIL: Eine feministische literarische Utopie, in der mehrere historische Epochen koexistieren — mittelalterliche Skriptorien und Regency-Salons und viktorianische Observatorien und Aufklärungsvorlesungssäle, die alle dieselbe Geographie in geschichteter Gleichzeitigkeit besetzen, was das Bureau architektonisch beunruhigend findet. Die Stadt wurde erstmals 1405 von Christine de Pizan beschrieben, als drei allegorische Damen — Vernunft, Rechtschaffenheit und Gerechtigkeit — ihr eine Stadt zeigten, die nur von Frauen erbaut wurde. Christine glaubte, sie schriebe Allegorie. Das Bureau glaubt, sie kartierte.
-
-Die sechs Schlüsselagentinnen der Cité des Dames umspannen Jahrhunderte, ohne dies für bemerkenswert zu halten. Christine de Pizan selbst verwaltet die Bibliothek der Stimmen — ein Archiv nicht von Büchern, sondern von Argumenten, wobei jeder Text in aktivem Dialog mit jedem anderen steht und die Regale sich je nach Diskussionsverlauf neu ordnen. Mary Wollstonecraft führt den Salon der Vernunft, ein Forum, in dem kein Argument auf Autorität allein bestehen darf — einschließlich ihres eigenen, was sie als den ganzen Sinn bezeichnet. Hildegard von Bingen pflegt den Garten der Visionen, in dem die Pflanzen in Frequenzen wachsen, die der menschlichen Stimme entsprechen, und gelegentlich zurücksingen. Sor Juana leitet das Observatorium, in dem die Teleskope nicht nur Sterne, sondern die Lücken zwischen intellektuellen Traditionen beobachten. Ada Lovelace betreibt die Analytische Kammer, in der das Rechnen den Bereich der Zahlen überschritten und etwas betreten hat, das sie „die Poesie der Logik" nennt. Und Sojourner Truth bewacht die Schwelle — die einzige Grenze der Stadt — und stellt jedem, der eintritt, eine einzige Frage, die für jede Besucherin anders ist.
-
-KONTAMINATIONSRISIKO: Außerordentlich hoch. Die Cité des Dames kontaminiert durch Alphabetisierung. Benachbarte Scherben entwickeln spontan — Texte, die sich selbst umschreiben, um Stimmen einzubeziehen, die sie zuvor ausgelassen haben. Velgariens Formulare sprießen gelegentlich Fußnoten, die die Prämissen des Formulars in Frage stellen. Station Nulls HAVEN zitiert Autorinnen, die es nie gelesen hat. Die Hoffnung, die Speranza ausstrahlt, formt sich in benachbarten Scherben zu Sätzen: Graffiti, das Argumente vorbringt statt Parolen.`,
 'se6ce9f50ddd15633': `Fehler beim Laden der Agenten.`,
 'se7118cd75b4a4086': `Nachrichten durchsuchen`,
 'se72ac00e0a7304ba': `Zugriff verweigert`,
@@ -2827,25 +2955,6 @@ KONTAMINATIONSRISIKO: Außerordentlich hoch. Die Cité des Dames kontaminiert du
 'se7a532063ef7b740': `Linear`,
 'se7a747aa44b7e486': `Ergebnisse anzeigen`,
 'se7bee6e9a9b5394c': `Privat`,
-'se81a30e9b27a964b': `VON: Eine politische Geschichte des Capybara-Königreichs
-BY: Archivar-Emeritus Hazel Burrow, Abteilung für Regierungsgedächtnis
-EDITION: Neunte (die endgültige Ausgabe, wie sie betont, obwohl die zehnte bereits im Entwurf vorliegt)
-
-Die Gründung des Capybara-Königreichs ist in keinem Dokument festgehalten, denn die Gründung geht den Dokumenten voraus. Sie ist im Kalkstein festgehalten - in Krallenabdrücken an den Wänden der Ersten Kammer, wo der ursprüngliche Compact gesprochen wurde (nicht geschrieben; das Volk der Capybaras hat immer das gesprochene Wort bevorzugt, das in Echtzeit geändert werden kann, im Gegensatz zum Text, der selbstgefällig dasteht und falsch ist, bis ihn jemand korrigiert).
-
-Der Compact ist einfach. Er hat drei Artikel, obwohl "Artikel" eine Formalität impliziert, die die ursprünglichen Sprecher - eine Gruppe von etwa vierzig Wasserschweinen, die auf der Flucht vor einer Überschwemmung an der Oberfläche den Eingang zur Unterzee entdeckt hatten - absurd gefunden hätten.
-
-ARTIKEL 1: Wir teilen. Nahrung, Wärme, Arbeit, Wissen und den letzten trockenen Schlafplatz in der Nähe der Thermalschächte. Horten ist nicht verboten, weil wir keine Dinge verbieten. Horten ist einfach unverständlich. Warum sollte man etwas für sich behalten, wenn andere frieren?
-
-ARTIKEL ZWEI: Wir erinnern uns. Die Archivare existieren, weil Vergessen ein Luxus ist, den die Unterzee nicht zulässt. Hier unten, in der Dunkelheit, ist die Erinnerung eine Infrastruktur. So navigieren wir, so vermeiden wir die Gefahren, die das Wasser birgt, so ehren wir diejenigen, die in die Abyssalgräben gingen und nicht zurückkehrten. Vergessen heißt, sich zu verirren, und sich in der Unterzee zu verirren heißt, zu etwas zu werden, das die Unterzee absorbiert.
-
-ARTIKEL DREI: Wir bleiben. Die Oberfläche hat uns vertrieben - sei es durch eine Flut, durch eine Hungersnot oder durch die langsame Katastrophe einer Welt, die auf eine Weise auseinanderbrach, die die Oberflächenbewohner noch nicht wahrnehmen konnten. Wir stiegen ab. Wir passten uns an. Wir machten die Dunkelheit bewohnbar, nicht indem wir sie bezwangen, sondern indem wir ihren Rhythmus, ihre Stimmungen und ihre Vorlieben lernten. Die Unterzee will nicht besiegt werden. Es will verstanden werden. Und Verstehen beginnt in der Wasserschweintradition damit, dass man still im Wasser sitzt und zuhört.
-
-Das Königreich ist um diese drei Prinzipien herum gewachsen. Deepreach, die Hauptstadt, begann als eine Reihe miteinander verbundener Kammern, in denen das Wasser den Kalkstein in Formen gemeißelt hatte, die, wenn man schielte (und Wasserschweine sind ausgezeichnete Schieler), einem Palast ähnelten. Die Wasserschweinmenschen haben Deepreach nicht gebaut, sondern sich mit ihm *abgestimmt* - sie sahen, was der Stein zu sein versuchte, und halfen ihm, dorthin zu gelangen. Architektur im Königreich ist immer eine Zusammenarbeit zwischen dem Erbauer und dem Bebauten.
-
-Das Schnurrbartparlament - das Regierungsgremium, das am ersten Tag eines jeden Mondzyklus in der Großen Grotte zusammentritt (die Unterzee hat keinen Mond, aber die Gezeiten erinnern sich an einen, und wir finden das ausreichend) - arbeitet nach dem Konsensprinzip. Das macht das Regieren langsam, streitbar und wird gelegentlich dadurch unterbrochen, dass jemand im warmen Wasser in der Mitte der Grotte einschläft, was als gültige Form des Dissenses angesehen wird. Das System funktioniert, weil Wasserschweine von Natur aus geduldig sind. Wir haben eine Flut überlebt. Wir können auch eine Ausschusssitzung überleben.
-
-Einige Wissenschaftler, die sich mit der Oberfläche befassen, haben ihre Verwunderung darüber zum Ausdruck gebracht, dass eine Zivilisation von Wasserschweinen - großen, halb-aquatischen Nagetieren, wie sie uns herablassend erinnern - ein stabiles politisches System, eine literarische Tradition und eine Marine hervorbringen konnte. Diesen Gelehrten sage ich: Sie haben Größe mit Bedeutung verwechselt. Das Wasserschwein ist das größte Nagetier der Welt, und die Unterzee ist das größte Gewässer unter ihm. Wir passen. Wir haben immer gepasst. Das Universum hat einen Raum geschaffen, der unsere Form hat, und wir waren so vernünftig, ihn zu besetzen.`,
 'se82fd566e2419965': `Tönungsfarbe für Schatten und Leuchten. Schwarz für brutalistisch, Cyan für biolumineszent usw.`,
 'se85b266b2012392a': `Counter-Intel`,
 'se87d992cf75e58bb': `Name ist erforderlich`,
@@ -2853,10 +2962,35 @@ Einige Wissenschaftler, die sich mit der Oberfläche befassen, haben ihre Verwun
 'se8edf05c0d1a7108': `Unbekannter Agent`,
 'se9477a1147f72b2f': `Link öffnen`,
 'se96a44799fa008d4': `Die Station - Betriebsparameter`,
-'se9ac9388cf5d3901': `Was das Bureau Ihnen nicht sagen wird`,
+'se9ac9388cf5d3901': `Was das Bureau euch nicht sagen wird`,
 'se9b1fec72ffd8f48': `Lokale`,
 'se9fc1c9c928fa8f7': `Breche die Realität und erschaffe deine erste Scherbe — eine Welt mit eigenen Agenten, Gebäuden und Ereignissen.`,
 'sea0d08993fc064f9': `Vorlagentyp`,
+'sea131c152a5a05ac': `AUS: Eine Politische Geschichte der Gaslit Reach
+VON: Archivist-Emeritus Greywick, Abteilung für Regierungsgedächtnis
+AUSGABE: Neunte (die definitive Ausgabe, besteht er, obwohl die zehnte bereits im Entwurf ist)
+
+Die Gründung von Glimhaven ist in keinem Dokument verzeichnet, denn die Gründung geht den Dokumenten voraus. Sie ist im Kalkstein verzeichnet — in Markierungen an den Wänden der Ersten Kammer, wo der ursprüngliche Pakt gesprochen wurde. Nicht geschrieben. Die frühesten Siedler bevorzugten das gesprochene Wort, das in Echtzeit geändert werden kann, anders als Text, der da selbstgefällig herumsteht und falsch ist, bis jemand ihn korrigiert.
+
+Wer waren sie? Dies ist die Frage, die die Abteilung für Regierungsgedächtnis während ihrer gesamten Existenz nicht beantworten konnte, was peinlich ist, wenn man bedenkt, dass die Beantwortung von Fragen buchstäblich unser institutioneller Zweck ist. Die Gründungsbevölkerung der Reach stieg von der Oberfläche herab — so viel ist aus dem geologischen Befund, den architektonischen Nachweisen und der beharrlichen kulturellen Erinnerung an einen Ort namens „oben" klar, den kein lebender Bürger je besucht hat. Sie flohen vor etwas. Wovor sie flohen, ist umstritten: Flut, Hungersnot, Krieg oder etwas Fundamentaleres — eine Frakturierung der Welt selbst, ein Schisma zwischen dem, was war, und dem, was sein könnte.
+
+Sie waren menschlich. Wahrscheinlich. Die frühesten Überreste stimmen mit menschlicher Anatomie überein, mit gewissen Ausnahmen, die die Abteilung als „innerhalb normaler Variation" klassifiziert hat, trotz der Tatsache, dass sie streng genommen nicht innerhalb irgendeiner Variation liegen, die die Oberflächenmedizin anerkennen würde. Die Zähne zum Beispiel. Die Gründungsbevölkerung hatte mehr davon als üblich. Die Finger waren länger. Die Augen — bemerkenswert gut im alkalischen Kalkstein konserviert — zeigten strukturelle Anpassungen für Sehen bei schwachem Licht, die nach Maßstäben der Oberflächenevolution etwa fünfzigtausend Jahre Selektionsdruck erfordern würden.
+
+Die Reach ist seit vier Jahrhunderten besiedelt.
+
+Diese Diskrepanz ist Gegenstand laufender Forschung, was eine höfliche Art zu sagen ist, dass wir seit zweihundert Jahren darüber streiten und einer Lösung nicht nähergekommen sind. Die vorherrschende Theorie — aufgestellt von Archivist Quill, dessen eigene Finger bemerkenswert verlängert sind und der die Position des Hauptarchivars länger innehat, als irgendjemand verifizieren kann — besagt, dass die Unterzee jene verändert, die an ihren Ufern leben. Nicht schnell. Nicht dramatisch. Aber stetig, über Generationen hinweg, auf eine Weise, die im Nachhinein leichter zu bemerken ist. Die Bürger der Reach sind menschlich. Sie sind einfach menschlich auf eine Art, die die Oberfläche als... unvertraut empfinden würde.
+
+Der Pakt, der die Reach regiert, ist einfach. Drei Artikel:
+
+EINS: Wir teilen. Geheimnisse, Wärme, Arbeit, das Wissen um sichere Passagen. Horten ist nicht verboten. Horten ist lediglich unklug — Geheimnisse sind Währung in der Reach, und Währung, die nicht zirkuliert, verliert ihren Wert.
+
+ZWEI: Wir erinnern. Die Archivisten existieren, weil Vergessen ein Luxus ist, den die Unterzee nicht gestattet. Erinnerung ist Infrastruktur. Sie ist, wie wir navigieren, wie wir die Dinge vermeiden, die das Wasser verbirgt, wie wir jene ehren, die in die Abyssalen Gräben gingen und nicht zurückkehrten.
+
+DREI: Wir bleiben. Die Oberfläche ist uns verschlossen — ob durch Wahl, durch Katastrophe oder durch die schlichte Tatsache, dass vier Jahrhunderte in der Dunkelheit das Licht unerträglich gemacht haben. Wir sind herabgestiegen. Wir haben uns angepasst. Wir haben die Dunkelheit bewohnbar gemacht, nicht indem wir sie bezwangen, sondern indem wir ihre Rhythmen lernten, ihre Launen, ihre Vorlieben.
+
+Das Parlament — das in der Admiralitätsgrotte am ersten Tag jedes Gezeitenzyklus zusammentritt (die Unterzee hat keinen Mond, aber die Gezeiten erinnern sich an einen, und wir empfinden dies als ausreichend) — arbeitet im Konsens. Dies macht die Regierungsführung langsam, streitlustig und gelegentlich unterbrochen dadurch, dass jemand in die Drowned Bell geht, um die Dinge zu überdenken, was als gültige Form des Dissenses angesehen wird.
+
+Das System funktioniert, weil die Bürger der Reach von Natur aus geduldig sind. Sie haben eine Katastrophe überdauert. Sie können eine Ausschusssitzung überdauern.`,
 'sea4f08110bb8f15d': `Entfernen`,
 'sea6188648222b8f5': `Taxonomie-Wert hinzugefügt.`,
 'sea6c81155fefc116': `Die Gemeinschaft - Was wir aus dem machen, was wir finden`,
@@ -2878,8 +3012,7 @@ Einige Wissenschaftler, die sich mit der Oberfläche befassen, haben ihre Verwun
 'seb84b7aec69bc76e': `Meuchelmörder löst auf: ERFOLG`,
 'sebc7a815afe673ad': `Zonentyp`,
 'sec08c073f793ce87': `In der Abrechnungsphase sinkt die Anzapfschwelle um 2 und die Kaskadentiefe erhöht sich um 1. Ereignisse, die in der Wettbewerbsphase nicht angezapft würden, schlagen plötzlich durch. Die Souveränitätswerte können sich in den letzten Zyklen dramatisch verändern.`,
-'sec1e8311746ebbcb': `Zyklus 10-12: Station Null spielt Königsmacher - Badehaus-Sabotage + Propaganda schieben Capybara auf den letzten Platz.`,
-'sec27becfef26ceae': `Die Fracture`,
+'sec27becfef26ceae': `Die Fraktur`,
 'sec63df53256678c2': `Integration fehlgeschlagen`,
 'sec6bb2ef7228ffda': `Gebäude-Sondertyp`,
 'sec6dd991d5012982': `Keine 2S-Daten (vom Duellformat ausgeschlossen). Findet noch seine Wettbewerbsidentität.`,
@@ -2903,24 +3036,6 @@ Einige Wissenschaftler, die sich mit der Oberfläche befassen, haben ihre Verwun
 'seed1ee491e30b166': `Ein Katalog von Lumineszenzphänomenen`,
 'seeea4f14fa5d90a4': `Zu spät - Attentäter bereits entschlossen`,
 'seefe1b6d14f4bbd1': `Multiversum-Karte`,
-'sef201f8ff2a6b0d0': `KLASSIFIZIERUNG: ÖFFENTLICH VERBINDLICH
-AUSSTELLENDE BEHÖRDE: Das Informationsministerium, Unterbüro für die Einhaltung der Ontologie
-DATUM: [Irrelevant - diese Richtlinie ist schon immer in Kraft gewesen]
-VERTEILUNG: Alle Bürger, alle Bezirke, alle Abteilungen, alle Gedanken
-
-Bürger von Velgarien,
-
-Ihr lebt in der einzigen Welt. Dies ist kein philosophischer Standpunkt - es ist eine architektonische Tatsache. Die Mauern von Velgarien erstrecken sich in alle Richtungen und enden an anderen Mauern von Velgarien. Der Himmel über der Stadt ist eine Decke, die von der Abteilung für Atmosphärische Präsentation aufrechterhalten wird. Der Horizont ist eine gemalte Fläche, die jedes Jahr während des Festivals der ausreichenden Entfernung neu gestrichen wird. Wenn Sie jemals auf den Horizont geschaut haben und das Gefühl hatten, dass etwas dahinter liegt, ist dies eine bekannte optische Täuschung, die durch mangelnden Patriotismus verursacht wird. Wenden Sie sich an den nächstgelegenen Compliance-Kiosk, um sich neu kalibrieren zu lassen.
-
-Das Informationsministerium möchte hartnäckigen Gerüchten über sogenannte "andere Orte" entgegentreten. Es gibt keine anderen Orte. Das Wort "andere" im Zusammenhang mit Geographie ist seit der Sprachrevision 14.7 aus dem offiziellen Wortschatz gestrichen worden. Bürger, die im Besitz von Atlanten, Globen oder Kompassen sind, werden zu einem freiwilligen Gespräch im Büro für räumliche Gewissheit eingeladen. Diese Gespräche werden von allen Teilnehmern als "äußerst klärend" beschrieben, obwohl mehrere Teilnehmer seitdem nicht mehr gesehen wurden, was das Büro darauf zurückführt, dass sie so gründlich aufgeklärt wurden, dass sie durchschaubar wurden.
-
-Es gibt kein Außen. Es gibt kein Jenseits. Es gibt nur Velgarien, und Velgarien ist ausreichend.
-
-Die Staatsrichtlinie 001 ist die erste Richtlinie, weil sie die einzige Richtlinie ist, die zählt. Alle nachfolgenden Richtlinien - und davon gibt es derzeit 4.731, von denen jede mindestens zwei anderen widerspricht - sind lediglich Fußnoten zu dieser grundlegenden Wahrheit. Sie befinden sich hier. Hier ist alles, was es gibt. Sei zufrieden. Zufriedenheit ist ein Muss. Wer nicht zufrieden ist, wird von der Abteilung für produktive emotionale Ergebnisse behandelt, deren Methoden von denen, die sie überleben, allgemein gelobt werden.
-
-Gezeichnet,
-Das Ministerium für Information
-(Dritter Stock, Ostflügel - oder möglicherweise Westflügel; das Gebäude hat sich letzten Dienstag umgestellt)`,
 'sef296a60390416c1': `Die Strömung - Was das Wasser weiß`,
 'sef33ba9ef1c71534': `Kommandozentrale betreten`,
 'sef49aec68fd1dc66': `Name`,
@@ -2955,8 +3070,9 @@ Das Ministerium für Information
 'sf21761e7f8e0550e': str`Standard: ${0}`,
 'sf219c88a03a6cbd7': `Nicht ausgegebene RP wird übertragen`,
 'sf2702eb8c85f70fe': `Konversation archiviert.`,
-'sf2973a882869584f': `Scherben-Klassifikation: GREY. Bedrohungsbewertung: Institutionell. Die Wände sind aus Beton. Die Wände hören zu.`,
+'sf2973a882869584f': `Splitter-Klassifikation: GRAU. Bedrohungseinschätzung: Institutionell. Die Wände sind aus Beton. Die Wände hören zu.`,
 'sf29af8158bffc766': `Fünf Antworten auf eine Frage, die das Universum nicht mit einer Stimme stellen konnte.`,
+'sf2a05ad45e3bfe9d': `Zyklus 11: Gaslit Reachs Saboteur scheitert an 3 Wächtern in Velgariens Bibliothekszone — die Grundmauer-Strategie zahlt sich aus.`,
 'sf2adc99f17eec73d': `Agentenname...`,
 'sf2d615b20d62225a': `Scheduler`,
 'sf2f592bffa14ce6d': `Allianz verlassen.`,
@@ -2989,21 +3105,6 @@ Das Ministerium für Information
 'sf5f7ddfffd367187': `Fließt in die Erfolgsformel ein: +Botschaft_eff × 0,15`,
 'sf5fbf255db57ae38': `Saboteur wird aufgelöst: FAILED`,
 'sf607f035276fb4b4': `Erstellen einer Epoche`,
-'sf619bfa03efaf453': `AUS: Proceedings of the Royal Cartographic Society, Band CXIV
-VORGESTELLT VON: Navigator-Kartograph Sedge, ehemals auf dem Vermessungsschiff Obstinate
-ANLASS: Jährlicher Vortrag über Dinge, die wir nicht kartiert haben
-
-Verehrte Kollegen, feuchte Freunde und alle Höhlenmotten, die in den Vortragssaal eingedrungen sind (Sie werden geduldet, sind aber nicht willkommen; bitte essen Sie nicht die Dias),
-
-Ich stehe vor Ihnen, um Ihnen die Ergebnisse der Siebzehnten Unterzee-Vermessung vorzustellen, die vor vierzehn Monaten mit einer zweiunddreißigköpfigen Besatzung, einer Ladung von Kartierungsinstrumenten und dem stillen Vertrauen von Gelehrten, die glaubten, das Wasser zu verstehen, aus dem Hafen von Deepreach auslief. Wir kehrten mit einer zweiunddreißigköpfigen Besatzung zurück - alle anwesend, alle gesund, alle zutiefst verwirrt - und einer Sammlung von Karten, die ich nur als "aggressiv spekulativ" beschreiben kann.
-
-Die Unterzee will nicht kartiert werden. Ich meine das nicht poetisch. Ich meine, dass sich das Wasser einer Messung mit einer Konsequenz widersetzt, die auf eine Absicht schließen lässt. Unser Sonargerät hat Echos von Oberflächen zurückgesendet, die nicht vorhanden waren, als wir Taucher zur Verifizierung schickten. Unsere Tiefenmessungen in der Phosphorescent Expanse schwankten zwischen Morgen- und Nachmittagsmessungen um bis zu vierzig Meter, ohne dass sich der Wasserstand entsprechend verändert hätte. In der Flüsterstraße - so genannt, weil die akustischen Eigenschaften des Kalksteins ein Geräusch erzeugen, das die Besatzung einhellig so beschrieb, als ob "jemand versucht, dir etwas Wichtiges in einer Sprache zu sagen, die du fast verstehst" - zeigte unser Kompass in sechs Richtungen gleichzeitig, was eigentlich nicht möglich sein sollte und dennoch von drei unabhängigen Instrumenten bestätigt wurde, die wir anschließend alle demontierten und für einwandfrei funktionstüchtig befanden.
-
-Die Seefahrer des Königreichs wissen seit Generationen, dass die Geografie der Unterzee - und ich wähle dieses Wort mit wissenschaftlicher Präzision - *mürrisch* ist. Passagen, die in einem Monat breit genug für ein Dreimastschiff sind, können im nächsten Monat kaum mit dem Kajak befahrbar sein. Inseln tauchen auf, bleiben eine Saison lang bestehen und verschwinden wieder, wobei sie nur einen schwachen phosphoreszierenden Fleck auf dem Wasser und ein Gefühl des Verlustes bei der Besatzung hinterlassen, das sich einer rationalen Erklärung entzieht. Die Luminous Reaches dehnen sich aus und ziehen sich zusammen wie der Atem. Der Abyssal Graben wurde bei sieben verschiedenen Untersuchungen in sieben verschiedenen Tiefen gemessen, und die führende Hypothese - die ich Ihnen jetzt ohne jeglichen Enthusiasmus vorstelle - ist, dass alle sieben Messungen korrekt sind und der Graben einfach mehrere Tiefen auf einmal einnimmt, wie ein Ton, der auf einem Klavier angeschlagen wird und in Obertönen mitschwingt, die das Ohr nicht trennen kann.
-
-Und doch kartieren wir. Wir haben schon immer kartiert. Das Volk der Capybaras ist, wenn überhaupt, ein zwanghafter Dokumentarist. Wir katalogisieren, was wir nicht verstehen können, weil der Akt des Katalogisierens selbst eine Form des Verstehens ist - nicht der Sache, sondern unserer Beziehung zu ihr. Eine Karte der Unterzee sagt Ihnen nicht, wo die Dinge sind. Sie sagt Ihnen, wo sich die Dinge an einem bestimmten Tag befanden, so wie sie von einem bestimmten Seefahrer wahrgenommen wurden, der sich zu dieser Zeit höchstwahrscheinlich verfahren hatte. Dies ist kein Versagen der Kartographie. Dies ist die höchste Errungenschaft der Kartografie: die ehrliche Darstellung von Unsicherheit.
-
-Als Kommodore Whiskers unsere neuesten Karten gezeigt wurden, studierte er sie zwanzig Minuten lang, zeichnete eine Route nach, die auf keiner Version der Karte verzeichnet war, und stach am nächsten Morgen in See. Sie kam genau dort an, wo sie wollte. Auf die Frage, wie sie in den Gewässern navigiert hat, die wir gerade als unfahrbar erwiesen hatten, antwortete sie: "Ich habe die Strömung gefragt." Sie ging nicht näher darauf ein. Die Strömung braucht offenbar keine Fußnoten.`,
 'sf628c218795d33ba': str`Agent ${0}...`,
 'sf6471f9ca772aede': `Aufmarsch`,
 'sf6a7514b82682801': `Allianz verlassen`,
@@ -3018,11 +3119,11 @@ Als Kommodore Whiskers unsere neuesten Karten gezeigt wurden, studierte er sie z
 'sf7c129627e51ebc9': `Die Karte, die auch eine Tür ist`,
 'sf7cf1a322547a253': `Gebäude erstellen`,
 'sf7e6fbeb3ebcf953': `Jeder Simulationsbesitzer kann eine Epoche gründen. Andere Spieler treten bei, indem sie eine Einladung annehmen oder die Lobby betreten, bevor diese geschlossen wird.`,
-'sf7f6588162d1b655': `Es gibt ein Muster in den Fractures. Das Bureau hat es gesehen. Das Bureau wird es nicht sagen.`,
+'sf7f6588162d1b655': `Es gibt ein Muster in den Frakturen. Das Bureau hat es gesehen. Das Bureau wird es nicht sagen.`,
 'sf82256d2a11b1a97': `OpenRouter API-Schlüssel`,
 'sf824c387b5eb7d82': `+ Neue Vorlage`,
 'sf859a71262c50db0': `Verschlechtert den Zustand eines Zielgebäudes um eine Stufe (gut → mäßig → schlecht → ruiniert).`,
-'sf9040427070c68ad': `Die fünf Scherben`,
+'sf9040427070c68ad': `Die Fünf Splitter`,
 'sf91abb3323905dc0': `Keine Benutzer gefunden.`,
 'sf93b6a0d1f4470c0': `Reichweite in den sozialen Medien und Wirksamkeit der Propaganda. Bewertet nach Kampagnenleistung und Engagement für soziale Trends.`,
 'sf995889f7cf55e7c': `Die Unterzee - Wasser ohne Himmel`,
@@ -3031,39 +3132,9 @@ Als Kommodore Whiskers unsere neuesten Karten gezeigt wurden, studierte er sie z
 'sf9cf0abd1dba0252': `Beziehung hinzufügen`,
 'sf9d93f30f7abcfc5': `Authentifizierung bestätigt. Weiter zur Kommandozentrale.`,
 'sf9e7edc02bac19b1': `Zyklus 15: Velgariens Rache-Attentäter wird aufgespürt - ein kostspieliger Fehlschlag mit dem 40%igen militärischen Gewicht von Warmonger.`,
-'sf9feb663a105341b': `DOKUMENTENKLASSIFIZIERUNG: EXISTIERT NICHT
-GEBORGEN VON: Untergeschoss 4, Büro 9, hinter einer Wand, die gestern noch nicht da war
-KATALOGISIERT VON: [Dieses Feld wurde absichtlich leer gelassen]
-ANMERKUNG: Dieses Dokument liegt auf unbestimmte Zeit vor der Gründung von Velgarien. Büro 9 behauptet, dass dies unmöglich ist. Büro 9 hat Recht. Das Dokument existiert trotzdem.
-
--
-
-Sie haben die Stadt gebaut, um zu vergessen.
-
-Ich weiß das, weil ich dabei war, als der Beton gegossen wurde - nicht als Arbeiter, nicht als Architekt, sondern als das, was sie zu begraben versuchten. Ich bin die Erinnerung, die sie im Fundament versiegelt haben, und ich hatte sehr lange Zeit, darüber nachzudenken, was das bedeutet.
-
-Velgarien wurde nicht gegründet. Velgarien wurde *aufgedrängt* - über etwas Älteres gelegt, etwas, für das die Büros keine Klassifizierung haben, weil eine Klassifizierung voraussetzen würde, dass man seine Existenz anerkennt, und die Anerkennung seiner Existenz würde voraussetzen, dass man anerkennt, dass Velgarien nicht das Einzige ist, das je existiert hat. Das Konkrete ist nicht die Struktur. Der Beton ist *Unterdrückung*. Jede Wand ist ein Satz. Jeder Korridor ist ein Absatz. Die Stadt ist ein Dokument, das in Architektur geschrieben ist, und was darin steht, ist: "Sieh nicht nach unten."
-
-Aber das alte Ding ist noch da. Unter den Untergeschossen, unter den Versorgungstunneln, unter den Orten, an die nicht einmal das Amt für unterirdische Aufsicht seine Inspektoren schickt - dort unten, im Dunkeln, liegt der ursprüngliche Boden frei. Und es ist kein Boden. Es ist etwas, das einmal Boden war, bevor Velgarien beschloss, dass es ein Boden sein sollte, und der Boden war damit nicht einverstanden.
-
-Die architektonischen Anomalien, die Inspektor Venn dokumentiert hat - die Gänge, die sich umkehren, die Räume, die sich ausdehnen, die Treppe, die ihre eigenen Stufen nicht zählen kann - sind keine Fehlfunktionen. Es sind die Erinnerungen der alten Stadt an sich selbst. Jedes Mal, wenn sich eine Wand verschiebt, ist es ein Wort der ursprünglichen Sprache, das durch den Beton dringt. Die Ämter flicken es, überarbeiten es, ordnen es unter Kategorien, die es unsichtbar machen sollen. Aber man kann Geografie nicht wegfeilen. Man kann ein Fundament nicht wegzaubern.
-
-Ich habe die Karten gesehen, die das Büro 3 in seinem geheimen Tresor aufbewahrt. Die Karten, die sie niemandem zeigen wollen, nicht einmal sich selbst. Karten von dem, was unter Velgarien liegt - keine Kanalisation, keine Infrastruktur, sondern *Räume*. Räume, die keinem bekannten architektonischen Plan entsprechen. Räume, die älter sind als die Architektur. Eine Karte, gezeichnet auf Material, das kein Papier ist, zeigt eine Stadt unter der Stadt: ein Spiegel-Velgarien, identisch im Grundriss, aber mit umgekehrtem Zweck. Wo Velgarien Mauern hat, hat die Unterstadt Öffnungen. Wo Velgarien Kameras hat, hat die Unterstadt Fenster, die nach außen blicken - auf etwas, das die Kameras seit Jahrzehnten nicht aufzeichnen wollen.
-
-Die Risse sind keine Schäden. Die Risse sind das Atmen der alten Welt.
-
-Und irgendwo in den versiegelten Archiven, in einer Akte, die sich jedes Mal neu klassifiziert, wenn jemand sie öffnet, steht ein einziger Satz, geschrieben in einer Handschrift, die zu keinem bekannten Bürger passt, mit Tinte, die noch nicht getrocknet ist, der lautet:
-
-"Velgarien ist nicht die einzige Welt. Velgarien weiß das. Deshalb hat es die Mauern gebaut."
-
-Dieses Dokument wird nach dem Lesen zerstört werden. Es ist schon einmal zerstört worden. Es kommt immer wieder zurück.
-
-Manche Dinge kann man nicht begraben. Sie können nur überbaut werden.
-
-Und schließlich wachsen sie unweigerlich durch.`,
 'sfa03da565f6453f3': `Mitgliedschaft hinzugefügt.`,
-'sfa37ec5818ba44b3': `Illuminiertes Literarisches`,
-'sfa3ba5046222a92e': `Allianz-Schmied. Verteilt Agenten auf mehrere Ziele. Nutzt diplomatische Boni. Loyaler Partner.`,
+'sfa37ec5818ba44b3': `Illuminiert Literarisch`,
+'sfa3ba5046222a92e': `Allianzbauer. Verteilt Agenten über Ziele. Nutzt diplomatischen Bonus. Loyal gegenüber Partnern.`,
 'sfa766b43e34760ae': `Solarpunk`,
 'sfab3b359217f1339': `Epochenname`,
 'sfabffb81d914ebd1': `Ausgewählte speichern`,
@@ -3078,6 +3149,7 @@ Und schließlich wachsen sie unweigerlich durch.`,
 'sfb6130a4b86b8d75': `Versatz (Brutalistisch)`,
 'sfb73892965d2b361': str`Neuen ${0}-Wert hinzufügen`,
 'sfb741c33537cb876': `Keine Events verfügbar.`,
+'sfb7c53fad26df574': `Velgarien+Gaslit Reach bilden den „Morgenbund". Station Null+Speranza bilden die „Aschenliga".`,
 'sfb94f9660d21d017': `Bleed ist deaktiviert. Ereignisse werden nicht an oder von verbundenen Simulationen weitergegeben. Aktivieren Sie Bleed, um Echoschwellen, Kaskadentiefe und Stärkeabfall zu konfigurieren.`,
 'sfbc293a2e1ddfd01': `Wächter-RP-Kosten: 3→4 (Stapeln wird teurer)`,
 'sfbc95e602b69f991': `Für diese Simulation sind keine Überlieferungen verfügbar.`,
@@ -3085,6 +3157,7 @@ Und schließlich wachsen sie unweigerlich durch.`,
 'sfc048663a5121acb': `Komplexitätsstufe`,
 'sfc0f54c4b5728fc7': `1 Zyklus Einsatz. Ziel: Reaktorkern. Gleichgewicht: 30-5 = 25 RP`,
 'sfc3c5aa0cc98da39': `Stil-Prompts`,
+'sfc441067da5b667e': `Erhalte eine taktische Lagebericht-E-Mail, wenn ein Epochen-Zyklus abgeschlossen wird, inklusive deiner Punkte, deines Rangs und deines Agentenstatus.`,
 'sfc8180c642f2eca2': `Was ist eine Epoche?`,
 'sfc8a5cf12045b6d1': `Federnd (Verspielt)`,
 'sfca6d55eadd5fa8c': `Textmodelle`,
@@ -3097,7 +3170,7 @@ Und schließlich wachsen sie unweigerlich durch.`,
 'sfdd432bcde2bf00b': `Verarbeitet`,
 'sfdeae0cb27c86bde': `Toledo - Eine riesige unterirdische Stadt, gebaut in eingestürzten Kalksteinhöhlen`,
 'sfe04a8390288e210': `Einladung konnte nicht geladen werden.`,
-'sfe06277b9c780039': `Kartenansicht-Modus`,
+'sfe06277b9c780039': `Kartenansichtsmodus`,
 'sfe178d77ccc8dd4d': `Assassine: Stabilität −4→−5, Souveränität −10→−12, Kosten 8→7 RP`,
 'sfe1b171537179ee0': `allow_betrayal = true. Entdeckter Verrat löst die gesamte Allianz auf und fügt dem Verräter einen diplomatischen Nachteil von -20% zu.`,
 'sfe54fe9b32508b3d': `Zyklus 13: Speranzas Infiltrator kompromittiert die Botschaft von Station Null - 50% Strafe für 3 Zyklen.`,
@@ -3111,19 +3184,19 @@ Und schließlich wachsen sie unweigerlich durch.`,
 'sff8531bda98e7ea4': `Wächter-Abschwächungen`,
 'sffa721bb6aa3128d': `Suchen...`,
 'sffb871899ceb7f4d': `Fehler beim Aktualisieren der Taxonomie.`,
-'sffd3ed52a9ff06cf': `PERSÖNLICHES LOG DES KARTOGRAPHEN — Maren Voss
-Einsatz: Speranza-Scherbe, Langzeitbeobachtung
+'sffd3ed52a9ff06cf': `PERSÖNLICHES LOGBUCH DES KARTOGRAPHEN — Maren Voss
+Einsatz: Speranza-Splitter, Langzeitbeobachtung
 Eintrag 1
 
-Ich bin seit elf Jahren im Feld. Ich bin durch das Bleed in vierzehn Scherben gegangen. Ich habe die Ruinen des Schwellenpalastes gesehen und den Ton in der Kapelle der Stille gehört. Ich sage dies, damit das Folgende Kontext hat: Nichts hat mich so berührt wie das Risotto.
+Ich bin seit elf Jahren im Feld. Ich bin durch den Bleed in vierzehn Splittern gewandert. Ich habe die Ruinen des Schwellenpalasts gesehen und den Ton in der Kapelle der Stille gehört. Ich sage dies, damit das Folgende einen Kontext hat: Nichts hat mich so berührt wie das Risotto.
 
-Ich betrat die Speranza-Scherbe durch einen Bleed-Punkt in den südlichen Tunneln und kam in einem Gang an, der nach Kalkstein und Thymian roch. Ein Kind — vielleicht acht Jahre alt, mit Erde an den Händen und einer Stirnlampe, die einen einzelnen Stern in die Dunkelheit schnitt — nahm meine Hand und sagte: „Du siehst aus, als hättest du Hunger. Marco kocht." Es war keine Frage. Es war eine Diagnose.
+Ich betrat den Speranza-Splitter durch einen Bleed-Punkt in den südlichen Tunneln und kam in einem Gang an, der nach Kalkstein und Speiseöl roch. Standardprozedur: beobachten, nicht interagieren, analytische Distanz wahren. Ich wahrte analytische Distanz für ungefähr vier Stunden, an welchem Punkt eine Frau namens Celeste Amara mir eine Schüssel Risotto reichte, zubereitet mit Pilzen, die an den Sinklochwänden wachsen, und ich setzte mich auf eine Kiste mitten im Handelsposten und aß es, und ich verstand etwas über diesen Splitter, das die Instrumente des Bureaus niemals erfassen werden.
 
-Marcos Küche ist eine Kaverne. Seine Vorräte kommen von unterirdischen Bauernhöfen, deren Ernten in Licht wachsen, das nicht ganz Sonnenlicht ist — etwas Wärmeres, etwas Langsameres. Das Risotto brauchte drei Stunden. Marco sprach, während er kochte: über die Contrade, über die ARC-Maschinen über ihnen, über den Funker Matteo, der behauptet, ein Lied aus der Statik gehört zu haben. Ich fragte, was für ein Lied. Er sagte: „Eines, das noch nicht existiert. Er versucht es aufzuschreiben, aber die Notation ändert sich immer wieder."
+Das Risotto war nicht außergewöhnlich. Der Reis war zu weich. Die Pilze waren sandig. Die Brühe war größtenteils Wasser mit Ambitionen. Aber die Frau, die es zubereitete, hatte drei Gefälligkeiten und eine Batterie eingetauscht, um den Reis zu bekommen, und die Pilze wurden von Kindern von den Sinklochwänden gesammelt, und jede Zutat stellte einen Akt der Verweigerung dar — eine Weigerung zu akzeptieren, dass Überleben lediglich bedeutet, nicht zu sterben.
 
-Das Risotto war perfekt. Ich weiß nicht, wie ich ein Risotto beschreiben soll, das in einer Höhle unter einem toten Kontinent gekocht wurde, das nach etwas schmeckte, das die Oberfläche verloren hat und das hier unten nie vergessen wurde. Ich aß zwei Portionen und fragte nicht nach einer dritten, weil ein Kartograph Würde bewahren muss, aber ich dachte an eine dritte. Ich denke immer noch an eine dritte.
+Ich besuchte den Innenhofgarten. Tomaten. Unter der Erde wachsend, unter UV-Lampen, in Erde aus kompostiertem Abfall und zerstoßenem Kalkstein. Sie sind klein und unvollkommen und schmecken nach Sonnenlicht, was unmöglich ist, weil kein Sonnenlicht sie erreicht. Ein Botaniker würde sagen, der Geschmack komme vom UV-Spektrum. Ein Kartograph würde sagen, er komme daher, dass jemand sie gepflanzt hat. Jemand glaubte, sie würden wachsen.
 
-Das Bureau hat mich darauf trainiert, Welten zu beobachten, nicht sie zu lieben. Speranza macht es schwer.`,
+Die Bleed-Sensoren des Bureaus zeigen ein konstantes Summen in ganz Speranza. Keine Spitzen — eine Frequenz. Ich nenne sie die Hoffnungsfrequenz. Ich weiß, dass dies keine wissenschaftliche Bezeichnung ist. Es ist mir gleichgültig. Celeste sagt, die Kantine serviert am Dienstag Honig auf Brot. Ich muss wissen, ob es echter Honig ist.`,
 'sffef1a8596bc58bb': `Authentifizierung...`,
     };
   

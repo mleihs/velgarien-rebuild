@@ -101,7 +101,7 @@ IMAGES = [
         "height": 683,
     },
     {
-        "name": "Capybara Kingdom Banner",
+        "name": "The Gaslit Reach Banner",
         "storage_path": f"{CAPYBARA_SIM_ID}/banner.webp",
         "simulation_id": CAPYBARA_SIM_ID,
         "prompt": (

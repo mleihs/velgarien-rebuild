@@ -1,7 +1,8 @@
 # 03 - Database Schema New: Neues Schema mit Simulation-Kontext
 
-**Version:** 2.7
-**Datum:** 2026-03-02
+**Version:** 2.8
+**Datum:** 2026-03-03
+**Aenderung v2.8:** 1 neue Tabelle (notification_preferences). 1 neue SECURITY DEFINER Function (get_user_emails_batch). **45 Tabellen gesamt**, ~179 RLS-Policies. Migration 044. Per-User Email-Benachrichtigungspraeferenzen fuer Epoch-Events (cycle_resolved, phase_changed, epoch_completed, email_locale). RLS: authenticated users can read/insert/update own row only.
 **Aenderung v2.7:** 2 neue Tabellen (bot_players, bot_decision_log). 3 neue Spalten auf epoch_participants (is_bot, bot_player_id). 1 neue Spalte auf epoch_chat_messages (sender_type). **44 Tabellen gesamt**, ~176 RLS-Policies. Migration 041.
 **Aenderung v2.6:** 1 neue Tabelle (platform_settings). 42 Tabellen gesamt, 170 RLS-Policies, ~41 unique Triggers (64 Trigger-Eintraege), 8 Views, 4 materialisierte Views, 21 Functions. Migration 040. Platform Admin: key-value store fuer runtime-konfigurierbare Cache-TTLs (map data, SEO metadata, HTTP Cache-Control). RLS service_role only (kein anon/authenticated Zugriff). updated_at Trigger.
 **Aenderung v2.5:** Neuer Index `idx_echo_source_sim_status` auf event_echoes(source_simulation_id, status) fuer Scoring-Queries.
@@ -1421,6 +1422,7 @@ CREATE POLICY agents_delete ON agents FOR DELETE
 | `battle_log` | Public/Member | Auth | - | - |
 | `epoch_invitations` | Creator/Anon(token) | Creator | Creator | Creator |
 | `epoch_chat_messages` | Anon(epoch)/Participant(epoch+team) | Participant | - | - |
+| `notification_preferences` | Own (auth) | Own (auth) | Own (auth) | - |
 | `audit_log` | Admin+ | Service only | - | - |
 
 ---
@@ -1805,7 +1807,7 @@ CREATE TRIGGER set_simulation_connections_updated_at
 | | `co_conspirator` | Co-Conspirator | Mitverschwoerer |
 | | `supervisor` | Supervisor | Vorgesetzter |
 | | `subject` | Subject | Subjekt |
-| **Capybara Kingdom** | `ally` | Ally | Verbuendeter |
+| **The Gaslit Reach** | `ally` | Ally | Verbuendeter |
 | | `mentor` | Mentor | Mentor |
 | | `rival` | Rival | Rivale |
 | | `trading_partner` | Trading Partner | Handelspartner |
@@ -1823,7 +1825,7 @@ CREATE TRIGGER set_simulation_connections_updated_at
 | | `salvage_partner` | Salvage Partner | Bergungspartner |
 | | `sworn_enemy` | Sworn Enemy | Erzfeind |
 
-**Hinweis:** Station Null hat nur 5 Typen (nicht 6). `rival` wird von Velgarien, Capybara Kingdom und Speranza geteilt (gleicher `value`, unterschiedliche `simulation_id`).
+**Hinweis:** Station Null hat nur 5 Typen (nicht 6). `rival` wird von Velgarien, The Gaslit Reach und Speranza geteilt (gleicher `value`, unterschiedliche `simulation_id`).
 
 ---
 
@@ -2281,3 +2283,63 @@ CREATE INDEX idx_bot_decision_log_participant ON bot_decision_log(participant_id
 - `bot_decision_log_select` — SELECT fuer authentifizierte Epoch-Teilnehmer (Transparenz)
 - `bot_decision_log_anon_select` — SELECT fuer anon (oeffentliche Transparenz)
 - `bot_decision_log_service_insert` — INSERT nur via service_role (Admin-Client)
+
+### `notification_preferences`
+
+Per-User Email-Benachrichtigungspraeferenzen fuer Epoch-Events. Jeder Benutzer hat maximal eine Zeile (UNIQUE user_id). Steuert welche Email-Typen gesendet werden und in welcher Sprache.
+
+```sql
+CREATE TABLE notification_preferences (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    cycle_resolved  BOOLEAN NOT NULL DEFAULT true,
+    phase_changed   BOOLEAN NOT NULL DEFAULT true,
+    epoch_completed BOOLEAN NOT NULL DEFAULT true,
+    email_locale    TEXT NOT NULL DEFAULT 'en' CHECK (email_locale IN ('en', 'de')),
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (user_id)
+);
+
+CREATE INDEX idx_notification_preferences_user ON notification_preferences(user_id);
+```
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `user_id` | uuid | NO | |
+| `cycle_resolved` | boolean | NO | `true` |
+| `phase_changed` | boolean | NO | `true` |
+| `epoch_completed` | boolean | NO | `true` |
+| `email_locale` | text | NO | `'en'` |
+| `created_at` | timestamptz | NO | `now()` |
+| `updated_at` | timestamptz | NO | `now()` |
+
+**Foreign Keys:**
+- `user_id` → `auth.users(id) ON DELETE CASCADE`
+
+**CHECK Constraints:**
+- `email_locale IN ('en', 'de')`
+
+**Trigger:** `set_updated_at` — automatisches `updated_at` bei UPDATE.
+
+**RLS:** 3 Policies:
+- `notification_preferences_select` — SELECT fuer authentifizierte User (eigene Zeile: `user_id = auth.uid()`)
+- `notification_preferences_insert` — INSERT fuer authentifizierte User (eigene Zeile)
+- `notification_preferences_update` — UPDATE fuer authentifizierte User (eigene Zeile)
+
+**SECURITY DEFINER Function:**
+
+```sql
+CREATE OR REPLACE FUNCTION get_user_emails_batch(user_ids UUID[])
+RETURNS TABLE(id UUID, email TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT u.id, u.email::TEXT
+    FROM auth.users u
+    WHERE u.id = ANY(user_ids);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+Wird von `CycleNotificationService` fuer Batch-Email-Lookup verwendet. Nur service_role darf diese Funktion aufrufen.

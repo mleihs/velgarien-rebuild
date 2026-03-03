@@ -589,7 +589,7 @@ export function getChangelog(): ChangelogEntry[] {
 export function getEloRatings(): EloRating[] {
   return [
     { simulation: 'Speranza', rating: 1529, delta: 29, color: 'var(--color-warning)' },
-    { simulation: 'Capybara Kingdom', rating: 1513, delta: 13, color: 'var(--color-success)' },
+    { simulation: 'The Gaslit Reach', rating: 1513, delta: 13, color: 'var(--color-success)' },
     { simulation: 'Velgarien', rating: 1511, delta: 11, color: 'var(--color-danger)' },
     {
       simulation: 'Nova Meridian',
@@ -714,8 +714,8 @@ export function getSimulationProfiles(): SimulationProfile[] {
       ),
     },
     {
-      tag: 'CK',
-      name: msg('Capybara Kingdom'),
+      tag: 'GR',
+      name: msg('The Gaslit Reach'),
       color: 'var(--color-success)',
       eloRating: 1513,
       winRates: { pc2: 65, pc3: 15, pc4: 14, pc5: 22 },
@@ -823,17 +823,17 @@ export function getDimensionVariance(): DimensionVariance[] {
 
 export function getHeadToHeadData(): HeadToHead[] {
   return [
-    { rowSim: 'Speranza', colSim: 'Capybara Kingdom', winRate: 42, games: 26 },
+    { rowSim: 'Speranza', colSim: 'The Gaslit Reach', winRate: 42, games: 26 },
     { rowSim: 'Speranza', colSim: 'Velgarien', winRate: 56, games: 26 },
     { rowSim: 'Speranza', colSim: 'Station Null', winRate: 64, games: 26 },
-    { rowSim: 'Capybara Kingdom', colSim: 'Speranza', winRate: 58, games: 26 },
-    { rowSim: 'Capybara Kingdom', colSim: 'Velgarien', winRate: 62, games: 26 },
-    { rowSim: 'Capybara Kingdom', colSim: 'Station Null', winRate: 72, games: 26 },
+    { rowSim: 'The Gaslit Reach', colSim: 'Speranza', winRate: 58, games: 26 },
+    { rowSim: 'The Gaslit Reach', colSim: 'Velgarien', winRate: 62, games: 26 },
+    { rowSim: 'The Gaslit Reach', colSim: 'Station Null', winRate: 72, games: 26 },
     { rowSim: 'Velgarien', colSim: 'Speranza', winRate: 44, games: 26 },
-    { rowSim: 'Velgarien', colSim: 'Capybara Kingdom', winRate: 38, games: 26 },
+    { rowSim: 'Velgarien', colSim: 'The Gaslit Reach', winRate: 38, games: 26 },
     { rowSim: 'Velgarien', colSim: 'Station Null', winRate: 58, games: 26 },
     { rowSim: 'Station Null', colSim: 'Speranza', winRate: 36, games: 26 },
-    { rowSim: 'Station Null', colSim: 'Capybara Kingdom', winRate: 28, games: 26 },
+    { rowSim: 'Station Null', colSim: 'The Gaslit Reach', winRate: 28, games: 26 },
     { rowSim: 'Station Null', colSim: 'Velgarien', winRate: 42, games: 26 },
   ];
 }

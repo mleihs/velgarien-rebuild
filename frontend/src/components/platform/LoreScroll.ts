@@ -31,7 +31,7 @@ function getLoreSections(): LoreSection[] {
       epigraph: msg('There was once a single world. No one agrees on what it was called.'),
       imageSlug: 'the-unnamed',
       imageCaption: msg('The Unnamed — The world before the Fracture, whole and impossibly vast'),
-      body: msg(`The Archivists of the Capybara Kingdom — those meticulous, damp-furred scholars who catalogue everything in their lightless libraries beneath the Unterzee — refer to it as die Ganzheit, the Wholeness, though they admit this is a translation of a translation of a word that predates their language by several geological epochs. "We found the term carved into a stalactite," Head Archivist Barnaby Gnaw noted in his seminal work On the Improbability of Ceilings, "and stalactites do not lie, though they do exaggerate over time."
+      body: msg(`The Archivists of the Gaslit Reach — those meticulous, long-fingered scholars who catalogue everything in their flooded libraries beneath the Unterzee — refer to it as die Ganzheit, the Wholeness, though they admit this is a translation of a translation of a word that predates their language by several geological epochs. "We found the term carved into a stalactite," Archivist Quill noted in their seminal work On the Improbability of Ceilings, "and stalactites do not lie, though they do exaggerate over time."
 
 The propagandists of Velgarien insist no such prior world existed. State Directive 77-4/C is unambiguous: "There is, was, and shall be only Velgarien. Speculation regarding alternative geographies is a Class III Thought Infraction punishable by Re-Education (Tier 2)."
 
@@ -83,7 +83,7 @@ Axiom 4: The Cartographers exist outside the axioms. This is not a privilege. Th
       ),
       imageSlug: 'the-fracture',
       imageCaption: msg('The Fracture — Reality shattering into five incompatible worlds'),
-      body: msg(`The Capybara Kingdom's account is the most poetic. In the Annals of the Deep, Commodore Whiskers describes it thus: "Imagine you are swimming in a sea that is also a mirror. The mirror cracks. You continue swimming. But now the water on one side tastes of salt and the water on the other tastes of copper, and you realise that you have always been swimming in two seas, and they have only just now stopped pretending to be one."
+      body: msg(`The Gaslit Reach's account is the most poetic. In the Annals of the Deep, Commodore Harrowgate describes it thus: "Imagine you are swimming in a sea that is also a mirror. The mirror cracks. You continue swimming. But now the water on one side tastes of salt and the water on the other tastes of copper, and you realise that you have always been swimming in two seas, and they have only just now stopped pretending to be one."
 
 Velgarien's official account is characteristically blunt. Bureau 9 maintains that the Fracture was a "controlled decoupling performed by the State for the safety of the citizenry." The circular logic is considered a feature, not a bug.
 
@@ -101,7 +101,7 @@ This is why the Shards cannot be simply reassembled. You cannot pour the wine ba
 
 VELGARIEN answers: "What if control were absolute?" A brutalist surveillance state where the bureaucracy has become the weather and contentment is mandatory. The walls are concrete. The walls are watching. The paste is grey and the forms are in triplicate and somewhere in the cracks between the filing cabinets, something is growing that the Bureaux have not yet found a form for.
 
-THE CAPYBARA KINGDOM answers: "What if the darkness were kind?" A subterranean civilisation of scholar-capybaras beneath a lightless sea, where bioluminescent fungi serve as streetlamps and the economy runs on secrets. The water is patient. The archives are damp. The mushroom wine is, by all accounts, extraordinary.
+THE GASLIT REACH answers: "What if the darkness were kind?" A subterranean civilisation beneath a lightless sea, where bioluminescent fungi serve as streetlamps and the economy runs on secrets. The citizens are almost human. The water is patient. The archives are damp. The lichen-wine is, by all accounts, extraordinary.
 
 STATION NULL answers: "What if we could see the wound?" A derelict research station orbiting a black hole that the Bureau classifies as a discontinuity — a point where the Shard boundary has worn through to the substrate beneath. Crew complement: 6 of 200. All systems nominal. The AI insists on this. The AI insists on everything.
 
@@ -128,7 +128,7 @@ SHARD PROFILE: Velgarien is a brutalist surveillance state administered by forty
 
 The surveillance grid is total. Cameras in every corridor, acoustic monitors in every room, and a population that has internalised observation so completely that they self-correct before any correction is applied. This is the Panoptikon principle perfected: not a prison where guards watch prisoners, but a society where the distinction between guard and prisoner has been administratively dissolved.
 
-BLEED SIGNATURE: Institutional contamination. When Velgarien's Bleed touches adjacent Shards, agents begin forming committees. Documents appear — memos, directives, forms requesting the completion of other forms. In the Capybara Kingdom, Archivist Gnaw once discovered an entire filing cabinet that had materialised overnight, filled with personnel records for employees who did not exist. He catalogued it. The catalogue disappeared. A receipt for the catalogue appeared. He catalogued the receipt.
+BLEED SIGNATURE: Institutional contamination. When Velgarien's Bleed touches adjacent Shards, agents begin forming committees. Documents appear — memos, directives, forms requesting the completion of other forms. In the Gaslit Reach, Archivist Quill once discovered an entire filing cabinet that had materialised overnight, filled with personnel records for employees who did not exist. They catalogued it. The catalogue disappeared. A receipt for the catalogue appeared. They catalogued the receipt.
 
 PHILOSOPHICAL AXIS: Control as identity. The Velgarien question is not "why are we watched?" but "who would we be if we weren't?" The surveillance has lasted so long that the citizens cannot imagine an unwatched self. Privacy is not forbidden — it is simply inconceivable, like a colour no one has seen.
 
@@ -157,49 +157,49 @@ I ate the paste. Nutritional provision, distributed at 07:00, 12:00, and 18:00. 
 What stays with me — what I will report to the Bureau and what the Bureau will file and what the filing will not capture — is the sound of eight million people being quiet in exactly the same way. Not silence. Compliance. The soft, continuous hum of a population that has learned to make exactly the amount of noise that the acoustic monitors classify as "normal." It is the sound of a civilisation holding its breath.`),
     },
     {
-      id: 'dossier-capybara',
+      id: 'dossier-gaslit-reach',
       chapter: msg('The Shards — Bureau Dossiers'),
       arcanum: 'VII',
-      title: msg('Bureau Dossier: The Capybara Kingdom'),
+      title: msg('Bureau Dossier: The Gaslit Reach'),
       epigraph: msg(
         'Shard Classification: TEAL. Threat Assessment: Ecological. The darkness is kind. This is not a comfort.',
       ),
-      body: msg(`BUREAU OF IMPOSSIBLE GEOGRAPHY — Document SHARD/CAPYBARA-001
+      body: msg(`BUREAU OF IMPOSSIBLE GEOGRAPHY — Document SHARD/REACH-001
 Classification: TEAL — Ecological Contamination Vector
 
-SHARD PROFILE: A subterranean civilisation of capybara-people beneath the Unterzee — a body of water so vast, so ancient, and so utterly disinterested in the affairs of the surface that it makes the oceans above look like enthusiastic puddles. The darkness is not absence here. It is presence. The colour that black wants to be when it grows up. And in that darkness, the capybara people have built a kingdom of bioluminescent wonder, fungal architecture, and scholarly obsession that the Bureau considers one of the most stable and one of the most dangerous Shards in the multiverse.
+SHARD PROFILE: A subterranean civilisation beneath the Unterzee — a body of water so vast, so ancient, and so utterly disinterested in the affairs of the surface that it makes the oceans above look like enthusiastic puddles. The darkness is not absence here. It is presence. The colour that black wants to be when it grows up. And in that darkness, the citizens of the Gaslit Reach have built a city of bioluminescent wonder, fungal architecture, and scholarly obsession that the Bureau considers one of the most stable and one of the most dangerous Shards in the multiverse. The citizens are almost human. The "almost" is doing considerable work in that sentence.
 
-The economy runs on secrets. Not metaphorically — literally. Knowledge is currency. The Archives of the Deep contain information that changes the knower, and the restricted shelves hold volumes that must be read in pairs for safety, because reading them alone risks losing something the reader cannot name. The mushroom wine is traded at market value. A genuine secret about the nature of the Unterzee's currents is worth a ship.
+The economy runs on secrets. Not metaphorically — literally. Knowledge is currency. The Drowned Archive contains information that changes the knower, and the restricted shelves hold volumes that must be read in pairs for safety, because reading them alone risks losing something the reader cannot name. The lichen-wine is traded at market value. A genuine secret about the nature of the Unterzee's currents is worth a ship.
 
-BLEED SIGNATURE: Ecological contamination. When the Kingdom's Bleed touches adjacent Shards, things begin to grow. Bioluminescent organisms that follow no terrestrial taxonomy, phosphorescent patterns on previously bare walls, puddles that glow in colours the observer cannot quite name. In Velgarien, a clerk discovered a luminous mushroom growing from a crack in his office floor. The mushroom has been classified seven times. Each classification contradicts the last.
+BLEED SIGNATURE: Ecological contamination. When the Reach's Bleed touches adjacent Shards, things begin to grow. Bioluminescent organisms that follow no terrestrial taxonomy, phosphorescent patterns on previously bare walls, puddles that glow in colours the observer cannot quite name. In Velgarien, a clerk discovered a luminous mushroom growing from a crack in his office floor. The mushroom has been classified seven times. Each classification contradicts the last.
 
-PHILOSOPHICAL AXIS: Wonder as survival. The Capybara Kingdom persists not because it has conquered the darkness but because it has found the darkness interesting. Every threat is a research opportunity. Every monster is a taxonomy entry. Every shipwreck is a library acquisition. This is either the most resilient or the most deranged response to catastrophe the Bureau has documented, and the Bureau is professionally unable to determine which.
+PHILOSOPHICAL AXIS: Wonder as survival. The Gaslit Reach persists not because it has conquered the darkness but because it has found the darkness interesting. Every threat is a research opportunity. Every monster is a taxonomy entry. Every shipwreck is a library acquisition. This is either the most resilient or the most deranged response to catastrophe the Bureau has documented, and the Bureau is professionally unable to determine which.
 
-KEY AGENTS: Commodore Whiskers (navigates by asking the current; the current does not require footnotes), Barnaby Gnaw (Head Archivist, whose footnotes have footnotes), Lady Caplin of Mudhollow (controls more trade than the Parliament suspects), Sister Ember (tends the Great Sporocarp, measures faith in candlepower).
+KEY AGENTS: Commodore Harrowgate (navigates by asking the current; the current does not require footnotes), Archivist Quill (Head Archivist, whose footnotes have footnotes), the Marchioness (controls more trade than Parliament suspects), Mother Cinder (tends the Great Sporocarp, measures faith in candlepower).
 
-CARTOGRAPHIC NOTE: The Capybara Kingdom is the only Shard where Bureau Cartographers have been welcomed with genuine warmth, extensive documentation, and a bowl of mushroom soup that three agents independently described as "the best meal of my career." The Bureau considers this a contamination effect. The Bureau has not discouraged it.`),
+CARTOGRAPHIC NOTE: The Gaslit Reach is the only Shard where Bureau Cartographers have been welcomed with genuine warmth, extensive documentation, and a bowl of fungal soup that three agents independently described as "the best meal of my career." The Bureau considers this a contamination effect. The Bureau has not discouraged it.`),
     },
     {
-      id: 'field-report-capybara',
+      id: 'field-report-gaslit-reach',
       chapter: msg('The Shards — Bureau Dossiers'),
       arcanum: 'VIII',
-      title: msg('Field Report: The Capybara Kingdom'),
+      title: msg('Field Report: The Gaslit Reach'),
       epigraph: msg(
         'The room where I slept was carved from singing stone. The water I drank tasted of starlight. The archive where I worked tried to catalogue me.',
       ),
       body: msg(`CARTOGRAPHER'S PERSONAL LOG — Cartographer Lise Engel
-Assignment: Capybara Kingdom, long-term ecological survey
-Entry 7 (the entries are numbered, but the numbers do not correspond to days, because time in the Kingdom is measured in tides that the Unterzee remembers from a moon it has never seen)
+Assignment: The Gaslit Reach, long-term ecological survey
+Entry 7 (the entries are numbered, but the numbers do not correspond to days, because time in the Reach is measured in tides that the Unterzee remembers from a moon it has never seen)
 
 I have been in the Fungal Warrens for what the Archivists tell me is three weeks, though my body insists it has been longer and my instruments insist it has been shorter, and the Archivists' response to this discrepancy was to add it to their catalogue of temporal anomalies, Volume XIV, which they assure me is nearly complete and has been nearly complete for eleven years.
 
-The light is the first thing. Not the darkness — you expect the darkness; you prepare for it; you bring torches and headlamps and the Bureau's standard-issue luminescence kit. What you do not prepare for is the light. It comes from everywhere and nowhere. The fungi on the cave walls pulse with a soft blue-green phosphorescence that the Archivists call the Glow, because the Archivists are meticulous about everything except naming things, at which they are endearingly terrible. The Glow is not bright enough to read by, but it is bright enough to walk by, and it is warm, and it is alive, and after three days you stop reaching for your torch and start trusting the fungi, which is exactly what the fungi want, according to Sister Ember, who says the Sporocarp has opinions about visitors and expresses them through luminosity.
+The light is the first thing. Not the darkness — you expect the darkness; you prepare for it; you bring torches and headlamps and the Bureau's standard-issue luminescence kit. What you do not prepare for is the light. It comes from everywhere and nowhere. The fungi on the cave walls pulse with a soft blue-green phosphorescence that the Archivists call the Glow, because the Archivists are meticulous about everything except naming things, at which they are endearingly terrible. The Glow is not bright enough to read by, but it is bright enough to walk by, and it is warm, and it is alive, and after three days you stop reaching for your torch and start trusting the fungi, which is exactly what the fungi want, according to Mother Cinder, who says the Sporocarp has opinions about visitors and expresses them through luminosity.
 
 The water. The Unterzee is dark and still and so deep that the Archivists have measured it at seven different depths in seven different surveys and concluded that all seven measurements are correct simultaneously. I dipped my hand in. The water is warm in some currents and cold in others, and the boundary between warm and cold is so precise that I could feel both temperatures on the same palm. It tastes of copper and salt and something the Archivists call "memory" and I call "the sensation of remembering a place you have never been." I drank it. I was not supposed to drink it. I drank it anyway and for three hours afterward I could hear the current, not as sound but as direction — I knew which way the water was going the way you know which way is down.
 
-The stone sings. Not metaphorically. The limestone formations in the Upper Caverns produce a constant, low-frequency vibration that the capybara people can hear through their jawbones — they press their faces to the walls and listen the way surface-dwellers listen to radios. The Archivists have catalogued forty-seven distinct "songs" and believe the stone is narrating the geological history of the cave system in real time, which would make the Capybara Kingdom the only civilisation whose national archive includes the autobiography of its own architecture.
+The stone sings. Not metaphorically. The limestone formations in the Upper Galleries produce a constant, low-frequency vibration that the citizens hear through their jawbones — they press their faces to the walls and listen the way surface-dwellers listen to radios. The Archivists have catalogued forty-seven distinct "songs" and believe the stone is narrating the geological history of the cave system in real time, which would make the Gaslit Reach the only civilisation whose national archive includes the autobiography of its own architecture.
 
-I am staying longer than my assignment requires. I have reported this to the Bureau as "extended data collection." The Bureau has noted that this is the seventh consecutive Cartographer assigned to the Capybara Kingdom who has requested an extension. The Bureau suspects contamination. The Bureau is correct. The mushroom wine is extraordinary.`),
+I am staying longer than my assignment requires. I have reported this to the Bureau as "extended data collection." The Bureau has noted that this is the seventh consecutive Cartographer assigned to the Gaslit Reach who has requested an extension. The Bureau suspects contamination. The Bureau is correct. The lichen-wine is extraordinary.`),
     },
     {
       id: 'dossier-station-null',
@@ -216,7 +216,7 @@ The Bureau does not classify Auge Gottes as a black hole. Black holes are astrop
 
 Station Null orbits this wound. Crew complement: 6 of 200. The station's AI, HAVEN, lists the remaining 194 as "on extended leave." HAVEN maintains life support for 200. The meal trays return empty. The trays are warm.
 
-BLEED SIGNATURE: Ontological erosion. The Bleed at Station Null does not contaminate adjacent Shards with culture or ecology. It contaminates them with doubt. Agents in Shards bordering Station Null's boundary report temporal inconsistencies, biological anomalies, and the persistent sensation that the rules governing their world are suggestions rather than laws. In Speranza, a watchman reported that the stars — visible through the surface access shaft — rearranged themselves for three minutes and then returned to normal. In the Capybara Kingdom, an Archivist found a book in the Deep Library that had not been written yet.
+BLEED SIGNATURE: Ontological erosion. The Bleed at Station Null does not contaminate adjacent Shards with culture or ecology. It contaminates them with doubt. Agents in Shards bordering Station Null's boundary report temporal inconsistencies, biological anomalies, and the persistent sensation that the rules governing their world are suggestions rather than laws. In Speranza, a watchman reported that the stars — visible through the surface access shaft — rearranged themselves for three minutes and then returned to normal. In the Gaslit Reach, an Archivist found a book in the Drowned Archive that had not been written yet.
 
 PHILOSOPHICAL AXIS: Knowledge as wound. Station Null asks what happens when you look at the thing you're not supposed to look at, and the thing looks back, and what it shows you is true.
 
@@ -266,7 +266,7 @@ SHARD PROFILE: A post-apocalyptic Shard centred on Toledo, an underground city b
 
 The word "Speranza" means hope in Italian. The residents use it without irony and without naivety. Hope is not optimism. Optimism is the belief that things will improve. Hope is the decision to act as though they might, in full knowledge that they might not.
 
-BLEED SIGNATURE: Contagious resilience. When Speranza's Bleed touches adjacent Shards, agents experience sudden, inexplicable motivation. In Velgarien, Bureau 9 flagged three cases of citizens spontaneously forming mutual aid networks. In the Capybara Kingdom, a colony of cave-dwellers began singing work songs in a language none of them knew — phonetic analysis identified fragments of Italian. The hope does not arrive as a feeling. It arrives as an action — the impulse to repair, to share, to build something even when building is irrational.
+BLEED SIGNATURE: Contagious resilience. When Speranza's Bleed touches adjacent Shards, agents experience sudden, inexplicable motivation. In Velgarien, Bureau 9 flagged three cases of citizens spontaneously forming mutual aid networks. In the Gaslit Reach, a group of dockworkers began singing work songs in a language none of them knew — phonetic analysis identified fragments of Italian. The hope does not arrive as a feeling. It arrives as an action — the impulse to repair, to share, to build something even when building is irrational.
 
 PHILOSOPHICAL AXIS: Hope as resistance. Not the hope of the optimist, who believes. The hope of the realist, who acts.
 
@@ -313,7 +313,7 @@ SHARD PROFILE: A feminist literary utopia where multiple historical eras coexist
 
 This is the platform's only light-themed Shard. Honey-coloured stone. Stained glass in the Pre-Raphaelite manner. Gold leaf borders that appear on walls when nobody is painting them. The light is warm. The Bureau finds this more unsettling than any darkness.
 
-BLEED SIGNATURE: Literate contamination. When the Cite's Bleed touches adjacent Shards, agents begin finding unfamiliar books on their shelves — books by authors who don't exist in their world, arguing for things their societies have never considered. A Velgarien bureaucrat discovers a treatise on the rights of citizens by "M. Wollstonecraft" and spends three days trying to classify it before realising he agrees with it. A Capybara Archivist catalogs a volume of poetry by "Sor Juana" that reduces her to tears in a language she has never learned. The Bureau considers Literate Contamination untreatable, because you cannot unread a book.
+BLEED SIGNATURE: Literate contamination. When the Cite's Bleed touches adjacent Shards, agents begin finding unfamiliar books on their shelves — books by authors who don't exist in their world, arguing for things their societies have never considered. A Velgarien bureaucrat discovers a treatise on the rights of citizens by "M. Wollstonecraft" and spends three days trying to classify it before realising he agrees with it. An Archivist in the Gaslit Reach catalogs a volume of poetry by "Sor Juana" that reduces them to tears in a language they have never learned. The Bureau considers Literate Contamination untreatable, because you cannot unread a book.
 
 PHILOSOPHICAL AXIS: Voice as architecture. The Cite des Dames is not asking for permission. It is demonstrating that the question of permission was always the wrong question — that the city was always possible, and only the asking was prevented.
 
@@ -359,7 +359,7 @@ I am returning my Bureau credentials. I am staying. Not because the Cite has con
       imageCaption: msg('The Bleed — Where Shards press together and reality thins'),
       body: msg(`INCIDENT LOG: BLEED EVENT BL-2749 — Classification: AMBER
 
-14:00 — Routine monitoring of boundary V-CK/7 (Velgarien-Capybara Kingdom interface). Boundary integrity nominal.
+14:00 — Routine monitoring of boundary V-GR/7 (Velgarien-Gaslit Reach interface). Boundary integrity nominal.
 
 14:23 — Agent Fenn reports hearing "dripping sounds" in a basement that architectural records confirm has no plumbing.
 
@@ -383,9 +383,9 @@ STATUS: Resolved. Residual contamination: one mushroom (persistent), one propaga
       ),
       body: msg(`Specific cross-Shard contamination examples, compiled from Bureau incident logs:
 
-VELGARIEN to CAPYBARA KINGDOM: Filing cabinets. Always filing cabinets. They appear overnight in the Deep Library, stuffed with forms in languages the Archivists cannot read but feel compelled to catalogue anyway. Barnaby Gnaw has devoted an entire wing to the Velgarien overflow. He calls it "the Damp Bureaucracy" and visits it with a mixture of professional obligation and what he will not admit is fondness.
+VELGARIEN to THE GASLIT REACH: Filing cabinets. Always filing cabinets. They appear overnight in the Drowned Archive, stuffed with forms in languages the Archivists cannot read but feel compelled to catalogue anyway. Archivist Quill has devoted an entire wing to the Velgarien overflow. They call it "the Damp Bureaucracy" and visit it with a mixture of professional obligation and what they will not admit is fondness.
 
-CAPYBARA KINGDOM to VELGARIEN: Bioluminescence. Faint phosphorescent patterns on concrete walls, dismissed by Bureau 3 as "mineral deposits." The patterns follow the architectural plans of buildings that exist only in the Capybara Kingdom. A clerk in Bureau 12 traced one pattern and produced, without knowing it, a perfect floor plan of the Drowned Library.
+THE GASLIT REACH to VELGARIEN: Bioluminescence. Faint phosphorescent patterns on concrete walls, dismissed by Bureau 3 as "mineral deposits." The patterns follow the architectural plans of buildings that exist only in the Gaslit Reach. A clerk in Bureau 12 traced one pattern and produced, without knowing it, a perfect floor plan of the Drowned Archive.
 
 STATION NULL to ALL SHARDS: Temporal stutters. Moments where time skips, repeats, or runs backward for a heartbeat. In Speranza, a Topside watchman saw the same Snitch fly the same patrol route three times in one minute. In the Cite des Dames, Christine de Pizan wrote the same sentence in two different centuries and found it had changed meaning in the interval.
 
@@ -399,7 +399,7 @@ CITE DES DAMES to ALL SHARDS: Books. Unfamiliar volumes that appear on shelves, 
       arcanum: 'XVII',
       title: msg('The Tides'),
       epigraph: msg('The Bleed pulses. The Cartographers call this rhythm the Tide.'),
-      body: msg(`During High Tide, the Bleed is at its most active. Agents dream of other worlds with vivid specificity. Objects migrate between Shards. Architecture bleeds — a Velgarien tower develops organic curves overnight, a Capybara Kingdom cavern sprouts right angles. A Speranza mural depicts a city the painter has never seen, in colours that do not exist underground. A page in the Cite des Dames' library goes blank and refills itself with equations from Station Null's chapel.
+      body: msg(`During High Tide, the Bleed is at its most active. Agents dream of other worlds with vivid specificity. Objects migrate between Shards. Architecture bleeds — a Velgarien tower develops organic curves overnight, a Gaslit Reach cavern sprouts right angles. A Speranza mural depicts a city the painter has never seen, in colours that do not exist underground. A page in the Cite des Dames' library goes blank and refills itself with equations from Station Null's chapel.
 
 High Tide lasts between three and seventeen days. The variability is considered "thematically appropriate" by the Bureau and "professionally embarrassing" by the Cartographer-Astronomers.
 
@@ -471,7 +471,7 @@ DIRECTOR'S NOTE: The recommended action section has been consumed by the documen
       ),
       body: msg(`This section has been [CONSUMED] seventeen times. Each time, a Cartographer rewrites it. Each time, the document eats it. We persist.
 
-What the Bureau will not tell you is this: the five Shards are not random. They are not the arbitrary debris of a cosmic accident. They are an argument — five positions in a philosophical dispute that the Unnamed could not resolve while it was whole. Control (Velgarien). Wonder (the Capybara Kingdom). Knowledge (Station Null). Hope (Speranza). Voice (the Cite des Dames). These are not accidents. These are the five things the universe could not hold simultaneously.
+What the Bureau will not tell you is this: the five Shards are not random. They are not the arbitrary debris of a cosmic accident. They are an argument — five positions in a philosophical dispute that the Unnamed could not resolve while it was whole. Control (Velgarien). Wonder (the Gaslit Reach). Knowledge (Station Null). Hope (Speranza). Voice (the Cite des Dames). These are not accidents. These are the five things the universe could not hold simultaneously.
 
 The Fracture was not a catastrophe. It was a vote. The universe asked itself what mattered, and it could not agree, and the disagreement became geography.
 
@@ -492,7 +492,7 @@ The Bureau has a name for this sixth answer. The name is classified. The classif
       epigraph: msg(
         'The multiverse is not a problem to be solved. It is a question to be inhabited.',
       ),
-      body: msg(`Every Shard is an answer. Velgarien answers: "What if control were absolute?" The Capybara Kingdom answers: "What if the darkness were kind?" Station Null answers: "What if we could see the wound?" Speranza answers: "What if we simply refused to stop?" The Cite des Dames answers: "What if women had always been heard?"
+      body: msg(`Every Shard is an answer. Velgarien answers: "What if control were absolute?" The Gaslit Reach answers: "What if the darkness were kind?" Station Null answers: "What if we could see the wound?" Speranza answers: "What if we simply refused to stop?" The Cite des Dames answers: "What if women had always been heard?"
 
 Each answer is wrong. Each answer is necessary. The multiverse exists because no single answer is sufficient, and the Fracture was the universe's way of admitting this.
 
