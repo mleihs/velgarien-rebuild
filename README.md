@@ -48,19 +48,13 @@ The entire platform is bilingual (English/German), fully themed per-simulation w
 
 ![Station Null buildings view showing 10 building cards in a dark sci-fi horror theme with green terminal glow and derelict space station interiors](docs/screenshots/tcg-building-cards-grid-station-null.png)
 
-*Cite des Dames — feminist literary utopia (light illuminated theme)*
-
-**Agent Cards** — Six agent cards in the illuminated-literary light theme: ultramarine and gold accents, vellum cream background. Historical figures (Ada Lovelace, Christine de Pizan, Hildegard von Bingen, Mary Wollstonecraft, Sojourner Truth, Sor Juana) with AI-generated Renaissance-style portraits, aptitude pips, and system badges.
-
-![Cite des Dames agent cards showing 6 historical figures in illuminated-literary light theme with Renaissance-style AI portraits and ultramarine accents](docs/screenshots/tcg-agent-cards-cite-des-dames.png)
-
 **Cartographer's Map** — Force-directed multiverse graph showing all five simulations as nodes with diplomatic connections (orange embassy links), energy pulses along edges, starfield background, and a minimap viewport. Supports 2D SVG and WebGL 3D rendering modes with search, zoom-to-cluster, and 30-second auto-refresh during active epochs.
 
 ![Cartographer's Map showing the force-directed multiverse graph with five simulation nodes, diplomatic connections, energy pulses, and minimap](docs/screenshots/cartographers-map-multiverse-graph.png)
 
-**LoreScroll** — Platform-level narrative UI with accordion chapters, epigraph accents, gradient dividers, and sweep headers. Each simulation has ~5,000 words of in-world lore written as Bureau field reports and dossiers.
+**Intelligence Report** — How-to-Play guide section with Elo power rankings across all five simulations (188 Monte Carlo games), methodology callout, and interactive Apache ECharts radar chart comparing simulation performance across 2P/3P/4P/5P player counts. Dark military-console aesthetic with "CLASSIFIED" headers and SIGINT classification labels.
 
-![LoreScroll narrative section showing The Fracture chapter with epigraph, gradient dividers, and dark atmospheric styling](docs/screenshots/lorescroll-the-fracture-platform.png)
+![Intelligence Report showing Elo power rankings bar chart for 5 simulations and radar chart comparing performance across player counts](docs/screenshots/intelligence-report-elo-radar.png)
 
 ---
 
