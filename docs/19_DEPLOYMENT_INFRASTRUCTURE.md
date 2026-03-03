@@ -436,7 +436,7 @@ supabase db push
 | `014_chat_prompt_templates` | Chat and prompt template updates | Schema |
 | `015_cleanup` | Schema cleanup and fixes | Schema |
 | `016_image_gen_config` | Image generation config seed data | Data-only |
-| `017_capybara_kingdom` | The Gaslit Reach simulation seed | Data-only |
+| `017_capybara_kingdom` | The Gaslit Reach simulation seed (originally "Capybara Kingdom") | Data-only |
 | `018_public_read_access` | 21 anon RLS policies for public read access | Schema |
 | `019_add_buildings_street_index` | Index on `buildings.street_id` | Schema |
 | `020_restrict_settings_anon_policy` | Restrict `settings_anon_select` to `category = 'design'` | Schema |

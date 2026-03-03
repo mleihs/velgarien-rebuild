@@ -170,7 +170,7 @@ SIMULATION_IMAGES: dict[str, list[dict]] = {
         },
         {
             "name": "The Founding Compact — Chamber of Accord",
-            "filename": "founding-compact.avif",
+            "filename": "founding-of-glimhaven.avif",
             "prompt": (
                 CAPYBARA_STYLE
                 + "Grand underground parliament chamber carved from natural cavern, "

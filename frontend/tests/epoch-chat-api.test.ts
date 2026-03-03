@@ -167,7 +167,7 @@ describe('EpochChatApiService — listMessages', () => {
   it('should return messages array', async () => {
     const messages = [
       { id: 'msg-1', content: 'Hello', sender_name: 'Velgarien' },
-      { id: 'msg-2', content: 'Hi back', sender_name: 'Capybara' },
+      { id: 'msg-2', content: 'Hi back', sender_name: 'Gaslit Reach' },
     ];
     mockFetch([{ body: { data: messages, meta: { count: 2, total: 2 } } }]);
     const result = await service.get('/epochs/epoch-1/chat');

@@ -15,16 +15,17 @@ test.describe('Multiverse Map', () => {
     await expect(page.locator('velg-map-graph')).toBeVisible({ timeout: 10_000 });
   });
 
-  test('map shows all 4 simulation nodes', async ({ page }) => {
+  test('map shows all 5 simulation nodes', async ({ page }) => {
     await page.goto('/multiverse');
     await expect(page.locator('velg-map-graph')).toBeVisible({ timeout: 15_000 });
 
-    // Check that the SVG contains text labels for all 4 simulations
+    // Check that the SVG contains text labels for all 5 simulations
     const svg = page.locator('velg-map-graph');
     await expect(svg.getByText('Velgarien')).toBeVisible({ timeout: 10_000 });
-    await expect(svg.getByText('The Capybara Kingdom')).toBeVisible();
+    await expect(svg.getByText('The Gaslit Reach')).toBeVisible();
     await expect(svg.getByText('Station Null')).toBeVisible();
     await expect(svg.getByText('Speranza')).toBeVisible();
+    await expect(svg.getByText('Cité des Dames')).toBeVisible();
   });
 
   test('map nav link is visible in header', async ({ page }) => {

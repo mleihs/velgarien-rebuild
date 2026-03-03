@@ -24,7 +24,7 @@ DECLARE
     v_p3 UUID := '00000000-0000-0000-0000-000000000004';
     v_p4 UUID := '00000000-0000-0000-0000-000000000005';
     v_velgarien     UUID := '10000000-0000-0000-0000-000000000001';
-    v_capybara      UUID := '20000000-0000-0000-0000-000000000001';
+    v_gaslit_reach      UUID := '20000000-0000-0000-0000-000000000001';
     v_station_null  UUID := '30000000-0000-0000-0000-000000000001';
     v_speranza      UUID := '40000000-0000-0000-0000-000000000001';
 BEGIN
@@ -91,7 +91,7 @@ BEGIN
     -- =========================================================================
     INSERT INTO simulation_members (simulation_id, user_id, member_role) VALUES
         (v_velgarien,    v_p1, 'owner'),
-        (v_capybara,     v_p2, 'owner'),
+        (v_gaslit_reach,     v_p2, 'owner'),
         (v_station_null, v_p3, 'owner'),
         (v_speranza,     v_p4, 'owner')
     ON CONFLICT (simulation_id, user_id) DO NOTHING;

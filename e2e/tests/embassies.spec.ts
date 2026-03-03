@@ -132,7 +132,7 @@ test.describe('Embassy System (authenticated)', () => {
   test('embassy link shows partner info and status', async ({ page }) => {
     await expect(page.locator('velg-building-card').first()).toBeVisible({ timeout: 10_000 });
 
-    // Open details for Room 441 (paired with The Threshold in Capybara Kingdom)
+    // Open details for Room 441 (paired with The Threshold in The Gaslit Reach)
     await clickBuildingCardByName(page, 'Room 441');
     await expect(page.locator('velg-building-details-panel')).toBeVisible({ timeout: 10_000 });
 

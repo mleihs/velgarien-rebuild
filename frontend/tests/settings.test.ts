@@ -460,7 +460,7 @@ describe('Slug URL resolution', () => {
   it('rejects slugs', () => {
     expect(UUID_RE.test('speranza')).toBe(false);
     expect(UUID_RE.test('station-null')).toBe(false);
-    expect(UUID_RE.test('capybara-kingdom')).toBe(false);
+    expect(UUID_RE.test('the-gaslit-reach')).toBe(false);
     expect(UUID_RE.test('velgarien')).toBe(false);
     expect(UUID_RE.test('my-test-simulation-123')).toBe(false);
   });
