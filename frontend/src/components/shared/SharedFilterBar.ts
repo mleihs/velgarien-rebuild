@@ -154,19 +154,19 @@ export class VelgFilterBar extends LitElement {
     }
 
     @media (max-width: 480px) {
-      .filter-bar__search {
-        min-width: 0;
-        width: 100%;
-      }
-
       .filter-bar__row {
         flex-direction: column;
         align-items: stretch;
       }
 
+      .filter-bar__search {
+        min-width: 0;
+        box-sizing: border-box;
+      }
+
       .filter-bar__select {
-        width: 100%;
         min-height: 44px;
+        box-sizing: border-box;
       }
     }
   `;
