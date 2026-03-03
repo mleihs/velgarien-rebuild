@@ -24,6 +24,46 @@ The entire platform is bilingual (English/German), fully themed per-simulation w
 
 ---
 
+## Screenshots
+
+*Speranza — post-apocalyptic survival simulation (warm parchment theme)*
+
+**Buildings** — TCG card grid with AI-generated art, capacity stat gems, security dot indicators, type/condition badges, and embassy markers. Each card is a tactile 5:7 collectible with 3D tilt and light reflection on hover.
+
+![Speranza buildings view showing 10 building cards in a responsive grid with AI-generated artwork, stat gems, security indicators, and embassy badges](docs/screenshots/tcg-building-cards-grid-speranza.png)
+
+**Agents** — Lineup Overview strip (mini portraits with 6-row aptitude bar charts for at-a-glance team comparison) above the full agent card grid. Cards display AI portraits, color-coded aptitude pips per operative type, profession/gender subtitles, and rarity-driven border treatments.
+
+![Speranza agents view showing the Lineup Overview strip with aptitude charts and 7 agent cards with AI portraits, aptitude pips, and profession badges](docs/screenshots/tcg-agent-cards-lineup-speranza.png)
+
+*Velgarien — brutalist dystopia simulation (dark concrete theme)*
+
+**Agents** — The same card system in Velgarien's dark theme: 9 agents with AI portraits, color-coded aptitude pips, profession/system badges, and the Lineup Overview strip for cross-agent aptitude comparison. Ambassador badges visible on Inspektor Mueller.
+
+![Velgarien agents view showing 9 agent cards in dark brutalist theme with AI portraits, aptitude pips, profession badges, and Lineup Overview strip](docs/screenshots/tcg-agent-cards-lineup-velgarien.png)
+
+*Station Null — deep space horror simulation (dark sci-fi theme)*
+
+**Buildings** — The same card grid in Station Null's deep-space-horror theme: green terminal glow, monospaced labels, AI-generated derelict interiors. Embassy badges, condition badges, and capacity bars adapt to the dark palette.
+
+![Station Null buildings view showing 10 building cards in a dark sci-fi horror theme with green terminal glow and derelict space station interiors](docs/screenshots/tcg-building-cards-grid-station-null.png)
+
+*Cite des Dames — feminist literary utopia (light illuminated theme)*
+
+**Agent Cards** — Six agent cards in the illuminated-literary light theme: ultramarine and gold accents, vellum cream background. Historical figures (Ada Lovelace, Christine de Pizan, Hildegard von Bingen, Mary Wollstonecraft, Sojourner Truth, Sor Juana) with AI-generated Renaissance-style portraits, aptitude pips, and system badges.
+
+![Cite des Dames agent cards showing 6 historical figures in illuminated-literary light theme with Renaissance-style AI portraits and ultramarine accents](docs/screenshots/tcg-agent-cards-cite-des-dames.png)
+
+**Cartographer's Map** — Force-directed multiverse graph showing all five simulations as nodes with diplomatic connections (orange embassy links), energy pulses along edges, starfield background, and a minimap viewport. Supports 2D SVG and WebGL 3D rendering modes with search, zoom-to-cluster, and 30-second auto-refresh during active epochs.
+
+![Cartographer's Map showing the force-directed multiverse graph with five simulation nodes, diplomatic connections, energy pulses, and minimap](docs/screenshots/cartographers-map-multiverse-graph.png)
+
+**LoreScroll** — Platform-level narrative UI with accordion chapters, epigraph accents, gradient dividers, and sweep headers. Each simulation has ~5,000 words of in-world lore written as Bureau field reports and dossiers.
+
+![LoreScroll narrative section showing The Fracture chapter with epigraph, gradient dividers, and dark atmospheric styling](docs/screenshots/lorescroll-the-fracture-platform.png)
+
+---
+
 ## The Five Simulations
 
 | Simulation | Theme | Literary DNA | Aesthetic |
@@ -78,6 +118,53 @@ Five personality archetypes &mdash; **Sentinel**, **Warlord**, **Diplomat**, **S
 
 ---
 
+## TCG Card System
+
+Every agent and building in the platform is rendered as a collectible card &mdash; a unified `<velg-game-card>` component inspired by Hearthstone, MTG Arena, Marvel Snap, and Balatro. Cards are tactile objects, not flat list items.
+
+### Card Anatomy
+
+```
+┌─────────────────────────────────┐
+│ ┌─┐                        ┌─┐ │  Stat gems (diamond-rotated)
+│ │36│  ┌───────────────────┐ │ 8│ │  Left: power level / capacity
+│ └─┘  │                   │ └─┘ │  Right: best aptitude / condition
+│      │    CARD ARTWORK   │     │
+│      │    (60% height)   │     │  Art frame with inner glow
+│      │                   │     │
+│      └───────────────────┘     │
+│ ┌─────────────────────────────┐│  Name plate with gradient divider
+│ │    ✦ AGENT NAME ✦          ││
+│ └─────────────────────────────┘│
+│  ▪7 ▪5 ▪8 ▪4 ▪6 ▪6            │  Aptitude pips (operative-colored)
+│  SPY GRD SAB PRP INF ASN      │  or building type / condition badges
+│  Profession · Gender           │  Subtitle + capacity bar
+└─────────────────────────────────┘
+```
+
+### Rarity Tiers
+
+| Tier | Criteria | Visual Treatment |
+|:-----|:---------|:-----------------|
+| **Common** | Standard agent/building | Plain border |
+| **Rare** | Has relationships, AI-generated, or embassy | Gradient border (type-colored) |
+| **Legendary** | Ambassador, aptitude 9, or embassy in good condition | Animated glow + holographic rainbow shimmer on hover |
+
+### Interactions
+
+- **3D Tilt** &mdash; Mouse-tracking `rotateX/Y` via CSS custom properties (`--mx`, `--my`), 800px perspective, spring-back on leave
+- **Light Reflection** &mdash; Radial gradient overlay follows cursor position with `mix-blend-mode: overlay`
+- **Holographic Foil** &mdash; Legendary cards only: rainbow shimmer via `color-dodge` blend mode, tracks mouse
+- **Card Deal** &mdash; Staggered entrance: `translateY(60px) scale(0.8) rotateZ(8deg)` &rarr; rest, 400ms spring easing, 50ms stagger
+- **Idle Sway** &mdash; Micro `translateY` oscillation (1px, 4s cycle), phased per card index
+- **Four Sizes** &mdash; `xs` (80&times;112), `sm` (120&times;168), `md` (200&times;280), `lg` (280&times;392) &mdash; 5:7 TCG aspect ratio
+
+### Draft Phase &mdash; "The Hand"
+
+During pre-match drafting, the DraftRosterPanel presents available agents as a fanned hand of cards. Players select which agents to deploy into their match roster, seeing aptitude pips and rarity at a glance. Drafted cards receive a "DEPLOYED" stamp and dim. The card system makes agent composition feel like deckbuilding.
+
+---
+
 ## Game Balance & Intelligence Gathering
 
 Balance is calibrated through deterministic simulation, not intuition.
@@ -119,7 +206,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
            ▼        │
 ┌──────────────┐    │
 │   FastAPI     │    │
-│   246 endpoints│    │
+│   256 endpoints│    │
 │   32 routers  │    │
 │   PyJWT auth  │    │
 └──────┬───────┘    │
@@ -198,36 +285,38 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | Database tables | 46 |
 | RLS policies | 184+ |
 | SQL migrations | 51 |
-| API endpoints | 253 across 33 routers |
+| API endpoints | 256 across 33 routers |
 | Web Components | 113 custom elements |
-| Backend tests | 739 |
+| Backend tests | 788 |
 | Frontend tests | 442 |
 | E2E specs | 81 |
-| Localized UI strings | 2,130 (EN/DE) |
+| Localized UI strings | 2,279 (EN/DE) |
 | Specification documents | 29 |
 | Simulations | 5 (each with ~30 entities) |
 | Operative types | 6 |
 | Scoring dimensions | 5 |
 | Bot personalities | 5 archetypes x 3 difficulty levels |
 | Theme presets | 5 (WCAG 2.1 AA validated) |
-| Email templates | 4 (bilingual, per-simulation themed) |
+| Email templates | 5 (bilingual, per-simulation themed + signup confirmation) |
 
 ---
 
 ## Features
 
 - **Simulation worldbuilding** &mdash; agents, buildings, events, locations, zones, streets, social media, campaigns, chat
+- **TCG card system** &mdash; unified collectible card component with 3D tilt, holographic foil, rarity tiers, stat gems, aptitude pips, card-deal animations
 - **Cross-simulation diplomacy** &mdash; embassies, ambassadors, event echoes (narrative bleed between worlds)
 - **Cartographer's Map** &mdash; force-directed multiverse graph with operative trails, health arcs, sparklines, battle feed, leaderboard
 - **Competitive Epochs** &mdash; operative deployment, 5-dimension scoring, cycle-based resolution, alliances & betrayal
-- **Agent aptitudes & draft phase** &mdash; pre-match strategic agent selection with aptitude-weighted success rates
+- **Agent aptitudes & draft phase** &mdash; pre-match deckbuilding with card-hand draft UI and aptitude-weighted success rates
 - **Bot AI opponents** &mdash; 5 personality archetypes, 3 difficulty levels, fog-of-war compliant, dual-mode chat
 - **AI content generation** &mdash; portraits, building images, descriptions, event reactions, relationship suggestions, invitation lore
 - **Bilingual email notifications** &mdash; cycle briefings, phase changes, epoch completion (fog-of-war compliant, per-player data)
 - **Per-simulation theming** &mdash; 5 CSS presets with WCAG 2.1 AA contrast validation, light & dark modes
-- **Full i18n** &mdash; English + German (2,130 localized strings)
+- **Full i18n** &mdash; English + German (2,279 localized strings)
 - **How-to-Play tutorial** &mdash; rules reference, worked match replays, changelog, ECharts Intelligence Report
 - **Platform admin panel** &mdash; user/membership management, runtime cache TTL controls
+- **Bureau auth terminals** &mdash; themed login/register screens with scanlines, corner brackets, amber glow, blinking cursor, styled signup confirmation email
 - **SEO** &mdash; JSON-LD structured data, dynamic sitemap, slug-based URLs, crawler meta injection
 - **Public-first browsing** &mdash; full read access without authentication
 
@@ -265,7 +354,7 @@ npm run dev                              # Dev server on http://localhost:5173
 
 ```bash
 # Backend (from project root, venv activated)
-python3.13 -m pytest backend/tests/ -v   # 739 tests
+python3.13 -m pytest backend/tests/ -v   # 788 tests
 python3.13 -m ruff check backend/        # Lint
 
 # Frontend (from frontend/)

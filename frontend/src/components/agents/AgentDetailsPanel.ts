@@ -22,6 +22,7 @@ import { getFullResUrl } from '../../utils/image.js';
 import { agentAltText } from '../../utils/text.js';
 import '../buildings/EmbassyLink.js';
 import { VelgConfirmDialog } from '../shared/ConfirmDialog.js';
+import { infoBubbleStyles, renderInfoBubble } from '../shared/info-bubble-styles.js';
 import '../shared/Lightbox.js';
 import { panelButtonStyles } from '../shared/panel-button-styles.js';
 import { panelCascadeStyles } from '../shared/panel-cascade-styles.js';
@@ -40,6 +41,7 @@ export class VelgAgentDetailsPanel extends LitElement {
   static styles = [
     panelButtonStyles,
     panelCascadeStyles,
+    infoBubbleStyles,
     css`
     :host {
       display: block;
@@ -692,6 +694,10 @@ export class VelgAgentDetailsPanel extends LitElement {
   private async _saveAptitudes(): Promise<void> {
     if (!this.agent || !this.simulationId || !this._aptitudes || this._aptitudesSaving) return;
 
+    // Only save when budget is exactly 36 — user may still be adjusting
+    const total = Object.values(this._aptitudes).reduce((sum, v) => sum + v, 0);
+    if (total !== 36) return;
+
     this._aptitudesSaving = true;
     try {
       const response = await agentsApi.setAptitudes(
@@ -1301,7 +1307,7 @@ export class VelgAgentDetailsPanel extends LitElement {
                   }
 
                   <div class="panel__section">
-                    <velg-section-header>${msg('Aptitudes')}</velg-section-header>
+                    <velg-section-header>${msg('Aptitudes')} ${renderInfoBubble(msg('Drag sliders to set operative strengths. Total budget must equal 36 — raising one type means lowering another. Changes auto-save when the budget balances.'))}</velg-section-header>
                     ${this._renderAptitudes()}
                   </div>
 

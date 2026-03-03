@@ -2,7 +2,7 @@
 
 **Version:** 2.9
 **Datum:** 2026-03-03
-**Aenderung v2.9:** 1 neue Tabelle (agent_aptitudes). 2 neue Spalten auf epoch_participants (drafted_agent_ids, draft_completed_at). `max_agents_per_player` in game_epochs.config JSONB. **46 Tabellen gesamt**, ~184 RLS-Policies. Migration 046. Agent Aptitude System (operative_type-specific aptitude levels 3-9 per agent) + Draft Phase (player agent selection during epoch lobby).
+**Aenderung v2.9:** 1 neue Tabelle (agent_aptitudes). 2 neue Spalten auf epoch_participants (drafted_agent_ids, draft_completed_at). `max_agents_per_player` in game_epochs.config JSONB. **46 Tabellen gesamt**, ~184 RLS-Policies. Migration 047. Agent Aptitude System (operative_type-specific aptitude levels 3-9 per agent) + Draft Phase (player agent selection during epoch lobby).
 **Aenderung v2.8:** 1 neue Tabelle (notification_preferences). 1 neue SECURITY DEFINER Function (get_user_emails_batch). **45 Tabellen gesamt**, ~179 RLS-Policies. Migration 044. Per-User Email-Benachrichtigungspraeferenzen fuer Epoch-Events (cycle_resolved, phase_changed, epoch_completed, email_locale). RLS: authenticated users can read/insert/update own row only.
 **Aenderung v2.7:** 2 neue Tabellen (bot_players, bot_decision_log). 3 neue Spalten auf epoch_participants (is_bot, bot_player_id). 1 neue Spalte auf epoch_chat_messages (sender_type). **44 Tabellen gesamt**, ~176 RLS-Policies. Migration 041.
 **Aenderung v2.6:** 1 neue Tabelle (platform_settings). 42 Tabellen gesamt, 170 RLS-Policies, ~41 unique Triggers (64 Trigger-Eintraege), 8 Views, 4 materialisierte Views, 21 Functions. Migration 040. Platform Admin: key-value store fuer runtime-konfigurierbare Cache-TTLs (map data, SEO metadata, HTTP Cache-Control). RLS service_role only (kein anon/authenticated Zugriff). updated_at Trigger.
@@ -2356,9 +2356,22 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 Wird von `CycleNotificationService` fuer Batch-Email-Lookup verwendet. Nur service_role darf diese Funktion aufrufen.
 
+### `resolve_template_id()` (Migration 046)
+
+Helper-Funktion fuer Game-Instance-RLS. Liest `source_template_id` aus der `simulations`-Tabelle:
+
+```sql
+CREATE OR REPLACE FUNCTION resolve_template_id(sim_id UUID)
+RETURNS UUID AS $$
+    SELECT COALESCE(source_template_id, sim_id) FROM simulations WHERE id = sim_id;
+$$ LANGUAGE sql STABLE SECURITY INVOKER;
+```
+
+Wird in 7 RLS-Policies verwendet, die Epoch-Teilnehmern Zugriff auf Game-Instance-Daten ermoeglichen: Die `simulation_id` der Game-Instance wird auf ihre `source_template_id` aufgeloest, um den Abgleich mit `epoch_participants.simulation_id` (die immer auf Templates zeigt) zu ermoeglichen.
+
 ---
 
-## Agent Aptitudes (Migration 046)
+## Agent Aptitudes (Migration 047)
 
 Operative-Type-spezifische Eignungswerte pro Agent. Jeder Agent hat pro `operative_type` einen `aptitude_level` (3-9), der die Erfolgswahrscheinlichkeit und Effektivitaet bei Missionen beeinflusst. Wird im Draft-System zur Teamzusammenstellung verwendet.
 

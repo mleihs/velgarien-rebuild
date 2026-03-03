@@ -1,129 +1,333 @@
 # 06 - Feature Catalog: Plattform + Simulation Features
 
-**Version:** 1.1
-**Datum:** 2026-02-25
-**Aenderung v1.1:** 3 Simulationen (Velgarien, The Gaslit Reach, Station Null). Public-First-Architektur (anonymer Lesezugriff ohne Login). Dashboard-Bannerbilder. LoreScroll-Akkordeon. 6 Theme-Presets.
+**Version:** 2.0
+**Datum:** 2026-03-03
+**Aenderung v2.0:** Vollständige Überarbeitung. 5 Simulationen (Velgarien, The Gaslit Reach, Station Null, Speranza, Cité des Dames). 46 Datenbanktabellen, 51 Migrationen, 2279 i18n-Strings (EN/DE). Competitive PvP Epochs, Bot Players, Platform Admin, Agent Aptitudes & Draft, Game Instances, Epoch Invitations, Realtime Chat, Cycle Notifications, How-to-Play Tutorial, ECharts Intelligence Report, Embassies & Ambassadors, Cartographer's Map, Game Systems, SEO/GA4, Slug-URLs, Admin Data Cleanup. Alle Features implementiert und deployed.
 
 ---
 
 ## Feature-Kategorien
 
-### A. Plattform-Features (NEU)
+### A. Plattform-Features
 
 Features die auf Plattform-Ebene existieren, unabhängig von einzelnen Simulationen.
 
-| # | Feature | Priorität | Beschreibung |
-|---|---------|-----------|-------------|
-| P1 | **Simulation erstellen** | MUST | Neue Simulation mit Namen, Thema, Sprache anlegen |
-| P2 | **Simulation-Dashboard** | MUST | Übersicht aller eigenen Simulationen mit Status |
-| P3 | **Simulation-Auswahl** | MUST | Zwischen Simulationen wechseln |
-| P4 | **Benutzer-Registrierung** | MUST | Signup mit Email/Passwort (Supabase Auth) |
-| P5 | **Benutzer-Login** | MUST | Signin mit JWT-Token |
-| P6 | **Mitglieder einladen** | SHOULD | Einladungs-Links mit Rollen-Zuweisung |
-| P7 | **Mitglieder verwalten** | SHOULD | Rollen ändern, Mitglieder entfernen |
-| P8 | **Simulation archivieren** | COULD | Simulation in Read-Only-Modus setzen |
-| P9 | **Simulation klonen** | COULD | Bestehende Simulation als Vorlage kopieren |
-| P10 | **Plattform-Administration** | COULD | Globale Admin-Funktionen |
+#### A1. Kern-Plattform
 
-### B. Simulation-Features (bestehend, erweitert)
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P1 | **Simulation erstellen** | ✅ IMPL | Wizard mit Name, Beschreibung, Thema, Slug. CreateSimulationWizard Lit-Komponente. |
+| P2 | **Simulations-Dashboard** | ✅ IMPL | Übersicht aller 5 Simulationen mit Zähler-Badges (Agenten, Gebäude, Events), Bannerbilder, LoreScroll-Akkordeon (25 Sektionen, 6 Kapitel, Spectral-Schrift). Hero-Hintergrund, Slogan "Five Worlds. One Fracture." |
+| P3 | **Simulation-Auswahl** | ✅ IMPL | Zwischen Simulationen wechseln. Slug-basierte URLs (`/simulations/speranza/lore`). SimulationShell + SimulationHeader + SimulationNav mit Theme-Wechsel. |
+| P4 | **Benutzer-Registrierung** | ✅ IMPL | Signup mit Email/Passwort via Supabase Auth. RegisterView Komponente. |
+| P5 | **Benutzer-Login** | ✅ IMPL | Signin mit JWT (ES256 Production / HS256 Local). LoginPanel (Slide-from-right via VelgSidePanel). DevAccountSwitcher (5 Accounts, in Production verfügbar). |
+| P6 | **Mitglieder einladen** | ✅ IMPL | Einladungs-Links mit Rollen-Zuweisung (owner/admin/editor/viewer). MemberService mit LastOwnerError-Schutz. |
+| P7 | **Mitglieder verwalten** | ✅ IMPL | Rollen ändern, Mitglieder entfernen. Access-Settings-Panel. Letzter Owner kann nicht entfernt werden. |
+| P8 | **Simulation archivieren** | ✅ IMPL | Archivierung via `simulation_type='archived'`. Game Instances werden nach Epoch-Ende automatisch archiviert. |
+| P9 | **Simulation klonen** | ✅ IMPL | `clone_simulations_for_epoch()` PL/pgSQL-Funktion (~250 Zeilen). Atomisches Klonen mit Agent-Capping (max 6), Building-Capping (max 8), Normalisierung, Embassy-Remapping. |
+| P10 | **Public-First-Architektur** | ✅ IMPL | Anonymer Lesezugriff ohne Login. 21 Anon-RLS-Policies. 46 Public-API-Endpoints (`/api/v1/public/*`). `BaseApiService.getSimulationData()` routet automatisch zwischen public/authenticated. Rate-Limiting 100/min. |
 
-Features die innerhalb einer Simulation existieren.
+#### A2. Competitive Epochs (PvP-System)
 
-#### B1. Agenten-Management
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P11 | **Epoch-Lifecycle** | ✅ IMPL | Vollständiger Lebenszyklus: Lobby → Draft → Active (Zyklen) → Completed/Cancelled. EpochCommandCenter als Orchestrator-Komponente. EpochOpsBoard mit Dossier-Karten für aktive Epochs. |
+| P11a | **Teams & Teilnehmer** | ✅ IMPL | 2-8 Spieler pro Epoch. Automatische Team-Erstellung bei Simulation-Auswahl. `epoch_participants` mit `source_template_id`-Fallback für Game-Instance-Matching. |
+| P11b | **Operative Missions** | ✅ IMPL | 6 Operativ-Typen: Spy (Intel-Reveal + Zone Security), Guardian (Verteidigung 0.06/Einheit, Cap 0.15), Saboteur (Zone-Downgrade), Propagandist (Event-Erstellung in Ziel-Sim), Assassin (Ambassador-Blocking 3 Zyklen), Infiltrator (Embassy-Reduktion 65% für 3 Zyklen). RP-Economy: 12/Zyklus, Cap 40. Counter-Intel Sweep Kosten 4. |
+| P11c | **Scoring-System** | ✅ IMPL | 5-Dimensionen: Stability, Influence, Sovereignty, Diplomatic, Military. Alliance-Bonus (+15%), Betrayal-Penalty (-25%), Spy-Bonuspunkte. `ScoringService` mit Materialized Views. |
+| P11d | **Battle Log** | ✅ IMPL | Chronologischer Kampfbericht. Fog-of-War: Nur eigene und öffentliche Events sichtbar. Öffentlicher Battle-Feed (`/api/v1/public/battle-feed`). EpochBattleLog-Komponente mit Bot-Indikatoren und Persönlichkeits-Farben. |
+| P11e | **Leaderboard** | ✅ IMPL | Echtzeit-Rangliste mit 5-Dimensionen-Scores, Rang-Gap-Indikator, TRAITOR-Badge bei Verrat. EpochLeaderboard + MapLeaderboardPanel. Batch-Fetch für N+1-Optimierung. |
+| P11f | **Allianzen & Verrat** | ✅ IMPL | Diplomatische Allianzen (1 + 0.15 × ally_count Multiplikator). Verrats-Erkennung mit `betrayal_penalty`-Spalte. Alliance-Dissolve + -25% Diplomatic Score. EpochAlliancesTab. |
 
-| # | Feature | Priorität | Status Alt | Beschreibung |
-|---|---------|-----------|-----------|-------------|
-| S1 | Agent erstellen | MUST | ✅ Vorhanden | Manuell mit Name, System, Charakter, Hintergrund |
-| S2 | Agent bearbeiten | MUST | ✅ Vorhanden | Alle Felder editierbar |
-| S3 | Agent löschen | MUST | ✅ Vorhanden | Cascade auf Relationen |
-| S4 | Agenten-Liste | MUST | ✅ Vorhanden | Paginiert, filterbar, sortierbar |
-| S5 | Agent-Details | MUST | ✅ Vorhanden | Vollansicht mit Professionen, Reaktionen |
-| S6 | Beschreibung generieren (AI) | MUST | ✅ Vorhanden | Charakter + Hintergrund per AI |
-| S7 | Portrait generieren (AI) | MUST | ✅ Vorhanden | Bild per Stable Diffusion |
-| S8 | Profession zuweisen | SHOULD | ✅ Vorhanden | Aus Simulation-Taxonomie |
-| S9 | Agent-Filter | SHOULD | ✅ Vorhanden | Nach System, Gender, Profession |
-| S10 | Agent-Suche | SHOULD | ✅ Vorhanden | Volltextsuche über Name |
+#### A3. Bot Players (KI-Gegner)
 
-#### B2. Gebäude-Management
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P12 | **Bot-Presets** | ✅ IMPL | `bot_players`-Tabelle: Wiederverwendbare Bot-Konfigurationen. 5 Persönlichkeits-Archetypen (Sentinel, Warlord, Diplomat, Strategist, Chaos) mit persönlichkeitsspezifischen Akzentfarben. 3 Schwierigkeitsstufen (easy/medium/hard). |
+| P12a | **Deterministic Decision Engine** | ✅ IMPL | `BotPersonality` (abstrakte Basis + 5 Implementierungen). Fog-of-War-konforme `BotGameState`-Erstellung. Bots nutzen dieselben `OperativeService.deploy()` + `spend_rp()`-Methoden wie Spieler — kein Code-Duplikat. Synchrone Ausführung während `resolve_cycle()` via Admin-Supabase. |
+| P12b | **Dual-Mode Chat** | ✅ IMPL | Template-basiert (kostenlos, sofort) + LLM via OpenRouter (konfigurierbar pro Simulation). `BotChatService` mit `bot_chat_mode`-Toggle in AI-Settings. `sender_type`-Spalte auf `epoch_chat_messages`. |
+| P12c | **BotConfigPanel** | ✅ IMPL | VelgSidePanel "Bot Deployment Console". Collectible-Card-Deck-Builder-Ästhetik: Persönlichkeitskarten-Grid mit SVG-Radar-Charts, Difficulty Segmented Toggle, Behavior-Matrix-Bars, Stagger-Reveal-Animationen. `bot_decision_log`-Tabelle für Zyklus-Audit-Trail. |
+| P12d | **Auto-Draft** | ✅ IMPL | Persönlichkeitsgewichteter `auto_draft()`: Bots wählen Agenten basierend auf Archetyp-Präferenzen (z.B. Warlord bevorzugt hohe Assassin/Saboteur-Aptitudes). |
 
-| # | Feature | Priorität | Status Alt | Beschreibung |
-|---|---------|-----------|-----------|-------------|
-| S11 | Gebäude erstellen | MUST | ✅ Vorhanden | Name, Typ, Beschreibung, Stil |
-| S12 | Gebäude bearbeiten | MUST | ✅ Vorhanden | Alle Felder editierbar |
-| S13 | Gebäude löschen | MUST | ✅ Vorhanden | Cascade auf Relationen |
-| S14 | Gebäude-Liste | MUST | ✅ Vorhanden | Paginiert, filterbar |
-| S15 | Gebäude-Bild generieren (AI) | SHOULD | ✅ Vorhanden | Per Stable Diffusion |
-| S16 | Agent zuweisen | SHOULD | ✅ Vorhanden | Agent-Building Relation |
-| S17 | Profession-Anforderungen | COULD | ✅ Vorhanden | Min-Qualifikation pro Profession |
-| S18 | Spezialgebäude (Akademie) | COULD | ✅ Vorhanden | Training-Interface |
+#### A4. Platform Admin Panel
 
-#### B3. Events-System
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P13 | **Admin-Route** | ✅ IMPL | `/admin` mit Email-Allowlist-Auth (`admin@velgarien.dev`). `require_platform_admin()`-Dependency. `isPlatformAdmin` Computed Signal. Dark tactical HUD-Ästhetik (gray-950 bg, Scanlines, "RESTRICTED ACCESS"-Badge). |
+| P13a | **User Management** | ✅ IMPL | AdminUsersTab: Suche, expandierbare Zeilen, Rollen-Dropdowns, Mitgliedschafts-Verwaltung, Simulation-Zuweisung, Löschen mit Bestätigung. 3 SECURITY DEFINER RPC-Funktionen (`admin_list_users`, `admin_get_user`, `admin_delete_user`) — umgeht GoTrue Admin API HS256-Inkompatibilität. |
+| P13b | **Cache TTL Controls** | ✅ IMPL | AdminCachingTab: Card-basierte TTL-Inputs, Dirty-Tracking, Save/Reset. `platform_settings`-Tabelle (Key-Value Runtime-Config). `CacheConfigService`-Singleton für Map-Data, SEO-Metadata, HTTP Cache-Control. |
+| P13c | **Data Cleanup** | ✅ IMPL | AdminCleanupTab: 6 Daten-Kategorien (completed_epochs, cancelled_epochs, stale_lobbies, archived_instances, audit_log, bot_decision_log). Preview-Before-Delete-Workflow (Stats → Scan → Preview → Execute). Cascade-aware Epoch-Deletion (Game Instances zuerst, dann Epoch-Zeilen mit 8 Kind-Tabellen). Monospace-Cascade-Tree-Anzeige. |
 
-| # | Feature | Priorität | Status Alt | Beschreibung |
-|---|---------|-----------|-----------|-------------|
-| S19 | Event erstellen | MUST | ✅ Vorhanden | Manuell mit Titel, Beschreibung, Typ |
-| S20 | Event bearbeiten | MUST | ✅ Vorhanden | Alle Felder editierbar |
-| S21 | Event löschen | MUST | ✅ Vorhanden | Cascade auf Reaktionen |
-| S22 | Event-Liste | MUST | ✅ Vorhanden | Paginiert, sortiert |
-| S23 | Event generieren (AI) | SHOULD | ✅ Vorhanden | Komplettes Event per AI |
-| S24 | Agenten-Reaktion generieren (AI) | SHOULD | ✅ Vorhanden | Charakter-basierte Reaktion |
-| S25 | Reaktionen anzeigen | SHOULD | ✅ Vorhanden | Expandierbare Reaktionsliste |
+#### A5. Agent Aptitudes & Draft Phase
 
-#### B4. Chat-System
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P14 | **Template-Set Aptitudes** | ✅ IMPL | `agent_aptitudes`-Tabelle (Migration 047). Jeder Agent: Aptitude-Scores 3-9 für 6 Operativ-Typen (spy/guardian/saboteur/propagandist/infiltrator/assassin), Budget 36 Punkte. Erfolgswahrscheinlichkeits-Formel: `aptitude × 0.03` (18pp Swing zwischen niedrigstem/höchstem). Seed-Daten für 35 Agenten (210 Aptitude-Zeilen). |
+| P14a | **VelgAptitudeBars** | ✅ IMPL | Shared-Komponente: 3 Größen, editierbarer Modus mit Budget-Tracking, Highlight-Modus, Gradient-Fills, farbige Slider-Thumbs, Glow auf hervorgehobenen Bars. Verwendet in AgentDetailsPanel, AgentsView, DeployOperativeModal, DraftRosterPanel. |
+| P14b | **Draft Phase** | ✅ IMPL | `max_agents_per_player` Epoch-Config (4-8, Standard 6). `drafted_agent_ids UUID[]` + `draft_completed_at` auf `epoch_participants`. DraftRosterPanel: Full-Screen-Overlay (Zwei-Spalten: verfügbarer Roster + Deployment-Slots), Counter-Bar mit Pip-Pulse-Animation, Team-Stats, Scanline-Textur, "DRAFTED"-Stempel, bernsteinfarbene pulsierende leere Slots, Spring-Slot-Fill-Animation. |
+| P14c | **Operative-Aptitude-Integration** | ✅ IMPL | DeployOperativeModal: Aptitude-Bars + Fit-Indikator + sortiertes Dropdown. `AgentService` prüft Ambassador-Blocking. Clone-Funktion Draft-aware refaktoriert. |
 
-| # | Feature | Priorität | Status Alt | Beschreibung |
-|---|---------|-----------|-----------|-------------|
-| S26 | Konversation starten | MUST | ✅ Vorhanden | User-Agent → Welt-Agent |
-| S27 | Nachricht senden | MUST | ✅ Vorhanden | Mit AI-Antwort-Generierung |
-| S28 | Konversations-Historie | MUST | ✅ Vorhanden | LangChain Memory (50 Nachrichten) |
-| S29 | Agenten-Auswahl | SHOULD | ✅ Vorhanden | Chat-Partner wählen |
-| S30 | Chat-Archivierung | COULD | ❌ Fehlt | Konversationen archivieren |
+#### A6. Game Instances
 
-#### B5. Social Trends & Kampagnen
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P15 | **Template-Klonen** | ✅ IMPL | `clone_simulations_for_epoch()` PL/pgSQL (~250 Zeilen): Agent-Capping (max 6), Building-Capping (max 8), Condition-Normalisierung (alle → 'good'), Capacity-Normalisierung (alle → 30), Security-Level-Distribution (1×high, 2×medium, 1×low), Qualification-Normalisierung (alle → 5), Cross-Simulation Embassy-Remapping, simulation_connections-Remapping, Participant-Repointing. `simulation_type`-Spalte (template/game_instance/archived). |
+| P15a | **Lifecycle** | ✅ IMPL | Start → `clone_simulations_for_epoch()`, Complete → `archive_epoch_instances()`, Cancel → `delete_epoch_instances()`. `GameInstanceService` (clone/archive/delete/list). SimulationNav: violettes "Game Instance"-Badge. Simulation-Listings filtern `simulation_type='template'`. |
 
-| # | Feature | Priorität | Status Alt | Beschreibung |
-|---|---------|-----------|-----------|-------------|
-| S31 | Trends abrufen | SHOULD | ✅ Vorhanden | Von Guardian, NewsAPI |
-| S32 | Trend transformieren (AI) | SHOULD | ✅ Vorhanden | In Simulations-Kontext |
-| S33 | Als Kampagne integrieren | SHOULD | ✅ Vorhanden | Mit Event-Erstellung |
-| S34 | Kampagnen-Dashboard | COULD | ✅ Vorhanden | Übersicht, Metriken |
-| S35 | Workflow (Fetch→Transform→Integrate) | COULD | ✅ Vorhanden | Einschritt-Prozess |
+#### A7. Epoch Invitations
 
-#### B6. Social Media Integration
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P16 | **Email-Einladungen** | ✅ IMPL | `epoch_invitations`-Tabelle mit Token-basierter Annahme. `EpochInvitationService` (CRUD + Lore-Generierung via OpenRouter, gecacht in `game_epochs.config.invitation_lore` + Email-Versand via SMTP). Dark tactical HTML-Email mit Inline-CSS, bilingual EN/DE, per-Simulation-Akzentfarben. |
+| P16a | **Invite UI** | ✅ IMPL | EpochInvitePanel: VelgSidePanel Slide-out mit Email-Input, AI-Lore-Dossier-Preview, gesendete Einladungen mit Status-Badges. Nur für Epoch-Creator in Lobby-Phase sichtbar. Auto-Öffnung nach Epoch-Erstellung. |
+| P16b | **Token-Annahme** | ✅ IMPL | EpochInviteAcceptView: Split-Screen Auth-Seite bei `/epoch/join?token=...` mit Lore-Panel + Login/Register-Terminal. Öffentliche Token-Validierung via `/api/v1/public/epoch-invitations/{token}`. |
 
-| # | Feature | Priorität | Status Alt | Beschreibung |
-|---|---------|-----------|-----------|-------------|
-| S36 | Posts importieren | COULD | ✅ Vorhanden | Von Facebook |
-| S37 | Posts transformieren (AI) | COULD | ✅ Vorhanden | Dystopisch/Propaganda/Surveillance |
-| S38 | Sentiment-Analyse (AI) | COULD | ✅ Vorhanden | Detailliert + Schnell |
-| S39 | Agenten-Reaktionen (AI) | COULD | ✅ Vorhanden | Charakter-basiert |
-| S40 | Thread-Analyse (AI) | COULD | ⚠️ Teilweise | Kommentar-Threads analysieren |
+#### A8. Epoch Realtime Chat
 
-#### B7. Standorte
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P17 | **Dual-Channel Chat** | ✅ IMPL | `epoch_chat_messages`-Tabelle + 4 RLS-Policies + 2 Broadcast-Trigger. REST Catch-up + Supabase Realtime Live. ALL CHANNELS + TEAM FREQ. Cursor-basierte Pagination. `EpochChatService` (4 Endpoints: Nachricht senden, Epoch-Messages, Team-Messages, Cycle-Ready-Toggle). |
+| P17a | **Presence & Ready** | ✅ IMPL | `RealtimeService`-Singleton (4 Supabase Realtime Channels: chat, presence, status, team). `EpochPresenceIndicator` (Online-Dot). `EpochReadyPanel` (Cycle-Ready-Toggle). `cycle_ready`-Spalte auf `epoch_participants`. |
+| P17b | **COMMS Sidebar** | ✅ IMPL | Einklappbares "COMMS"-Panel auf dem Epoch Operations Board. Zwei-Spalten-Grid (links: Dossier-Karten, rechts: 360px COMMS-Sidebar). Signal-Strength-Indikator, bernsteinfarbener Glow-Toggle mit Unread-Badge. Realtime-Channel-Lifecycle: Join bei OpsBoard, Leave bei Epoch-Detail, Re-join bei Zurück. |
 
-| # | Feature | Priorität | Status Alt | Beschreibung |
-|---|---------|-----------|-----------|-------------|
-| S41 | Städte verwalten | COULD | ✅ Vorhanden | CRUD mit Geo-Daten |
-| S42 | Zonen verwalten | COULD | ✅ Vorhanden | CRUD pro Stadt |
-| S43 | Straßen verwalten | COULD | ✅ Vorhanden | CRUD pro Zone |
+#### A9. Cycle Email Notifications
 
-### C. Settings-Features (NEU)
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P18 | **Taktische Briefing-Emails** | ✅ IMPL | `CycleNotificationService` (~740 Zeilen). Bilingual EN/DE via SMTP SSL (Port 465, `asyncio.to_thread()`). 3 Trigger: Cycle-Resolve, Phase-Change, Epoch-Start. Per-Player Fog-of-War-konforme Briefing-Daten: Rang-Gap, Missions-Tabelle, Spy-Intel (Zone Security + Guardian Deployment), Threat Assessment, Alliance-Status, Nächster-Zyklus-Preview. |
+| P18a | **Notification Preferences** | ✅ IMPL | `notification_preferences`-Tabelle (Migration 044). Per-User Email Opt-in/Opt-out für cycle_resolved, phase_changed, epoch_completed. `email_locale`-Feld. `get_user_emails_batch()` SECURITY DEFINER RPC. NotificationsSettingsPanel (3 Toggle-Switches in Settings). |
+| P18b | **Email-Templates** | ✅ IMPL | `EmailTemplates` (~1660 Zeilen, 4 bilinguale Templates). 85+ lokalisierte String-Keys via `_NOTIF_STRINGS`-Dict. Per-Simulation-Akzentfarben via `_SIM_EMAIL_COLORS`. Per-Simulation-Narrativ-Voice via `_SIM_HEADERS`. WCAG AA Kontrast. `CLASSIFIED //`-Betreffzeilen-Pattern. |
 
-| # | Feature | Priorität | Beschreibung |
-|---|---------|-----------|-------------|
-| C1 | **General Settings** | MUST | Name, Beschreibung, Thema, Sprache |
-| C2 | **World Settings** | MUST | Taxonomien verwalten (Systeme, Professionen, etc.) |
-| C3 | **AI Settings** | SHOULD | Modelle pro Zweck, Prompt-Templates, Parameter |
-| C4 | **Integration Settings** | SHOULD | Social Media Accounts, News-Quellen, API-Keys |
-| C5 | **Design Settings** | DONE | Per-Simulation Theming: 32 Token-Overrides (Farben, Typographie, Charakter, Animation), 5 Presets, Live-Preview, Custom CSS. Impl. in Phase 3. |
-| C6 | **Access Settings** | SHOULD | Öffentlich/Privat, Einladungen, Rollen |
-| C7 | **Taxonomy Editor** | MUST | UI zum Hinzufügen/Bearbeiten/Deaktivieren von Taxonomie-Werten |
-| C8 | **Prompt Template Editor** | SHOULD | UI zum Bearbeiten von AI-Prompts pro Sprache |
-| C9 | **Model Selector** | SHOULD | AI-Modell pro Generierungs-Zweck wählen |
+#### A10. How-to-Play Tutorial
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P19 | **Tutorial-Seite** | ✅ IMPL | `/how-to-play`-Route. Dark military-console Ästhetik. Sticky Sidebar-TOC mit Scroll-Spy. 12 Sektionen (inkl. Updates & Changelog mit v2.0-v2.3). 6 Operativ-Karten mit Details. 4 vollständig ausgearbeitete Match-Replays. Keyboard-Accessibility (aria-expanded, focus-visible). htp-styles.ts (~1100 Zeilen extrahiertes CSS). |
+
+#### A11. ECharts Intelligence Report
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| P20 | **Interaktive Analyse-Charts** | ✅ IMPL | Apache ECharts 6.0 Integration. `EchartsChart` Lit-Wrapper mit `tactical` Dark-Theme. 4 Charts: Radar (Simulations-Profile), Heatmap (Head-to-Head 2P-Duelle), Grouped Bar mit Wilson 95% CI-Whiskers (Strategie-Tiers), Multi-Line (Win-Rate nach Spieleranzahl). IntersectionObserver Scroll-Reveal mit "CLASSIFIED" / "INTEL GRADE" Eck-Bracket-Dekorativen Headers. 200-Game Epoch-Simulations-Datenbasis. |
 
 ---
 
-## Prioritäts-Verteilung für Rebuild
+### B. Simulation-Features
+
+Features die innerhalb einer Simulation existieren. 5 Simulationen: Velgarien (dunkel, bürokratisch), The Gaslit Reach (Fantasy, viktorianisch), Station Null (Sci-Fi-Horror), Speranza (Post-Apokalyptisch), Cité des Dames (feministisch-literarisch, erstes helles Theme).
+
+#### B1. Agenten-Management
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S1 | Agent erstellen | ✅ IMPL | Manuell mit Name, System, Charakter, Hintergrund. Soft-Delete via `active_agents`-View. |
+| S2 | Agent bearbeiten | ✅ IMPL | Alle Felder editierbar. Optimistic Locking. Audit-Logging. |
+| S3 | Agent löschen | ✅ IMPL | Soft-Delete mit Cascade auf Relationen. |
+| S4 | Agenten-Liste | ✅ IMPL | Paginiert, filterbar, sortierbar. Card-Grid mit Stagger-Animation (`--i` CSS-Variable). `gridLayoutStyles` shared CSS. |
+| S5 | Agent-Details | ✅ IMPL | VelgSidePanel mit Panel-Cascade-Animation. Professionen, Reaktionen, Beziehungen, Aptitude-Editor, Ambassador-Status. |
+| S6 | Beschreibung generieren (AI) | ✅ IMPL | Charakter + Hintergrund per AI (OpenRouter). Modell-Fallback. Rate-Limit 30/hr. |
+| S7 | Portrait generieren (AI) | ✅ IMPL | Bild per Replicate (Flux). AVIF-Format (Quality 85). Pro-Simulation Prompt-Templates. |
+| S8 | Profession zuweisen | ✅ IMPL | Aus Simulation-Taxonomie. `agent_professions`-Tabelle. Min-Qualifikation pro Profession. |
+| S9 | Agent-Filter | ✅ IMPL | Nach System, Gender, Profession. SharedFilterBar-Komponente. |
+| S10 | Agent-Suche | ✅ IMPL | Volltextsuche über Name. `apply_search_filter()` Utility. |
+| S10a | Agenten-Beziehungen | ✅ IMPL | `agent_relationships`-Tabelle. Intra-Sim gerichteter Graph mit Taxonomie-getriebenen Typen. RelationshipCard + RelationshipEditModal in AgentDetailsPanel. |
+| S10b | AI-Beziehungsgenerierung | ✅ IMPL | Inline Review-Flow: "Generate Relationships" → AI-Vorschläge mit Checkboxen (alle vorausgewählt). Typ-Badge, Ziel-Agent, Beschreibung, Intensitäts-Bar. "Save Selected" / "Dismiss". |
+| S10c | Agent-Aptitudes | ✅ IMPL | VelgAptitudeBars im AgentDetailsPanel (editierbarer Modus). Debounced Save. Budget-Tracking (36 Punkte). AgentsView: Lineup-Overview-Strip. |
+| S10d | Ambassador-Flag | ✅ IMPL | `is_ambassador` als berechnetes Flag via `AgentService._enrich_ambassador_flag()`. BLOCKED-Badge bei `ambassador_blocked_until`. |
+
+#### B2. Gebäude-Management
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S11 | Gebäude erstellen | ✅ IMPL | Name, Typ, Beschreibung, Stil. Soft-Delete. Audit-Logging. |
+| S12 | Gebäude bearbeiten | ✅ IMPL | Alle Felder editierbar. Optimistic Locking. |
+| S13 | Gebäude löschen | ✅ IMPL | Soft-Delete mit Cascade auf Relationen. |
+| S14 | Gebäude-Liste | ✅ IMPL | Paginiert, filterbar. Card-Grid mit Embassy-Pulsing-Ring (`.card--embassy`). |
+| S15 | Gebäude-Bild generieren (AI) | ✅ IMPL | Per Replicate (Flux). Kurze funktionale Prompt-Beschreibungen (max 30 Wörter, Migration 027). AVIF-Format. |
+| S16 | Agent zuweisen | ✅ IMPL | Agent-Building Relation. Drag-Drop Zuordnung. |
+| S17 | Profession-Anforderungen | ✅ IMPL | Min-Qualifikation pro Profession. Info-Bubble im Edit-Modal. |
+| S18 | Spezialgebäude | ✅ IMPL | Embassy-Gebäude (`special_type = 'embassy'`). COMPROMISED-Badge bei `infiltration_penalty`. |
+
+#### B3. Embassies & Ambassadors
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S18a | **Embassy-Gebäude** | ✅ IMPL | Cross-Sim diplomatische Gebäude. `embassies`-Tabelle (Migrationen 028-030). Auto-Aktivierung bei Erstellung. 12 Embassy-Gebäude (3 pro Simulation) + 15 Bilder generiert. |
+| S18b | **EmbassyCreateModal** | ✅ IMPL | 4-Schritt-Wizard: Partner-Simulation → Protokoll → Ambassador-Ausweisung → Bestätigung. EmbassyLink-Komponente für Cross-Sim Navigation. |
+| S18c | **Visuelle Effekte** | ✅ IMPL | `.card--embassy` in `card-styles.ts`: Pulsierender Ring via `box-shadow` (1px→5px), Gradient-Fill-Overlay via `::after` bei Hover, Gradient-Border via `background: padding-box/border-box`. Per-Simulation-Theme-Farben. |
+| S18d | **Ambassador-Metadata** | ✅ IMPL | Ambassador-Swap bei Building-Reorder (Migration 030). `infiltration_penalty` + `ambassador_blocked_until` für Operativ-Effekte. |
+
+#### B4. Events-System
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S19 | Event erstellen | ✅ IMPL | Manuell mit Titel, Beschreibung, Typ. Soft-Delete. Audit-Logging. |
+| S20 | Event bearbeiten | ✅ IMPL | Alle Felder editierbar. Optimistic Locking. |
+| S21 | Event löschen | ✅ IMPL | Soft-Delete mit Cascade auf Reaktionen. |
+| S22 | Event-Liste | ✅ IMPL | Paginiert, sortiert. Bleed-Filter (Cross-Sim Events). PROPAGANDA-Badge für Propagandist-generierte Events. Impact-Bar-Segment-Grows-Animation. |
+| S23 | Event generieren (AI) | ✅ IMPL | Komplettes Event per AI (OpenRouter). Prompt-Templates pro Simulation und Sprache. |
+| S24 | Agenten-Reaktion generieren (AI) | ✅ IMPL | Charakter-basierte Reaktion. `list_for_reaction()` für leichtgewichtige AI-Queries. |
+| S25 | Reaktionen anzeigen | ✅ IMPL | Expandierbare Reaktionsliste. Panel-Cascade-Animationen. |
+
+#### B5. Event Echoes (Bleed-Mechanik)
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S25a | **Cross-Sim Bleed** | ✅ IMPL | `event_echoes`-Tabelle (Migration 026). Probabilistischer Bleed-Threshold basierend auf Connection-Strength. Strength-Decay über Zeit. Vector-Tag-Resonanz. |
+| S25b | **Echo-Transformation-Pipeline** | ✅ IMPL | Approve → AI Generate → Create Target Event. EchoCard + EchoTriggerModal in EventDetailsPanel. Cross-Simulation Writes via Admin-Client. Cascade-Prevention. |
+| S25c | **BleedSettingsPanel** | ✅ IMPL | Konfigurierbare Bleed-Parameter in Settings-UI. Extends BaseSettingsPanel. |
+
+#### B6. Chat-System
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S26 | Konversation starten | ✅ IMPL | User-Agent → Welt-Agent. ConversationList + MessageList + MessageInput. |
+| S27 | Nachricht senden | ✅ IMPL | Mit AI-Antwort-Generierung via OpenRouter. Rate-Limit 10/min. Direktionale Chat-Message-Animationen. |
+| S28 | Konversations-Historie | ✅ IMPL | Kontextuelles Memory (50 Nachrichten). Cursor-basierte Pagination. |
+| S29 | Agenten-Auswahl | ✅ IMPL | Chat-Partner wählen. AgentSelector-Komponente. |
+
+#### B7. Social Trends & Kampagnen
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S31 | Trends abrufen | ✅ IMPL | Von Guardian, NewsAPI. Rate-Limit 5/min. Anon-Guard (Sign-in Message für unauthentifizierte User). |
+| S32 | Trend transformieren (AI) | ✅ IMPL | In Simulations-Kontext per AI. TransformationModal. |
+| S33 | Als Kampagne integrieren | ✅ IMPL | Mit Event-Erstellung. CampaignService extends BaseService. |
+| S34 | Kampagnen-Dashboard | ✅ IMPL | Übersicht, Metriken. CampaignCard mit gridLayoutStyles. campaign_performance Materialized View. |
+| S35 | Workflow (Fetch→Transform→Integrate) | ✅ IMPL | Einschritt-Prozess. PostTransformModal. |
+
+#### B8. Social Media Integration
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S36 | Posts importieren | ✅ IMPL | Von Facebook. Integration-Settings-Panel für API-Keys. |
+| S37 | Posts transformieren (AI) | ✅ IMPL | Dystopisch/Propaganda/Surveillance Transformation per AI. |
+| S38 | Sentiment-Analyse (AI) | ✅ IMPL | Detailliert + Schnell. SentimentBadge (entfernt — direkt in Komponenten). |
+| S39 | Agenten-Reaktionen (AI) | ✅ IMPL | Charakter-basierte Reaktionen auf Social Media Posts. |
+| S40 | Thread-Analyse (AI) | ✅ IMPL | Kommentar-Threads analysieren. |
+
+#### B9. Standorte
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S41 | Städte verwalten | ✅ IMPL | CRUD. LocationService-Fassade delegiert an CityService. |
+| S42 | Zonen verwalten | ✅ IMPL | CRUD pro Stadt. ZoneService extends BaseService. Zone-Stability Materialized View. Security-Level-Tiers. |
+| S43 | Straßen verwalten | ✅ IMPL | CRUD pro Zone. StreetService extends BaseService. Location-Level-Crossfade-Animationen. |
+
+#### B10. Per-Simulation Lore
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| S44 | **Lore-Seiten** | ✅ IMPL | Dedizierter Lore-Tab (erste Position in SimulationNav). ~3500-5000 Wörter In-World-Narrativ in 6 Kapiteln pro Simulation. Default-Landing geändert von `/agents` zu `/lore`. |
+| S45 | **SimulationLoreView** | ✅ IMPL | Mappt Theme-Tokens → Lore-CSS-Variablen mit `effect()` Signal-Subscription für Reload-Resilienz. 12 CSS Custom Properties (Defaults bewahren Dashboard-Appearance). Content-Dateien in `components/lore/content/` (5 Dateien, eine pro Sim). |
+| S46 | **Lore-Bilder** | ✅ IMPL | 16 Lore-Bilder (3 pro Sim + 4 Plattform) in AVIF-Format. VelgLightbox für Bild-Vergrößerung. `lightbox-open` CustomEvent für GA4-Tracking. |
+| S47 | **Schema.org Markup** | ✅ IMPL | JSON-LD `Thing` Structured Data via `SeoService.setStructuredData()`. Entfernung via `removeStructuredData()`. |
+
+---
+
+### C. Settings-Features
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| C1 | **General Settings** | ✅ IMPL | Name, Beschreibung, Thema, Sprache. Liest direkt von `simulations`-Tabelle (nicht BaseSettingsPanel). |
+| C2 | **World Settings** | ✅ IMPL | Taxonomien verwalten (Systeme, Professionen, etc.). Taxonomy-Editor UI. |
+| C3 | **AI Settings** | ✅ IMPL | Modelle pro Zweck (chat, generation, bot_chat), Prompt-Templates, Parameter. `bot_chat_mode`-Toggle + `model_bot_chat`-Selector. Extends BaseSettingsPanel. |
+| C4 | **Integration Settings** | ✅ IMPL | Social Media Accounts, News-Quellen, API-Keys (AES-256 verschlüsselt). Extends BaseSettingsPanel. |
+| C5 | **Design Settings** | ✅ IMPL | Per-Simulation Theming: 37 Token-Overrides (Farben, Typographie, Charakter, Animation), 6 Theme-Presets (dark-brutalist, deep-space-horror, arc-raiders, gaslit-reach, illuminated-literary + custom). Live-Preview, Custom CSS. WCAG 2.1 AA validiert. Extends BaseSettingsPanel. |
+| C6 | **Access Settings** | ✅ IMPL | Öffentlich/Privat, Einladungen, Rollen. Extends BaseSettingsPanel. |
+| C7 | **Taxonomy Editor** | ✅ IMPL | UI zum Hinzufügen/Bearbeiten/Deaktivieren von Taxonomie-Werten. Locale-aware Labels. |
+| C8 | **Prompt Template Editor** | ✅ IMPL | UI zum Bearbeiten von AI-Prompts pro Sprache (EN/DE). PromptTemplateService. |
+| C9 | **Model Selector** | ✅ IMPL | AI-Modell pro Generierungs-Zweck wählen. Fallback-Ketten. |
+| C10 | **View Settings** | ✅ IMPL | Ansichts-Einstellungen für Simulation. ViewSettingsPanel. |
+| C11 | **Notifications Settings** | ✅ IMPL | NotificationsSettingsPanel: 3 Toggle-Switches (cycle_resolved, phase_changed, epoch_completed). Per-User Email Opt-in/Opt-out. email_locale-Feld. |
+| C12 | **Bleed Settings** | ✅ IMPL | BleedSettingsPanel: Konfigurierbare Bleed-Parameter (Threshold, Decay, Resonanz). Extends BaseSettingsPanel. |
+
+---
+
+### D. Cartographer's Map (Multiverse-Visualisierung)
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| D1 | **Force-Directed Graph** | ✅ IMPL | Custom Physics-Simulation in `map-force.ts` (~130 Zeilen). SVG-Rendering in Lit Shadow DOM mit Pan/Zoom. Mobile Fallback zu Card-Liste bei ≤768px. Template/Instance-Orbit-Physik, Instance-Clustering. |
+| D2 | **Starfield & Ambient** | ✅ IMPL | 200 zufällige SVG-Kreise, 25% Twinkle-Animation. Energy-Pulses (animateMotion entlang Edge-Pfaden). Node-Glow-Drift (JS requestAnimationFrame, Kreise driften Richtung verbundener Nachbarn). `transform-box: fill-box` Fix. |
+| D3 | **Game Instance Visualization** | ✅ IMPL | Gestrichelte rotierende Border-Ringe, Phase-Ring-Pulse (Farbe pro Epoch-Phase), Phase-Labels, 5-Dimensionen Health-Arcs, Sparkline Composite Scores auf Template-Nodes, Operative-Type-Trails auf Kanten, Operative-Heat auf Edge-Breite/Opacity, Search mit Node-Fade, Zoom-to-Cluster bei Doppelklick, Reset-Zoom-Button. |
+| D4 | **MapBattleFeed** | ✅ IMPL | Scrollender öffentlicher Battle-Log-Ticker am Karten-Unterrand. `GET /api/v1/public/battle-feed`. |
+| D5 | **MapLeaderboardPanel** | ✅ IMPL | VelgSidePanel für Epoch-Scores bei Instance-Klick. 5-Dimensionen-Scores. |
+| D6 | **MapMinimap** | ✅ IMPL | 150×100px Viewport-Übersicht unten rechts. |
+| D7 | **MapConnectionPanel** | ✅ IMPL | Connection-Details bei Edge-Klick. MapTooltip für Game-Instance-Tooltips mit Score-Dimensionen-Bars. |
+| D8 | **Auto-Refresh** | ✅ IMPL | 30s automatischer Refresh während aktiver Epochs. `ConnectionService.get_map_data()` angereichert mit active_instance_counts, operative_flow, score_dimensions, sparklines. |
+
+---
+
+### E. Game Systems (Mechanisch bedeutsame Attribute)
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| E1 | **Materialized Views** | ✅ IMPL | Migration 031: `mv_building_readiness`, `mv_zone_stability`, `mv_embassy_effectiveness`, `mv_simulation_health`. `agent_statistics` + `campaign_performance`. |
+| E2 | **GameMechanicsService** | ✅ IMPL | 4 API-Endpoints für berechnete Attribute. Computed Metrics für AI-Prompt-Integration. |
+| E3 | **Info Bubbles** | ✅ IMPL | `renderInfoBubble(title, text)` Shared-Render-Funktion in allen Edit-Modals + SimulationHealthView Dashboard. |
+| E4 | **Bleed-Pipeline** | ✅ IMPL | Probabilistischer Bleed-Threshold, Strength-Decay, Vector-Tag-Resonanz, Echo-Transformation-Pipeline (approve → AI generate → create target event). |
+
+---
+
+### F. SEO, Analytics & Plattform-Infrastruktur
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| F1 | **Slug-basierte URLs** | ✅ IMPL | `/simulations/speranza/lore` statt UUIDs. Backend: `/api/v1/public/simulations/by-slug/{slug}`. Frontend: `_resolveSimulation()` in app-shell `enter()` Callback. 301-Redirects von UUID→Slug für Crawler. |
+| F2 | **SEO Structured Data** | ✅ IMPL | JSON-LD Schema.org Markup (`SeoService`). Epoch → `Event`, Lore → `Thing`. robots.txt + dynamischer sitemap.xml aus DB. Server-side Crawler Meta-Injection (Middleware). |
+| F3 | **GA4 Analytics** | ✅ IMPL | 37 GA4-Events via deklarative EVENT_MAP (29 DOM-Events, 8 Service-Level). Production-Only Guard. Consent Mode v2. Measurement ID `G-GP0Y16L51G`. |
+| F4 | **Cookie Consent** | ✅ IMPL | Fixed Bottom Banner. Accept/Decline Analytics. Privacy-Policy-Link. localStorage-Persistenz. GDPR-konform. |
+| F5 | **Crawler-Erkennung** | ✅ IMPL | SEO Middleware: Googlebot, Bingbot, AI-Bots (GPTBot, ChatGPT, Claude, Anthropic, PerplexityBot, etc.). HTML-Enrichment für Crawler. |
+| F6 | **IndexNow** | ✅ IMPL | Bing/Yandex/Seznam/Naver Benachrichtigung bei Seitenänderungen. API-Key auf Server hinterlegt. |
+
+---
+
+### G. i18n & Theming
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| G1 | **Lit Localize (Runtime)** | ✅ IMPL | 2279 lokalisierte UI-Strings (EN/DE). `msg()` + `str` Template Literals. XLIFF-Workflow (extract → translate → build). Claude 4.6 für Übersetzungen. `&amp;`-Bug-Fix via sed. |
+| G2 | **Per-Simulation Theming** | ✅ IMPL | 6 Theme-Presets mit 37 Token-Overrides. `ThemeService` mit `animation_speed`-Multiplikator (7 Duration-Tokens). `hover_effect`-Bridge schreibt `--hover-transform` CSS Property. WCAG 2.1 AA validiert (4.5:1 Text, 3.0:1 Muted/Buttons/Badges). |
+| G3 | **Spectral Bureau Font** | ✅ IMPL | `--font-bureau` CSS Property (Spectral Serif). 19th-Century French Academic für Bureau-Level Plattform-Content (LoreScroll, Dashboard). Google Fonts Integration (+ Libre Baskerville, Barlow). |
+
+---
+
+### H. Dramatische Mikroanimationen
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| H1 | **Stagger-Pattern** | ✅ IMPL | `--i` CSS Custom Property aus `.map()` Index. Neue Tokens: `--duration-entrance` (350ms), `--duration-stagger` (40ms), `--duration-cascade` (60ms), `--ease-dramatic`, `--ease-spring`, `--ease-snap`. |
+| H2 | **Animationstypen** | ✅ IMPL | Card-Grid-Stagger (Agent/Building/Event/Campaign/Social), Detail-Panel-Cascades (nth-child), Badge-Pop (VelgBadge), Impact-Bar-Segment-Grows, Direktionale Chat-Messages, Settings-Tab-Stagger + Content-Crossfade, Dashboard-Shard-Entrance, Header-Letter-Spacing-Collapse, Empty-State 3-Step-Cascade + Icon-Idle-Rotation, Toast-Slide-Out-Fix, Create-Button-Materialize, Filter-Chip-Pop, Location-Level-Crossfade. |
+| H3 | **Motion Preferences** | ✅ IMPL | `prefers-reduced-motion` Kill-Switch auf allen Animationen. Theme-aware Duration-Scaling via ThemeService. |
+
+---
+
+## Technische Infrastruktur-Übersicht
+
+| Kennzahl | Wert |
+|----------|------|
+| **Simulationen** | 5 (Velgarien, The Gaslit Reach, Station Null, Speranza, Cité des Dames) |
+| **Datenbanktabellen** | 46 |
+| **SQL-Migrationen** | 51 |
+| **RLS-Policies** | 140+ |
+| **Trigger** | 27+ |
+| **Views** | 6 Standard + 6 Materialized |
+| **API-Endpoints** | 255 (über 32 Router) |
+| **Backend-Tests** | 788 (pytest: unit + integration + security + performance) |
+| **Frontend-Tests** | 442 (vitest: validation + API + theme contrast + SEO) |
+| **E2E-Tests** | 81 (Playwright: 12 Dateien) |
+| **i18n-Strings** | 2279 (EN/DE) |
+| **Storage Buckets** | 4 (agent.portraits, building.images, user.agent.portraits, simulation.assets) |
+| **Theme-Presets** | 6 (dark-brutalist, deep-space-horror, arc-raiders, gaslit-reach, illuminated-literary, custom) |
+| **Shared Components** | 16 + 10 Shared CSS Modules + BaseSettingsPanel |
+| **Backend Services** | 29 Entity + Audit + Simulation + External + Email + Admin + Bot + Notification + Cleanup |
+
+---
+
+## Phasen-Übersicht (historisch)
+
+Alle 6 Phasen abgeschlossen. 160 Tasks implementiert.
 
 ### Phase 1: MVP (Plattform-Grundgerüst)
 - P1-P5 (Simulations-Management + Auth)
@@ -142,10 +346,33 @@ Features die innerhalb einer Simulation existieren.
 ### Phase 3: Erweiterte Features
 - P6-P7 (Einladungen + Mitgliederverwaltung)
 - S31-S35 (Social Trends + Kampagnen)
-- C4 (Integration Settings)
+- C4-C5 (Integration + Design Settings)
 - S41-S43 (Standorte)
 
-### Phase 4: Vollständig
+### Phase 4: Social Media + Erweitert
 - S36-S40 (Social Media Integration)
-- P8-P10 (Archivierung, Klonen, Admin)
-- ~~C5 (Design Settings)~~ — vorgezogen nach Phase 3 (implementiert)
+- P8-P10 (Archivierung, Klonen, Public-First)
+
+### Phase 5: Multiverse & Game Systems
+- S10a-S10b (Agent Relationships + AI Generation)
+- S25a-S25c (Event Echoes + Bleed Pipeline)
+- S18a-S18d (Embassies & Ambassadors)
+- S44-S47 (Per-Simulation Lore)
+- D1-D8 (Cartographer's Map)
+- E1-E4 (Game Systems + Materialized Views)
+- F1-F6 (SEO, GA4, Slug-URLs)
+- G1-G3 (i18n, Theming, Fonts)
+- H1-H3 (Dramatic Microanimations)
+
+### Phase 6: Competitive Layer + Platform Admin
+- P11-P11f (Competitive Epochs + Scoring + Battle Log)
+- P12-P12d (Bot Players + Decision Engine + Chat)
+- P13-P13c (Platform Admin Panel + Cleanup)
+- P14-P14c (Agent Aptitudes + Draft Phase)
+- P15-P15a (Game Instances + Lifecycle)
+- P16-P16b (Epoch Invitations)
+- P17-P17b (Epoch Realtime Chat + COMMS)
+- P18-P18b (Cycle Email Notifications)
+- P19 (How-to-Play Tutorial)
+- P20 (ECharts Intelligence Report)
+- C10-C12 (View + Notifications + Bleed Settings)

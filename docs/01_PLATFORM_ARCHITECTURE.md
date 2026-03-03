@@ -1,8 +1,9 @@
 # 01 - Platform Architecture: Multi-Simulations-Plattform
 
-**Version:** 1.1
-**Datum:** 2026-02-25
-**Aenderung v1.1:** 3 Simulationen live (Velgarien, The Gaslit Reach, Station Null). Public-First-Architektur (anonymer Lesezugriff via `/api/v1/public/*`, 20 GET-Endpoints, anon-RLS-Policies).
+**Version:** 2.0
+**Datum:** 2026-03-03
+**Aenderung v2.0:** 5 Simulationen live (Velgarien, The Gaslit Reach, Station Null, Speranza, Cité des Dames). Competitive Layer (Epochs, Operative, Scoring, Bot-Spieler, Agenten-Aptitudes, Draft-Phase). Platform Admin Panel. Notification Preferences. Agent Aptitudes. Game Instances (Template→Clone→Archiv). 48 GET-only Public-Endpoints.
+**Aenderung v1.1:** 3 Simulationen live. Public-First-Architektur (anonymer Lesezugriff via `/api/v1/public/*`, anon-RLS-Policies).
 
 ---
 
@@ -19,11 +20,14 @@ Plattform
 │   ├── Default AI-Modelle
 │   ├── Default Design-Tokens
 │   ├── Default Prompts (EN)
-│   └── System-Administratoren
+│   ├── System-Administratoren
+│   ├── platform_settings (Key-Value Runtime-Config)
+│   └── Competitive Layer (Epochs, Scoring, Bot-Spieler)
 │
-├── Simulation A ("Velgarien")
+├── Simulation 1 — "Velgarien" (dystopisch-brutalistisch, dark theme)
 │   ├── Settings (General, World, AI, Integration, Design, Access)
 │   ├── Agenten, Gebäude, Events, Zonen, Städte
+│   ├── Agenten-Aptitudes (6 Operativ-Typen × Score 3–9)
 │   ├── Kampagnen, Social Trends
 │   ├── Chat-Konversationen
 │   ├── Prompt-Templates (DE)
@@ -32,14 +36,22 @@ Plattform
 │   ├── Members (Owner, Admins, Editors, Viewers)
 │   └── Integrationen (Facebook Page, Guardian API)
 │
-└── Simulation B ("Utopia Prime")
-    ├── Settings (eigene Konfiguration)
+├── Simulation 2 — "The Gaslit Reach" (Sunless Sea/Fallen London, dark theme)
+│   ├── Eigene Agenten, Gebäude, Events...
+│   ├── Design-Theme (Gaslamp Fantasy)
+│   └── Botschaften (Cross-Sim-Diplomatie)
+│
+├── Simulation 3 — "Station Null" (Deep-Space-Horror, dark theme)
+│   ├── Eigene Agenten, Gebäude, Events...
+│   └── Design-Theme (Sci-Fi Horror)
+│
+├── Simulation 4 — "Speranza" (Post-Apokalyptisch, dark theme)
+│   ├── Eigene Agenten, Gebäude, Events...
+│   └── Design-Theme (Arc Raiders / Parchment-Amber)
+│
+└── Simulation 5 — "Cité des Dames" (Feministische Literatur-Utopie, light theme)
     ├── Eigene Agenten, Gebäude, Events...
-    ├── Prompt-Templates (EN)
-    ├── Taxonomien (englische Enums)
-    ├── Design-Theme (Clean/Utopisch)
-    ├── Members (anderes Team)
-    └── Integrationen (andere Facebook Page)
+    └── Design-Theme (Illuminated-Literary / Vellum-Ultramarin)
 ```
 
 ### Data Isolation
@@ -95,9 +107,12 @@ interface Simulation {
   description: string;             // Kurzbeschreibung
   theme: string;                   // "dystopian", "utopian", "fantasy", "scifi", "custom"
   status: SimulationStatus;        // draft | configuring | active | paused | archived
+  simulation_type: SimulationType; // template | game_instance | archived
   content_locale: string;          // "de" - Hauptsprache für Inhalte
   additional_locales: string[];    // ["en"] - Weitere Inhalts-Sprachen
   owner_id: UUID;                  // Ersteller
+  source_template_id?: UUID;       // Nur für game_instance: Verweis auf Template
+  epoch_id?: UUID;                 // Nur für game_instance: Zugehörige Epoch
   created_at: timestamptz;
   updated_at: timestamptz;
   archived_at?: timestamptz;
@@ -108,6 +123,23 @@ interface Simulation {
   building_count: number;
   event_count: number;
 }
+```
+
+**Simulation-Typen (Game Instance Lifecycle):**
+
+| Typ | Beschreibung |
+|-----|-------------|
+| `template` | Reguläre Simulation, von Benutzern erstellt und verwaltet |
+| `game_instance` | Geklonte Kopie eines Templates für eine laufende Epoch (balancierte Werte) |
+| `archived` | Abgeschlossene Game-Instance, Read-Only-Snapshot |
+
+```
+Template-Simulation → clone_simulations_for_epoch() → Game Instance (balanciert)
+                                                            │
+                                                   Epoch abgeschlossen
+                                                            │
+                                                            ▼
+                                                    Archived Instance
 ```
 
 ---
@@ -224,7 +256,7 @@ Simulation Viewer
 ### Übersicht aller konfigurierbaren Bereiche
 
 #### 1. Welt-Definition
-- **Welt-Name:** z.B. "Velgarien", "Elysium", "Neo Tokyo"
+- **Welt-Name:** z.B. "Velgarien", "The Gaslit Reach", "Station Null", "Speranza", "Cité des Dames"
 - **Thema:** dystopisch, utopisch, fantasy, sci-fi, historisch, custom
 - **Beschreibung:** Freitext zur Welt-Beschreibung
 - **Zeitrahmen:** Gegenwart, Zukunft, Vergangenheit, fiktiv
@@ -233,17 +265,32 @@ Simulation Viewer
 Statt hartcodierter PostgreSQL ENUMs: Dynamische Tabellen pro Simulation.
 
 ```
-Simulation "Velgarien":
+Simulation "Velgarien" (Dystopisch):
   Systeme: [Politik, Militär, Klerus, Wissenschaft, Zivil]
   Professionen: [Wissenschaftler, Militär, Ingenieur, Künstler, ...]
   Gebäudetypen: [Akademie, Forschungslabor, Propagandazentrum, ...]
   Gender: [Männlich, Weiblich, Divers, Alien]
 
-Simulation "Fantasy World":
-  Systeme: [Magie, Krieger, Natur, Schatten]
-  Professionen: [Magier, Ritter, Heiler, Druide, ...]
-  Gebäudetypen: [Burg, Turm, Tempel, Taverne, ...]
+Simulation "The Gaslit Reach" (Gaslamp Fantasy):
+  Systeme: [Handel, Mycologie, Admiralität, Archiv]
+  Professionen: [Händler, Sporologe, Admiral, Archivar, ...]
+  Gebäudetypen: [Archiv, Sporokarp, Handelsposten, Glockenturm, ...]
   Gender: [Männlich, Weiblich, Nichtbinär]
+
+Simulation "Station Null" (Sci-Fi Horror):
+  Systeme: [Forschung, Sicherheit, Technik, Medizin]
+  Professionen: [Forscher, Sicherheitsoffizier, Techniker, Mediziner, ...]
+  Gebäudetypen: [Labor, Kontrollraum, Reaktor, Medbay, ...]
+
+Simulation "Speranza" (Post-Apokalyptisch):
+  Systeme: [Verteidigung, Handel, Erkundung, Handwerk]
+  Professionen: [Kundschafter, Mechaniker, Heiler, Wächter, ...]
+  Gebäudetypen: [Werkstatt, Markt, Wachturm, Lazarett, ...]
+
+Simulation "Cité des Dames" (Literarische Utopie):
+  Systeme: [Schrift, Wissenschaft, Gerechtigkeit, Mystik]
+  Professionen: [Autorin, Gelehrte, Philosophin, Naturkundlerin, ...]
+  Gebäudetypen: [Bibliothek, Skriptorium, Observatorium, Tribunal, ...]
 ```
 
 #### 3. AI-Konfiguration
@@ -300,6 +347,178 @@ Simulation "Fantasy World":
 **Entscheidung:** `prompt_templates(simulation_id, template_type, locale, content, ...)`.
 
 **Begründung:** Ermöglicht simulation-spezifische und sprachspezifische Prompts ohne Code-Änderungen. Fallback-Kette: Simulation+Locale → Simulation+Default-Locale → Plattform-Default.
+
+### ADR-005: Competitive Layer als Template-Clone-Architektur
+
+**Entscheidung:** Epochs klonen Template-Simulationen in isolierte Game Instances mit normalisierten Werten. Templates bleiben unverändert.
+
+**Begründung:** Spieler gestalten ihre Simulationen kreativ (Templates). Für kompetitives PvP müssen alle Seiten gleiche Ausgangsbedingungen haben. `clone_simulations_for_epoch()` (~250 Zeilen PL/pgSQL) normalisiert: Agenten-Cap (max 6), Gebäude-Cap (max 8), Zustand (alle→'good'), Kapazität (alle→30), Sicherheits-Verteilung (1×high, 2×medium, 1×low), Qualifikation (alle→5). Nach Epoch-Abschluss werden Instances archiviert.
+
+### ADR-006: Platform Admin via SECURITY DEFINER RPC
+
+**Entscheidung:** Admin-Endpunkte nutzen PostgreSQL SECURITY DEFINER-Funktionen statt GoTrue Admin API.
+
+**Begründung:** GoTrue Admin API erwartet HS256-Tokens, lokale Supabase-Instanz verwendet jedoch ES256. SECURITY DEFINER-Funktionen (`admin_list_users`, `admin_get_user`, `admin_delete_user`) umgehen das Problem und bieten direkten `auth.users`-Zugriff mit korrekter Berechtigung.
+
+---
+
+## Competitive Layer (Epochs)
+
+### Übersicht
+
+Die Competitive Layer ist das zentrale PvP-System der Plattform. Spieler treten mit ihren Simulationen in zeitlich begrenzten Wettkämpfen (Epochs) gegeneinander an.
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  Epoch Lifecycle                                         │
+│                                                          │
+│  [Lobby] → [Draft] → [Active: Zyklen] → [Abgeschlossen] │
+│     │         │            │                    │        │
+│     ▼         ▼            ▼                    ▼        │
+│  Spieler   Agenten      Operativ-          Archivierung  │
+│  einladen  wählen       Einsätze +         + Endwertung  │
+│  + Bots               Zyklus-Auflösung                   │
+│  hinzufügen                                              │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Datenmodell
+
+| Tabelle | Beschreibung |
+|---------|-------------|
+| `game_epochs` | Epoch-Definition (Phase, Zyklen, Config inkl. `max_agents_per_player`) |
+| `epoch_teams` | Team-Zuordnung innerhalb einer Epoch |
+| `epoch_participants` | Spieler-Teilnahme (RP-Budget, `drafted_agent_ids`, `is_bot`, `bot_player_id`) |
+| `operative_missions` | Eingesetzte Operativ-Missionen pro Zyklus |
+| `epoch_scores` | 5-Dimensionen-Scoring pro Zyklus |
+| `battle_log` | Kampfprotokoll aller Aktionen |
+| `epoch_chat_messages` | Epoch-Chat (ALL CHANNELS + TEAM FREQ) |
+| `epoch_invitations` | E-Mail-Einladungen mit Lore-generiertem Dossier |
+| `bot_players` | Wiederverwendbare Bot-Vorlagen (Persönlichkeit × Schwierigkeit) |
+| `bot_decision_log` | Zyklus-für-Zyklus Audit-Trail der Bot-Entscheidungen |
+
+### 6 Operativ-Typen
+
+| Typ | Effekt | RP-Kosten |
+|-----|--------|-----------|
+| **Spy** | Enthüllt Zone-Sicherheit + Guardian-Zahl des Ziels | 4 |
+| **Guardian** | Verteidigt eigene Simulation (−0.06/Einheit, Cap 0.15) | 4 |
+| **Saboteur** | Stuft Zone-Sicherheit des Ziels herab + Stabilitäts-Schaden | 6 |
+| **Propagandist** | Erzeugt negatives Event in Ziel-Simulation + Einfluss-Gewinn | 5 |
+| **Infiltrator** | Reduziert Botschafts-Effektivität um 65% für 3 Zyklen | 5 |
+| **Assassin** | Blockiert Botschafter für 3 Zyklen + Souveränitäts-Schaden | 7 |
+
+### 5-Dimensionen-Scoring
+
+| Dimension | Misst |
+|-----------|-------|
+| **Stability** | Gebäude-Zustand, Zone-Sicherheit, Sabotage-Auswirkungen |
+| **Influence** | Propaganda-Erfolge, Social-Media-Reichweite |
+| **Sovereignty** | Agenten-Autonomie, feindliche Infiltration |
+| **Diplomatic** | Botschafts-Effektivität, Allianz-Boni (15%), Verrats-Strafen (−25%) |
+| **Military** | Operative Erfolge/Misserfolge, Verteidigungs-Leistung |
+
+### Agenten-Aptitudes
+
+Jeder Agent hat Aptitude-Werte (3–9) für alle 6 Operativ-Typen. Budget pro Agent: 36 Punkte.
+
+```
+Agent "Kommissar Petrov":
+  Spy: 7  | Guardian: 5 | Saboteur: 4
+  Propagandist: 8 | Infiltrator: 6 | Assassin: 6
+```
+
+**Erfolgswahrscheinlichkeit:** `aptitude × 0.03` (18 Prozentpunkte Unterschied zwischen 3 und 9).
+
+### Draft-Phase
+
+Vor Match-Beginn wählt jeder Spieler seine Agenten aus dem Template-Pool:
+- `max_agents_per_player` konfigurierbar (4–8, Standard 6)
+- `drafted_agent_ids UUID[]` auf `epoch_participants`
+- Bot-Spieler draften automatisch basierend auf Persönlichkeits-Gewichtung
+
+### Bot-Spieler
+
+5 KI-Persönlichkeits-Archetypen × 3 Schwierigkeitsgrade:
+
+| Archetyp | Strategie |
+|----------|----------|
+| **Sentinel** | Defensiv, Guardian-lastig |
+| **Warlord** | Aggressiv, Assassin/Saboteur-fokussiert |
+| **Diplomat** | Allianz-orientiert, Botschafts-Ausbau |
+| **Strategist** | Adaptiv, reagiert auf Gegner-Aktionen |
+| **Chaos** | Unberechenbar, randomisierte Entscheidungen |
+
+Bot-Entscheidungen werden synchron während `resolve_cycle()` via Admin-Supabase ausgeführt (kein RLS — Bots sind System-Akteure). Bots nutzen dieselben `OperativeService.deploy()` + `spend_rp()`-Methoden wie menschliche Spieler.
+
+---
+
+## Platform Admin
+
+### Zugriffskontrolle
+
+```
+Platform Admin (Email-Allowlist: admin@velgarien.dev)
+├── require_platform_admin() Dependency
+├── get_admin_supabase() — service_role Client
+│
+├── Benutzer-Verwaltung
+│   ├── admin_list_users() — SECURITY DEFINER RPC
+│   ├── admin_get_user()  — SECURITY DEFINER RPC
+│   ├── admin_delete_user() — SECURITY DEFINER RPC
+│   └── Mitgliedschaft-CRUD via PostgREST
+│
+├── Cache-TTL-Steuerung
+│   ├── platform_settings Tabelle (Key-Value)
+│   ├── CacheConfigService (Singleton TTL-Reader)
+│   └── Beeinflusst: Map-Daten, SEO, HTTP Cache-Control
+│
+└── Daten-Bereinigung (6 Kategorien)
+    ├── Abgeschlossene Epochs
+    ├── Abgebrochene Epochs
+    ├── Verwaiste Lobbies
+    ├── Archivierte Game Instances
+    ├── Audit-Log
+    └── Bot-Entscheidungsprotokoll
+```
+
+### Zusätzliche Tabellen
+
+| Tabelle | Beschreibung |
+|---------|-------------|
+| `platform_settings` | Key-Value Runtime-Konfiguration (RLS: nur service_role) |
+| `notification_preferences` | Pro-Benutzer E-Mail-Opt-in/Opt-out (cycle_resolved, phase_changed, epoch_completed) |
+| `agent_aptitudes` | Aptitude-Werte pro Agent für 6 Operativ-Typen (3–9, Budget 36) |
+
+---
+
+## Erweiterte Auth-Patterns
+
+### Autorisierungs-Hierarchie
+
+```python
+# Standard: Simulation-Mitglied mit Mindest-Rolle
+require_role("admin")               # → Depends(), prüft simulation_members
+
+# Epoch-Ersteller: Besitz-Prüfung auf game_epochs
+require_epoch_creator()             # → Depends(), prüft epoch.created_by == user.id
+
+# Simulation-Mitglied über Query-Parameter (für plattform-weite Endpoints)
+require_simulation_member("editor") # → Depends(), prüft Rolle via query param
+
+# Platform Admin: Email-Allowlist (admin@velgarien.dev)
+require_platform_admin()            # → Depends(), prüft email + get_admin_supabase()
+```
+
+### Public-First-Architektur
+
+48 GET-only Endpoints unter `/api/v1/public/*`:
+- Keine Authentifizierung erforderlich
+- Rate-Limited (100/min)
+- Nutzt `get_anon_supabase()` (anon-RLS-Policies)
+- Slug-basierte URL-Auflösung: `/api/v1/public/simulations/by-slug/{slug}`
+- Epoch-Einladungs-Validierung: `/api/v1/public/epoch-invitations/{token}`
+- Globaler Battle-Feed: `/api/v1/public/battle-feed`
 
 ---
 

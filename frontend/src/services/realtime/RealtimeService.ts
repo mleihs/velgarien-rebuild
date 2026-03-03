@@ -27,6 +27,7 @@ class RealtimeServiceImpl {
   readonly readyStates = signal<Record<string, boolean>>({});
   readonly unreadEpochCount = signal(0);
   readonly unreadTeamCount = signal(0);
+  readonly cycleResolved = signal<{ cycle_number: number; epoch_id: string } | null>(null);
 
   // ── Internal state ───────────────────────────────────
   private _chatChannel: RealtimeChannel | null = null;
@@ -87,7 +88,7 @@ class RealtimeServiceImpl {
         }
       });
 
-    // 3. Status channel (ready signals)
+    // 3. Status channel (ready signals + cycle resolution)
     this._statusChannel = supabase
       .channel(`epoch:${epochId}:status`, { config: { private: true } })
       .on('broadcast', { event: 'ready_changed' }, (payload) => {
@@ -99,6 +100,13 @@ class RealtimeServiceImpl {
           ...this.readyStates.value,
           [simulation_id]: cycle_ready,
         };
+      })
+      .on('broadcast', { event: 'cycle_resolved' }, (payload) => {
+        const { epoch_id, cycle_number } = payload.payload as {
+          epoch_id: string;
+          cycle_number: number;
+        };
+        this.cycleResolved.value = { epoch_id, cycle_number };
       })
       .subscribe();
   }
@@ -172,6 +180,7 @@ class RealtimeServiceImpl {
     this.readyStates.value = {};
     this.unreadEpochCount.value = 0;
     this.unreadTeamCount.value = 0;
+    this.cycleResolved.value = null;
   }
 
   // ── Unread Management ────────────────────────────────
@@ -186,6 +195,16 @@ class RealtimeServiceImpl {
       this._teamChatFocused = true;
       this._epochChatFocused = false;
     }
+  }
+
+  // ── Broadcast Cycle Resolution ──────────────────────
+
+  broadcastCycleResolved(epochId: string, cycleNumber: number) {
+    this._statusChannel?.send({
+      type: 'broadcast',
+      event: 'cycle_resolved',
+      payload: { epoch_id: epochId, cycle_number: cycleNumber },
+    });
   }
 
   // ── Initialize Ready States ──────────────────────────

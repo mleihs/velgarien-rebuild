@@ -852,6 +852,28 @@ export type OperativeType =
   | 'guardian'
   | 'infiltrator';
 
+// --- TCG Card System ---
+
+export type CardRarity = 'common' | 'rare' | 'legendary';
+
+export type CardFrameTexture =
+  | 'circuits'
+  | 'filigree'
+  | 'scanlines'
+  | 'rivets'
+  | 'illumination'
+  | 'none';
+export type CardNameplateStyle = 'terminal' | 'banner' | 'readout' | 'plate' | 'cartouche';
+export type CardCornerMotif = 'none' | 'brackets' | 'tentacles' | 'crosshairs' | 'bolts' | 'floral';
+export type CardFoilStyle = 'holographic' | 'aquatic' | 'phosphor' | 'patina' | 'gilded';
+
+export interface CardFrameConfig {
+  texture: CardFrameTexture;
+  nameplate_style: CardNameplateStyle;
+  corner_motif: CardCornerMotif;
+  foil_style: CardFoilStyle;
+}
+
 export type BattleLogEventType =
   | 'operative_deployed'
   | 'mission_success'

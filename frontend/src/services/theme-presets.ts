@@ -56,6 +56,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '1',
     animation_easing: 'ease',
     text_inverse: '#ffffff',
+    card_frame_texture: 'none',
+    card_frame_nameplate: 'terminal',
+    card_frame_corners: 'none',
+    card_frame_foil: 'holographic',
   },
 
   'sunless-sea': {
@@ -96,6 +100,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '1.5',
     animation_easing: 'ease-in-out',
     text_inverse: '#e8ede9',
+    card_frame_texture: 'filigree',
+    card_frame_nameplate: 'banner',
+    card_frame_corners: 'tentacles',
+    card_frame_foil: 'aquatic',
   },
 
   solarpunk: {
@@ -136,6 +144,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '1.3',
     animation_easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
     text_inverse: '#1a2e05',
+    card_frame_texture: 'none',
+    card_frame_nameplate: 'banner',
+    card_frame_corners: 'none',
+    card_frame_foil: 'holographic',
   },
 
   cyberpunk: {
@@ -176,6 +188,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '0.7',
     animation_easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
     text_inverse: '#0a0a0a',
+    card_frame_texture: 'circuits',
+    card_frame_nameplate: 'terminal',
+    card_frame_corners: 'brackets',
+    card_frame_foil: 'holographic',
   },
 
   'nordic-noir': {
@@ -216,6 +232,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '1.2',
     animation_easing: 'ease-in-out',
     text_inverse: '#f8fafc',
+    card_frame_texture: 'none',
+    card_frame_nameplate: 'banner',
+    card_frame_corners: 'none',
+    card_frame_foil: 'holographic',
   },
 
   'deep-space-horror': {
@@ -256,6 +276,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '1.8',
     animation_easing: 'ease-in',
     text_inverse: '#050508',
+    card_frame_texture: 'scanlines',
+    card_frame_nameplate: 'readout',
+    card_frame_corners: 'crosshairs',
+    card_frame_foil: 'phosphor',
   },
 
   'arc-raiders': {
@@ -296,6 +320,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '0.9',
     animation_easing: 'ease-out',
     text_inverse: '#FFFFFF',
+    card_frame_texture: 'rivets',
+    card_frame_nameplate: 'plate',
+    card_frame_corners: 'bolts',
+    card_frame_foil: 'patina',
   },
 
   'illuminated-literary': {
@@ -336,6 +364,10 @@ export const THEME_PRESETS: Record<ThemePresetName, Record<string, string>> = {
     animation_speed: '1.1',
     animation_easing: 'ease-in-out',
     text_inverse: '#FFFFFF',
+    card_frame_texture: 'illumination',
+    card_frame_nameplate: 'cartouche',
+    card_frame_corners: 'floral',
+    card_frame_foil: 'gilded',
   },
 };
 

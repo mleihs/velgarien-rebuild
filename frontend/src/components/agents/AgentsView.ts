@@ -33,6 +33,7 @@ export class VelgAgentsView extends LitElement {
     }
 
     .entity-grid {
+      --grid-min-width: 200px;
       gap: var(--space-5);
     }
 
@@ -476,6 +477,7 @@ export class VelgAgentsView extends LitElement {
             <velg-agent-card
               style="--i: ${i}"
               .agent=${agent}
+              .aptitudes=${this._aptitudeMap.get(agent.id) ?? null}
               @agent-click=${this._handleAgentClick}
               @agent-edit=${this._handleAgentEdit}
               @agent-delete=${this._handleAgentDelete}

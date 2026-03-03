@@ -1,7 +1,8 @@
 # 14 - I18N Architecture: Mehrsprachigkeit auf 3 Ebenen
 
-**Version:** 1.4
-**Datum:** 2026-03-02
+**Version:** 2.0
+**Datum:** 2026-03-03
+**Aenderung v2.0:** Dokument aktualisiert auf aktuellen Stand — 2279 UI-Strings in 114+ Komponenten, Claude 4.6 als mandatiertes Uebersetzungswerkzeug (ersetzt DeepL API), `&amp;`-Bug-Workaround dokumentiert, Browser-Spracherkennung entfernt (English als Default), Prompt-Tabelle erweitert (Embassy-, Epoch-Invitation-, Relationship-, Echo-Prompts), Komponenten-Tabelle als historischer Snapshot markiert.
 **Aenderung v1.4:** LoreScroll von 20 auf 25 Sections erweitert (6 Chapters, alle 5 Simulationen gleichmaessig abgedeckt). 58 neue UI-Strings (2063 total). concept.md erweitert (Velgarien + The Gaslit Reach + Literary Theory). 100% deutsche Abdeckung via Claude 4.6 Uebersetzung.
 **Aenderung v1.3:** 893 UI-Strings lokalisiert (EN/DE) inkl. LoreScroll-Akkordeon, Station-Null-Lore, Deep-Space-Horror-Theme-Label. 100% deutsche Abdeckung.
 **Aenderung v1.2:** Ebene 1 (Plattform-UI) vollstaendig implementiert — 875 Strings mit msg() gewrappt, DE-Uebersetzungen in XLIFF, Locale-Toggle in PlatformHeader, FormatService fuer Datum/Zahlen
@@ -28,7 +29,7 @@ Die Internationalisierung betrifft drei unabhangige Ebenen, die jeweils eigene M
 │ - Sprache: Pro Simulation konfiguriert              │
 ├─────────────────────────────────────────────────────┤
 │ Ebene 3: AI-Prompts                                 │
-│ - Alle 22 Generierungs-Prompts                      │
+│ - 30+ Generierungs-Prompts                           │
 │ - DB: prompt_templates mit locale-Feld              │
 │ - System-Prompt: "Antworte auf {locale_name}"       │
 │ - Sprache: Pro Simulation + Template-Typ            │
@@ -41,10 +42,12 @@ Die Internationalisierung betrifft drei unabhangige Ebenen, die jeweils eigene M
 
 ### Frontend: Alle Strings mit msg() gewrappt
 
-**875 UI-Strings** in 68 Komponenten + 3 Services mit `msg()` / `msg(str\`...\`)` gewrappt.
-Komplette deutsche Uebersetzung in XLIFF (875 trans-units) und generiertem `de.ts`.
+**2279 UI-Strings** in 114+ Komponenten + Services mit `msg()` / `msg(str\`...\`)` gewrappt.
+Komplette deutsche Uebersetzung in XLIFF (2279 trans-units) und generiertem `de.ts`.
 
-| Bereich | Dateien | Strings |
+> **Hinweis:** Die folgende Tabelle ist ein historischer Snapshot aus Phase 2 (v1.2). Der tatsaechliche Stand ist deutlich hoeher: **2279 Strings** in **114+ Komponenten** — inklusive Epoch (EpochCommandCenter, EpochOpsBoard, EpochOverviewTab, EpochOperationsTab, EpochAlliancesTab, EpochLobbyActions, EpochCreationWizard, EpochInvitePanel, EpochChatPanel, EpochReadyPanel, DraftRosterPanel), Bot (BotConfigPanel), Admin (AdminPanel, AdminUsersTab, AdminCachingTab, AdminCleanupTab), How-to-Play (HowToPlayView), Aptitudes (VelgAptitudeBars), Multiverse (CartographerMap, MapGraph, MapBattleFeed, MapLeaderboardPanel) und viele weitere Bereiche.
+
+| Bereich | Dateien (v1.2) | Strings (v1.2) |
 |---------|---------|---------|
 | Shared Components | 11 | ~30 |
 | Auth | 2 | ~20 |
@@ -58,7 +61,8 @@ Komplette deutsche Uebersetzung in XLIFF (875 trans-units) und generiertem `de.t
 | Locations | 5 | ~20 |
 | Settings | 8 | ~130 |
 | Services | 3 | ~25 |
-| **Gesamt** | **68+3** | **~875** |
+| **Gesamt (v1.2)** | **68+3** | **~875** |
+| **Aktuell (v2.0)** | **114+** | **~2279** |
 
 ### Fruehere Probleme (GELOEST)
 
@@ -179,21 +183,48 @@ Uebersetzungen werden ueber den `@lit/localize` XLIFF-Workflow verwaltet (NICHT 
 
 ```
 1. Strings in Komponenten mit msg('English text') wrappen
-2. npx lit-localize extract        → generiert/aktualisiert src/locales/xliff/de.xlf
-3. Deutsche <target> in XLIFF eintragen
-4. npx lit-localize build          → generiert src/locales/generated/de.ts
+2. cd frontend && npx lit-localize extract   → generiert/aktualisiert src/locales/xliff/de.xlf
+3. Deutsche <target> in XLIFF eintragen (via Claude 4.6 — siehe unten)
+4. npx lit-localize build                    → generiert src/locales/generated/de.ts
+5. sed -i '' 's/&amp;/\&/g' src/locales/generated/de.ts   → &amp;-Bug beheben (siehe unten)
 ```
+
+#### PFLICHT: Claude 4.6 fuer alle deutschen Uebersetzungen
+
+**Immer Claude 4.6 verwenden**, um neue `msg()`-Strings ins Deutsche zu uebersetzen. DeepL API wird **NICHT mehr verwendet** (seit Maerz 2026 abgeloest). Claude 4.6 uebersetzt direkt mit Spiel-/UI-Kontext fuer akkurate Terminologie.
+
+Vorgehensweise:
+1. Neue `msg()`-Strings in Komponenten einbauen
+2. `npx lit-localize extract` ausfuehren — neue `<trans-unit>`-Eintraege ohne `<target>` erscheinen in `de.xlf`
+3. Fuer jeden neuen Eintrag die deutsche Uebersetzung mit Claude 4.6 erstellen und als `<target>` eintragen
+4. `npx lit-localize build` ausfuehren — generiert `de.ts`
+5. `&amp;`-Bug-Fix ausfuehren (siehe naechster Abschnitt)
+
+> **Kontext fuer Uebersetzungen:** Die Plattform hat eine dunkle militaerisch-taktische HUD-Aesthetik. Begriffe wie "Epoch", "Operative", "Deploy", "Briefing", "Intel" sollten im militaerischen Register bleiben. Simulationsspezifische Begriffe (z.B. "Bleed", "Embassy", "Draft") sind Fachbegriffe und werden NICHT uebersetzt.
+
+#### Bekanntes Problem: `&amp;`-Bug in lit-localize build
+
+`npx lit-localize build` doppelt-escaped `&`-Zeichen: Die XLIFF-Datei verwendet korrekt `&amp;` (XML-Standard), aber die generierte `de.ts` gibt literal `&amp;` in JS-Strings aus statt `&`.
+
+**Workaround — NACH JEDEM `lit-localize build` ausfuehren:**
+```bash
+sed -i '' 's/&amp;/\&/g' src/locales/generated/de.ts
+```
+
+Ohne diesen Fix werden z.B. "Chaos & Order" als "Chaos &amp;amp; Order" im UI angezeigt.
 
 **Generierte Dateien:**
 - `frontend/src/locales/generated/locale-codes.ts` — Source/Target Locale Konstanten
-- `frontend/src/locales/generated/de.ts` — Hash-basierte Template-Map (875 Eintraege, auto-generiert)
-- `frontend/src/locales/xliff/de.xlf` — XLIFF 1.2 Interchange-Datei (875 trans-units)
+- `frontend/src/locales/generated/de.ts` — Hash-basierte Template-Map (2279 Eintraege, auto-generiert)
+- `frontend/src/locales/xliff/de.xlf` — XLIFF 1.2 Interchange-Datei (2279 trans-units)
 
 **Wichtig:** Die `de.ts` Datei wird automatisch generiert und darf NICHT manuell bearbeitet werden.
-Aenderungen erfolgen ausschliesslich ueber die XLIFF-Datei + `lit-localize build`.
+Aenderungen erfolgen ausschliesslich ueber die XLIFF-Datei + `lit-localize build` + `sed`-Fix.
 Die generierten Dateien sind von Biome-Checks ausgenommen (`biome.json` negation pattern).
 
 ### Locale-Service
+
+> **Aenderung seit v2.0:** Browser-Spracherkennung (`navigator.language`) wurde entfernt. Die Plattform startet immer auf Englisch (sourceLocale), es sei denn, der Benutzer hat explizit eine andere Sprache ueber den Locale-Toggle gewaehlt (gespeichert in `localStorage`). Grund: Die meisten Benutzer erwarten englische UI, und automatische Spracherkennung fuehrte zu unerwarteten Ergebnissen bei Browser-Konfigurationen mit mehreren Sprachen.
 
 ```typescript
 // services/i18n/locale-service.ts
@@ -220,15 +251,14 @@ export class LocaleService {
 
   /** Initiale Locale bestimmen */
   getInitialLocale(): string {
-    // 1. User-Praferenz
+    // 1. User-Praferenz (einzige Quelle — kein Browser-Sniffing)
     const stored = localStorage.getItem('preferred-locale');
     if (stored && allLocales.includes(stored)) return stored;
 
-    // 2. Browser-Sprache
-    const browserLang = navigator.language.split('-')[0];
-    if (allLocales.includes(browserLang)) return browserLang;
-
-    // 3. Default
+    // 2. Default: English (sourceLocale)
+    // HINWEIS: Browser-Spracherkennung (navigator.language) wurde
+    // bewusst entfernt. Default ist immer Englisch. Benutzer waehlen
+    // ihre Sprache explizit ueber den Locale-Toggle im PlatformHeader.
     return sourceLocale;
   }
 
@@ -244,11 +274,11 @@ export const localeService = new LocaleService();
 ### Fallback-Kette
 
 ```
-1. User-Praferenz (localStorage)
-2. Browser navigator.language
-3. Simulations-Default-Locale
-4. Plattform-Default ('en')
+1. User-Praferenz (localStorage, gesetzt via Locale-Toggle)
+2. Plattform-Default ('en' / sourceLocale)
 ```
+
+> **Hinweis:** Die fruehere Stufe 2 (Browser `navigator.language`) und Stufe 3 (Simulations-Default-Locale) wurden entfernt. English ist der harte Default. Sprachauswahl erfolgt ausschliesslich ueber den Locale-Toggle im PlatformHeader.
 
 ---
 
@@ -431,7 +461,9 @@ def build_system_prompt(template: PromptTemplate, locale: str) -> str:
     return system + language_instruction
 ```
 
-### Alle 22 Prompts als lokalisierte Templates
+### Prompt-Templates (30+, lokalisiert)
+
+> **Hinweis:** Die urspruengliche Liste von 22 Prompts wurde durch weitere Template-Typen erweitert (Embassy-Prompts, Epoch-Invitation-Prompt, Relationship-Generation-Prompt, Echo-Transformation-Prompt, Building-Description-Prompt-Varianten). Die folgende Tabelle zeigt die Kern-Templates; weitere Prompt-Typen sind in den jeweiligen Migrations-Dateien (028-029, 036) und Seed-Dateien definiert.
 
 | # | Template-Type | DE | EN | Beschreibung |
 |---|--------------|----|----|-------------|
@@ -457,8 +489,16 @@ def build_system_prompt(template: PromptTemplate, locale: str) -> str:
 | 20 | `social_media_image_caption_dystopian` | Seed | Seed | Bild-Caption dystopisch |
 | 21 | `social_media_image_caption_surveillance` | Seed | Seed | Bild-Caption Surveillance |
 | 22 | `user_agent_description` | Seed | Seed | User-Agent Beschreibung |
+| 23 | `embassy_description` | Migration 029 | Migration 029 | Embassy-Gebaude Beschreibung |
+| 24 | `embassy_protocol` | Migration 029 | Migration 029 | Embassy-Protokoll generieren |
+| 25 | `epoch_invitation_lore` | Migration 036 | Migration 036 | Epoch-Einladungs-Lore generieren |
+| 26 | `relationship_generation` | Seed | Seed | Agent-Beziehungen generieren |
+| 27 | `echo_transformation` | Seed | Seed | Event-Echo Transformation (Bleed) |
+| 28 | `building_description_named` | Migration 027 | Migration 027 | Gebaude-Beschreibung (kurz, mit Name) |
+| 29 | `building_description` | Migration 027 | Migration 027 | Gebaude-Beschreibung (kurz, ohne Name) |
 
 **"Seed"** bedeutet: Wird als Seed-Daten bei Plattform-Setup eingefugt (simulation_id = NULL = Plattform-Default).
+**"Migration NNN"** bedeutet: Wird als Teil der Migration eingefuegt (simulationsspezifisch oder plattformweit).
 
 ### Ausnahme: Negative Prompts (Bildgenerierung)
 
@@ -616,7 +656,7 @@ const agentCount = (count: number) =>
 
 ### Phase 4: AI-Prompts
 
-12. Alle 22 Prompts als `prompt_templates` Seed-Daten (DE + EN)
+12. Alle 30+ Prompts als `prompt_templates` Seed-/Migrations-Daten (DE + EN)
 13. Mock-Templates lokalisieren (M1-M7)
 14. PromptResolver mit Fallback-Kette
 15. Sprach-Instruktion in System-Prompts

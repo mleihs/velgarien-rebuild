@@ -43,9 +43,8 @@ export const infoBubbleStyles = css`
   .info-bubble__tooltip {
     display: none;
     position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
+    top: calc(100% + 6px);
+    left: 0;
     background: var(--color-text-primary);
     color: var(--color-surface);
     padding: var(--space-2) var(--space-3);

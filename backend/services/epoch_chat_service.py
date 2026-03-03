@@ -157,8 +157,16 @@ class EpochChatService:
         epoch_id: UUID,
         simulation_id: UUID,
         ready: bool,
+        admin_supabase: Client | None = None,
     ) -> dict:
-        """Toggle cycle_ready for a participant."""
+        """Toggle cycle_ready for a participant.
+
+        When a human sets ready=True and all non-bot participants are ready,
+        automatically resolves the cycle (bots, scoring, notifications).
+        Returns the participant row with optional `auto_resolved` and `new_cycle` fields.
+        """
+        from backend.services.epoch_service import EpochService
+
         # Validate epoch is in an active phase
         epoch_resp = (
             supabase.table("game_epochs")
@@ -190,7 +198,33 @@ class EpochChatService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Participant not found in this epoch.",
             )
-        return response.data[0]
+
+        result = response.data[0]
+
+        # Auto-resolve: if signalling ready, check if all humans are now ready
+        if ready and admin_supabase:
+            all_participants = (
+                supabase.table("epoch_participants")
+                .select("id, cycle_ready, is_bot")
+                .eq("epoch_id", str(epoch_id))
+                .execute()
+            )
+            humans = [p for p in (all_participants.data or []) if not p.get("is_bot")]
+            all_humans_ready = len(humans) > 0 and all(p["cycle_ready"] for p in humans)
+
+            if all_humans_ready:
+                try:
+                    epoch_data = await EpochService.resolve_cycle_full(
+                        supabase, epoch_id, admin_supabase
+                    )
+                    result["auto_resolved"] = True
+                    result["new_cycle"] = epoch_data.get("current_cycle", 1)
+                except Exception:
+                    logger.warning(
+                        "Auto-resolve failed for epoch %s", epoch_id, exc_info=True
+                    )
+
+        return result
 
     @staticmethod
     async def _enrich_sender_name(supabase: Client, message: dict) -> dict:

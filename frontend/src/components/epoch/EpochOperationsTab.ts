@@ -229,12 +229,28 @@ export class VelgEpochOperationsTab extends LitElement {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+
+    /* ── Cycle resolve pulse ── */
+    .panel--pulse {
+      animation: panel-pulse 0.8s ease-out;
+    }
+
+    @keyframes panel-pulse {
+      0% { border-color: var(--color-gray-800); box-shadow: none; }
+      30% { border-color: var(--color-warning); box-shadow: 0 0 12px rgba(245 158 11 / 0.2); }
+      100% { border-color: var(--color-gray-800); box-shadow: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .panel--pulse { animation: none; }
+    }
   `;
 
   @property({ type: Object }) myParticipant: EpochParticipant | null = null;
   @property({ type: Array }) missions: OperativeMission[] = [];
   @property({ type: Array }) threats: OperativeMission[] = [];
   @property({ type: Boolean }) actionLoading = false;
+  @property({ type: Boolean }) cycleJustResolved = false;
 
   protected render() {
     if (!this.myParticipant) {
@@ -248,9 +264,11 @@ export class VelgEpochOperationsTab extends LitElement {
       ['success', 'failed', 'detected', 'captured'].includes(m.status),
     );
 
+    const pulseClass = this.cycleJustResolved ? 'panel--pulse' : '';
+
     return html`
       <div class="overview">
-        <div class="panel">
+        <div class="panel ${pulseClass}">
           <div class="panel__header">
             <h3 class="panel__title">${msg('Active Missions')} (${activeMissions.length})</h3>
           </div>
@@ -263,7 +281,7 @@ export class VelgEpochOperationsTab extends LitElement {
           </div>
         </div>
 
-        <div class="panel">
+        <div class="panel ${pulseClass}">
           <div class="panel__header">
             <h3 class="panel__title">${msg('Intelligence')}</h3>
             ${
@@ -281,7 +299,7 @@ export class VelgEpochOperationsTab extends LitElement {
           </div>
         </div>
 
-        <div class="panel panel--full-width">
+        <div class="panel panel--full-width ${pulseClass}">
           <div class="panel__header">
             <h3 class="panel__title">${msg('Mission History')} (${completedMissions.length})</h3>
           </div>

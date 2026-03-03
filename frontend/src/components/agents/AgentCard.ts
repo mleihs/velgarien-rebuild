@@ -1,97 +1,23 @@
-import { localized, msg, str } from '@lit/localize';
-import { css, html, LitElement, nothing } from 'lit';
+import { localized, msg } from '@lit/localize';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import type { Agent } from '../../types/index.js';
-import { icons } from '../../utils/icons.js';
-import '../shared/VelgAvatar.js';
-import '../shared/VelgBadge.js';
-import '../shared/VelgIconButton.js';
-import { cardStyles } from '../shared/card-styles.js';
+import type { Agent, AptitudeSet } from '../../types/index.js';
+import type { CardBadge, CardRarity } from '../shared/VelgGameCard.js';
+import '../shared/VelgGameCard.js';
 
 @localized()
 @customElement('velg-agent-card')
 export class VelgAgentCard extends LitElement {
-  static styles = [
-    cardStyles,
-    css`
+  static styles = css`
     :host {
       display: block;
     }
-
-    .card {
-      background: var(--color-surface-raised);
-      border: var(--border-default);
-      box-shadow: var(--shadow-md);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .card__body {
-      padding: var(--space-3) var(--space-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      flex: 1;
-    }
-
-    .card__name {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-black);
-      font-size: var(--text-md);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-brutalist);
-      margin: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .card__badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-1-5);
-    }
-
-    .card__meta {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .card__meta-item {
-      font-size: var(--text-sm);
-      color: var(--color-text-secondary);
-      line-height: var(--leading-snug);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .card__connections {
-      font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-    }
-
-    .card__actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-4) var(--space-3);
-      margin-top: auto;
-    }
-  `,
-  ];
+  `;
 
   @property({ type: Object }) agent!: Agent;
   @property({ type: Number }) relationshipCount = 0;
+  @property({ type: Object }) aptitudes: AptitudeSet | null = null;
 
   private _handleClick(): void {
     this.dispatchEvent(
@@ -103,8 +29,7 @@ export class VelgAgentCard extends LitElement {
     );
   }
 
-  private _handleEdit(e: Event): void {
-    e.stopPropagation();
+  private _handleEdit(): void {
     this.dispatchEvent(
       new CustomEvent('agent-edit', {
         detail: this.agent,
@@ -114,8 +39,7 @@ export class VelgAgentCard extends LitElement {
     );
   }
 
-  private _handleDelete(e: Event): void {
-    e.stopPropagation();
+  private _handleDelete(): void {
     this.dispatchEvent(
       new CustomEvent('agent-delete', {
         detail: this.agent,
@@ -125,62 +49,78 @@ export class VelgAgentCard extends LitElement {
     );
   }
 
+  private _computeRarity(): CardRarity {
+    const agent = this.agent;
+    if (!agent) return 'common';
+
+    // Legendary: ambassador OR has aptitude 9
+    if (agent.is_ambassador) return 'legendary';
+    if (this.aptitudes) {
+      for (const val of Object.values(this.aptitudes)) {
+        if (val >= 9) return 'legendary';
+      }
+    }
+
+    // Rare: has relationships OR AI-generated
+    if (this.relationshipCount > 0 || agent.data_source === 'ai') return 'rare';
+
+    return 'common';
+  }
+
+  private _getBestAptitude(): { level: number } | null {
+    if (!this.aptitudes) return null;
+    let best = 0;
+    for (const val of Object.values(this.aptitudes)) {
+      if (val > best) best = val;
+    }
+    return { level: best };
+  }
+
+  private _getBadges(): CardBadge[] {
+    const badges: CardBadge[] = [];
+    const agent = this.agent;
+    if (!agent) return badges;
+
+    if (agent.system) badges.push({ label: agent.system, variant: 'primary' });
+    if (agent.is_ambassador) badges.push({ label: msg('Ambassador'), variant: 'warning' });
+    if (agent.ambassador_blocked_until && new Date(agent.ambassador_blocked_until) > new Date()) {
+      badges.push({ label: msg('Blocked'), variant: 'danger' });
+    }
+    if (agent.data_source === 'ai') badges.push({ label: msg('AI'), variant: 'info' });
+
+    return badges;
+  }
+
+  private _getSubtitle(): string {
+    const parts: string[] = [];
+    if (this.agent?.primary_profession) parts.push(this.agent.primary_profession);
+    if (this.agent?.gender) parts.push(this.agent.gender);
+    return parts.join(' \u00b7 ');
+  }
+
   protected render() {
     const agent = this.agent;
     if (!agent) return html``;
 
+    const best = this._getBestAptitude();
+
     return html`
-      <div class="card ${agent.is_ambassador ? 'card--embassy' : ''}" role="button" tabindex="0" @click=${this._handleClick} @keydown=${(
-        e: KeyboardEvent,
-      ) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this._handleClick();
-        }
-      }}>
-        <velg-avatar
-          .src=${agent.portrait_image_url ?? ''}
-          .name=${agent.name}
-          size="full"
-        ></velg-avatar>
-
-        <div class="card__body">
-          <h3 class="card__name">${agent.name}</h3>
-
-          <div class="card__badges">
-            ${agent.system ? html`<velg-badge variant="primary">${agent.system}</velg-badge>` : null}
-            ${agent.is_ambassador ? html`<velg-badge variant="warning">${msg('Ambassador')}</velg-badge>` : null}
-            ${
-              agent.ambassador_blocked_until &&
-              new Date(agent.ambassador_blocked_until) > new Date()
-                ? html`<velg-badge variant="danger" title=${msg('Ambassador status temporarily suspended')}>${msg('Blocked')}</velg-badge>`
-                : null
-            }
-            ${agent.data_source === 'ai' ? html`<velg-badge variant="info">${msg('AI Generated')}</velg-badge>` : null}
-          </div>
-
-          <div class="card__meta">
-            ${agent.gender ? html`<span class="card__meta-item">${agent.gender}</span>` : null}
-            ${agent.primary_profession ? html`<span class="card__meta-item">${agent.primary_profession}</span>` : null}
-            ${this.relationshipCount > 0 ? html`<span class="card__connections">${msg(str`${this.relationshipCount} connections`)}</span>` : null}
-          </div>
-        </div>
-
-        ${
-          appState.canEdit.value
-            ? html`
-              <div class="card__actions">
-                <velg-icon-button .label=${msg('Edit agent')} @icon-click=${this._handleEdit}>
-                  ${icons.edit()}
-                </velg-icon-button>
-                <velg-icon-button variant="danger" .label=${msg('Delete agent')} @icon-click=${this._handleDelete}>
-                  ${icons.trash()}
-                </velg-icon-button>
-              </div>
-            `
-            : nothing
-        }
-      </div>
+      <velg-game-card
+        type="agent"
+        .name=${agent.name}
+        image-url=${agent.portrait_image_url ?? ''}
+        .primaryStat=${36}
+        .secondaryStat=${best?.level ?? null}
+        .rarity=${this._computeRarity()}
+        .aptitudes=${this.aptitudes}
+        .badges=${this._getBadges()}
+        .subtitle=${this._getSubtitle()}
+        .connectionCount=${this.relationshipCount}
+        ?show-actions=${appState.canEdit.value}
+        @card-click=${this._handleClick}
+        @card-edit=${this._handleEdit}
+        @card-delete=${this._handleDelete}
+      ></velg-game-card>
     `;
   }
 }

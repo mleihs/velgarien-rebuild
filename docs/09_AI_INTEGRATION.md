@@ -1,8 +1,9 @@
 # 09 - AI Integration: Pipelines pro Simulation konfigurierbar
 
-**Version:** 1.1
-**Datum:** 2026-02-25
-**Aenderung v1.1:** Replicate Flux Dev (`black-forest-labs/flux-dev`) als Standard-Bildmodell fuer alle Simulationen. 4 Generierungs-Scripts: `generate_velgarien_images.py` (8+6), `generate_gaslit_reach_images.py` (5+5), `generate_station_null_images.py` (6+7), `generate_dashboard_images.py` (1 Hero + 3 Banner). Workflow: lokal generieren → via REST API zu Production transferieren.
+**Version:** 2.0
+**Datum:** 2026-03-03
+**Aenderung v2.0:** Bild-Pipeline auf AVIF migriert (Pillow 12.1.1 nativer AVIF-Support, Qualitaet 85). LangChain-Referenzen entfernt (Chat nutzt direkte OpenRouter-API-Aufrufe). Flux-Dev-Parameter aktualisiert (guidance_scale 3.5–5.0). 6 Generierungs-Scripts. Neue AI-Pipelines: Bot-Chat (dual-mode Template+LLM), Epoch-Lore-Generierung, Echo-Transformations-Pipeline. AI-Beziehungsgenerierung dokumentiert. Game-Mechanik-Integration (materialisierte Views in Prompts).
+**Aenderung v1.1:** Replicate Flux Dev (`black-forest-labs/flux-dev`) als Standard-Bildmodell fuer alle Simulationen. 6 Generierungs-Scripts: `generate_velgarien_images.py` (8+6), `generate_gaslit_reach_images.py` (5+5), `generate_station_null_images.py` (6+7), `generate_speranza_images.py` (6+7), `generate_cite_des_dames_images.py` (6+7), `generate_dashboard_images.py` (1 Hero + 5 Banner). Zusaetzlich: Epoch-Simulations-Scripts in `scripts/` (`epoch_sim_lib.py`, `simulate_epoch_*.py`, `epoch_statistical_analysis.py`) fuer Game-Balance-Analysen. Workflow: lokal generieren → via REST API zu Production transferieren.
 
 ---
 
@@ -15,7 +16,7 @@ Die AI-Integration wird vollständig pro Simulation konfigurierbar. Jede Simulat
 | Provider | Zweck | API |
 |----------|-------|-----|
 | **OpenRouter** | Text-Generierung (LLM) | `https://api.openrouter.com/api/v1/chat/completions` |
-| **Replicate** | Bild-Generierung (Stable Diffusion) | `https://api.replicate.com/v1/predictions` |
+| **Replicate** | Bild-Generierung (Flux Dev) | `https://api.replicate.com/v1/predictions` |
 
 ### Auflösungs-Reihenfolge für AI-Konfiguration
 
@@ -139,8 +140,8 @@ def build_prompt(template: PromptTemplate, variables: dict, locale: str) -> str:
 1. Portrait/Building-Beschreibung generieren (Text-LLM)
 2. Beschreibung als Prompt an Replicate senden
 3. Negative Prompt aus Settings laden
-4. Bild generieren (Stable Diffusion)
-5. Bild verarbeiten (WebP, 1024px max)
+4. Bild generieren (Flux Dev, Output-Format: PNG als verlustfreie Quelle)
+5. Bild verarbeiten via image_service.py (AVIF, Qualität 85, Pillow 12.1.1 nativer Support, 1024px max)
 6. In Supabase Storage hochladen
 7. URL in Entity speichern
 ```
@@ -149,22 +150,24 @@ def build_prompt(template: PromptTemplate, variables: dict, locale: str) -> str:
 
 | Parameter | Setting Key | Default |
 |-----------|------------|---------|
-| Modell | `ai.image_models.{purpose}` | stability-ai/stable-diffusion |
+| Modell | `ai.image_models.{purpose}` | black-forest-labs/flux-dev |
 | Breite | `ai.image_params.width` | 512 |
 | Höhe | `ai.image_params.height` | 512 |
-| Guidance Scale | `ai.image_params.guidance_scale` | 7.5 |
+| Guidance Scale | `ai.image_params.guidance_scale` | 3.5–5.0 (Flux-optimiert) |
 | Inference Steps | `ai.image_params.num_inference_steps` | 50 |
-| Scheduler | `ai.image_params.scheduler` | K_EULER |
+| Output-Format | — | PNG (verlustfreie Quelle, Konvertierung zu AVIF via image_service.py) |
 | Negative Prompt (Agent) | `ai.params.negative_prompt.agent` | "cartoon, anime, illustration, distorted..." |
 | Negative Prompt (Building) | `ai.params.negative_prompt.building` | "people, humans, characters, faces..." |
 
-**Wichtig:** Negative Prompts bleiben immer auf Englisch, da Stable Diffusion englische Prompts erwartet.
+**Wichtig:** Negative Prompts bleiben immer auf Englisch, da Flux englische Prompts erwartet. Flux Dev nutzt keine Scheduler-Parameter (anders als Stable Diffusion).
 
 ---
 
-## Chat-System mit LangChain
+## Chat-System (direkte OpenRouter-API)
 
 ### Architektur
+
+Das Chat-System nutzt direkte HTTP-Aufrufe an die OpenRouter-API (kein LangChain). Memory-Management erfolgt manuell ueber die `chat_messages`-Tabelle.
 
 ```
 User Message
@@ -174,46 +177,101 @@ User Message
 │ Chat Service         │
 │                     │
 │ 1. Load Prompt      │ ← prompt_templates (chat_system_prompt + locale)
-│ 2. Load Memory      │ ← chat_messages (letzte 50)
+│ 2. Load Memory      │ ← chat_messages (letzte 50, manuell geladen)
 │ 3. Build Context    │ ← Agent-Profil + Simulation-Kontext
-│ 4. Call LLM         │ ← OpenRouter (Modell aus Settings)
+│ 4. Call OpenRouter   │ ← Direkte API-Aufrufe (httpx), Modell aus Settings
 │ 5. Save Response    │ ← chat_messages
 │                     │
 └─────────────────────┘
 ```
 
-### LangChain Memory (pro Simulation)
+### Chat Memory (pro Simulation)
 
 ```python
-class SimulationChatMemory(BaseMemory):
-    """Chat Memory mit Simulation-Kontext."""
+class ChatService:
+    """Chat-Service mit manueller Konversations-History."""
 
-    simulation_id: UUID
-    conversation_id: UUID
-    max_messages: int = 50
+    async def get_conversation_history(
+        self, conversation_id: UUID, limit: int = 50
+    ) -> list[dict]:
+        """Laedt die letzten N Nachrichten als Message-Array fuer OpenRouter."""
+        messages = await self.db.get_messages(conversation_id, limit=limit)
+        return [
+            {"role": msg["sender_role"], "content": msg["content"]}
+            for msg in messages
+        ]
 
-    def load_memory_variables(self, inputs: dict) -> dict:
-        messages = self.db.get_messages(
-            self.conversation_id,
-            limit=self.max_messages
-        )
-        return {"history": self._format_messages(messages)}
-
-    def _build_system_prompt(self, agent: Agent) -> str:
-        # Prompt aus Simulation-Settings laden
+    def build_system_prompt(self, agent: Agent, simulation: Simulation) -> str:
+        """Baut den System-Prompt aus Simulation-Settings."""
         template = self.prompt_resolver.resolve(
-            self.simulation_id,
+            simulation.id,
             'chat_system_prompt',
-            self.simulation_locale
+            simulation.locale
         )
         return template.format(
             agent_name=agent.name,
             agent_character=agent.character,
             agent_background=agent.background,
-            simulation_name=self.simulation_name,
-            locale_name=self.locale_name
+            simulation_name=simulation.name,
+            locale_name=self.get_locale_name(simulation.locale)
         )
 ```
+
+---
+
+## Weitere AI-Pipelines
+
+### Bot-Chat (`BotChatService`)
+
+Dual-Mode-System fuer KI-gesteuerte Gegner in kompetitiven Epochen:
+
+| Modus | Kosten | Latenz | Beschreibung |
+|-------|--------|--------|-------------|
+| **Template** | Kostenlos | Sofort | Muster-basierte Antworten mit Persoenlichkeits-Varianten |
+| **LLM** | OpenRouter-Kosten | ~1-3s | Vollstaendige LLM-Generierung via OpenRouter |
+
+Konfigurierbar pro Simulation ueber `bot_chat_mode` (Setting) und `model_bot_chat` (Modell-Auswahl). 5 Persoenlichkeits-Archetypen beeinflussen Chatstil und Tonfall: Sentinel (defensiv/analytisch), Warlord (aggressiv/direkt), Diplomat (kooperativ/diplomatisch), Strategist (kalkulierend/abstrakt), Chaos (unberechenbar/provokant).
+
+### Epoch-Lore-Generierung (`EpochInvitationService`)
+
+Generiert narrativ-gewuerzte Einladungstexte fuer Epochen via OpenRouter. Das generierte Lore wird in `game_epochs.config.invitation_lore` gecacht und in den E-Mail-Einladungen (SMTP, HTML-Template) verwendet. Prompt-Template: `epoch_invitation` (en/de).
+
+### Echo-Transformations-Pipeline
+
+Kreuz-Simulations-Event-Erzeugung fuer den Bleed-Mechanismus:
+
+```
+1. Event Echo genehmigen (approve)
+2. AI-Generierung via GenerationService → Event-Text fuer Ziel-Simulation
+3. Neues Event in Ziel-Simulation erstellen (via Admin-Client, umgeht RLS)
+```
+
+Verwendet `EchoService` mit probabilistischem Bleed-Threshold (konfigurierbar via `BleedSettingsPanel`). Vektor-Tag-Resonanz und Strength-Decay beeinflussen die Transformation.
+
+### AI-Beziehungsgenerierung
+
+Vollstaendige Pipeline fuer automatische Agent-Beziehungsvorschlaege:
+
+```
+1. GenerationService.generateRelationships(agent_id, locale)
+2. POST /simulations/{sim_id}/generate/relationships
+3. OpenRouter generiert Beziehungsvorschlaege basierend auf Agent-Profil + Simulation-Kontext
+4. Frontend: Inline-Vorschlagskarten mit Checkboxen (alle vorausgewaehlt)
+5. Benutzer waehlt aus → relationshipsApi.create() speichert ausgewaehlte
+```
+
+Genutzt im `AgentDetailsPanel`. Prompt-Template: `relationship_generation` (en/de). Jede Karte zeigt: Typ-Badge, Ziel-Agent-Name, Beschreibung, Intensitaets-Balken.
+
+### Game-Mechanik-Integration in AI-Prompts
+
+Berechnete Metriken aus materialisierten Views werden in AI-Generierungs-Prompts injiziert fuer kontextbewusste Ausgabe:
+
+| Materialisierte View | Daten | Einfluss auf Prompts |
+|---------------------|-------|---------------------|
+| `mv_building_readiness` | Gebaeude-Zustand + Kapazitaets-Auslastung | Weltbeschreibung (verfallend vs. florierend) |
+| `mv_zone_stability` | Zonen-Sicherheit + Aktivitaet | Event-Ton (ruhig vs. chaotisch) |
+| `mv_embassy_effectiveness` | Diplomatische Beziehungen | Kreuz-Simulations-Kontext |
+| `mv_simulation_health` | Gesamt-Gesundheitsbewertung | Narrativer Grundton |
 
 ---
 

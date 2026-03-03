@@ -32,7 +32,6 @@ from backend.services.cycle_notification_service import CycleNotificationService
 from backend.services.epoch_chat_service import EpochChatService
 from backend.services.epoch_service import EpochService
 from backend.services.game_instance_service import GameInstanceService
-from backend.services.scoring_service import ScoringService
 from supabase import Client
 
 logger = logging.getLogger(__name__)
@@ -255,37 +254,7 @@ async def resolve_cycle(
     admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
     """Resolve the current cycle (allocate RP, execute bot turns, advance cycle counter). Creator only."""
-    from backend.services.bot_service import BotService
-
-    data = await EpochService.resolve_cycle(supabase, epoch_id, admin_supabase=admin_supabase)
-    config = data.get("config", {})
-    cycle_number = data.get("current_cycle", 1)
-
-    # Execute bot decisions (after RP grant, before next cycle)
-    try:
-        await BotService.execute_bot_cycle(
-            supabase=supabase,
-            admin_supabase=admin_supabase,
-            epoch_id=str(epoch_id),
-            cycle_number=cycle_number,
-            config=config,
-        )
-    except Exception:
-        logger.warning("Bot cycle execution failed for epoch %s", epoch_id, exc_info=True)
-
-    # Compute scores after missions resolve (best-effort)
-    try:
-        await ScoringService.compute_cycle_scores(supabase, epoch_id, cycle_number)
-    except Exception:
-        logger.warning("Scoring failed for epoch %s cycle %s", epoch_id, cycle_number, exc_info=True)
-
-    # Send cycle notification emails (best-effort, non-blocking)
-    try:
-        await CycleNotificationService.send_cycle_notifications(
-            admin_supabase, str(epoch_id), cycle_number,
-        )
-    except Exception:
-        logger.warning("Cycle notification failed for epoch %s", epoch_id, exc_info=True)
+    data = await EpochService.resolve_cycle_full(supabase, epoch_id, admin_supabase)
 
     await AuditService.safe_log(
         supabase, None, user.id, "game_epochs", epoch_id, "update",
@@ -504,9 +473,21 @@ async def toggle_ready(
     body: ReadySignal,
     user: CurrentUser = Depends(get_current_user),
     supabase: Client = Depends(get_supabase),
+    admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
-    """Toggle cycle_ready for a participant. Triggers realtime broadcast."""
+    """Toggle cycle_ready for a participant. Triggers realtime broadcast.
+
+    When all human participants signal ready, the cycle auto-resolves.
+    """
     data = await EpochChatService.toggle_ready(
         supabase, epoch_id, body.simulation_id, body.ready,
+        admin_supabase=admin_supabase,
     )
+
+    if data.get("auto_resolved"):
+        await AuditService.safe_log(
+            supabase, None, user.id, "game_epochs", epoch_id, "update",
+            details={"action": "auto_resolve_cycle", "cycle": data.get("new_cycle")},
+        )
+
     return {"success": True, "data": data}

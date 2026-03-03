@@ -80,6 +80,17 @@ export class VelgEpochReadyPanel extends LitElement {
       background: var(--border-dim);
     }
 
+    /* ── Sweep animation on cycle resolve ── */
+    .bar__seg--sweep {
+      animation: seg-sweep 0.6s ease-out forwards;
+      animation-delay: calc(var(--seg-i, 0) * 80ms);
+    }
+
+    @keyframes seg-sweep {
+      0% { background: var(--amber); box-shadow: 0 0 12px var(--amber); }
+      100% { background: var(--border-dim); box-shadow: none; }
+    }
+
     /* ── Participant list ── */
     .participants {
       display: flex;
@@ -204,18 +215,28 @@ export class VelgEpochReadyPanel extends LitElement {
 
   @state() private _readyStates: Record<string, boolean> = {};
   @state() private _toggling = false;
+  @state() private _sweeping = false;
 
   private _disposeEffect?: () => void;
+
+  private _disposeCycleEffect?: () => void;
 
   connectedCallback() {
     super.connectedCallback();
     this._disposeEffect = effect(() => {
       this._readyStates = realtimeService.readyStates.value;
     });
+    this._disposeCycleEffect = effect(() => {
+      const resolved = realtimeService.cycleResolved.value;
+      if (resolved && resolved.epoch_id === this.epochId) {
+        this._triggerSweep();
+      }
+    });
   }
 
   disconnectedCallback() {
     this._disposeEffect?.();
+    this._disposeCycleEffect?.();
     super.disconnectedCallback();
   }
 
@@ -244,10 +265,27 @@ export class VelgEpochReadyPanel extends LitElement {
         ...realtimeService.readyStates.value,
         [this.mySimulationId]: newReady,
       };
+
+      // Handle auto-resolve: backend resolved the cycle because all humans were ready
+      const data = result.data as { auto_resolved?: boolean; new_cycle?: number } | undefined;
+      if (data?.auto_resolved) {
+        const newCycle = data.new_cycle ?? 0;
+        realtimeService.broadcastCycleResolved(this.epochId, newCycle);
+        VelgToast.success(msg('All players ready. Cycle resolved automatically.'));
+        this._triggerSweep();
+      }
     } else {
       VelgToast.error(msg('Failed to update ready signal.'));
     }
     this._toggling = false;
+  }
+
+  private _triggerSweep() {
+    this._sweeping = true;
+    const totalDuration = this.participants.length * 80 + 600;
+    setTimeout(() => {
+      this._sweeping = false;
+    }, totalDuration);
   }
 
   protected render() {
@@ -265,9 +303,10 @@ export class VelgEpochReadyPanel extends LitElement {
 
       <!-- Segmented progress bar -->
       <div class="bar">
-        ${this.participants.map((p) => {
+        ${this.participants.map((p, i) => {
           const ready = this._readyStates[p.simulation_id] ?? false;
-          return html`<div class="bar__seg ${ready ? 'bar__seg--ready' : 'bar__seg--waiting'}"></div>`;
+          const sweepClass = this._sweeping ? 'bar__seg--sweep' : '';
+          return html`<div class="bar__seg ${ready ? 'bar__seg--ready' : 'bar__seg--waiting'} ${sweepClass}" style="--seg-i:${i}"></div>`;
         })}
       </div>
 

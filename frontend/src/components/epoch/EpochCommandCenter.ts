@@ -12,6 +12,7 @@
  */
 
 import { localized, msg, str } from '@lit/localize';
+import { effect } from '@preact/signals-core';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
@@ -1079,6 +1080,99 @@ export class VelgEpochCommandCenter extends LitElement {
         padding: var(--space-4) var(--space-3);
       }
     }
+
+    /* ── Cycle Resolved Overlay ───────────────── */
+
+    .cycle-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-overlay, 50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: radial-gradient(ellipse at center, rgba(0 0 0 / 0.85), rgba(0 0 0 / 0.95));
+      animation: overlay-lifecycle 2.2s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .cycle-overlay__label {
+      font-family: var(--font-brutalist);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--color-warning);
+      opacity: 0;
+      animation: overlay-fade-in 0.3s 0.1s ease-out forwards;
+    }
+
+    .cycle-overlay__number {
+      font-family: var(--font-brutalist);
+      font-size: clamp(48px, 10vw, 96px);
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--color-gray-100);
+      text-shadow: 0 0 40px rgba(245 158 11 / 0.4), 0 0 80px rgba(245 158 11 / 0.15);
+      opacity: 0;
+      animation: overlay-zoom-in 0.5s 0.15s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) forwards;
+    }
+
+    .cycle-overlay__divider {
+      width: 120px;
+      height: 2px;
+      background: var(--color-warning);
+      margin: var(--space-3) 0;
+      opacity: 0;
+      animation: overlay-divider-grow 0.4s 0.3s ease-out forwards;
+    }
+
+    @keyframes overlay-lifecycle {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      75% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes overlay-fade-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes overlay-zoom-in {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes overlay-divider-grow {
+      from { opacity: 0; width: 0; }
+      to { opacity: 1; width: 120px; }
+    }
+
+    /* ── Banner cycle bump ─────────────────────── */
+
+    .banner__sub--bump {
+      animation: cycle-bump 0.6s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+    }
+
+    @keyframes cycle-bump {
+      0% { transform: scale(1); }
+      30% { transform: scale(1.4); color: var(--color-warning); text-shadow: 0 0 16px rgba(245 158 11 / 0.5); }
+      100% { transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cycle-overlay,
+      .cycle-overlay__label,
+      .cycle-overlay__number,
+      .cycle-overlay__divider,
+      .banner__sub--bump {
+        animation: none;
+        opacity: 1;
+        width: 120px;
+      }
+    }
   `;
 
   @state() private _loading = true;
@@ -1104,6 +1198,12 @@ export class VelgEpochCommandCenter extends LitElement {
   @state() private _actionLoading = false;
   @state() private _commsEpoch: Epoch | null = null;
   @state() private _commsParticipant: EpochParticipant | null = null;
+  @state() private _showCycleOverlay = false;
+  @state() private _newCycleNumber = 0;
+  @state() private _cycleBump = false;
+  @state() private _cycleJustResolved = false;
+
+  private _disposeCycleEffect?: () => void;
 
   async connectedCallback() {
     super.connectedCallback();
@@ -1111,10 +1211,20 @@ export class VelgEpochCommandCenter extends LitElement {
     seoService.setDescription(
       msg('Competitive PvP operations dashboard — manage epochs, deploy operatives, track scores.'),
     );
+
+    // Watch for cycle resolution broadcasts (from self or other players)
+    this._disposeCycleEffect = effect(() => {
+      const resolved = realtimeService.cycleResolved.value;
+      if (resolved && this._epoch && resolved.epoch_id === this._epoch.id) {
+        this._onCycleResolved(resolved.cycle_number);
+      }
+    });
+
     await this._loadData();
   }
 
   disconnectedCallback() {
+    this._disposeCycleEffect?.();
     if (this._epoch) {
       realtimeService.leaveEpoch(this._epoch.id);
     } else if (this._commsEpoch) {
@@ -1510,6 +1620,17 @@ export class VelgEpochCommandCenter extends LitElement {
 
     return html`
       ${mainContent}
+      ${
+        this._showCycleOverlay
+          ? html`
+        <div class="cycle-overlay">
+          <div class="cycle-overlay__label">${msg('Cycle')}</div>
+          <div class="cycle-overlay__number">${this._newCycleNumber}</div>
+          <div class="cycle-overlay__divider"></div>
+        </div>
+      `
+          : nothing
+      }
       <velg-epoch-creation-wizard
         .open=${this._showCreateWizard}
         @modal-close=${this._onWizardClose}
@@ -1629,7 +1750,7 @@ export class VelgEpochCommandCenter extends LitElement {
               ${msg('Operations Board')}
             </button>
             <h1 class="banner__title">${this._epoch.name}</h1>
-            <p class="banner__sub">
+            <p class="banner__sub ${this._cycleBump ? 'banner__sub--bump' : ''}">
               <span class="banner__phase ${this._getPhaseClass(this._epoch.status)}">
                 ${this._epoch.status}
               </span>
@@ -1749,6 +1870,7 @@ export class VelgEpochCommandCenter extends LitElement {
             .missions=${this._missions}
             .threats=${this._threats}
             .actionLoading=${this._actionLoading}
+            .cycleJustResolved=${this._cycleJustResolved}
             @recall-operative=${(e: CustomEvent) => this._onRecallOperative(e.detail.missionId)}
           ></velg-epoch-operations-tab>
         `;
@@ -1978,16 +2100,40 @@ export class VelgEpochCommandCenter extends LitElement {
     if (!this._epoch) return;
     this._actionLoading = true;
     const result = await epochsApi.resolveCycle(this._epoch.id);
+    this._actionLoading = false;
     if (!result.success) {
-      this._actionLoading = false;
       VelgToast.error(msg('Failed to resolve cycle.'));
       return;
     }
-    await epochsApi.resolveOperatives(this._epoch.id);
-    await epochsApi.computeScores(this._epoch.id);
-    this._actionLoading = false;
+    // Backend now handles bots + scoring + notifications in resolve_cycle_full()
+    const newCycle = (result.data as Epoch)?.current_cycle ?? 0;
+    realtimeService.broadcastCycleResolved(this._epoch.id, newCycle);
     VelgToast.success(msg('Cycle resolved.'));
-    await this._loadData();
+  }
+
+  private _onCycleResolved(cycleNumber: number) {
+    this._newCycleNumber = cycleNumber;
+    this._showCycleOverlay = true;
+    this._cycleBump = true;
+    this._cycleJustResolved = true;
+
+    // Auto-dismiss overlay after 2.2s (matches animation duration)
+    setTimeout(() => {
+      this._showCycleOverlay = false;
+    }, 2200);
+
+    // Remove bump class after animation
+    setTimeout(() => {
+      this._cycleBump = false;
+    }, 600);
+
+    // Remove pulse prop after animation
+    setTimeout(() => {
+      this._cycleJustResolved = false;
+    }, 800);
+
+    // Reload all epoch data
+    this._loadData();
   }
 
   private async _onCancelEpoch() {

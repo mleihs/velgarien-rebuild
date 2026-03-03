@@ -1,7 +1,8 @@
 # 16 - Testing Strategy
 
-**Version:** 1.2
-**Datum:** 2026-02-25
+**Version:** 2.0
+**Datum:** 2026-03-03
+**Aenderung v2.0:** Aktualisierte Test-Zahlen (788 Backend, 442 Frontend, 81 E2E), PyJWT statt jose, happy-dom statt jsdom, @open-wc/testing entfernt, neue Test-Suites (Operative, Scoring, Epoch, Bot, Cleanup, Email, Notifications, Aptitudes), E2E-Dateien aktualisiert (13 Specs)
 **Aenderung v1.2:** Aktualisierte Test-Zahlen (275 Backend, 197 Frontend, 56 E2E), 88 WCAG-Kontrast-Tests, 36 Anonymous-View-Integrationstests
 
 ---
@@ -10,22 +11,22 @@
 
 ```
           ┌──────────┐
-          │   E2E    │  56 Specs   (Playwright, 9 Dateien)
+          │   E2E    │  81 Specs   (Playwright, 13 Dateien)
           │ Browser  │  Kritische User-Flows
          ┌┴──────────┴┐
-         │ Integration │  ~110 Tests (pytest + vitest)
+         │ Integration │  ~250 Tests (pytest + vitest)
          │  API + DB   │  Router ↔ Service ↔ DB
         ┌┴────────────┴┐
-        │     Unit      │  ~360 Tests (pytest + vitest)
+        │     Unit      │  ~980 Tests (pytest + vitest)
         │ Services, Utils│  Isolierte Logik
         └───────────────┘
 ```
 
 | Ebene | Backend (pytest) | Frontend (vitest) | Ziel |
 |-------|-----------------|-------------------|------|
-| **Unit** | Services, Utils, Models, Encryption | Components, State, Validation, Formatters, WCAG-Kontrast (88 Tests) | ~360 Tests, < 30s |
-| **Integration** | Router → Service → Supabase (TestClient), 36 Anonymous-View-Tests | API-Services → Mock-Server, Component Interaction | ~110 Tests, < 2min |
-| **E2E** | — | Playwright: Login → CRUD → Chat → Settings → Public Access (10 Specs) | 56 Specs, < 5min |
+| **Unit** | Services (Operative, Scoring, Epoch, Bot, Cleanup, Email, Notification, ...), Utils, Models, Encryption | Validation, Formatters, WCAG-Kontrast (88 Tests), SEO/Analytics, Settings, Theme, Map, Realtime, Aptitudes | ~980 Tests, < 30s |
+| **Integration** | Router → Service → Supabase (TestClient), 36 Anonymous-View-Tests, Admin-Cleanup, SEO, Epoch-Chat | API-Services → Mock-Server, Component Interaction | ~250 Tests, < 2min |
+| **E2E** | — | Playwright: Login → CRUD → Chat → Settings → Public Access → Embassies → Relationships → Echoes → Multiverse Map → Social → Multi-User (13 Specs) | 81 Specs, < 5min |
 
 ### Abdeckungsziele
 
@@ -70,32 +71,46 @@ show_missing = true
 ```
 backend/tests/
 ├── conftest.py                    # Shared Fixtures
+├── test_connection_router.py      # Simulation-Connections
+├── test_echo_router.py            # Event-Echo Router
+├── test_echo_service.py           # Echo-Service Logik
+├── test_embassy_router.py         # Embassy Router
+├── test_embassy_service.py        # Embassy-Service Logik
+├── test_relationship_router.py    # Relationship Router
+├── test_relationship_service.py   # Relationship-Service Logik
 ├── unit/
 │   ├── test_models.py             # Pydantic Validierung
-│   ├── test_encryption.py         # Fernet encrypt/decrypt
-│   ├── test_prompt_resolver.py    # Fallback-Kette
-│   ├── test_settings_service.py   # Settings Auflösung
-│   ├── test_taxonomy_service.py   # Taxonomie-Lookup
-│   └── services/
-│       ├── test_agent_service.py
-│       ├── test_building_service.py
-│       ├── test_event_service.py
-│       ├── test_generation_service.py
-│       ├── test_chat_service.py
-│       └── test_image_service.py
+│   ├── test_entity_models.py      # Entity-spezifische Models
+│   ├── test_base_service.py       # BaseService CRUD
+│   ├── test_agent_service.py      # Agent-Service + Ambassador
+│   ├── test_event_service.py      # Event-Service + Reactions
+│   ├── test_generation_service.py # AI-Generierung
+│   ├── test_chat_ai_service.py    # Chat-AI-Service
+│   ├── test_operative_service.py  # Operative Deployment + 6 Effekte + Game-State
+│   ├── test_scoring_service.py    # 5-Dimensionen-Scoring + Allianz/Verrat
+│   ├── test_epoch_service.py      # Epoch-Lifecycle + Game-Instance-Integration
+│   ├── test_epoch_chat_service.py # Epoch-Chat CRUD + Broadcast
+│   ├── test_bot_personality.py    # 5 KI-Archetypen Entscheidungslogik
+│   ├── test_bot_player_service.py # Bot CRUD + Epoch-Management
+│   ├── test_cleanup_service.py    # Daten-Cleanup Stats/Preview/Execute
+│   ├── test_email_service.py      # SMTP-Email-Versand
+│   ├── test_email_templates.py    # Zweisprachige Email-Template-Rendering
+│   ├── test_cycle_notification_service.py  # Empfaenger-Auflosung + Briefing-Daten
+│   ├── test_output_repair.py      # JSON-Output-Reparatur
+│   ├── test_news_transform_flow.py # News-Transformation
+│   ├── test_social_browse.py      # Social-Browse-Logik
+│   ├── test_seo.py                # SEO-Middleware + Sitemap
+│   └── test_service_layer.py      # Service-Layer Patterns
 ├── integration/
 │   ├── conftest.py                # Supabase Test-Client, Fixtures
-│   ├── test_agents_router.py
-│   ├── test_buildings_router.py
-│   ├── test_events_router.py
-│   ├── test_chat_router.py
-│   ├── test_generation_router.py
-│   ├── test_settings_router.py
-│   ├── test_taxonomies_router.py
-│   ├── test_simulations_router.py
-│   ├── test_users_router.py
+│   ├── test_routes.py             # Router-Integrationstests
+│   ├── test_public_router.py      # 36 Anonymous-View-Tests
 │   ├── test_rls_policies.py       # RLS Enforcement Tests
-│   └── test_auth_flow.py          # JWT Validierung
+│   ├── test_seo_router.py         # SEO-Endpoints
+│   ├── test_epoch_chat_router.py  # Epoch-Chat-Integrationstests
+│   └── test_admin_cleanup.py      # Admin-Cleanup-Integrationstests
+├── performance/
+│   └── test_load.py               # Lasttests (100 concurrent reads)
 └── fixtures/
     ├── agents.json
     ├── buildings.json
@@ -149,7 +164,7 @@ def auth_headers(test_user_jwt):
 @pytest.fixture
 def test_user_jwt(settings):
     """Generiert einen Test-JWT."""
-    from jose import jwt
+    import jwt  # PyJWT (nicht python-jose)
     payload = {
         "sub": "test-user-uuid",
         "email": "test@example.com",
@@ -327,7 +342,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: 'jsdom',
+    environment: 'node',  // Standard-Umgebung ist node (NICHT jsdom)
+    // Tests, die DOM benoetigen, muessen die Direktive nutzen:
+    //   // @vitest-environment happy-dom
     globals: true,
     setupFiles: ['./tests/setup.ts'],
     include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
@@ -345,6 +362,8 @@ export default defineConfig({
   }
 });
 ```
+
+> **Hinweis:** Die Standard-Testumgebung ist `node`. Tests, die DOM-Zugriff benoetigen (z.B. Component-Tests), muessen am Anfang der Datei `// @vitest-environment happy-dom` als Direktive setzen. Das Package `happy-dom` ist als Dev-Dependency installiert.
 
 ```typescript
 // tests/setup.ts
@@ -373,37 +392,51 @@ global.fetch = vi.fn();
 ### Verzeichnisstruktur
 
 ```
-frontend/
-├── tests/
-│   ├── setup.ts                      # Global mocks
-│   ├── helpers/
-│   │   ├── render.ts                 # Component render helper
-│   │   ├── fixtures.ts               # Test data factories
-│   │   └── mock-api.ts               # API mock helpers
-│   └── e2e/
-│       ├── auth.spec.ts              # Login/Register flow
-│       ├── agents.spec.ts            # Agent CRUD flow
-│       ├── buildings.spec.ts         # Building CRUD flow
-│       ├── events.spec.ts            # Event + Reactions flow
-│       ├── chat.spec.ts              # Chat conversation flow
-│       ├── settings.spec.ts          # Settings modification flow
-│       └── simulation.spec.ts        # Create/switch simulation
-├── src/
-│   ├── components/
-│   │   └── agents/
-│   │       ├── VelgAgentsView.ts
-│   │       └── VelgAgentsView.test.ts    # Co-located unit test
-│   ├── services/
-│   │   └── api/
-│   │       ├── AgentsApiService.ts
-│   │       └── AgentsApiService.test.ts  # Co-located unit test
-│   ├── utils/
-│   │   ├── formatters.ts
-│   │   └── formatters.test.ts
-│   └── types/
-│       └── validation/
-│           ├── agent.ts                   # Zod schemas
-│           └── agent.test.ts
+frontend/tests/
+├── setup.ts                          # Global mocks (Supabase, fetch)
+├── setup.test.ts                     # Setup-Validierung
+├── api-services.test.ts              # API-Service-Layer Tests
+├── echo-api.test.ts                  # Echo-API-Service
+├── embassy-api.test.ts               # Embassy-API-Service
+├── epoch-chat-api.test.ts            # Epoch-Chat-API
+├── map-data.test.ts                  # Kartendaten-Transformation
+├── map-force.test.ts                 # Force-Simulation Physik
+├── map-three-render.test.ts          # Map-Rendering
+├── notification-preferences.test.ts  # Notification-Praeferenzen
+├── notification-service.test.ts      # Notification-Service
+├── realtime-service.test.ts          # Realtime-Channels
+├── relationship-api.test.ts          # Relationship-API-Service
+├── seo-analytics.test.ts             # SEO + GA4 Event-Tracking
+├── settings.test.ts                  # Settings-Panel-Logik
+├── theme-contrast.test.ts            # 88 WCAG AA Kontrast-Tests
+├── theme-service.test.ts             # Theme-Service + Presets
+└── transformation-flow.test.ts       # News-Transformation
+
+frontend/src/types/validation/
+├── agent.ts                          # Zod-Schemas
+├── agent.test.ts                     # Agent-Validierung
+├── building.test.ts                  # Building-Validierung
+├── aptitude.test.ts                  # Aptitude-Validierung (Budget, Bereich)
+└── ...                               # Weitere Zod-Schema-Tests
+```
+
+> **Hinweis:** Frontend-Tests liegen in `frontend/tests/` (Top-Level) und `frontend/src/types/validation/` (co-located Zod-Schema-Tests). Component-Tests mit DOM-Zugriff verwenden `// @vitest-environment happy-dom`.
+
+```
+e2e/tests/                            # Playwright E2E (81 Specs, 13 Dateien)
+├── auth.spec.ts                      # Login/Register-Flow
+├── agents.spec.ts                    # Agent CRUD
+├── buildings.spec.ts                 # Building CRUD
+├── events.spec.ts                    # Event + Reactions
+├── chat.spec.ts                      # Chat-Conversation
+├── settings.spec.ts                  # Settings-Modifikation
+├── anonymous.spec.ts                 # Public Access (anon RLS)
+├── multi-user.spec.ts                # Multi-User Rollen + Isolation
+├── social.spec.ts                    # Social Media + Trends
+├── embassies.spec.ts                 # Embassy CRUD + Wizard
+├── relationships.spec.ts             # Relationship CRUD
+├── echoes.spec.ts                    # Event-Echo Bleed
+└── multiverse-map.spec.ts            # Cartographer's Map
 ```
 
 ### Unit Test Beispiele
@@ -514,39 +547,37 @@ describe('AgentsApiService', () => {
 
 ### Component Test Beispiele
 
+> **Hinweis:** `@open-wc/testing` wurde aus dem Projekt entfernt. Component-Tests nutzen stattdessen direktes DOM-Testing mit `happy-dom` via Direktive.
+
 ```typescript
-// src/components/shared/ErrorState.test.ts
+// @vitest-environment happy-dom
+// tests/theme-contrast.test.ts — Beispiel: WCAG-Kontrast-Validierung (88 Tests)
 import { describe, it, expect } from 'vitest';
-import { fixture, html } from '@open-wc/testing';
-import './ErrorState';
+import { THEME_PRESETS } from '../src/services/theme-presets';
 
-describe('ErrorState', () => {
-  it('renders error message', async () => {
-    const el = await fixture(html`<error-state message="Something went wrong"></error-state>`);
-    const shadow = el.shadowRoot!;
-    expect(shadow.textContent).toContain('Something went wrong');
-  });
+// Relative Luminanz berechnen (WCAG 2.1)
+function relativeLuminance(hex: string): number { /* ... */ }
+function contrastRatio(fg: string, bg: string): number { /* ... */ }
 
-  it('shows retry button when retryable', async () => {
-    const el = await fixture(html`<error-state message="Error" retryable></error-state>`);
-    const btn = el.shadowRoot!.querySelector('button');
-    expect(btn).toBeDefined();
-  });
+describe('Theme Contrast WCAG AA', () => {
+  for (const [name, preset] of Object.entries(THEME_PRESETS)) {
+    describe(name, () => {
+      it('text on surface >= 4.5:1', () => {
+        const ratio = contrastRatio(preset.color_text, preset.color_surface);
+        expect(ratio).toBeGreaterThanOrEqual(4.5);
+      });
 
-  it('hides retry button when not retryable', async () => {
-    const el = await fixture(html`<error-state message="Error"></error-state>`);
-    const btn = el.shadowRoot!.querySelector('button.retry');
-    expect(btn).toBeNull();
-  });
+      it('muted text on surface >= 3.0:1', () => {
+        const ratio = contrastRatio(preset.color_text_muted, preset.color_surface);
+        expect(ratio).toBeGreaterThanOrEqual(3.0);
+      });
 
-  it('dispatches retry event on button click', async () => {
-    const el = await fixture(html`<error-state message="Error" retryable></error-state>`);
-    let retried = false;
-    el.addEventListener('retry', () => { retried = true; });
-    const btn = el.shadowRoot!.querySelector('button')!;
-    btn.click();
-    expect(retried).toBe(true);
-  });
+      it('button text on primary >= 3.0:1', () => {
+        const ratio = contrastRatio(preset.text_inverse, preset.color_primary);
+        expect(ratio).toBeGreaterThanOrEqual(3.0);
+      });
+    });
+  }
 });
 ```
 
@@ -557,11 +588,11 @@ describe('ErrorState', () => {
 ### Setup
 
 ```typescript
-// playwright.config.ts
+// e2e/playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests',
   timeout: 30_000,
   retries: 1,
   use: {
@@ -840,7 +871,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
+        with: { python-version: '3.13' }
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -899,7 +930,7 @@ jobs:
         with: { node-version: '20' }
 
       - name: Install Playwright
-        run: cd frontend && npx playwright install --with-deps
+        run: cd e2e && npx playwright install --with-deps
 
       - name: Start Services
         run: |
@@ -908,14 +939,49 @@ jobs:
           sleep 5
 
       - name: Run E2E Tests
-        run: cd frontend && npx playwright test
+        run: cd e2e && npx playwright test
 
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: playwright-report
-          path: frontend/playwright-report/
+          path: e2e/playwright-report/
 ```
+
+---
+
+## Neue Test-Suites (seit v1.2)
+
+### Backend: Competitive Layer + Game Systems
+
+| Datei | Tests | Beschreibung |
+|-------|-------|-------------|
+| `test_operative_service.py` | Operative-Deployment, 6 Effekte (Spy Intel, Saboteur Zone Damage, Propagandist Events, Assassin Blocking, Infiltrator Reduction, Alliance/Betrayal), Game-State-Auswirkungen, Aptitude-basierte Erfolgswahrscheinlichkeit | Vollstaendige Operative-Pipeline |
+| `test_scoring_service.py` | 5-Dimensionen-Scoring (Stability, Influence, Sovereignty, Diplomatic, Military), Allianz-Bonus (15%), Verrat-Malus (-25%), Spy-Intel-Bonus, Guardian-Penalty (0.06/Unit, Cap 0.15) | Scoring-Formeln und Balancing |
+| `test_epoch_service.py` | Epoch-Lifecycle (create → start → resolve_cycle → advance_phase → complete), Game-Instance-Integration (clone → archive → delete), Draft-Phase-Validierung, Bot-Integration bei resolve_cycle | Epoch-Orchestrierung |
+| `test_bot_personality.py` | 5 KI-Archetypen (Sentinel, Warlord, Diplomat, Strategist, Chaos), Entscheidungslogik pro Persoenlichkeit, Difficulty-Skalierung (easy/medium/hard), Auto-Draft mit Persoenlichkeits-Gewichtung | Bot-Entscheidungs-Engine |
+| `test_bot_player_service.py` | Bot-CRUD, Bot zu Epoch hinzufuegen/entfernen, Epoch-Management, Participant-Erstellung mit `is_bot=true` | Bot-Verwaltung |
+
+### Backend: Infrastruktur + Email
+
+| Datei | Tests | Beschreibung |
+|-------|-------|-------------|
+| `test_cleanup_service.py` | Stats-Abfrage (6 Daten-Kategorien), Preview-vor-Delete (Cascade-Baum), Execute mit FK-Reihenfolge, Epoch-Loeschung (game_instances zuerst, dann 8 Child-Tabellen) | Admin-Datenbereinigung |
+| `test_email_templates.py` | Zweisprachige Email-Rendering (EN/DE), Per-Simulation-Akzentfarben, WCAG-AA-Kontrast, 4 Template-Typen (Invitation, Cycle-Resolved, Phase-Changed, Epoch-Completed), 85+ lokalisierte Strings | Email-Templates |
+| `test_cycle_notification_service.py` | 6-Schritt-Empfaenger-Auflosung (Participants → Templates → Members → Emails → Preferences → Slug), Per-Player-Briefing-Daten (Rank-Gap, Missions, Spy-Intel, Threats, Alliances), Fog-of-War-Compliance | Cycle-Benachrichtigungen |
+| `test_email_service.py` | SMTP-SSL-Verbindung (Port 465), asyncio.to_thread-Integration, Fehlerbehandlung | Email-Versand |
+
+### Frontend: Spezialisierte Test-Suites
+
+| Datei | Tests | Beschreibung |
+|-------|-------|-------------|
+| `theme-contrast.test.ts` | 88 WCAG-AA-Tests ueber alle Theme-Presets (6 Presets × ~15 Kontrast-Paare), Normal-Text 4.5:1, Muted 3.0:1, Button-Text 3.0:1, Badge-Text 3.0:1 | WCAG-Kontrast-Validierung |
+| `seo-analytics.test.ts` | SEO-Meta-Tags, JSON-LD Structured Data, GA4 Event-Tracking (37 Events), Consent-Mode v2, Production-Only-Guard | SEO + Analytics |
+| `settings.test.ts` | BaseSettingsPanel Load/Save/Dirty-Tracking, 8 Panel-Konfigurationen, Design-Tokens | Settings-Logik |
+| `validation/aptitude.test.ts` | Budget-Validierung (36 Punkte), Bereichs-Validierung (3-9 pro Dimension), 6 Operative-Typen | Aptitude-Schemas |
+| `map-force.test.ts` | Force-Simulation Physik, Template/Instance-Orbit, Repulsion/Attraction-Balance, Equilibrium-Distance | Kartograph-Physik |
+| `realtime-service.test.ts` | 4 Supabase-Realtime-Channels (chat, presence, status, team), Signal-Subscriptions, Channel-Lifecycle | Realtime-Integration |
+| `notification-preferences.test.ts` | Opt-in/Opt-out-Toggles, API-Service-Aufrufe, Locale-Praeferenz | Benachrichtigungs-Praeferenzen |
 
 ---
 

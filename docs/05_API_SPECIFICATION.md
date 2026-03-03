@@ -2,7 +2,7 @@
 
 **Version:** 2.0
 **Datum:** 2026-03-03
-**Aenderung v2.0:** **255 Endpoints total (32 Router).** Admin-Router erweitert um 3 Data-Cleanup-Endpoints (`GET /api/v1/admin/cleanup/stats`, `POST /api/v1/admin/cleanup/preview`, `POST /api/v1/admin/cleanup/execute`). 6 Cleanup-Typen: completed_epochs, cancelled_epochs, stale_lobbies, archived_instances, audit_log, bot_decision_log. Preview-before-delete Sicherheit. Epoch-Loeschungen kaskadieren ueber 8 Kind-Tabellen + Spielinstanzen.
+**Aenderung v2.0:** **256 Endpoints total (33 Router).** Admin-Router erweitert um 3 Data-Cleanup-Endpoints (`GET /api/v1/admin/cleanup/stats`, `POST /api/v1/admin/cleanup/preview`, `POST /api/v1/admin/cleanup/execute`). 6 Cleanup-Typen: completed_epochs, cancelled_epochs, stale_lobbies, archived_instances, audit_log, bot_decision_log. Preview-before-delete Sicherheit. Epoch-Loeschungen kaskadieren ueber 8 Kind-Tabellen + Spielinstanzen.
 **Aenderung v1.9:** **252 Endpoints total (32 Router).** Agent Aptitudes: 2 neue Endpoints auf Agents-Router (`GET/PUT /api/v1/simulations/:simId/agents/:agentId/aptitudes`), 1 neuer Endpoint fuer Simulations-Aptitudes (`GET /api/v1/simulations/:simId/aptitudes`), 2 neue Public-Endpoints. Draft Phase: 1 neuer Endpoint auf Epochs-Router (`POST /api/v1/epochs/:epochId/participants/:simId/draft`).
 **Aenderung v1.8:** **246 Endpoints total (32 Router).** 2 neue Notification-Preferences-Endpoints auf Users-Router (`GET/POST /api/v1/users/me/notification-preferences`).
 **Aenderung v1.7:** **244 Endpoints total (32 Router).** Neuer bot_players Router (`/api/v1/bot-players`, 4 Endpoints): CRUD fuer Bot-Presets. Epochs-Router erweitert um add-bot/remove-bot (2 Endpoints).
@@ -1747,7 +1747,8 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | Operatives | 7 | Deploy + List + Threats + Get + Recall + Resolve + CounterIntel |
 | Scores | 4 | Leaderboard + Standings + History + Compute |
 | Game Mechanics | 8 | Health Dashboard + Sim/Buildings/Zones/Embassies + Refresh |
-| Bot Players | 4 | CRUD (List + Create + Update + Delete) |
+| Bot Players | 5 | CRUD (List + Get + Create + Update + Delete) |
+| Aptitudes | 3 | GetForAgent + UpdateForAgent + ListForSimulation |
 | Admin | 11 | Settings (2) + Users (3) + Memberships (3) + Cleanup (3) |
 | Public | 48 | Anonymer Lesezugriff (alle GET-only) |
-| **Gesamt** | **255** | **32 Router** |
+| **Gesamt** | **256** | **33 Router** |

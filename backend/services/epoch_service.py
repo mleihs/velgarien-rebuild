@@ -758,6 +758,59 @@ class EpochService:
     # ── Cycle Resolution ─────────────────────────────────────
 
     @classmethod
+    async def resolve_cycle_full(
+        cls,
+        supabase: Client,
+        epoch_id: UUID,
+        admin_supabase: Client,
+    ) -> dict:
+        """Full cycle resolution pipeline: resolve → bots → scoring → notifications.
+
+        Extracts the multi-step resolve pipeline so it can be called from both
+        the manual resolve endpoint and the auto-resolve trigger (all humans ready).
+        Returns updated epoch data.
+        """
+        from backend.services.bot_service import BotService
+        from backend.services.cycle_notification_service import CycleNotificationService
+        from backend.services.scoring_service import ScoringService
+
+        data = await cls.resolve_cycle(supabase, epoch_id, admin_supabase=admin_supabase)
+        config = data.get("config", {})
+        cycle_number = data.get("current_cycle", 1)
+
+        # Execute bot decisions (after RP grant, before next cycle)
+        try:
+            await BotService.execute_bot_cycle(
+                supabase=supabase,
+                admin_supabase=admin_supabase,
+                epoch_id=str(epoch_id),
+                cycle_number=cycle_number,
+                config=config,
+            )
+        except Exception:
+            logger.warning("Bot cycle execution failed for epoch %s", epoch_id, exc_info=True)
+
+        # Compute scores after missions resolve (best-effort)
+        try:
+            await ScoringService.compute_cycle_scores(supabase, epoch_id, cycle_number)
+        except Exception:
+            logger.warning(
+                "Scoring failed for epoch %s cycle %s", epoch_id, cycle_number, exc_info=True
+            )
+
+        # Send cycle notification emails (best-effort, non-blocking)
+        try:
+            await CycleNotificationService.send_cycle_notifications(
+                admin_supabase,
+                str(epoch_id),
+                cycle_number,
+            )
+        except Exception:
+            logger.warning("Cycle notification failed for epoch %s", epoch_id, exc_info=True)
+
+        return data
+
+    @classmethod
     async def resolve_cycle(
         cls,
         supabase: Client,
