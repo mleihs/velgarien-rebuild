@@ -23,6 +23,8 @@ export class VelgSimulationShell extends LitElement {
 
     .shell__content {
       padding: var(--content-padding);
+      min-width: 0;
+      overflow: hidden;
     }
   `;
 
