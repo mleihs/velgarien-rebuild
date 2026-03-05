@@ -16,10 +16,13 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-# Install Python dependencies (needs pyproject.toml + backend source)
+# Install pinned deps first (Docker layer cache — only re-runs when requirements.txt changes)
+COPY backend/requirements.txt ./backend/
+RUN pip install --no-cache-dir -r backend/requirements.txt
+
+# Copy app source (changes frequently, but deps are already cached)
 COPY pyproject.toml ./
 COPY backend/ ./backend/
-RUN pip install --no-cache-dir .
 
 # Copy built frontend assets
 COPY --from=frontend-build /app/static/dist ./static/dist
