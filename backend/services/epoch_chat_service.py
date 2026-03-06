@@ -214,8 +214,13 @@ class EpochChatService:
             all_humans_ready = len(humans) > 0 and all(p["cycle_ready"] for p in humans)
 
             logger.info(
-                "Ready check for epoch %s: %d total, %d humans, all_ready=%s",
-                epoch_id, len(all_participants.data or []), len(humans), all_humans_ready,
+                "Ready check",
+                extra={
+                    "epoch_id": str(epoch_id),
+                    "total_participants": len(all_participants.data or []),
+                    "human_count": len(humans),
+                    "all_ready": all_humans_ready,
+                },
             )
 
             if all_humans_ready:
@@ -226,7 +231,7 @@ class EpochChatService:
                     result["auto_resolved"] = True
                     result["new_cycle"] = epoch_data.get("current_cycle", 1)
                 except Exception:
-                    logger.exception("Auto-resolve FAILED for epoch %s", epoch_id)
+                    logger.exception("Auto-resolve failed", extra={"epoch_id": str(epoch_id)})
 
         return result
 

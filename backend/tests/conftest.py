@@ -1,3 +1,4 @@
+from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
@@ -21,6 +22,28 @@ def test_app():
 def mock_user_token() -> str:
     """A fake JWT token string for testing."""
     return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.signature"
+
+
+def make_chain_mock(execute_data=None, execute_count=None):
+    """Reusable Supabase query chain mock.
+
+    Usage: chain = make_chain_mock(execute_data=[...])
+    Supports: .select(), .eq(), .in_(), .lt(), .gt(), .or_(), .order(),
+              .limit(), .single(), .maybe_single(), .is_(), .not_(),
+              .range(), .insert(), .update(), .delete(), .upsert()
+    """
+    c = MagicMock()
+    for method in (
+        "select", "eq", "in_", "lt", "gt", "or_", "order",
+        "limit", "single", "maybe_single", "is_", "not_",
+        "range", "insert", "update", "delete", "upsert",
+    ):
+        getattr(c, method).return_value = c
+    resp = MagicMock()
+    resp.data = execute_data
+    resp.count = execute_count
+    c.execute.return_value = resp
+    return c
 
 
 @pytest.fixture()

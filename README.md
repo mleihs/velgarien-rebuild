@@ -1,6 +1,6 @@
 # metaverse.center
 
-**Five worlds. One fracture. A multiplayer worldbuilding platform where literary simulations compete, bleed into each other, and evolve.**
+**Worlds collide. One fracture. A multiplayer worldbuilding platform where literary simulations compete, bleed into each other, and evolve.**
 
 [![Python 3.13](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://python.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org)
@@ -14,9 +14,9 @@
 
 ## What Is This?
 
-metaverse.center is a multiplayer worldbuilding platform built around five literary simulations &mdash; each a distinct fictional world with its own agents, buildings, locations, events, and political dynamics. Players join simulations, shape their worlds through AI-assisted content generation, and compete in **Epochs**: structured PvP campaigns where operatives are deployed, alliances form and fracture, and scoring spans five strategic dimensions.
+metaverse.center is a multiplayer worldbuilding platform where users create and manage literary simulations &mdash; each a distinct fictional world with its own agents, buildings, locations, events, and political dynamics. The platform ships with five richly detailed flagship worlds, but any user can forge new simulations with custom lore, themes, and entity hierarchies. Players shape their worlds through AI-assisted content generation and compete in **Epochs**: structured PvP campaigns where operatives are deployed, alliances form and fracture, and scoring spans five strategic dimensions.
 
-The platform implements a **cross-simulation diplomacy layer** where embassies connect worlds, ambassadors carry influence across borders, and "Event Echoes" bleed narrative consequences from one simulation into another. A force-directed **Cartographer's Map** visualizes the entire multiverse &mdash; simulation nodes, diplomatic connections, active game instances, operative trails, and real-time battle feeds.
+A **cross-simulation diplomacy layer** connects worlds through embassies, ambassadors carry influence across borders, and "Event Echoes" bleed narrative consequences from one simulation into another. A force-directed **Cartographer's Map** visualizes the entire multiverse &mdash; simulation nodes, diplomatic connections, active game instances, operative trails, and real-time battle feeds.
 
 Every number tells a story. Every story changes a number. Agent aptitudes shape operative success probabilities. Zone stability degrades under sabotage. Embassy effectiveness drops when infiltrators compromise diplomatic channels. The game balance is calibrated through deterministic simulation of hundreds of epoch matches, with statistical analysis driving each tuning pass.
 
@@ -46,17 +46,19 @@ The entire platform is bilingual (English/German), fully themed per-simulation w
 
 ![Velgarien agents view showing 9 agent cards in dark brutalist theme with AI portraits, aptitude pips, profession badges, and Lineup Overview strip](docs/screenshots/tcg-agent-cards-lineup-velgarien.png)
 
-**Cartographer's Map** — Force-directed multiverse graph showing all five simulations as nodes with diplomatic connections (orange embassy links), energy pulses along edges, starfield background, and a minimap viewport. Supports 2D SVG and WebGL 3D rendering modes with search, zoom-to-cluster, and 30-second auto-refresh during active epochs.
+**Cartographer's Map** — Force-directed multiverse graph showing simulations as nodes with diplomatic connections (orange embassy links), energy pulses along edges, starfield background, and a minimap viewport. Supports 2D SVG and WebGL 3D rendering modes with search, zoom-to-cluster, and 30-second auto-refresh during active epochs. The graph grows dynamically as users create new simulations.
 
-![Cartographer's Map showing the force-directed multiverse graph with five simulation nodes, diplomatic connections, energy pulses, and minimap](docs/screenshots/cartographers-map-multiverse-graph.png)
+![Cartographer's Map showing the force-directed multiverse graph with simulation nodes, diplomatic connections, energy pulses, and minimap](docs/screenshots/cartographers-map-multiverse-graph.png)
 
-**Intelligence Report** — How-to-Play guide section with Elo power rankings across all five simulations (188 Monte Carlo games), methodology callout, and interactive Apache ECharts radar chart comparing simulation performance across 2P/3P/4P/5P player counts. Dark military-console aesthetic with "CLASSIFIED" headers and SIGINT classification labels.
+**Intelligence Report** — How-to-Play guide section with Elo power rankings across the flagship simulations (188 Monte Carlo games), methodology callout, and interactive Apache ECharts radar chart comparing simulation performance across 2P/3P/4P/5P player counts. Dark military-console aesthetic with "CLASSIFIED" headers and SIGINT classification labels.
 
 ![Intelligence Report showing Elo power rankings bar chart for 5 simulations and radar chart comparing performance across player counts](docs/screenshots/intelligence-report-elo-radar.png)
 
 ---
 
-## The Five Simulations
+## The Flagship Simulations
+
+The platform ships with five richly detailed seed worlds. Users can create additional simulations with custom lore, themes, and entity data through the Simulation Forge.
 
 | Simulation | Theme | Literary DNA | Aesthetic |
 |:-----------|:------|:-------------|:----------|
@@ -200,8 +202,8 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
            ▼        │
 ┌──────────────┐    │
 │   FastAPI     │    │
-│   257 endpoints│    │
-│   33 routers  │    │
+│   293 endpoints│    │
+│   37 routers  │    │
 │   PyJWT auth  │    │
 └──────┬───────┘    │
        │            │
@@ -209,7 +211,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 ┌──────────────────────┐
 │   Supabase (PostgreSQL)   │
 │   52 tables + pgvector     │
-│   194+ RLS policies       │
+│   230+ RLS policies       │
 │   Realtime channels       │
 │   Auth (ES256/HS256)      │
 │   Storage (4 buckets)     │
@@ -221,7 +223,8 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 - **Public-First Architecture** &mdash; All simulation data is browsable without authentication. Frontend API services route to `/api/v1/public/*` (anon RLS policies) for unauthenticated visitors and authenticated non-members alike.
 - **Hybrid Supabase** &mdash; Frontend talks to Supabase directly for Auth, Storage, and Realtime. Business logic routes through FastAPI, which forwards the user's JWT so RLS is always enforced.
 - **Defense in Depth** &mdash; FastAPI `Depends()` validates roles (layer 1), Supabase RLS validates row-level access (layer 2). Neither layer trusts the other.
-- **Per-Simulation Theming** &mdash; CSS custom properties cascade through shadow DOM. Five theme presets, all validated against WCAG 2.1 AA contrast ratios.
+- **Per-Simulation Theming** &mdash; CSS custom properties cascade through shadow DOM. Each simulation gets its own theme preset, all validated against WCAG 2.1 AA contrast ratios.
+- **Structured Logging** &mdash; structlog on top of stdlib logging. JSON output in production, console renderer locally. Request context (user_id, request_id, method, path) injected via middleware. All mutations log with structured `extra={}` fields for observability.
 - **Game Instance Isolation** &mdash; When an epoch starts, participating simulations are atomically cloned into balanced game instances. Templates remain untouched. Clones are archived on completion, deleted on cancellation.
 
 ---
@@ -234,15 +237,17 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 |:--------|:--------|:--------|
 | FastAPI | 0.135 | Async web framework, auto-generated OpenAPI docs |
 | Pydantic v2 | 2.12 | Request/response validation, settings management |
-| Supabase Python | 2.25 | PostgreSQL client with RLS enforcement |
+| structlog | 25.1 | Structured logging (JSON production, console dev) |
+| Supabase Python | 2.10 | PostgreSQL client with RLS enforcement |
 | PyJWT | 2.11 | JWT verification (ES256 production, HS256 local) |
-| Pillow | 12.1 | Image processing, AVIF conversion |
+| Pillow | 12.0 | Image processing, AVIF conversion |
 | Replicate | 1.0 | AI image generation (Flux, Stable Diffusion) |
 | httpx | 0.28 | Async HTTP client for OpenRouter AI calls |
 | slowapi | 0.1 | Tiered rate limiting (30/hr AI, 100/min standard) |
 | cryptography | 46.0 | AES-256 encryption for sensitive settings |
 | cachetools | 7.0 | JWKS + model resolution + map data caching |
-| pydantic-ai | 1.66 | AI agent framework for structured generation |
+| pydantic-ai | 0.0.1 | AI agent framework for structured generation |
+| tavily-python | 0.5 | Web research for AI-assisted content generation |
 
 ### Frontend
 
@@ -256,20 +261,21 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | Zod | 4.3 | Runtime schema validation |
 | TypeScript | 5.9 | Type safety |
 | Vite | 7.3 | Build tool with HMR |
+| Vitest | 4.0 | Unit/component testing framework |
 
 ### Infrastructure
 
 | Component | Technology |
 |:----------|:-----------|
-| Database | PostgreSQL via Supabase (52 tables, 194+ RLS policies, pgvector embeddings) |
+| Database | PostgreSQL via Supabase (52 tables, 230+ RLS policies, pgvector embeddings) |
 | Auth | Supabase Auth (JWT with ES256 in production, HS256 locally) |
 | Email | SMTP SSL (bilingual tactical briefing emails, fog-of-war compliant) |
 | AI Text | OpenRouter (model fallback chain) |
 | AI Images | Replicate (Flux, Stable Diffusion) |
 | Hosting | Railway (backend + frontend) + Cloudflare (CDN/DNS) |
 | Analytics | Google Analytics 4 (37 events, consent mode v2) |
-| Testing | pytest + vitest + Playwright |
-| Linting | Ruff (backend) + Biome 2.0 (frontend) |
+| Testing | pytest + pytest-cov + vitest + Playwright |
+| Linting | Ruff (backend) + Biome 2.4 (frontend) |
 
 ---
 
@@ -278,16 +284,16 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | Metric | Count |
 |:-------|------:|
 | Database tables | 52 |
-| RLS policies | 194+ |
+| RLS policies | 230+ |
 | SQL migrations | 72 |
-| API endpoints | 257 across 33 routers |
+| API endpoints | 293 across 37 routers |
 | Web Components | 133 custom elements |
-| Backend tests | 789 |
-| Frontend tests | 439 |
+| Backend tests | 866 |
+| Frontend tests | 453 |
 | E2E specs | 81 |
-| Localized UI strings | ~2,563 (EN/DE) |
-| Specification documents | 29 |
-| Simulations | 5 (each with ~30 entities) |
+| Localized UI strings | ~3,100 (EN/DE) |
+| Specification documents | 30 |
+| Flagship simulations | 5 (users can create more) |
 | Operative types | 6 |
 | Scoring dimensions | 5 |
 | Bot personalities | 5 archetypes x 3 difficulty levels |
@@ -299,6 +305,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 ## Features
 
 - **Simulation worldbuilding** &mdash; agents, buildings, events, locations, zones, streets, social media, campaigns, chat
+- **Dynamic simulation creation** &mdash; users forge new worlds with custom lore, themes, taxonomies, and AI prompt templates via the Simulation Forge
 - **TCG card system** &mdash; unified collectible card component with 3D tilt, holographic foil, rarity tiers, stat gems, aptitude pips, card-deal animations
 - **Cross-simulation diplomacy** &mdash; embassies, ambassadors, event echoes (narrative bleed between worlds)
 - **Cartographer's Map** &mdash; force-directed multiverse graph with operative trails, health arcs, sparklines, battle feed, leaderboard
@@ -310,8 +317,9 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 - **Agent Memory & Reflection** &mdash; Stanford Generative Agents-style memory loop; pgvector embeddings (1536-dim), retrieval via cosine similarity + importance + recency decay, memories injected into agent chat context
 - **AI content generation** &mdash; portraits, building images, descriptions, event reactions, relationship suggestions, invitation lore, chronicle editions, memory reflections
 - **Bilingual email notifications** &mdash; cycle briefings, phase changes, epoch completion (fog-of-war compliant, per-player data)
-- **Per-simulation theming** &mdash; 5 CSS presets with WCAG 2.1 AA contrast validation, light & dark modes
-- **Full i18n** &mdash; English + German (2,563 localized strings)
+- **Per-simulation theming** &mdash; CSS presets per world with WCAG 2.1 AA contrast validation, light & dark modes
+- **Structured logging** &mdash; JSON production logs with request context, structured extra fields, per-service observability
+- **Full i18n** &mdash; English + German (~3,100 localized strings)
 - **How-to-Play tutorial** &mdash; rules reference, worked match replays, changelog, ECharts Intelligence Report
 - **Platform admin panel** &mdash; user/membership management, runtime cache TTL controls
 - **Bureau auth terminals** &mdash; themed login/register screens with scanlines, corner brackets, amber glow, blinking cursor, styled signup confirmation email
@@ -339,7 +347,7 @@ supabase start                           # Start local PostgreSQL + Auth + Stora
 cd backend
 python3.13 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 uvicorn backend.app:app --reload         # API on http://localhost:8000
 
 # Frontend
@@ -352,11 +360,12 @@ npm run dev                              # Dev server on http://localhost:5173
 
 ```bash
 # Backend (from project root, venv activated)
-python3.13 -m pytest backend/tests/ -v   # 789 tests
-python3.13 -m ruff check backend/        # Lint
+python -m pytest backend/tests/ -v              # 866 tests
+python -m pytest backend/tests/ --cov=backend   # With coverage report
+python -m ruff check backend/                   # Lint
 
 # Frontend (from frontend/)
-npx vitest run                           # 439 tests
+npx vitest run                           # 453 tests
 npx tsc --noEmit                         # Type check
 npx biome check src/                     # Lint
 
@@ -368,43 +377,45 @@ npx playwright test                      # 81 specs
 
 ```
 backend/
-  app.py                    # FastAPI entry (33 routers registered)
+  app.py                    # FastAPI entry (37 routers registered)
+  logging_config.py         # structlog setup (JSON/console, noisy logger suppression)
   dependencies.py           # JWT auth, Supabase clients, role checking
-  routers/                  # 33 route modules (public, admin, entity, epoch)
-  models/                   # 22 Pydantic model files
-  services/                 # 29+ service modules (BaseService CRUD, AI, email, bots)
-  tests/                    # pytest (unit + integration + security)
+  routers/                  # 37 route modules (public, admin, entity, epoch)
+  models/                   # Pydantic model files
+  services/                 # Service modules (BaseService CRUD, AI, email, bots, logging)
+  middleware/               # SEO injection, logging context (request_id, user_id)
+  tests/                    # pytest (unit + integration + performance)
 frontend/
   src/
     app-shell.ts            # Router + auth + simulation context
-    components/             # 113 Lit web components across 15 directories
-    services/               # 22 API services, state, theme, i18n, realtime, SEO
+    components/             # 133 Lit web components across 15 directories
+    services/               # API services, state, theme, i18n, realtime, SEO
     styles/tokens/          # CSS design tokens (8 files)
     types/                  # TypeScript interfaces + Zod schemas
     locales/                # i18n (XLIFF source + generated output)
 supabase/
-  migrations/               # 62+ SQL migration files
+  migrations/               # 72 SQL migration files
   seed/                     # Seed data (7 active, 11 archived)
 scripts/                    # Image generation + epoch simulation library
-docs/                       # 29 specification documents
-e2e/                        # Playwright E2E tests
+docs/                       # 30 specification documents
+e2e/                        # Playwright E2E tests (13 spec files)
 ```
 
 ---
 
 ## Documentation
 
-The `docs/` directory contains 29 specification documents covering every aspect of the system:
+The `docs/` directory contains 30 specification documents covering every aspect of the system:
 
 | Area | Documents |
 |:-----|:----------|
 | Overview & Planning | Project Overview, Implementation Plan (160 tasks, 6 phases) |
-| Data & API | Database Schema (v3.0), Domain Models (v3.0), API Specification (257 endpoints) |
+| Data & API | Database Schema (v3.0), Domain Models (v3.0), API Specification (293 endpoints) |
 | Frontend | Component Hierarchy, Design System, Theming System, Microanimations |
 | Security | Auth & Security (hybrid JWT, RLS strategies) |
 | Game Systems | Game Mechanics, Epochs & Competitive Layer, Game Design Document |
 | Features | Relationships/Echoes/Map, Embassies, AI Integration |
-| Infrastructure | Deployment, Simulation Blueprint (template for new worlds) |
+| Infrastructure | Deployment, Testing Strategy, Simulation Blueprint (template for new worlds) |
 
 ---
 

@@ -1,6 +1,7 @@
 """Unit tests for EpochChatService — message validation, team checks, ready toggle."""
 
-from unittest.mock import MagicMock
+import logging
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
@@ -268,3 +269,97 @@ class TestListMessages:
         )
         messages, _ = await EpochChatService.list_messages(sb, EPOCH_ID)
         assert messages[0]["sender_name"] == "TestSim"
+
+
+# ── Logging Tests ────────────────────────────────────────
+
+
+class TestEpochChatLogging:
+    """Verify logging output for epoch chat operations."""
+
+    @pytest.mark.asyncio
+    async def test_ready_check_logs_participant_counts(self, caplog):
+        """Ready check should log INFO with human_count and all_ready."""
+        participant_data = {
+            "id": "p1",
+            "epoch_id": str(EPOCH_ID),
+            "simulation_id": str(SIM_ID),
+            "cycle_ready": True,
+        }
+
+        # User supabase — for epoch check and toggle_ready update
+        sb = _mock_supabase(
+            epoch_data=[{"id": str(EPOCH_ID), "status": "foundation"}],
+            update_data=[participant_data],
+        )
+
+        # Admin supabase — for the all-participants check
+        admin_sb = MagicMock()
+        admin_chain = MagicMock()
+        admin_chain.select.return_value = admin_chain
+        admin_chain.eq.return_value = admin_chain
+        admin_chain.execute.return_value = MagicMock(
+            data=[
+                {"id": "p1", "cycle_ready": True, "is_bot": False},
+                {"id": "p2", "cycle_ready": True, "is_bot": True},
+            ]
+        )
+        admin_sb.table.return_value = admin_chain
+
+        with (
+            caplog.at_level(logging.INFO, logger="backend.services.epoch_chat_service"),
+            patch(
+                "backend.services.epoch_service.EpochService.resolve_cycle_full",
+                new_callable=AsyncMock,
+                return_value={"current_cycle": 2},
+            ),
+        ):
+            await EpochChatService.toggle_ready(
+                sb, EPOCH_ID, SIM_ID, True, admin_supabase=admin_sb,
+            )
+
+        ready_records = [r for r in caplog.records if "Ready check" in r.message]
+        assert len(ready_records) >= 1
+        record = ready_records[0]
+        assert record.human_count == 1
+        assert record.all_ready is True
+
+    @pytest.mark.asyncio
+    async def test_auto_resolve_failure_logs_exception(self, caplog):
+        """Auto-resolve failure should log ERROR with epoch_id."""
+        participant_data = {
+            "id": "p1",
+            "epoch_id": str(EPOCH_ID),
+            "simulation_id": str(SIM_ID),
+            "cycle_ready": True,
+        }
+
+        sb = _mock_supabase(
+            epoch_data=[{"id": str(EPOCH_ID), "status": "competition"}],
+            update_data=[participant_data],
+        )
+
+        admin_sb = MagicMock()
+        admin_chain = MagicMock()
+        admin_chain.select.return_value = admin_chain
+        admin_chain.eq.return_value = admin_chain
+        admin_chain.execute.return_value = MagicMock(
+            data=[{"id": "p1", "cycle_ready": True, "is_bot": False}]
+        )
+        admin_sb.table.return_value = admin_chain
+
+        with (
+            caplog.at_level(logging.ERROR, logger="backend.services.epoch_chat_service"),
+            patch(
+                "backend.services.epoch_service.EpochService.resolve_cycle_full",
+                new_callable=AsyncMock,
+                side_effect=RuntimeError("Scoring failed"),
+            ),
+        ):
+            await EpochChatService.toggle_ready(
+                sb, EPOCH_ID, SIM_ID, True, admin_supabase=admin_sb,
+            )
+
+        error_records = [r for r in caplog.records if r.levelno == logging.ERROR]
+        assert len(error_records) >= 1
+        assert error_records[0].epoch_id == str(EPOCH_ID)

@@ -526,7 +526,7 @@ class GenerationService:
         if pydantic_model is None:
             return None
 
-        logger.info("Attempting LLM repair for malformed JSON output")
+        logger.warning("Attempting LLM repair for malformed JSON output")
         return await repair_json_output(
             openrouter=self._openrouter,
             model=model_id,

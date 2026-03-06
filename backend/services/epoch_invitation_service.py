@@ -163,6 +163,7 @@ class EpochInvitationService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Invitation not found.",
             )
+        logger.info("Epoch invitation revoked", extra={"invitation_id": str(invitation_id)})
         return response.data[0]
 
     @staticmethod
@@ -215,6 +216,10 @@ class EpochInvitationService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to accept invitation.",
             )
+        logger.info(
+            "Epoch invitation accepted",
+            extra={"epoch_id": str(invitation["epoch_id"]), "user_id": str(user_id)},
+        )
         return update_response.data[0]
 
     @staticmethod

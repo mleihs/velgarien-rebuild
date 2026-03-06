@@ -8,6 +8,7 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from pydantic_ai import Agent
 
+from backend.config import settings
 from backend.models.forge import (
     ForgeAgentDraft,
     ForgeBuildingDraft,
@@ -15,9 +16,8 @@ from backend.models.forge import (
     ForgeGenerationConfig,
     ForgeGeographyDraft,
 )
-from backend.config import settings
-from backend.services.ai_utils import get_openrouter_model
 from backend.services import forge_mock_service as mock
+from backend.services.ai_utils import get_openrouter_model
 from backend.services.forge_draft_service import ForgeDraftService
 from backend.services.forge_entity_translation_service import ForgeEntityTranslationService
 from backend.services.forge_lore_service import ForgeLoreService
@@ -73,12 +73,12 @@ class ForgeOrchestratorService:
         draft_id: UUID,
     ) -> dict:
         """Run AI research phase (Phase 1)."""
-        logger.info("Starting Astrolabe research for user %s, draft %s", user_id, draft_id)
+        logger.info("Starting Astrolabe research", extra={"user_id": str(user_id), "draft_id": str(draft_id)})
         draft_data = await ForgeDraftService.get_draft(supabase, user_id, draft_id)
         seed = draft_data["seed_prompt"]
 
         if settings.forge_mock_mode:
-            logger.info("FORGE_MOCK_MODE: using mock research + anchors")
+            logger.debug("FORGE_MOCK_MODE: using mock research + anchors")
             context = mock.mock_research_context(seed)
             from backend.models.forge import PhilosophicalAnchor
             anchors = [PhilosophicalAnchor(**a) for a in mock.mock_anchors(seed)]
@@ -116,7 +116,10 @@ class ForgeOrchestratorService:
         chunk_type: str,
     ) -> dict:
         """Generate a portion of the lore (Phase 2)."""
-        logger.info("Generating blueprint chunk '%s' for user %s, draft %s", chunk_type, user_id, draft_id)
+        logger.info(
+            "Generating blueprint chunk",
+            extra={"chunk_type": chunk_type, "user_id": str(user_id), "draft_id": str(draft_id)},
+        )
         draft_data = await ForgeDraftService.get_draft(supabase, user_id, draft_id)
         anchor = draft_data.get("philosophical_anchor", {}).get("selected")
         if not anchor:
@@ -131,7 +134,7 @@ class ForgeOrchestratorService:
         seed = draft_data.get("seed_prompt", "")
 
         if settings.forge_mock_mode:
-            logger.info("FORGE_MOCK_MODE: using mock %s data", chunk_type)
+            logger.debug("FORGE_MOCK_MODE: using mock data", extra={"chunk_type": chunk_type})
             if chunk_type == "geography":
                 geo_data = mock.mock_geography(seed, gen_config.zone_count, gen_config.street_count)
                 await ForgeDraftService.update_draft(
@@ -213,7 +216,7 @@ class ForgeOrchestratorService:
         admin_supabase: Client | None = None,
     ) -> dict:
         """Finalize the draft and create production records (Phase 4)."""
-        logger.info("Materializing shard for user %s, draft %s", user_id, draft_id)
+        logger.info("Materializing shard", extra={"user_id": str(user_id), "draft_id": str(draft_id)})
 
         # Mark draft as processing
         await ForgeDraftService.update_draft(
@@ -253,8 +256,8 @@ class ForgeOrchestratorService:
             if theme_config:
                 try:
                     await ForgeThemeService.apply_theme_settings(write_client, sim_id, theme_config)
-                except Exception as e:
-                    logger.error("Theme application failed for %s: %s", sim_id, e)
+                except Exception:
+                    logger.exception("Theme application failed", extra={"simulation_id": str(sim_id)})
 
             # Generate and persist lore + translations
             anchor = draft_data.get("philosophical_anchor", {}).get("selected", {})
@@ -264,15 +267,15 @@ class ForgeOrchestratorService:
             seed = draft_data.get("seed_prompt", "")
 
             if settings.forge_mock_mode:
-                logger.info("FORGE_MOCK_MODE: using mock lore + translations")
+                logger.debug("FORGE_MOCK_MODE: using mock lore + translations")
                 try:
                     lore_sections = mock.mock_lore_sections(seed)
                     translations = mock.mock_lore_translations(lore_sections)
                     await ForgeLoreService.persist_lore(
                         write_client, sim_id, lore_sections, translations,
                     )
-                except Exception as e:
-                    logger.error("Mock lore persist failed for %s: %s", sim_id, e)
+                except Exception:
+                    logger.exception("Mock lore persist failed", extra={"simulation_id": str(sim_id)})
 
                 # Mock entity translations
                 try:
@@ -308,8 +311,8 @@ class ForgeOrchestratorService:
                     await ForgeEntityTranslationService.persist_translations(
                         write_client, sim_id, mock_trans,
                     )
-                except Exception as e:
-                    logger.error("Mock entity translation failed for %s: %s", sim_id, e)
+                except Exception:
+                    logger.exception("Mock entity translation failed", extra={"simulation_id": str(sim_id)})
             else:
                 or_key, _ = await ForgeOrchestratorService._get_user_keys(supabase, user_id)
 
@@ -328,14 +331,14 @@ class ForgeOrchestratorService:
                         translations = await ForgeLoreService.translate_lore(
                             lore_sections, openrouter_key=or_key,
                         )
-                    except Exception as e:
-                        logger.error("Lore translation failed for %s: %s", sim_id, e)
+                    except Exception:
+                        logger.exception("Lore translation failed", extra={"simulation_id": str(sim_id)})
 
                     await ForgeLoreService.persist_lore(
                         write_client, sim_id, lore_sections, translations,
                     )
-                except Exception as e:
-                    logger.error("Lore generation failed for %s: %s", sim_id, e)
+                except Exception:
+                    logger.exception("Lore generation failed", extra={"simulation_id": str(sim_id)})
 
                 # Translate entity fields (agents, buildings, zones, streets, sim description)
                 try:
@@ -377,8 +380,8 @@ class ForgeOrchestratorService:
                     await ForgeEntityTranslationService.persist_translations(
                         write_client, sim_id, entity_translations,
                     )
-                except Exception as e:
-                    logger.error("Entity translation failed for %s: %s", sim_id, e)
+                except Exception:
+                    logger.exception("Entity translation failed", extra={"simulation_id": str(sim_id)})
 
             return {
                 "simulation_id": sim_id,
@@ -389,7 +392,7 @@ class ForgeOrchestratorService:
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("SQL Materialization error: %s", e)
+            logger.exception("Shard materialization failed", extra={"draft_id": str(draft_id)})
             await ForgeDraftService.update_draft(
                 supabase, user_id, draft_id,
                 ForgeDraftUpdate(status="failed", error_log=str(e)[:500]),
@@ -407,12 +410,12 @@ class ForgeOrchestratorService:
         draft_id: UUID,
     ) -> dict:
         """Generate an AI theme for a draft (called from Darkroom phase)."""
-        logger.info("Generating theme for draft %s", draft_id)
+        logger.info("Generating theme", extra={"draft_id": str(draft_id)})
         draft_data = await ForgeDraftService.get_draft(supabase, user_id, draft_id)
         seed = draft_data.get("seed_prompt", "")
 
         if settings.forge_mock_mode:
-            logger.info("FORGE_MOCK_MODE: using mock theme")
+            logger.debug("FORGE_MOCK_MODE: using mock theme")
             theme_data = mock.mock_theme(seed)
         else:
             anchor = draft_data.get("philosophical_anchor", {}).get("selected", {})
@@ -447,7 +450,7 @@ class ForgeOrchestratorService:
         Optimized for 512MB RAM: processes one image at a time.
         Order: banner → agent portraits → building images → lore images.
         """
-        logger.info("Starting batch image generation for simulation %s", simulation_id)
+        logger.info("Starting batch image generation", extra={"simulation_id": str(simulation_id)})
 
         or_key, rep_key = await ForgeOrchestratorService._get_user_keys(supabase, user_id)
 
@@ -474,8 +477,8 @@ class ForgeOrchestratorService:
                 sim_description=sim_data.get("description", ""),
                 anchor_data=anchor_data,
             )
-        except Exception as e:
-            logger.error("Banner generation failed for simulation %s: %s", simulation_id, e)
+        except Exception:
+            logger.exception("Banner generation failed", extra={"simulation_id": str(simulation_id)})
 
         # 2. Agent portraits
         agents = (
@@ -491,8 +494,11 @@ class ForgeOrchestratorService:
                     agent_name=agent["name"],
                     agent_data={"character": agent["character"], "background": agent["background"]},
                 )
-            except Exception as e:
-                logger.error("Batch gen failed for agent %s: %s", agent["id"], e)
+            except Exception:
+                logger.exception(
+                    "Batch image gen failed for agent",
+                    extra={"entity_type": "agent", "entity_id": agent["id"]},
+                )
 
         # 3. Building images
         buildings = (
@@ -509,8 +515,11 @@ class ForgeOrchestratorService:
                     building_type=building["building_type"],
                     building_data={"description": building["description"]},
                 )
-            except Exception as e:
-                logger.error("Batch gen failed for building %s: %s", building["id"], e)
+            except Exception:
+                logger.exception(
+                    "Batch image gen failed for building",
+                    extra={"entity_type": "building", "entity_id": building["id"]},
+                )
 
         # 4. Lore images (sections with image_slug)
         sim_slug = sim_data.get("slug", str(simulation_id))
@@ -530,7 +539,10 @@ class ForgeOrchestratorService:
                     image_slug=section["image_slug"],
                     sim_slug=sim_slug,
                 )
-            except Exception as e:
-                logger.error("Lore image gen failed for section %s: %s", section["id"], e)
+            except Exception:
+                logger.exception(
+                    "Lore image gen failed",
+                    extra={"entity_type": "lore_section", "entity_id": section["id"]},
+                )
 
-        logger.info("Batch generation completed for simulation %s", simulation_id)
+        logger.info("Batch generation completed", extra={"simulation_id": str(simulation_id)})

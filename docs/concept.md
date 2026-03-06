@@ -494,7 +494,7 @@ This section documents the literary-theoretical framework that governs the platf
 
 **Mark Z. Danielewski** (b. 1966) provides the typographic precedent. *House of Leaves* (2000) uses five different typefaces for five different narrative voices: Times New Roman for the main narrator, Courier for the scholarly apparatus, Dante for the quoted manuscript, and two others for supplementary voices. The book's physical form mirrors its content — a house that is larger inside than outside, told through a manuscript that contains more voices than it should.
 
-The platform's five-font-per-simulation approach is Danielewski's technique applied at architectural scale: Oswald (Velgarien, Constructivist industrial), Cormorant Garamond (Gaslit Reach, Victorian scholarly), Space Mono (Station Null, CRT terminal), Barlow (Speranza, utilitarian humanist), Libre Baskerville (Cité des Dames, 18th-century literary). Each font is a voice. The platform-level font — Spectral, a 19th-century French academic serif — is the Bureau's voice: the narrator who contains all the other narrators, the Danielewski framing device.
+The platform's font-per-simulation approach is Danielewski's technique applied at architectural scale: Oswald (Velgarien, Constructivist industrial), Cormorant Garamond (Gaslit Reach, Victorian scholarly), Space Mono (Station Null, CRT terminal), Barlow (Speranza, utilitarian humanist), Libre Baskerville (Cité des Dames, 18th-century literary). Each font is a voice. The platform-level font — Spectral, a 19th-century French academic serif — is the Bureau's voice: the narrator who contains all the other narrators, the Danielewski framing device.
 
 ### Lem and Meta-Fictional Documentation
 
@@ -514,7 +514,7 @@ The Bureau's [CONSUMED] and [DEGRADED] markers are SCP's [REDACTED] with a liter
 
 ### Ergodic Literature
 
-**Espen Aarseth** (*Cybertext*, 1997) — coined "ergodic literature" for texts that require "nontrivial effort to traverse." Not passive reading but active navigation: choosing paths, solving puzzles, assembling fragments. The platform is ergodic in Aarseth's precise sense — users must navigate between simulations, choose which lore to read, decide which Shard to enter, assemble the meta-narrative from fragments distributed across five worlds. The meaning is not in any single simulation but in the *act of traversal* between them.
+**Espen Aarseth** (*Cybertext*, 1997) — coined "ergodic literature" for texts that require "nontrivial effort to traverse." Not passive reading but active navigation: choosing paths, solving puzzles, assembling fragments. The platform is ergodic in Aarseth's precise sense — users must navigate between simulations, choose which lore to read, decide which Shard to enter, assemble the meta-narrative from fragments distributed across multiple worlds. The meaning is not in any single simulation but in the *act of traversal* between them.
 
 ### Philip K. Dick and Mutable Reality
 

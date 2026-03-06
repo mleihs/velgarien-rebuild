@@ -63,8 +63,8 @@ class BotService:
                 results.append(result)
             except Exception:
                 logger.exception(
-                    "Bot execution failed for participant %s in epoch %s",
-                    bot_p["id"], epoch_id,
+                    "Bot execution failed",
+                    extra={"participant_id": bot_p["id"], "epoch_id": epoch_id},
                 )
                 results.append({
                     "participant_id": bot_p["id"],
@@ -137,8 +137,8 @@ class BotService:
                 fortified.append(result)
             except Exception:
                 logger.warning(
-                    "Bot fortification failed: zone %s",
-                    fort_plan.zone_id,
+                    "Bot fortification failed",
+                    extra={"zone_id": fort_plan.zone_id},
                     exc_info=True,
                 )
 
@@ -161,8 +161,12 @@ class BotService:
                 deployed.append(mission)
             except Exception:
                 logger.warning(
-                    "Bot deployment failed: %s %s → %s",
-                    plan.operative_type, plan.agent_id, plan.target_simulation_id,
+                    "Bot deployment failed",
+                    extra={
+                        "operative_type": plan.operative_type,
+                        "agent_id": plan.agent_id,
+                        "target_simulation_id": plan.target_simulation_id,
+                    },
                     exc_info=True,
                 )
 

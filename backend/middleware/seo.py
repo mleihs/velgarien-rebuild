@@ -82,7 +82,11 @@ def get_crawler_redirect(url_path: str) -> str | None:
             slug = response.data[0]["slug"]
             return f"/simulations/{slug}/{view}"
     except Exception:
-        logger.warning("Failed to resolve slug for crawler redirect: %s", simulation_id)
+        logger.warning(
+            "Failed to resolve slug for crawler redirect",
+            extra={"simulation_id": simulation_id},
+            exc_info=True,
+        )
 
     return None
 
@@ -160,7 +164,11 @@ async def enrich_html_for_crawler(index_path: Path, url_path: str) -> str | None
             sim = response.data[0]
             _sim_meta_cache[cache_key] = sim
         except Exception:
-            logger.warning("Failed to fetch simulation %s for crawler enrichment", id_or_slug)
+            logger.warning(
+                "Failed to fetch simulation for crawler enrichment",
+                extra={"simulation_id": id_or_slug},
+                exc_info=True,
+            )
             return None
 
     slug = sim.get("slug", id_or_slug)

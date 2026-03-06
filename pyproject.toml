@@ -19,12 +19,14 @@ dependencies = [
     "replicate>=1.0.7",
     "cachetools>=7.0.0",
     "tavily-python>=0.5.0",
+    "structlog>=25.1.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
     "pytest-asyncio>=0.23",
+    "pytest-cov>=6.0",
     "ruff>=0.15.0",
 ]
 
@@ -45,6 +47,7 @@ select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "DTZ", "T20", "ICN
 [tool.ruff.lint.per-file-ignores]
 "backend/tests/**/*.py" = ["S101", "S105", "S106", "E501"]
 "backend/models/common.py" = ["UP046"]
+"backend/app.py" = ["E402"]  # setup_logging() must run before other imports
 "backend/routers/**/*.py" = ["B008"]
 "backend/dependencies.py" = ["B008"]
 "backend/services/**/*.py" = ["A003"]

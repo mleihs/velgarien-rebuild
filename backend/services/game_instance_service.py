@@ -64,10 +64,8 @@ class GameInstanceService:
             )
 
         logger.info(
-            "Cloned %d simulations for epoch %s: %s",
-            len(mapping),
-            epoch_id,
-            [m["slug"] for m in mapping],
+            "Cloned simulations for epoch",
+            extra={"instance_count": len(mapping), "epoch_id": str(epoch_id)},
         )
 
         # Refresh materialized views so scoring picks up new instances
@@ -87,7 +85,7 @@ class GameInstanceService:
             {"p_epoch_id": str(epoch_id)},
         ).execute()
 
-        logger.info("Archived instances for epoch %s", epoch_id)
+        logger.info("Archived instances for epoch", extra={"epoch_id": str(epoch_id)})
 
     @classmethod
     async def delete_instances(
@@ -101,7 +99,7 @@ class GameInstanceService:
             {"p_epoch_id": str(epoch_id)},
         ).execute()
 
-        logger.info("Deleted instances for epoch %s", epoch_id)
+        logger.info("Deleted instances for epoch", extra={"epoch_id": str(epoch_id)})
 
     @classmethod
     async def list_instances(
@@ -143,7 +141,7 @@ class GameInstanceService:
     async def _refresh_game_metrics(cls, admin_supabase: Client) -> None:
         """Refresh all game materialized views after cloning."""
         admin_supabase.rpc("refresh_all_game_metrics", {}).execute()
-        logger.info("Refreshed game materialized views")
+        logger.debug("Refreshed game materialized views")
 
     @classmethod
     async def get_epoch_number(cls, supabase: Client) -> int:

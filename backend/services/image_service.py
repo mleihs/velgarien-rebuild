@@ -50,10 +50,9 @@ class ImageService:
 
         if description_override:
             description = description_override
-            logger.info(
-                "Using description override for '%s': %s",
-                agent_name,
-                description[:100],
+            logger.debug(
+                "Using description override for agent",
+                extra={"entity_type": "agent", "entity_id": str(agent_id)},
             )
         elif data.get("is_ambassador"):
             description = await self._generate_ambassador_description(
@@ -66,11 +65,7 @@ class ImageService:
                 locale="en",
             )
 
-        logger.info(
-            "Portrait description for '%s': %s",
-            agent_name,
-            description[:100],
-        )
+        logger.debug("Portrait description generated", extra={"entity_type": "agent", "entity_id": str(agent_id)})
 
         # 2. Append style prompt from settings
         style_prompt = await self._model_resolver.resolve_style_prompt("portrait")
@@ -100,7 +95,7 @@ class ImageService:
             {"portrait_image_url": url},
         ).eq("id", str(agent_id)).execute()
 
-        logger.info("Portrait uploaded for agent %s: %s", agent_id, url)
+        logger.info("Portrait uploaded", extra={"entity_type": "agent", "entity_id": str(agent_id), "path": url})
         return url
 
     async def generate_building_image(
@@ -118,10 +113,9 @@ class ImageService:
 
         if description_override:
             description = description_override
-            logger.info(
-                "Using description override for '%s': %s",
-                building_name,
-                description[:100],
+            logger.debug(
+                "Using description override for building",
+                extra={"entity_type": "building", "entity_id": str(building_id)},
             )
         elif data.get("special_type") == "embassy":
             description = await self._generate_embassy_description(
@@ -134,10 +128,9 @@ class ImageService:
                 building_data=building_data,
             )
 
-        logger.info(
-            "Building image description for '%s': %s",
-            building_name,
-            description[:100],
+        logger.debug(
+            "Building image description generated",
+            extra={"entity_type": "building", "entity_id": str(building_id)},
         )
 
         # 2. Append style prompt from settings
@@ -168,7 +161,7 @@ class ImageService:
             {"image_url": url},
         ).eq("id", str(building_id)).execute()
 
-        logger.info("Image uploaded for building %s: %s", building_id, url)
+        logger.info("Image uploaded", extra={"entity_type": "building", "entity_id": str(building_id), "path": url})
         return url
 
     async def generate_banner_image(
@@ -212,7 +205,10 @@ class ImageService:
             {"banner_url": url},
         ).eq("id", str(self._simulation_id)).execute()
 
-        logger.info("Banner uploaded for simulation %s: %s", self._simulation_id, url)
+        logger.info(
+            "Banner uploaded",
+            extra={"entity_type": "banner", "simulation_id": str(self._simulation_id), "path": url},
+        )
         return url
 
     async def generate_lore_image(
@@ -257,7 +253,7 @@ class ImageService:
         await self._upload_to_storage("simulation.assets", full_path, full_avif)
         url = await self._upload_to_storage("simulation.assets", path, thumb_avif)
 
-        logger.info("Lore image uploaded for %s/%s: %s", sim_slug, image_slug, url)
+        logger.info("Lore image uploaded", extra={"entity_type": "lore", "path": url})
         return url
 
     async def _generate_embassy_description(
@@ -472,9 +468,9 @@ class ImageService:
         await self._upload_to_storage(bucket, full_path, full_avif)
         thumb_url = await self._upload_to_storage(bucket, base_path, thumb_avif)
 
-        logger.info(
-            "Dual upload: thumb=%s (%d bytes), full=%s (%d bytes)",
-            base_path, len(thumb_avif), full_path, len(full_avif),
+        logger.debug(
+            "Dual upload complete",
+            extra={"path": base_path, "thumb_bytes": len(thumb_avif), "full_bytes": len(full_avif)},
         )
         return thumb_url
 

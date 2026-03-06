@@ -272,7 +272,7 @@ async def purge_stale_drafts(
     """Purge stale drafts older than N days (admin only)."""
     cutoff = (datetime.now(tz=UTC) - timedelta(days=days)).isoformat()
     deleted_count = await _draft_service.purge_stale_drafts(admin_supabase, cutoff)
-    logger.info("Purged %d stale forge drafts older than %d days", deleted_count, days)
+    logger.info("Purged stale forge drafts", extra={"deleted_count": deleted_count, "min_age_days": days})
     await AuditService.safe_log(
         admin_supabase, None, _admin.id, "forge_draft", None, "purge",
         {"days": days, "deleted_count": deleted_count},

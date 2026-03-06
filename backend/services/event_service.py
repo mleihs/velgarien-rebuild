@@ -245,7 +245,7 @@ class EventService(BaseService):
                         },
                     )
                 reactions.append(reaction)
-            except Exception as e:
-                logger.warning("Failed to generate reaction for agent %s: %s", agent["name"], e)
+            except Exception:
+                logger.warning("Agent reaction generation failed", extra={"agent_id": agent["id"]}, exc_info=True)
 
         return reactions

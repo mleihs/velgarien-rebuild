@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     platform_admin_emails: str = Field(default="admin@velgarien.dev", alias="PLATFORM_ADMIN_EMAILS")
     indexnow_key: str = ""
 
+    # Logging
+    log_level: str = "INFO"
+    log_format: str = "auto"  # "auto" | "json" | "console"
+
     # App
     app_title: str = "Velgarien Platform"
     debug: bool = False

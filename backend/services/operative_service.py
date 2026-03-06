@@ -595,9 +595,11 @@ class OperativeService:
             ).execute()
 
             logger.info(
-                "Betrayal detected: sim %s attacked ally %s — alliance dissolved, penalty applied",
-                mission["source_simulation_id"],
-                mission["target_simulation_id"],
+                "Betrayal detected — alliance dissolved, penalty applied",
+                extra={
+                    "source_simulation_id": mission["source_simulation_id"],
+                    "target_simulation_id": mission["target_simulation_id"],
+                },
             )
 
     # ── Per-type success effect handlers ─────────────────

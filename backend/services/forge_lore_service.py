@@ -68,7 +68,7 @@ class ForgeLoreService:
 
         Returns a list of section dicts matching ForgeLoreSection fields.
         """
-        logger.info("Generating lore for seed: %s", seed[:60])
+        logger.debug("Generating lore", extra={"seed_preview": seed[:60]})
 
         agent_names = ", ".join(a.get("name", "?") for a in agents[:12])
         building_names = ", ".join(b.get("name", "?") for b in buildings[:12])
@@ -99,7 +99,7 @@ class ForgeLoreService:
         result = await agent.run(prompt, output_type=ForgeLoreOutput)
         sections = [s.model_dump() for s in result.output.sections]
 
-        logger.info("Generated %d lore sections across chapters", len(sections))
+        logger.debug("Lore sections generated", extra={"section_count": len(sections)})
         return sections
 
     @staticmethod
@@ -111,7 +111,7 @@ class ForgeLoreService:
 
         Returns a list of dicts with title_de, epigraph_de, body_de, image_caption_de.
         """
-        logger.info("Translating %d lore sections to German", len(sections))
+        logger.debug("Translating lore sections", extra={"section_count": len(sections)})
 
         # Build translation prompt with all sections
         section_texts = []
@@ -139,7 +139,7 @@ class ForgeLoreService:
         result = await agent.run(prompt, output_type=ForgeLoreTranslatedOutput)
         translations = [t.model_dump() for t in result.output.sections]
 
-        logger.info("Translated %d sections to German", len(translations))
+        logger.debug("Lore sections translated", extra={"section_count": len(translations)})
         return translations
 
     @staticmethod
@@ -176,6 +176,9 @@ class ForgeLoreService:
                 row["image_caption_de"] = tr.get("image_caption")
             rows.append(row)
 
-        logger.info("Persisting %d lore sections for simulation %s", len(rows), simulation_id)
+        logger.debug(
+            "Persisting lore sections",
+            extra={"section_count": len(rows), "simulation_id": str(simulation_id)},
+        )
         supabase.table("simulation_lore").insert(rows).execute()
-        logger.info("Lore persisted for simulation %s", simulation_id)
+        logger.debug("Lore persisted", extra={"simulation_id": str(simulation_id)})

@@ -113,7 +113,7 @@ async def fetch_trends(
     except HTTPException:
         raise
     except Exception as exc:
-        logger.exception("External news API error for source=%s", body.source)
+        logger.exception("External news API error", extra={"source": body.source})
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="External API error. Please try again.",
@@ -162,7 +162,7 @@ async def transform_trend(
             news_content="\n".join(news_content_parts),
         )
     except Exception as exc:
-        logger.exception("AI transformation failed for trend=%s", body.trend_id)
+        logger.exception("AI transformation failed", extra={"trend_id": body.trend_id})
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="AI transformation failed. Please try again.",
@@ -207,7 +207,7 @@ async def integrate_trend(
     except HTTPException:
         raise
     except Exception as exc:
-        logger.exception("Failed to create event from trend %s", body.trend_id)
+        logger.exception("Failed to create event from trend", extra={"trend_id": body.trend_id})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to create event. Please try again.",
@@ -218,7 +218,7 @@ async def integrate_trend(
             supabase, simulation_id, UUID(body.trend_id)
         )
     except Exception:
-        logger.warning("Failed to mark trend %s as processed", body.trend_id)
+        logger.warning("Failed to mark trend as processed", extra={"trend_id": body.trend_id}, exc_info=True)
 
     try:
         await AuditService.log_action(
@@ -231,7 +231,7 @@ async def integrate_trend(
             changes={"source": "social_trend", "trend_id": body.trend_id},
         )
     except Exception:
-        logger.warning("Failed to log audit for trend integration %s", body.trend_id)
+        logger.warning("Audit log failed for trend integration", extra={"trend_id": body.trend_id}, exc_info=True)
 
     return {"success": True, "data": event}
 
@@ -255,7 +255,7 @@ async def workflow(
     except HTTPException:
         raise
     except Exception as exc:
-        logger.exception("External news API error for source=%s", body.source)
+        logger.exception("External news API error", extra={"source": body.source})
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="External API error. Please try again.",
@@ -308,7 +308,7 @@ async def browse_articles(
     except HTTPException:
         raise
     except Exception as exc:
-        logger.exception("External news API error for source=%s", body.source)
+        logger.exception("External news API error", extra={"source": body.source})
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="External API error. Please try again.",
@@ -349,7 +349,7 @@ async def transform_article(
             news_content="\n".join(news_content_parts),
         )
     except Exception as exc:
-        logger.exception("AI transformation failed for article=%s", body.article_name)
+        logger.exception("AI transformation failed", extra={"article_name": body.article_name})
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="AI transformation failed. Please try again.",
@@ -391,7 +391,7 @@ async def integrate_article(
     except HTTPException:
         raise
     except Exception as exc:
-        logger.exception("Failed to create event from article")
+        logger.exception("Failed to create event from article", extra={"simulation_id": str(simulation_id)})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to create event. Please try again.",
@@ -408,7 +408,7 @@ async def integrate_article(
             changes={"source": "article_browse"},
         )
     except Exception:
-        logger.warning("Failed to log audit for article integration")
+        logger.warning("Audit log failed for article integration", exc_info=True)
 
     reactions: list[dict] = []
     if body.generate_reactions:
@@ -422,7 +422,11 @@ async def integrate_article(
                 max_agents=body.max_reaction_agents,
             )
         except Exception:
-            logger.warning("Reaction generation failed for event %s", event["id"])
+            logger.warning(
+                "Reaction generation failed for integrated article",
+                extra={"event_id": event["id"]},
+                exc_info=True,
+            )
 
     return {
         "success": True,

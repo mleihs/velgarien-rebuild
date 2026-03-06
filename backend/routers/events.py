@@ -248,8 +248,8 @@ async def generate_reactions(
                         },
                     )
                 reactions.append(reaction)
-            except Exception as e:
-                logger.warning("Failed to generate reaction for agent %s: %s", agent["name"], e)
+            except Exception:
+                logger.warning("Agent reaction generation failed", extra={"agent_id": agent["id"]}, exc_info=True)
     else:
         # General reaction generation via EventService
         reactions = await EventService.generate_reactions(

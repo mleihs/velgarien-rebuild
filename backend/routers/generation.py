@@ -137,7 +137,8 @@ async def generate_agent(
             locale=body.locale,
         )
         return {"success": True, "data": result}
-    except OpenRouterError:
+    except OpenRouterError as e:
+        logger.warning("AI service unavailable", extra={"endpoint": "generate_agent", "error": str(e)})
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="AI service temporarily unavailable.",
         ) from None
@@ -169,7 +170,8 @@ async def generate_building(
             locale=body.locale,
         )
         return {"success": True, "data": result}
-    except OpenRouterError:
+    except OpenRouterError as e:
+        logger.warning("AI service unavailable", extra={"endpoint": "generate_building", "error": str(e)})
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="AI service temporarily unavailable.",
         ) from None
@@ -198,7 +200,8 @@ async def generate_portrait_description(
             agent_data=body.agent_data,
         )
         return {"success": True, "data": {"description": description}}
-    except OpenRouterError:
+    except OpenRouterError as e:
+        logger.warning("AI service unavailable", extra={"endpoint": "generate_portrait_description", "error": str(e)})
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="AI service temporarily unavailable.",
         ) from None
@@ -232,7 +235,8 @@ async def generate_event(
             game_context=game_context,
         )
         return {"success": True, "data": result}
-    except OpenRouterError:
+    except OpenRouterError as e:
+        logger.warning("AI service unavailable", extra={"endpoint": "generate_event", "error": str(e)})
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="AI service temporarily unavailable.",
         ) from None
@@ -290,7 +294,8 @@ async def generate_relationships(
         return {"success": True, "data": result}
     except HTTPException:
         raise
-    except OpenRouterError:
+    except OpenRouterError as e:
+        logger.warning("AI service unavailable", extra={"endpoint": "generate_relationships", "error": str(e)})
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="AI service temporarily unavailable.",
@@ -350,7 +355,8 @@ async def generate_image(
             )
 
         return {"success": True, "data": {"image_url": url}}
-    except OpenRouterError:
+    except OpenRouterError as e:
+        logger.warning("AI service unavailable", extra={"endpoint": "generate_image", "error": str(e)})
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="AI service temporarily unavailable.",
         ) from None

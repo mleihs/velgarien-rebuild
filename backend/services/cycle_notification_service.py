@@ -601,14 +601,17 @@ class CycleNotificationService:
 
             except Exception:
                 logger.warning(
-                    "Failed to send cycle notification to %s",
-                    recipient["email"],
+                    "Failed to send cycle notification",
+                    extra={"recipient": recipient["email"]},
                     exc_info=True,
                 )
 
         logger.info(
-            "Sent %d/%d cycle %d notifications for epoch %s",
-            sent_count, len(recipients), cycle_number, epoch_id,
+            "Cycle notifications sent",
+            extra={
+                "sent_count": sent_count, "total_recipients": len(recipients),
+                "cycle_number": cycle_number, "epoch_id": epoch_id,
+            },
         )
         return sent_count
 
@@ -676,14 +679,17 @@ class CycleNotificationService:
                 await asyncio.sleep(_SEND_DELAY_MS / 1000)
             except Exception:
                 logger.warning(
-                    "Failed to send phase change notification to %s",
-                    recipient["email"],
+                    "Failed to send phase change notification",
+                    extra={"recipient": recipient["email"]},
                     exc_info=True,
                 )
 
         logger.info(
-            "Sent %d/%d phase change notifications (%s→%s) for epoch %s",
-            sent_count, len(recipients), old_phase, new_phase, epoch_id,
+            "Phase change notifications sent",
+            extra={
+                "sent_count": sent_count, "total_recipients": len(recipients),
+                "old_status": old_phase, "new_status": new_phase, "epoch_id": epoch_id,
+            },
         )
         return sent_count
 
@@ -747,13 +753,13 @@ class CycleNotificationService:
                 await asyncio.sleep(_SEND_DELAY_MS / 1000)
             except Exception:
                 logger.warning(
-                    "Failed to send epoch completed notification to %s",
-                    recipient["email"],
+                    "Failed to send epoch completed notification",
+                    extra={"recipient": recipient["email"]},
                     exc_info=True,
                 )
 
         logger.info(
-            "Sent %d/%d epoch completed notifications for epoch %s",
-            sent_count, len(recipients), epoch_id,
+            "Epoch completed notifications sent",
+            extra={"sent_count": sent_count, "total_recipients": len(recipients), "epoch_id": epoch_id},
         )
         return sent_count

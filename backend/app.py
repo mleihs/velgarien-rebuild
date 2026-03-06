@@ -1,3 +1,7 @@
+from backend.logging_config import setup_logging
+
+setup_logging()
+
 import logging
 from pathlib import Path
 
@@ -9,6 +13,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from backend.config import settings as app_settings
+from backend.middleware.logging_context import LoggingContextMiddleware
 from backend.middleware.rate_limit import limiter
 from backend.middleware.security import SecurityHeadersMiddleware
 from backend.middleware.seo import enrich_html_for_crawler, get_crawler_redirect, get_prerendered_html, is_crawler
@@ -58,7 +63,10 @@ app = FastAPI(
     redoc_url="/api/redoc",
 )
 
-# --- Middleware (applied in reverse order) ---
+# --- Middleware (applied in reverse order — last registered = outermost) ---
+
+# Logging context (outermost — wraps everything)
+app.add_middleware(LoggingContextMiddleware)
 
 # Security headers
 app.add_middleware(SecurityHeadersMiddleware)
@@ -78,12 +86,12 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # --- Global Exception Handler ---
-_logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    _logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
+    logger.exception("Unhandled exception")
     return JSONResponse(
         status_code=500,
         content={

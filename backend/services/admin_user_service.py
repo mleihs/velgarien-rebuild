@@ -120,7 +120,7 @@ class AdminUserService:
                 {"p_user_id": str(user_id)},
             ).execute()
         except Exception as e:
-            logger.warning("Failed to delete user %s: %s", user_id, e)
+            logger.warning("User deletion failed", extra={"user_id": str(user_id)}, exc_info=True)
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"User '{user_id}' not found or could not be deleted.",

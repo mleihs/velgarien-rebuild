@@ -1,5 +1,6 @@
 """Service layer for invitation operations."""
 
+import logging
 import secrets
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
@@ -7,6 +8,8 @@ from uuid import UUID
 from fastapi import HTTPException, status
 
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 
 class InvitationService:
@@ -44,6 +47,7 @@ class InvitationService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to create invitation.",
             )
+        logger.info("Invitation created", extra={"simulation_id": str(simulation_id), "invited_role": invited_role})
         return response.data[0]
 
     @staticmethod
@@ -92,6 +96,7 @@ class InvitationService:
         # Check expiry
         expires_at = datetime.fromisoformat(invitation["expires_at"].replace("Z", "+00:00"))
         if expires_at < datetime.now(UTC):
+            logger.info("Expired invitation rejected", extra={"simulation_id": invitation["simulation_id"]})
             raise HTTPException(
                 status_code=status.HTTP_410_GONE,
                 detail="This invitation has expired.",
@@ -120,6 +125,10 @@ class InvitationService:
             "accepted_at": datetime.now(UTC).isoformat(),
         }).eq("id", invitation["id"]).execute()
 
+        logger.info(
+            "Invitation accepted",
+            extra={"simulation_id": invitation["simulation_id"], "user_id": str(user_id)},
+        )
         return member_response.data[0]
 
     @staticmethod

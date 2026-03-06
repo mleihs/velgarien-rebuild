@@ -237,8 +237,8 @@ class CleanupService:
         admin_supabase.table("game_epochs").delete().in_("id", epoch_ids).execute()
 
         logger.info(
-            "Cleanup %s: deleted %d epochs + cascade %s",
-            cleanup_type, len(epoch_ids), cascade_counts,
+            "Cleanup completed",
+            extra={"cleanup_type": cleanup_type, "deleted_count": len(epoch_ids)},
         )
 
         return CleanupExecuteResult(

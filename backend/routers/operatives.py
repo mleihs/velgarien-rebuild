@@ -111,7 +111,7 @@ async def resolve_missions(
                 details={"action": "resolve", "outcome": mission.get("mission_result", {}).get("outcome")},
             )
         except Exception:
-            logger.debug("Audit log skipped for mission resolve (RLS)")
+            logger.warning("Audit log failed for mission resolve", exc_info=True)
 
     return {"success": True, "data": results}
 

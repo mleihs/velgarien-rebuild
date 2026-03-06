@@ -6,10 +6,12 @@ Covers:
 3. Empty agents returns empty list
 4. Partial failure — some agents fail, others succeed
 5. max_agents passed through to AgentService
+6. Logging verification for partial failures
 """
 
 from __future__ import annotations
 
+import logging
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import UUID, uuid4
 
@@ -215,3 +217,42 @@ class TestGenerateReactionsMaxAgents:
 
         mock_list.assert_called_once()
         assert mock_list.call_args.kwargs["limit"] == 7
+
+
+class TestGenerateReactionsLogging:
+    """Verify logging on partial agent reaction failures."""
+
+    async def test_partial_failure_logs_warning_with_agent_id(self, caplog):
+        from backend.services.event_service import EventService
+
+        event_id = str(uuid4())
+        failing_agent_id = str(uuid4())
+        agents = [
+            {"id": failing_agent_id, "name": "Failing", "character": "", "system": ""},
+        ]
+
+        mock_gen = AsyncMock()
+        mock_gen.generate_agent_reaction = AsyncMock(side_effect=RuntimeError("AI timeout"))
+
+        with (
+            patch.object(
+                EventService, "get_reactions", new_callable=AsyncMock, return_value=[],
+            ),
+            patch(
+                "backend.services.event_service.AgentService.list_for_reaction",
+                new_callable=AsyncMock, return_value=agents,
+            ),
+            patch(
+                "backend.services.event_service.GameMechanicsService.build_generation_context",
+                new_callable=AsyncMock, return_value={"simulation_health": 0.5},
+            ),
+            caplog.at_level(logging.WARNING, logger="backend.services.event_service"),
+        ):
+            event = {"id": event_id, "title": "Test", "description": ""}
+            await EventService.generate_reactions(
+                MagicMock(), MOCK_SIM_ID, event, mock_gen,
+            )
+
+        warning_records = [r for r in caplog.records if r.levelno == logging.WARNING]
+        assert len(warning_records) >= 1
+        assert warning_records[0].agent_id == failing_agent_id

@@ -598,7 +598,7 @@ A single shared component used everywhere:
 
 In every major TCG, factions share the same card **anatomy** (dimensions, stat positions, layout) but differentiate through **frame treatment** — the border, textures, name plate, decorative motifs, and idle effects. This is exactly how MTG's 5 colors work (same card layout, but White cards have sunlit stone borders while Black cards have skull-etched obsidian), or how Gwent's 6 factions use the same card size but with completely different border art (Nilfgaard = gold imperial filigree, Skellige = weathered wood and iron).
 
-**What stays the SAME across all 5 simulations:**
+**What stays the SAME across all simulations:**
 - Card dimensions (5:7 aspect ratio)
 - Art frame position and size (60% of card)
 - Stat gem positions (top-left, top-right)

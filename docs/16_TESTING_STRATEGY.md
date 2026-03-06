@@ -1,7 +1,8 @@
 # 16 - Testing Strategy
 
-**Version:** 2.0
-**Datum:** 2026-03-03
+**Version:** 2.1
+**Datum:** 2026-03-06
+**Aenderung v2.1:** Aktualisierte Test-Zahlen (866 Backend, 453 Frontend, 81 E2E). pytest-cov hinzugefuegt. Shared `make_chain_mock` Fixture in conftest.py. Neue Test-Dateien: test_logging_config.py, test_logging_context_middleware.py, test_simulation_service.py, test_member_service.py, test_invitation_service.py, test_epoch_invitation_service.py. Logging-Assertions in 6 bestehende Test-Dateien hinzugefuegt (caplog-basiert). structlog-Integration getestet.
 **Aenderung v2.0:** Aktualisierte Test-Zahlen (788 Backend, 442 Frontend, 81 E2E), PyJWT statt jose, happy-dom statt jsdom, @open-wc/testing entfernt, neue Test-Suites (Operative, Scoring, Epoch, Bot, Cleanup, Email, Notifications, Aptitudes), E2E-Dateien aktualisiert (13 Specs)
 **Aenderung v1.2:** Aktualisierte Test-Zahlen (275 Backend, 197 Frontend, 56 E2E), 88 WCAG-Kontrast-Tests, 36 Anonymous-View-Integrationstests
 
@@ -17,14 +18,14 @@
          │ Integration │  ~250 Tests (pytest + vitest)
          │  API + DB   │  Router ↔ Service ↔ DB
         ┌┴────────────┴┐
-        │     Unit      │  ~980 Tests (pytest + vitest)
+        │     Unit      │  ~1069 Tests (pytest + vitest)
         │ Services, Utils│  Isolierte Logik
         └───────────────┘
 ```
 
 | Ebene | Backend (pytest) | Frontend (vitest) | Ziel |
 |-------|-----------------|-------------------|------|
-| **Unit** | Services (Operative, Scoring, Epoch, Bot, Cleanup, Email, Notification, ...), Utils, Models, Encryption | Validation, Formatters, WCAG-Kontrast (88 Tests), SEO/Analytics, Settings, Theme, Map, Realtime, Aptitudes | ~980 Tests, < 30s |
+| **Unit** | Services (Operative, Scoring, Epoch, Bot, Cleanup, Email, Notification, Simulation, Member, Invitation, Logging, ...), Utils, Models, Encryption | Validation, Formatters, WCAG-Kontrast (88 Tests), SEO/Analytics, Settings, Theme, Map, Realtime, Aptitudes | ~1069 Tests, < 30s |
 | **Integration** | Router → Service → Supabase (TestClient), 36 Anonymous-View-Tests, Admin-Cleanup, SEO, Epoch-Chat | API-Services → Mock-Server, Component Interaction | ~250 Tests, < 2min |
 | **E2E** | — | Playwright: Login → CRUD → Chat → Settings → Public Access → Embassies → Relationships → Echoes → Multiverse Map → Social → Multi-User (13 Specs) | 81 Specs, < 5min |
 
@@ -49,21 +50,15 @@
 ```toml
 # pyproject.toml
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["backend/tests"]
 asyncio_mode = "auto"
 markers = [
-    "unit: Unit tests (no external dependencies)",
-    "integration: Integration tests (requires Supabase)",
-    "slow: Tests that take >5s",
+    "integration: Integration tests requiring app instantiation but not external services",
+    "slow: Performance tests that may take several seconds",
 ]
 
-[tool.coverage.run]
-source = ["backend"]
-omit = ["tests/*", "*/migrations/*"]
-
-[tool.coverage.report]
-fail_under = 80
-show_missing = true
+# Coverage via pytest-cov (dev dependency)
+# Run: python -m pytest backend/tests/ --cov=backend --cov-report=term-missing
 ```
 
 ### Verzeichnisstruktur
@@ -100,7 +95,13 @@ backend/tests/
 │   ├── test_news_transform_flow.py # News-Transformation
 │   ├── test_social_browse.py      # Social-Browse-Logik
 │   ├── test_seo.py                # SEO-Middleware + Sitemap
-│   └── test_service_layer.py      # Service-Layer Patterns
+│   ├── test_service_layer.py      # Service-Layer Patterns
+│   ├── test_logging_config.py     # structlog Setup + Renderer-Auswahl
+│   ├── test_logging_context_middleware.py  # JWT-Extraktion, Request-IDs, Log-Output
+│   ├── test_simulation_service.py # Simulation CRUD + Logging
+│   ├── test_member_service.py     # Member CRUD + LastOwner-Schutz + Logging
+│   ├── test_invitation_service.py # Einladungs-Lifecycle + Logging
+│   └── test_epoch_invitation_service.py   # Epoch-Einladungen + Logging
 ├── integration/
 │   ├── conftest.py                # Supabase Test-Client, Fixtures
 │   ├── test_routes.py             # Router-Integrationstests
@@ -969,7 +970,22 @@ jobs:
 | `test_cleanup_service.py` | Stats-Abfrage (6 Daten-Kategorien), Preview-vor-Delete (Cascade-Baum), Execute mit FK-Reihenfolge, Epoch-Loeschung (game_instances zuerst, dann 8 Child-Tabellen) | Admin-Datenbereinigung |
 | `test_email_templates.py` | Zweisprachige Email-Rendering (EN/DE), Per-Simulation-Akzentfarben, WCAG-AA-Kontrast, 4 Template-Typen (Invitation, Cycle-Resolved, Phase-Changed, Epoch-Completed), 85+ lokalisierte Strings | Email-Templates |
 | `test_cycle_notification_service.py` | 6-Schritt-Empfaenger-Auflosung (Participants → Templates → Members → Emails → Preferences → Slug), Per-Player-Briefing-Daten (Rank-Gap, Missions, Spy-Intel, Threats, Alliances), Fog-of-War-Compliance | Cycle-Benachrichtigungen |
-| `test_email_service.py` | SMTP-SSL-Verbindung (Port 465), asyncio.to_thread-Integration, Fehlerbehandlung | Email-Versand |
+| `test_email_service.py` | SMTP-SSL-Verbindung (Port 465), asyncio.to_thread-Integration, Fehlerbehandlung, Logging-Verifikation (PII-Check) | Email-Versand |
+
+### Backend: Logging + Observability (seit v2.1)
+
+| Datei | Tests | Beschreibung |
+|-------|-------|-------------|
+| `test_logging_config.py` | structlog.configure()-Verifikation, JSON/Console-Renderer-Auswahl, Noisy-Logger-Unterdrueckung (httpx, supabase), Log-Level aus Settings, ExtraAdder in foreign_pre_chain | structlog-Infrastruktur (6 Tests) |
+| `test_logging_context_middleware.py` | JWT-Extraktion (5 Edge-Cases: valid, no-auth, malformed, missing-sub, non-bearer), Request-ID Generierung/Echo, "Request completed" Log mit status_code + duration_ms | Logging-Middleware (8 Tests) |
+| `test_simulation_service.py` | create_simulation INFO-Log (simulation_id, slug, user_id), hard_delete WARNING (simulation_name, slug), soft_delete INFO, restore INFO | Simulation CRUD + Logging (4 Tests) |
+| `test_member_service.py` | add_member INFO-Log (user_id, simulation_id, role), change_role INFO (member_id, new_role), LastOwner-Schutz WARNING bei Role-Change + Removal | Member CRUD + LastOwner (5 Tests) |
+| `test_invitation_service.py` | create INFO (simulation_id, invited_role), accept INFO (user_id), expired INFO (simulation_id) | Einladungs-Lifecycle (3 Tests) |
+| `test_epoch_invitation_service.py` | mark_accepted INFO (epoch_id, user_id), revoke INFO (invitation_id), expired 410-Exception | Epoch-Einladungen (3 Tests) |
+
+**Logging-Assertions in bestehenden Tests:** `test_email_service.py` (+4 Tests), `test_base_service.py` (+3 Tests), `test_event_service.py` (+1 Test), `test_scoring_service.py` (+2 Tests), `test_epoch_chat_service.py` (+2 Tests), `test_cleanup_service.py` (+2 Tests). Alle verwenden pytest `caplog` Fixture mit `extra={}`-Feld-Verifikation.
+
+**Shared Fixture:** `make_chain_mock()` in `conftest.py` — wiederverwendbarer Supabase-Query-Chain-Mock. Unterstuetzt `.select()`, `.eq()`, `.in_()`, `.insert()`, `.update()`, `.delete()`, `.maybe_single()`, etc. Eliminiert ~40 Zeilen Copy-Paste pro Test-Datei.
 
 ### Frontend: Spezialisierte Test-Suites
 

@@ -34,7 +34,7 @@ async def load_ttls_from_db() -> None:
         from backend.services.platform_settings_service import PlatformSettingsService
 
         _cache_ttls = await PlatformSettingsService.get_cache_ttls(admin_client)
-        logger.info("Loaded cache TTLs from platform_settings: %s", _cache_ttls)
+        logger.debug("Loaded cache TTLs from platform_settings")
     except Exception:
         logger.warning("Failed to load cache TTLs from DB, using defaults")
         _cache_ttls = dict(DEFAULT_SETTINGS)

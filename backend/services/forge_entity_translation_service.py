@@ -47,7 +47,7 @@ class ForgeEntityTranslationService:
         Returns a ForgeEntityTranslationOutput with _de fields for each entity.
         """
         entity_count = len(agents) + len(buildings) + len(zones) + len(streets) + 1
-        logger.info("Translating %d entities to German", entity_count)
+        logger.debug("Translating entities", extra={"entity_count": entity_count})
 
         # Build translation prompt
         sections: list[str] = []
@@ -108,12 +108,11 @@ class ForgeEntityTranslationService:
         result = await agent.run(prompt, output_type=ForgeEntityTranslationOutput)
         output = result.output
 
-        logger.info(
-            "Translated %d agents, %d buildings, %d zones, %d streets",
-            len(output.agents),
-            len(output.buildings),
-            len(output.zones),
-            len(output.streets),
+        logger.debug(
+            "Entities translated",
+            extra={
+                "entity_count": len(output.agents) + len(output.buildings) + len(output.zones) + len(output.streets),
+            },
         )
         return output
 
@@ -131,7 +130,7 @@ class ForgeEntityTranslationService:
             supabase.table("simulations").update(
                 {"description_de": translations.simulation.description_de}
             ).eq("id", sim_id).execute()
-            logger.info("Updated simulation description_de for %s", sim_id)
+            logger.debug("Updated simulation description_de", extra={"simulation_id": sim_id})
 
         # Update agents by name match
         for at in translations.agents:
@@ -147,7 +146,10 @@ class ForgeEntityTranslationService:
                     "simulation_id", sim_id
                 ).eq("name", at.name).execute()
 
-        logger.info("Updated %d agent translations for %s", len(translations.agents), sim_id)
+        logger.debug(
+            "Updated agent translations",
+            extra={"entity_count": len(translations.agents), "simulation_id": sim_id},
+        )
 
         # Update buildings by name match
         for bt in translations.buildings:
@@ -163,7 +165,10 @@ class ForgeEntityTranslationService:
                     "simulation_id", sim_id
                 ).eq("name", bt.name).execute()
 
-        logger.info("Updated %d building translations for %s", len(translations.buildings), sim_id)
+        logger.debug(
+            "Updated building translations",
+            extra={"entity_count": len(translations.buildings), "simulation_id": sim_id},
+        )
 
         # Update zones by name match
         for zt in translations.zones:
@@ -177,7 +182,10 @@ class ForgeEntityTranslationService:
                     "simulation_id", sim_id
                 ).eq("name", zt.name).execute()
 
-        logger.info("Updated %d zone translations for %s", len(translations.zones), sim_id)
+        logger.debug(
+            "Updated zone translations",
+            extra={"entity_count": len(translations.zones), "simulation_id": sim_id},
+        )
 
         # Update streets by name match
         for st in translations.streets:
@@ -189,4 +197,7 @@ class ForgeEntityTranslationService:
                     "simulation_id", sim_id
                 ).eq("name", st.name).execute()
 
-        logger.info("Updated %d street translations for %s", len(translations.streets), sim_id)
+        logger.debug(
+            "Updated street translations",
+            extra={"entity_count": len(translations.streets), "simulation_id": sim_id},
+        )

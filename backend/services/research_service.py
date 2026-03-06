@@ -142,8 +142,8 @@ class ResearchService:
 
             result = await anyio.to_thread.run_sync(_search)
             return result.get("answer") or str((result.get("results") or [])[:3])
-        except Exception as e:
-            logger.error("Tavily search failed: %s", e)
+        except Exception:
+            logger.exception("Tavily search failed")
             return f"Search failed for '{seed}'. Fallback to base seed concepts."
 
     @classmethod

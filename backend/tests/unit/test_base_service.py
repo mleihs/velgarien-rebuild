@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -155,3 +156,67 @@ class TestActualServiceFlags:
         from backend.services.agent_service import AgentService
 
         assert AgentService.supports_created_by is True
+
+
+class TestBaseServiceLogging:
+    """Verify logging output for BaseService CRUD operations."""
+
+    async def test_create_failure_logs_error(self, caplog):
+        """Empty response on create → ERROR with table and simulation_id."""
+        mock_sb = _mock_supabase(return_data=None)
+        sim_id = uuid4()
+
+        with caplog.at_level(logging.ERROR, logger="backend.services.base_service"):
+            with pytest.raises(HTTPException):
+                await _ServiceWithCreatedBy.create(mock_sb, sim_id, uuid4(), {"name": "Fail"})
+
+        error_records = [r for r in caplog.records if r.levelno == logging.ERROR]
+        assert len(error_records) >= 1
+        record = error_records[0]
+        assert record.table == "agents"
+        assert record.simulation_id == str(sim_id)
+
+    async def test_update_not_found_logs_warning(self, caplog):
+        """Update returning no data → WARNING with entity_id."""
+        mock_sb = MagicMock()
+        chain = MagicMock()
+        chain.update.return_value = chain
+        chain.eq.return_value = chain
+        chain.is_.return_value = chain
+        chain.execute.return_value = MagicMock(data=[])
+        mock_sb.table.return_value = chain
+
+        entity_id = uuid4()
+        sim_id = uuid4()
+
+        with caplog.at_level(logging.WARNING, logger="backend.services.base_service"):
+            with pytest.raises(HTTPException) as exc_info:
+                await _ServiceWithCreatedBy.update(
+                    mock_sb, sim_id, entity_id, {"name": "Updated"},
+                )
+            assert exc_info.value.status_code == 404
+
+        warning_records = [r for r in caplog.records if r.levelno == logging.WARNING]
+        assert len(warning_records) >= 1
+        assert warning_records[0].entity_id == str(entity_id)
+
+    async def test_delete_not_found_logs_warning(self, caplog):
+        """Delete returning no data → WARNING with entity_id."""
+        mock_sb = MagicMock()
+        chain = MagicMock()
+        chain.delete.return_value = chain
+        chain.eq.return_value = chain
+        chain.execute.return_value = MagicMock(data=[])
+        mock_sb.table.return_value = chain
+
+        entity_id = uuid4()
+        sim_id = uuid4()
+
+        with caplog.at_level(logging.WARNING, logger="backend.services.base_service"):
+            with pytest.raises(HTTPException) as exc_info:
+                await _ServiceWithCreatedBy.hard_delete(mock_sb, sim_id, entity_id)
+            assert exc_info.value.status_code == 404
+
+        warning_records = [r for r in caplog.records if r.levelno == logging.WARNING]
+        assert len(warning_records) >= 1
+        assert warning_records[0].entity_id == str(entity_id)

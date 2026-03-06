@@ -162,7 +162,10 @@ class TranslationService:
             context_block=_build_context_block(context),
         )
 
-        prompt_parts = ["Translate each of the following named fields. Return a JSON object mapping field names to translated text.\n"]
+        prompt_parts = [
+            "Translate each of the following named fields."
+            " Return a JSON object mapping field names to translated text.\n"
+        ]
         for name, value in fields.items():
             prompt_parts.append(f"--- {name} ---\n{value}\n")
 
@@ -281,7 +284,7 @@ async def _run_auto_translate(
             to_translate, context=context
         )
     except Exception:
-        logger.exception("Auto-translation failed for %s/%s", table, entity_id)
+        logger.exception("Auto-translation failed", extra={"entity_type": table, "entity_id": entity_id})
         return
 
     # Map back to _de column names
@@ -296,9 +299,12 @@ async def _run_auto_translate(
 
     try:
         supabase.table(table).update(update_data).eq("id", entity_id).execute()
-        logger.info("Auto-translated %d fields for %s/%s", len(update_data), table, entity_id)
+        logger.info(
+            "Auto-translated fields",
+            extra={"entity_type": table, "entity_id": entity_id, "entity_count": len(update_data)},
+        )
     except Exception:
-        logger.exception("Failed to persist auto-translation for %s/%s", table, entity_id)
+        logger.exception("Failed to persist auto-translation", extra={"entity_type": table, "entity_id": entity_id})
 
 
 def schedule_auto_translation(

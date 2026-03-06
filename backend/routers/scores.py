@@ -84,5 +84,5 @@ async def compute_scores(
             details={"epoch_id": str(epoch_id), "cycle": cycle_number, "scores_computed": len(data)},
         )
     except Exception:
-        logger.debug("Audit log skipped for score compute (RLS)")
+        logger.warning("Audit log failed for score compute", exc_info=True)
     return {"success": True, "data": data}

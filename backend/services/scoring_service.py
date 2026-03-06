@@ -24,6 +24,7 @@ class ScoringService:
         cycle_number: int,
     ) -> list[dict]:
         """Compute and store scores for all participants in the current cycle."""
+        logger.info("Computing cycle scores", extra={"epoch_id": str(epoch_id), "cycle_number": cycle_number})
         # Refresh materialized views so freshly cloned game instances have data
         try:
             supabase.rpc("refresh_all_game_metrics").execute()
@@ -57,6 +58,11 @@ class ScoringService:
             )
             if resp.data:
                 scores.append(resp.data[0])
+            else:
+                logger.warning(
+                    "Score upsert returned no data",
+                    extra={"simulation_id": sim_id, "epoch_id": str(epoch_id), "cycle_number": cycle_number},
+                )
 
         # Normalize and compute composites
         if scores:

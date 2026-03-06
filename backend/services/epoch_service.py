@@ -920,7 +920,7 @@ class EpochService:
                 except Exception:
                     logger.debug("Battle log write failed for mission result", exc_info=True)
         except Exception:
-            logger.warning("Mission resolution failed for epoch %s", epoch_id, exc_info=True)
+            logger.warning("Mission resolution failed", extra={"epoch_id": str(epoch_id)}, exc_info=True)
 
         # Expire zone fortifications that have passed their expiry cycle
         try:
@@ -957,7 +957,7 @@ class EpochService:
                 # Delete expired fortification
                 db.table("zone_fortifications").delete().eq("id", fort["id"]).execute()
         except Exception:
-            logger.warning("Fortification expiry failed for epoch %s", epoch_id, exc_info=True)
+            logger.warning("Fortification expiry failed", extra={"epoch_id": str(epoch_id)}, exc_info=True)
 
         # Execute bot decisions (after RP grant + mission resolution, before next cycle)
         try:
@@ -969,14 +969,14 @@ class EpochService:
                 config=config,
             )
         except Exception:
-            logger.warning("Bot cycle execution failed for epoch %s", epoch_id, exc_info=True)
+            logger.warning("Bot cycle execution failed", extra={"epoch_id": str(epoch_id)}, exc_info=True)
 
         # Compute scores after missions resolve (best-effort)
         try:
             await ScoringService.compute_cycle_scores(supabase, epoch_id, cycle_number)
         except Exception:
             logger.warning(
-                "Scoring failed for epoch %s cycle %s", epoch_id, cycle_number, exc_info=True
+                "Scoring failed", extra={"epoch_id": str(epoch_id), "cycle_number": cycle_number}, exc_info=True
             )
 
         # Send cycle notification emails (best-effort, non-blocking)
@@ -987,7 +987,7 @@ class EpochService:
                 cycle_number,
             )
         except Exception:
-            logger.warning("Cycle notification failed for epoch %s", epoch_id, exc_info=True)
+            logger.warning("Cycle notification failed", extra={"epoch_id": str(epoch_id)}, exc_info=True)
 
         return data
 
@@ -1083,8 +1083,8 @@ class EpochService:
         # Validate phases don't overlap
         if reckoning_start <= foundation_end:
             logger.warning(
-                "Phase overlap detected for epoch %s: foundation_end=%d, reckoning_start=%d",
-                epoch_id, foundation_end, reckoning_start,
+                "Phase overlap detected",
+                extra={"epoch_id": str(epoch_id), "foundation_end": foundation_end, "reckoning_start": reckoning_start},
             )
 
         new_status = current_status
@@ -1097,8 +1097,11 @@ class EpochService:
 
         if new_status != current_status:
             logger.info(
-                "Epoch %s auto-advancing phase: %s → %s (cycle %d/%d)",
-                epoch_id, current_status, new_status, new_cycle, total_cycles,
+                "Epoch auto-advancing phase",
+                extra={
+                    "epoch_id": str(epoch_id), "old_status": current_status,
+                    "new_status": new_status, "cycle_number": new_cycle,
+                },
             )
             phase_resp = (
                 db.table("game_epochs")

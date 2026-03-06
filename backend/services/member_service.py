@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import HTTPException, status
 
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 
 class LastOwnerError(Exception):
@@ -85,6 +88,10 @@ class MemberService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to add member.",
             )
+        logger.info(
+            "Member added",
+            extra={"user_id": str(user_id), "simulation_id": str(simulation_id), "role": member_role},
+        )
         return response.data[0]
 
     @classmethod
@@ -111,7 +118,14 @@ class MemberService:
                 .execute()
             )
         except Exception as e:
-            _check_last_owner_error(e)
+            try:
+                _check_last_owner_error(e)
+            except LastOwnerError:
+                logger.warning(
+                    "Last-owner protection triggered on role change",
+                    extra={"simulation_id": str(simulation_id), "member_id": str(member_id)},
+                )
+                raise
             raise
 
         if not response.data:
@@ -119,6 +133,10 @@ class MemberService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Member '{member_id}' not found.",
             )
+        logger.info(
+            "Member role changed",
+            extra={"member_id": str(member_id), "simulation_id": str(simulation_id), "new_role": member_role},
+        )
         return response.data[0]
 
     @classmethod
@@ -141,7 +159,14 @@ class MemberService:
                 .execute()
             )
         except Exception as e:
-            _check_last_owner_error(e)
+            try:
+                _check_last_owner_error(e)
+            except LastOwnerError:
+                logger.warning(
+                    "Last-owner protection triggered on removal",
+                    extra={"member_id": str(member_id), "simulation_id": str(simulation_id)},
+                )
+                raise
             raise
 
         if not response.data:
@@ -149,3 +174,4 @@ class MemberService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Member '{member_id}' not found.",
             )
+        logger.info("Member removed", extra={"member_id": str(member_id), "simulation_id": str(simulation_id)})

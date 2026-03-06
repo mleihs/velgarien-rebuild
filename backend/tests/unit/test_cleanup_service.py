@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -294,3 +295,74 @@ class TestExecute:
         # Should not raise
         result = await CleanupService.execute(sb, "bot_decision_log", 30, uuid4())
         assert result.deleted_count == 1
+
+
+# ── Logging Tests ────────────────────────────────────────────
+
+
+class TestCleanupServiceLogging:
+    """Verify logging output for cleanup operations."""
+
+    @pytest.mark.asyncio
+    async def test_execute_logs_completion(self, caplog):
+        """Successful epoch cleanup should log INFO with cleanup_type and deleted_count."""
+        epoch_chain = _make_chain_mock(
+            _mock_table_response(data=[{"id": EPOCH_ID_1}]),
+        )
+        cascade_chain = _make_chain_mock(_mock_table_response(count=2))
+        sim_chain = MagicMock()
+        sim_chain.select.return_value = sim_chain
+        sim_chain.eq.return_value = sim_chain
+        sim_chain.lt.return_value = sim_chain
+        sim_chain.in_.return_value = sim_chain
+        sim_chain.delete.return_value = sim_chain
+        sim_chain.order.return_value = sim_chain
+        sim_chain.limit.return_value = sim_chain
+        sim_chain.execute.return_value = _mock_table_response(count=1)
+        audit_chain = _make_chain_mock(_mock_table_response())
+
+        sb = MagicMock()
+
+        def table_router(name):
+            if name == "game_epochs":
+                return epoch_chain
+            if name == "simulations":
+                return sim_chain
+            if name == "audit_log":
+                return audit_chain
+            return cascade_chain
+
+        sb.table.side_effect = table_router
+
+        with caplog.at_level(logging.INFO, logger="backend.services.cleanup_service"):
+            await CleanupService.execute(sb, "completed_epochs", 30, uuid4())
+
+        info_records = [r for r in caplog.records if r.levelno == logging.INFO and "Cleanup" in r.message]
+        assert len(info_records) >= 1
+        record = info_records[0]
+        assert record.cleanup_type == "completed_epochs"
+        assert record.deleted_count == 1
+
+    @pytest.mark.asyncio
+    async def test_audit_failure_logs_warning(self, caplog):
+        """Audit log failure should log WARNING (not propagate exception)."""
+        sb = MagicMock()
+        data_chain = _make_chain_mock(
+            _mock_table_response(data=[{"id": "x"}], count=1),
+        )
+        audit_chain = MagicMock()
+        audit_chain.insert.side_effect = Exception("RLS denied")
+
+        def table_router(name):
+            if name == "audit_log":
+                return audit_chain
+            return data_chain
+
+        sb.table.side_effect = table_router
+
+        with caplog.at_level(logging.WARNING, logger="backend.services.cleanup_service"):
+            result = await CleanupService.execute(sb, "bot_decision_log", 30, uuid4())
+
+        assert result.deleted_count == 1
+        warning_records = [r for r in caplog.records if r.levelno == logging.WARNING and "audit" in r.message.lower()]
+        assert len(warning_records) >= 1

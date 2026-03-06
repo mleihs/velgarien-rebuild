@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import UTC, datetime
 from uuid import UUID
@@ -6,6 +7,8 @@ from fastapi import HTTPException, status
 
 from backend.models.simulation import SimulationCreate, SimulationUpdate
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 
 def _slugify(name: str) -> str:
@@ -137,6 +140,10 @@ class SimulationService:
             )
 
         simulation = sim_response.data[0]
+        logger.info(
+            "Simulation created",
+            extra={"simulation_id": simulation["id"], "slug": slug, "user_id": str(user_id)},
+        )
 
         # Add creator as owner member
         supabase.table("simulation_members").insert({
@@ -225,6 +232,7 @@ class SimulationService:
                 detail=f"Simulation '{simulation_id}' not found or already deleted.",
             )
 
+        logger.info("Simulation soft-deleted", extra={"simulation_id": str(simulation_id)})
         return response.data[0]
 
     @staticmethod
@@ -251,6 +259,14 @@ class SimulationService:
             )
 
         sim_info = fetch.data
+        logger.warning(
+            "Simulation hard-deleted",
+            extra={
+                "simulation_id": str(simulation_id),
+                "simulation_name": sim_info.get("name"),
+                "slug": sim_info.get("slug"),
+            },
+        )
         supabase.table("simulations").delete().eq("id", str(simulation_id)).execute()
         return sim_info
 
@@ -321,4 +337,5 @@ class SimulationService:
                 detail=f"Simulation '{simulation_id}' not found or not deleted.",
             )
 
+        logger.info("Simulation restored", extra={"simulation_id": str(simulation_id)})
         return response.data[0]

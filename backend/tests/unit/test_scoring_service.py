@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock
+import logging
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
@@ -913,3 +914,81 @@ class TestFinalStandings:
 
         result = await ScoringService.get_final_standings(sb, EPOCH_ID)
         assert isinstance(result, list)
+
+
+# ── Logging Tests ────────────────────────────────────────────
+
+
+class TestScoringServiceLogging:
+    """Verify logging output for scoring operations."""
+
+    @pytest.mark.asyncio
+    async def test_compute_logs_start(self, caplog):
+        """compute_cycle_scores should log INFO at start with epoch_id and cycle_number."""
+        sb = MagicMock()
+
+        # rpc chain for refresh_all_game_metrics
+        rpc_chain = MagicMock()
+        rpc_chain.execute.return_value = MagicMock()
+        sb.rpc.return_value = rpc_chain
+
+        # Mock EpochService.get and list_participants
+        with (
+            patch(
+                "backend.services.scoring_service.EpochService.get",
+                new_callable=AsyncMock,
+                return_value={"id": str(EPOCH_ID), "status": "competition", "config": {}},
+            ),
+            patch(
+                "backend.services.scoring_service.EpochService.list_participants",
+                new_callable=AsyncMock,
+                return_value=[],
+            ),
+            caplog.at_level(logging.INFO, logger="backend.services.scoring_service"),
+        ):
+            await ScoringService.compute_cycle_scores(sb, EPOCH_ID, 3)
+
+        info_records = [r for r in caplog.records if r.levelno == logging.INFO and "Computing" in r.message]
+        assert len(info_records) >= 1
+        record = info_records[0]
+        assert record.epoch_id == str(EPOCH_ID)
+        assert record.cycle_number == 3
+
+    @pytest.mark.asyncio
+    async def test_empty_upsert_logs_warning(self, caplog):
+        """Score upsert returning no data should log WARNING with simulation_id."""
+        sb = MagicMock()
+
+        rpc_chain = MagicMock()
+        rpc_chain.execute.return_value = MagicMock()
+        sb.rpc.return_value = rpc_chain
+
+        # Upsert chain that returns no data
+        upsert_chain = _make_chain()
+        upsert_chain.execute.return_value = MagicMock(data=[])
+
+        sb.table.side_effect = lambda name: upsert_chain
+
+        with (
+            patch(
+                "backend.services.scoring_service.EpochService.get",
+                new_callable=AsyncMock,
+                return_value={"id": str(EPOCH_ID), "status": "competition", "config": {}},
+            ),
+            patch(
+                "backend.services.scoring_service.EpochService.list_participants",
+                new_callable=AsyncMock,
+                return_value=[{"simulation_id": SIM_ID_A}],
+            ),
+            patch.object(
+                ScoringService, "_compute_raw_scores",
+                new_callable=AsyncMock,
+                return_value={"stability": 50, "influence": 10, "sovereignty": 80, "diplomatic": 5, "military": 3},
+            ),
+            caplog.at_level(logging.WARNING, logger="backend.services.scoring_service"),
+        ):
+            await ScoringService.compute_cycle_scores(sb, EPOCH_ID, 1)
+
+        warning_records = [r for r in caplog.records if r.levelno == logging.WARNING and "upsert" in r.message.lower()]
+        assert len(warning_records) >= 1
+        assert warning_records[0].simulation_id == SIM_ID_A

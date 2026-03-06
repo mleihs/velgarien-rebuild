@@ -35,13 +35,13 @@ class EmailService:
             with smtplib.SMTP_SSL(settings.smtp_host, settings.smtp_port, timeout=15) as server:
                 server.login(settings.smtp_user, settings.smtp_password)
                 server.sendmail(settings.smtp_from, [to], msg.as_string())
-            logger.info("Email sent to %s: %s", to, subject[:60])
+            logger.info("Email sent", extra={"recipient": to, "subject_preview": subject[:60]})
             return True
-        except smtplib.SMTPException as e:
-            logger.error("SMTP error sending to %s: %s", to, e)
+        except smtplib.SMTPException:
+            logger.exception("SMTP error sending email", extra={"recipient": to})
             return False
-        except (TimeoutError, OSError) as e:
-            logger.error("Connection error sending to %s: %s", to, e)
+        except (TimeoutError, OSError):
+            logger.exception("Email connection error", extra={"recipient": to})
             return False
 
     @classmethod
@@ -51,7 +51,7 @@ class EmailService:
         Returns True on success, False on failure or missing config.
         """
         if not cls._is_configured():
-            logger.warning("SMTP not configured, skipping email to %s", to)
+            logger.warning("SMTP not configured, skipping email", extra={"recipient": to})
             return False
 
         return await asyncio.to_thread(cls._send_sync, to, subject, html_body)

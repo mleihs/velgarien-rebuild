@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, date, datetime
 from uuid import UUID
 
 from fastapi import HTTPException, status
 
 from supabase import Client
+
+logger = logging.getLogger(__name__)
 
 
 def serialize_for_json(data: dict) -> dict:
@@ -139,6 +142,7 @@ class BaseService:
         )
 
         if not response.data:
+            logger.error("Entity creation failed", extra={"table": cls.table_name, "simulation_id": str(simulation_id)})
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to create {cls.table_name} record.",
@@ -207,6 +211,14 @@ class BaseService:
                     exists_query = exists_query.is_("deleted_at", "null")
                 exists = exists_query.execute()
                 if exists and exists.data:
+                    logger.warning(
+                        "Optimistic lock conflict",
+                        extra={
+                            "table": cls.table_name,
+                            "entity_id": str(entity_id),
+                            "simulation_id": str(simulation_id),
+                        },
+                    )
                     raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
                         detail=(
@@ -215,6 +227,10 @@ class BaseService:
                         ),
                     )
 
+            logger.warning(
+                "Update target not found",
+                extra={"table": cls.table_name, "entity_id": str(entity_id), "simulation_id": str(simulation_id)},
+            )
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{cls.table_name} '{entity_id}' not found.",
@@ -246,6 +262,10 @@ class BaseService:
         response = query.execute()
 
         if not response.data:
+            logger.warning(
+                "Delete target not found",
+                extra={"table": cls.table_name, "entity_id": str(entity_id), "simulation_id": str(simulation_id)},
+            )
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{cls.table_name} '{entity_id}' not found.",
@@ -271,6 +291,10 @@ class BaseService:
         )
 
         if not response.data:
+            logger.warning(
+                "Soft-delete target not found",
+                extra={"table": cls.table_name, "entity_id": str(entity_id), "simulation_id": str(simulation_id)},
+            )
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{cls.table_name} '{entity_id}' not found or already deleted.",

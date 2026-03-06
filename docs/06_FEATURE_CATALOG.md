@@ -18,7 +18,7 @@ Features die auf Plattform-Ebene existieren, unabhängig von einzelnen Simulatio
 | # | Feature | Status | Beschreibung |
 |---|---------|--------|-------------|
 | P1 | **Simulation erstellen** | ✅ IMPL | Wizard mit Name, Beschreibung, Thema, Slug. CreateSimulationWizard Lit-Komponente. |
-| P2 | **Simulations-Dashboard** | ✅ IMPL | Übersicht aller 5 Simulationen mit Zähler-Badges (Agenten, Gebäude, Events), Bannerbilder, LoreScroll-Akkordeon (25 Sektionen, 6 Kapitel, Spectral-Schrift). Hero-Hintergrund, Slogan "Five Worlds. One Fracture." |
+| P2 | **Simulations-Dashboard** | ✅ IMPL | Übersicht aller Simulationen mit Zähler-Badges (Agenten, Gebäude, Events), Bannerbilder, LoreScroll-Akkordeon (25 Sektionen, 6 Kapitel, Spectral-Schrift). Hero-Hintergrund. Dynamisch: zeigt alle vom Benutzer erstellten und beigetretenen Simulationen. |
 | P3 | **Simulation-Auswahl** | ✅ IMPL | Zwischen Simulationen wechseln. Slug-basierte URLs (`/simulations/speranza/lore`). SimulationShell + SimulationHeader + SimulationNav mit Theme-Wechsel. |
 | P4 | **Benutzer-Registrierung** | ✅ IMPL | Signup mit Email/Passwort via Supabase Auth. RegisterView Komponente. |
 | P5 | **Benutzer-Login** | ✅ IMPL | Signin mit JWT (ES256 Production / HS256 Local). LoginPanel (Slide-from-right via VelgSidePanel). DevAccountSwitcher (5 Accounts, in Production verfügbar). |
@@ -115,7 +115,7 @@ Features die auf Plattform-Ebene existieren, unabhängig von einzelnen Simulatio
 
 ### B. Simulation-Features
 
-Features die innerhalb einer Simulation existieren. 5 Simulationen: Velgarien (dunkel, bürokratisch), The Gaslit Reach (Fantasy, viktorianisch), Station Null (Sci-Fi-Horror), Speranza (Post-Apokalyptisch), Cité des Dames (feministisch-literarisch, erstes helles Theme).
+Features die innerhalb einer Simulation existieren. Benutzer können beliebig viele Simulationen erstellen. Flaggschiff-Simulationen: Velgarien (dunkel, bürokratisch), The Gaslit Reach (Fantasy, viktorianisch), Station Null (Sci-Fi-Horror), Speranza (Post-Apokalyptisch), Cité des Dames (feministisch-literarisch, erstes helles Theme).
 
 #### B1. Agenten-Management
 
