@@ -88,14 +88,14 @@ PLATFORM_PAGES: dict[str, dict[str, str]] = {
 }
 
 
-def _esc(text: str) -> str:
+def _esc(text: str | None) -> str:
     """Escape for HTML attribute context."""
-    return html.escape(text, quote=True)
+    return html.escape(text or "", quote=True)
 
 
-def _esc_content(text: str) -> str:
+def _esc_content(text: str | None) -> str:
     """Escape for HTML content context."""
-    return html.escape(text, quote=False)
+    return html.escape(text or "", quote=False)
 
 
 def _supabase_get(table: str, select: str, filters: dict[str, str] | None = None) -> list[dict]:
@@ -211,11 +211,10 @@ def _build_agents_content(sim_id: str, sim_name: str) -> str:
     agents = _supabase_get("agents", "name,character,primary_profession", {"simulation_id": sim_id, "deleted_at": "null"})
     sections = []
     for a in agents:
-        name = _esc_content(a.get("name", ""))
-        # Use first ~200 chars of character as a summary
-        char_text = a.get("character", "")
+        name = _esc_content(a.get("name"))
+        char_text = a.get("character") or ""
         desc = _esc_content(char_text[:200] + "..." if len(char_text) > 200 else char_text)
-        profession = _esc_content(a.get("primary_profession", ""))
+        profession = _esc_content(a.get("primary_profession"))
         sections.append(f'<article><h2>{name}</h2><p class="role">{profession}</p><p>{desc}</p></article>')
     return f"<h1>{_esc_content(sim_name)} — Agents</h1>\n" + "\n".join(sections)
 
@@ -225,10 +224,10 @@ def _build_buildings_content(sim_id: str, sim_name: str) -> str:
     buildings = _supabase_get("buildings", "name,description,building_type", {"simulation_id": sim_id, "deleted_at": "null"})
     sections = []
     for b in buildings:
-        name = _esc_content(b.get("name", ""))
-        desc_text = b.get("description", "")
+        name = _esc_content(b.get("name"))
+        desc_text = b.get("description") or ""
         desc = _esc_content(desc_text[:200] + "..." if len(desc_text) > 200 else desc_text)
-        btype = _esc_content(b.get("building_type", ""))
+        btype = _esc_content(b.get("building_type"))
         sections.append(f'<article><h2>{name}</h2><p class="type">{btype}</p><p>{desc}</p></article>')
     return f"<h1>{_esc_content(sim_name)} — Buildings</h1>\n" + "\n".join(sections)
 
@@ -241,7 +240,7 @@ def _build_locations_content(sim_id: str, sim_name: str) -> str:
     if zones:
         parts.append("<h2>Zones</h2>")
         for z in zones:
-            desc_text = z.get("description", "")
+            desc_text = z.get("description") or ""
             desc = _esc_content(desc_text[:200] + "..." if len(desc_text) > 200 else desc_text)
             parts.append(f"<article><h3>{_esc_content(z.get('name', ''))}</h3><p>{desc}</p></article>")
     if streets:
