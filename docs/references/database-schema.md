@@ -1,7 +1,7 @@
 ---
 title: "Database Schema: Neues Multi-Simulations-Schema"
 id: database-schema
-version: "3.2"
+version: "3.3"
 date: 2026-03-07
 lang: de
 type: reference
@@ -44,7 +44,7 @@ metaverse.center verfolgt eine **Database-First-Strategie**: Geschaeftslogik, di
 
 Triggers schuetzen Zustaende, die unter keinen Umstaenden verletzt werden duerfen:
 
-- **State Machines:** `validate_simulation_status_transition()`, `validate_epoch_status_transition()` — Nur definierte Uebergaenge erlaubt (z.B. `draft→active`, nicht `archived→draft`)
+- **State Machines:** `validate_simulation_status_transition()`, `validate_epoch_status_transition()` — Nur definierte Uebergaenge erlaubt (z.B. `draft→configuring→active`, `active→archived→active` fuer Restore, nicht `archived→draft`)
 - **Slug-Immutabilitaet:** `immutable_slug()` — Einmal gesetzte Slugs koennen nicht mehr geaendert werden (URL-Stabilitaet, SEO)
 - **Last-Owner-Guard:** `prevent_last_owner_removal()` — Letzte/r Owner kann nicht entfernt werden (Waisen-Simulation-Verhinderung)
 - **Primaer-Profession-Exklusivitaet:** `enforce_single_primary_profession()` — Genau eine `is_primary=true` pro Agent

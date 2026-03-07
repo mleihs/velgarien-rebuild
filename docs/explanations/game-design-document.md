@@ -1,7 +1,7 @@
 ---
 title: "Game Design Document"
 id: game-design-document
-version: "1.2"
+version: "1.3"
 date: 2026-03-07
 lang: en
 type: explanation
@@ -45,7 +45,7 @@ metaverse.center is a **multiplayer worldbuilding platform** where each player o
 
 The game sits at an unusual intersection: it's part **city builder** (staffing, infrastructure), part **diplomatic strategy** (embassies, alliances, bleed), part **espionage game** (operatives, counter-intelligence), and part **collaborative fiction engine** (AI-generated narratives, worldbuilding). The competitive layer is built entirely on top of the creative tools — there are no "game-only" entities. Every operative is a real agent, every sabotaged building is a real building, every propaganda event is a real event.
 
-**Current state:** 5 active simulations (Velgarien, The Gaslit Reach, Station Null, Speranza, Cite des Dames), each with distinct themes and ~25 entities. Full competitive layer implemented (backend services, frontend UI, database schema) with agent aptitude system and draft phase designed (Section VI). Production deployed. Bot players available for solo/low-player epochs.
+**Current state:** 5 flagship simulations (Velgarien, The Gaslit Reach, Station Null, Speranza, Cite des Dames), each with distinct themes and ~25 entities. New simulations can be created via the **Simulation Forge** — a 4-phase AI-assisted worldbuilding pipeline (Astrolabe → Drafting Table → Darkroom → Ignition) that generates philosophical anchors, geography, agents, buildings, themes, lore, and images from a single seed prompt. Full competitive layer implemented (backend services, frontend UI, database schema) with agent aptitude system and draft phase. Production deployed. Bot players available for solo/low-player epochs.
 
 ---
 

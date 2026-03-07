@@ -253,6 +253,9 @@ export class VelgForgeWizard extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
+    // Restore draft from sessionStorage on page refresh
+    forgeStateManager.restoreSession();
+
     this._disposeEffects.push(
       effect(() => {
         this._phase = forgeStateManager.phase.value;

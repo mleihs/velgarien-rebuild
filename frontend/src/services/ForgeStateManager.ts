@@ -14,6 +14,8 @@ const DEFAULT_GENERATION_CONFIG: ForgeGenerationConfig = {
   street_count: 5,
 };
 
+const DRAFT_STORAGE_KEY = 'forge_draft_id';
+
 /**
  * State manager for the Simulation Forge wizard.
  * Single source of truth — all forge operations go through here.
@@ -49,6 +51,17 @@ class ForgeStateManager {
 
   // --- Actions ---
 
+  /**
+   * Restore a draft from sessionStorage if one exists.
+   * Call this on wizard mount to survive page refreshes.
+   */
+  async restoreSession(): Promise<boolean> {
+    const savedId = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!savedId || this.draft.value) return false;
+    await this.loadDraft(savedId);
+    return !!this.draft.value;
+  }
+
   async loadDraft(id: string) {
     this.isLoading.value = true;
     this.error.value = null;
@@ -56,6 +69,7 @@ class ForgeStateManager {
       const resp = await forgeApi.getDraft(id);
       if (resp.success && resp.data) {
         this.draft.value = resp.data;
+        sessionStorage.setItem(DRAFT_STORAGE_KEY, resp.data.id);
         // Sync generation config from draft
         if (resp.data.generation_config) {
           this.generationConfig.value = {
@@ -80,6 +94,7 @@ class ForgeStateManager {
       const resp = await forgeApi.createDraft(seed);
       if (resp.success && resp.data) {
         this.draft.value = resp.data;
+        sessionStorage.setItem(DRAFT_STORAGE_KEY, resp.data.id);
         return resp.data.id;
       }
       const msg = resp.error?.message ?? 'Failed to create draft';
@@ -278,6 +293,7 @@ class ForgeStateManager {
     if (this._saveTimer) clearTimeout(this._saveTimer);
     this._pendingUpdate = null;
     this.draft.value = null;
+    sessionStorage.removeItem(DRAFT_STORAGE_KEY);
     this.error.value = null;
     this.isGenerating.value = false;
     this.isGeneratingTheme.value = false;

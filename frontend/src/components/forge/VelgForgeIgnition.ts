@@ -349,9 +349,16 @@ export class VelgForgeIgnition extends LitElement {
       if (result.slug) {
         this._materializedSlug = result.slug;
         VelgToast.success(msg('Shard ignited! Materializing assets...'));
+      } else {
+        // ignite() returns {} on API failure and sets forgeStateManager.error
+        const errorMsg = forgeStateManager.error.value ?? msg('Ignition failed. Please try again.');
+        this._error = errorMsg;
+        VelgToast.error(errorMsg);
       }
-    } catch {
-      VelgToast.error(msg('Ignition sequence failed. Check terminal for errors.'));
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : msg('Ignition sequence failed.');
+      this._error = errorMsg;
+      VelgToast.error(errorMsg);
     } finally {
       this._isIgniting = false;
     }

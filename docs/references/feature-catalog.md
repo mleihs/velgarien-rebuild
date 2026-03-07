@@ -1,7 +1,7 @@
 ---
 title: "Feature Catalog"
 id: feature-catalog
-version: "2.1"
+version: "2.2"
 date: 2026-03-07
 lang: de
 type: reference
@@ -30,7 +30,7 @@ Features die auf Plattform-Ebene existieren, unabhängig von einzelnen Simulatio
 | P5 | **Benutzer-Login** | ✅ IMPL | Signin mit JWT (ES256 Production / HS256 Local). LoginPanel (Slide-from-right via VelgSidePanel). DevAccountSwitcher (5 Accounts, in Production verfügbar). |
 | P6 | **Mitglieder einladen** | ✅ IMPL | Einladungs-Links mit Rollen-Zuweisung (owner/admin/editor/viewer). MemberService mit LastOwnerError-Schutz. |
 | P7 | **Mitglieder verwalten** | ✅ IMPL | Rollen ändern, Mitglieder entfernen. Access-Settings-Panel. Letzter Owner kann nicht entfernt werden. |
-| P8 | **Simulation archivieren** | ✅ IMPL | Archivierung via `simulation_type='archived'`. Game Instances werden nach Epoch-Ende automatisch archiviert. |
+| P8 | **Simulation archivieren** | ✅ IMPL | Archivierung via `simulation_type='archived'`. Game Instances werden nach Epoch-Ende automatisch archiviert. Restore (`archived→active`) via Admin-Panel. Hard-Delete (PURGE) mit Cascade auf alle Kind-Entitaeten. |
 | P9 | **Simulation klonen** | ✅ IMPL | `clone_simulations_for_epoch()` PL/pgSQL-Funktion (~250 Zeilen). Atomisches Klonen mit Agent-Capping (max 6), Building-Capping (max 8), Normalisierung, Embassy-Remapping. |
 | P10 | **Public-First-Architektur** | ✅ IMPL | Anonymer Lesezugriff ohne Login. 21 Anon-RLS-Policies. 46 Public-API-Endpoints (`/api/v1/public/*`). `BaseApiService.getSimulationData()` routet automatisch zwischen public/authenticated. Rate-Limiting 100/min. |
 
@@ -253,11 +253,11 @@ Features die innerhalb einer Simulation existieren. Benutzer können beliebig vi
 
 | # | Feature | Status | Beschreibung |
 |---|---------|--------|-------------|
-| S57 | **Forge-Pipeline** | ✅ IMPL | 4-Phasen AI-Pipeline: Astrolabe (Themen-Recherche via Tavily + 3 Philosophical Anchors) → Drafting Table (Geography/Agents/Buildings via Pydantic AI) → Darkroom (Theme-Generierung + Test-Renders) → Ignition (Materialisierung via `fn_materialize_shard` + Batch-Bildgenerierung). `ForgeOrchestratorService` koordiniert alle Phasen. |
+| S57 | **Forge-Pipeline** | ✅ IMPL | 4-Phasen AI-Pipeline: Astrolabe (Themen-Recherche via Tavily + 3 Philosophical Anchors) → Drafting Table (Geography/Agents/Buildings via Pydantic AI) → Darkroom (Theme-Generierung + Test-Renders) → Ignition (Materialisierung via `fn_materialize_shard` + Batch-Bildgenerierung). `ForgeOrchestratorService` koordiniert alle Phasen. Semantische RPC-Fehlerklassifizierung (402 Token-Mangel, 400 Validierung, 409 Duplikat). `_FlushingStreamHandler` fuer zuverlaessiges Logging bei uvicorn-Reloads. |
 | S58 | **Phase II: Drafting Table** | ✅ IMPL | Chunked Entity-Generierung mit typed Pydantic-Modellen als `output_type`. `ForgeAgentDraft` (character: 200-300 Wörter mit physischen Eindrücken für Portrait-Gen, background: 200-300 Wörter). `ForgeBuildingDraft` (description: 150-250 Wörter mit Materialien/Sensorik für Bild-Gen, variierte building_condition). `ForgeZoneDraft` (description + 2-4 characteristics-Tags). `ForgeStreetDraft` (optionale description). `_build_chunk_prompt()` assembliert chunk-spezifische Prompts mit Seed, Anchor-Kontext, geographischem Kontext, Wortlängen-Guidance und Diversitäts-Instruktionen. |
 | S59 | **Forge Mock-Service** | ✅ IMPL | `FORGE_MOCK_MODE=true`: Deterministisches Mock-System für alle 4 Phasen. Seed-aware via SHA-256. 8 Zonen (mit characteristics), 8 Straßen (mit descriptions), 8 Agenten (2-3 Satz character/background), 9 Gebäude (variierte conditions), 2 Theme-Presets, 5 Lore-Sektionen + DE-Übersetzungen. |
 | S60 | **BYOK (Bring Your Own Key)** | ✅ IMPL | User können eigene OpenRouter/Replicate API-Keys hinterlegen (AES-256 verschlüsselt via `user_wallets`). Forge nutzt User-Keys wenn vorhanden, sonst Platform-Keys. |
-| S61 | **Forge-Frontend** | ✅ IMPL | VelgForgeWizard (Multi-Step), VelgForgeTable (Draft-Management), VelgForgeAstrolabe (Pipeline-Visualisierung), VelgForgeDarkroom (Theme-Tuning), VelgForgeIgnition (Materialisierungs-Bestätigung), VelgForgeScanOverlay (Scan-Animation). Retro-Terminal CRT-Ästhetik (bernstein auf schwarz). |
+| S61 | **Forge-Frontend** | ✅ IMPL | VelgForgeWizard (Multi-Step), VelgForgeTable (Draft-Management), VelgForgeAstrolabe (Pipeline-Visualisierung), VelgForgeDarkroom (Theme-Tuning), VelgForgeIgnition (Materialisierungs-Bestätigung mit Fehleranzeige + Retry), VelgForgeScanOverlay (Scan-Animation). Retro-Terminal CRT-Ästhetik (bernstein auf schwarz). `ForgeStateManager` mit sessionStorage-Persistenz fuer Draft-ID (ueberlebt Page-Refresh). |
 
 ---
 
@@ -382,7 +382,7 @@ Features die innerhalb einer Simulation existieren. Benutzer können beliebig vi
 |----------|------|
 | **Simulationen** | 5 (Velgarien, The Gaslit Reach, Station Null, Speranza, Cité des Dames) |
 | **Datenbanktabellen** | 56 |
-| **SQL-Migrationen** | 85 |
+| **SQL-Migrationen** | 86 |
 | **RLS-Policies** | 150+ |
 | **Trigger** | 41+ |
 | **Views** | 8 Standard + 6 Materialized |

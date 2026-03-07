@@ -9,7 +9,7 @@ tags: [index, catalog, documentation]
 
 # Documentation Index
 
-> Auto-generated from frontmatter. 38 documents, 5 categories + 8 ADRs.
+> Auto-generated from frontmatter. 39 documents, 6 categories + 8 ADRs.
 
 ## Specifications (14)
 
@@ -34,10 +34,10 @@ tags: [index, catalog, documentation]
 
 | Document | Version | Date | Lang | Status |
 |----------|---------|------|------|--------|
-| [Database Schema: Neues Multi-Simulations-Schema](references/database-schema.md) | 3.2 | 2026-03-07 | de | active |
+| [Database Schema: Neues Multi-Simulations-Schema](references/database-schema.md) | 3.3 | 2026-03-07 | de | active |
 | [Design System](references/design-system.md) | 1.3 | 2026-03-02 | de | active |
 | [Domain Models](references/domain-models.md) | 3.1 | 2026-03-07 | de | active |
-| [Feature Catalog](references/feature-catalog.md) | 2.1 | 2026-03-07 | de | active |
+| [Feature Catalog](references/feature-catalog.md) | 2.2 | 2026-03-07 | de | active |
 | [Frontend Components](references/frontend-components.md) | 2.4 | 2026-03-04 | de | active |
 
 ## Guides (6)
@@ -56,7 +56,7 @@ tags: [index, catalog, documentation]
 | Document | Version | Date | Lang | Status |
 |----------|---------|------|------|--------|
 | [The Velgarien Multiverse — Game Design Proposal](explanations/concept-lore.md) | — | — | en | active |
-| [Game Design Document](explanations/game-design-document.md) | 1.2 | 2026-03-07 | en | active |
+| [Game Design Document](explanations/game-design-document.md) | 1.3 | 2026-03-07 | en | active |
 | [Project Overview: metaverse.center Multi-Simulations-Plattform](explanations/project-overview.md) | 2.0 | 2026-03-03 | de | active |
 | [TCG Card System — Unified Design Concept](explanations/tcg-card-system.md) | — | — | en | draft |
 | [Techstack Recommendation](explanations/techstack-recommendation.md) | 1.5 | 2026-02-28 | de | active |
@@ -71,6 +71,12 @@ tags: [index, catalog, documentation]
 | [Epoch 5-Player Simulation: 50-Game Analysis](analysis/epoch-5p-analysis.md) | — | — | en | active |
 | [Epoch Cross-Reference Analysis: Game Balance Report](analysis/epoch-cross-reference-analysis.md) | — | — | en | active |
 | [Epoch Playthrough: Bug Fix Verification](analysis/epoch-playthrough.md) | — | — | en | active |
+
+## Audits (1)
+
+| Document | Version | Date | Lang | Status |
+|----------|---------|------|------|--------|
+| [Simulation Forge — Live Playthrough Audit](audits/forge-playthrough-audit-2026-03-07.md) | 1.0 | 2026-03-07 | en | active |
 
 ## Architecture Decision Records (8)
 

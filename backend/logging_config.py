@@ -1,5 +1,6 @@
 """Central structured logging configuration using structlog + stdlib."""
 
+import atexit
 import logging
 import logging.config
 import sys
@@ -7,6 +8,18 @@ import sys
 import structlog
 
 from backend.config import settings
+
+
+class _FlushingStreamHandler(logging.StreamHandler):
+    """StreamHandler that flushes after every emit.
+
+    Prevents log loss during uvicorn ``--reload`` process restarts by
+    ensuring each log record is written to stderr immediately.
+    """
+
+    def emit(self, record: logging.LogRecord) -> None:
+        super().emit(record)
+        self.flush()
 
 
 def setup_logging() -> None:
@@ -70,8 +83,8 @@ def setup_logging() -> None:
         },
         "handlers": {
             "default": {
-                "class": "logging.StreamHandler",
-                "stream": "ext://sys.stderr",
+                "()": _FlushingStreamHandler,
+                "stream": sys.stderr,
                 "formatter": "structlog",
             },
         },
@@ -93,3 +106,6 @@ def setup_logging() -> None:
             "hpack": {"level": "WARNING"},
         },
     })
+
+    # Flush all handlers on process exit (protects against --reload log loss)
+    atexit.register(logging.shutdown)

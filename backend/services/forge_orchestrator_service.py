@@ -126,6 +126,28 @@ def _build_chunk_prompt(
 class ForgeOrchestratorService:
     """Orchestrates multi-step simulation generation."""
 
+    # Map PostgreSQL RAISE EXCEPTION messages to semantic HTTP status codes.
+    # Keys are substrings matched case-insensitively against the error message.
+    _RPC_ERROR_MAP: list[tuple[str, int, str]] = [
+        ("insufficient tokens", 402, "Insufficient Forge Tokens. Acquire more before igniting."),
+        ("already processed", 409, "This draft has already been materialized."),
+        ("in progress", 409, "Materialization is already in progress."),
+        ("missing a selected philosophical anchor", 400, "Draft is missing a philosophical anchor. Return to the Astrolabe."),
+        ("missing geography", 400, "Draft is missing geography data. Return to the Drafting Table."),
+        ("must contain at least one agent", 400, "Draft must contain at least one agent. Return to the Drafting Table."),
+    ]
+
+    @staticmethod
+    def _classify_rpc_error(error_message: str) -> tuple[int, str]:
+        """Parse a PostgreSQL RPC exception into an HTTP status code and user-facing message."""
+        lower = error_message.lower()
+        for pattern, code, detail in ForgeOrchestratorService._RPC_ERROR_MAP:
+            if pattern in lower:
+                return code, detail
+        # Unrecognized RPC error — keep 500 but log for future classification
+        logger.warning("Unclassified RPC error: %s", error_message[:200])
+        return 500, "Shard materialization failed. Please contact support if the issue persists."
+
     @staticmethod
     async def _get_user_keys(supabase: Client, user_id: UUID) -> tuple[str | None, str | None]:
         """Fetch and decrypt a user's BYOK API keys."""
@@ -304,7 +326,18 @@ class ForgeOrchestratorService:
         )
 
         try:
-            response = supabase.rpc("fn_materialize_shard", {"p_draft_id": str(draft_id)}).execute()
+            try:
+                response = supabase.rpc("fn_materialize_shard", {"p_draft_id": str(draft_id)}).execute()
+            except Exception as rpc_err:
+                # Parse PostgreSQL RAISE EXCEPTION into semantic HTTP codes
+                err_msg = str(rpc_err)
+                status_code, detail = ForgeOrchestratorService._classify_rpc_error(err_msg)
+                await ForgeDraftService.update_draft(
+                    supabase, user_id, draft_id,
+                    ForgeDraftUpdate(status="failed", error_log=err_msg[:500]),
+                )
+                raise HTTPException(status_code=status_code, detail=detail) from rpc_err
+
             if not response.data:
                 await ForgeDraftService.update_draft(
                     supabase, user_id, draft_id,

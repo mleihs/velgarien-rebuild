@@ -51,6 +51,9 @@
 - [Epoch Cross-Reference Analysis: Game Balance Report](analysis/epoch-cross-reference-analysis.md)
 - [Epoch Playthrough: Bug Fix Verification](analysis/epoch-playthrough.md)
 
+## Audits
+- [Simulation Forge — Live Playthrough Audit](audits/forge-playthrough-audit-2026-03-07.md): End-to-end Forge playthrough with UX audit, content quality analysis, admin deletion testing, and 5 architectural fixes
+
 ## Architecture Decision Records
 - [ADR-001: Simulation als Row-Level Tenant](adr/001-simulation-row-level-tenant.md)
 - [ADR-002: Settings als Key-Value Store](adr/002-settings-key-value-store.md)
