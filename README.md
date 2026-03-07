@@ -250,7 +250,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | slowapi | 0.1 | Tiered rate limiting (30/hr AI, 100/min standard) |
 | cryptography | 46.0 | AES-256 encryption for sensitive settings |
 | cachetools | 7.0 | JWKS + model resolution + map data caching |
-| pydantic-ai | 1.66 | AI agent framework for structured generation |
+| pydantic-ai-slim | 1.66 | AI agent framework for structured generation (OpenAI provider only) |
 | tavily-python | 0.5 | Web research for AI-assisted content generation |
 
 ### Frontend
@@ -276,7 +276,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | Email | SMTP SSL (bilingual tactical briefing emails, fog-of-war compliant) |
 | AI Text | OpenRouter (model fallback chain) |
 | AI Images | Replicate (Flux, Stable Diffusion) |
-| Hosting | Railway (backend + frontend) + Cloudflare (CDN/DNS) |
+| Hosting | Railway (3-stage Docker build with SEO prerender) + Cloudflare (CDN/DNS) |
 | Analytics | Google Analytics 4 (37 events, consent mode v2) |
 | Testing | pytest + pytest-cov + vitest + Playwright |
 | Linting | Ruff (backend) + Biome 2.4 (frontend) |
@@ -292,19 +292,19 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | Database trigger functions | 23 |
 | Views (regular + materialized) | 9 + 4 |
 | RLS policies | 240+ |
-| SQL migrations | 85 |
+| SQL migrations | 86 |
 | API endpoints | ~305 across 37 routers |
 | Web Components | 133 custom elements |
 | Backend tests | 866 |
 | Frontend tests | 453 |
 | E2E specs | 81 |
 | Localized UI strings | 2,563 (EN/DE, 0 missing) |
-| Documentation files | 38 (Divio structure + ADRs) |
+| Documentation files | 39 (Divio structure + ADRs) |
 | Flagship simulations | 5 (users can create more) |
 | Operative types | 6 |
 | Scoring dimensions | 5 |
 | Bot personalities | 5 archetypes x 3 difficulty levels |
-| Theme presets | 5 (WCAG 2.1 AA validated) |
+| Theme presets | 6 (WCAG 2.1 AA validated, 1 exempt joke preset) |
 | Email templates | 5 (bilingual, per-simulation themed + signup confirmation) |
 
 ---
@@ -402,15 +402,16 @@ frontend/
     types/                  # TypeScript interfaces + Zod schemas
     locales/                # i18n (XLIFF source + generated output)
 supabase/
-  migrations/               # 85 SQL migration files
+  migrations/               # 86 SQL migration files
   seed/                     # Seed data (7 active, 11 archived)
 scripts/                    # Image generation, epoch simulation, doc index generation
-docs/                       # 38 documents (Divio structure)
+docs/                       # 39 documents (Divio structure)
   specs/                    # 14 hard contracts ("this is how it works")
   references/               # 5 canonical data ("look it up here")
   guides/                   # 6 procedural ("how to do X")
   explanations/             # 5 understanding ("why it's this way")
   analysis/                 # 6 epoch balance analysis reports
+  audits/                   # 1 live playthrough audit
   adr/                      # 8 Architecture Decision Records
   archive/                  # 1 legacy doc
   INDEX.md                  # Auto-generated catalog from frontmatter
@@ -422,15 +423,16 @@ e2e/                        # Playwright E2E tests (13 spec files)
 
 ## Documentation
 
-The `docs/` directory contains 38 documents organized in [Divio](https://docs.divio.com/documentation-system/) structure with YAML frontmatter. See [`docs/INDEX.md`](docs/INDEX.md) for the full catalog or [`docs/llms.txt`](docs/llms.txt) for AI-friendly consumption. See [`CHANGELOG.md`](CHANGELOG.md) for recent changes.
+The `docs/` directory contains 39 documents organized in [Divio](https://docs.divio.com/documentation-system/) structure with YAML frontmatter. See [`docs/INDEX.md`](docs/INDEX.md) for the full catalog or [`docs/llms.txt`](docs/llms.txt) for AI-friendly consumption. See [`CHANGELOG.md`](CHANGELOG.md) for recent changes.
 
 | Category | Count | Contents |
 |:---------|------:|:---------|
 | **specs/** | 14 | Platform Architecture, API (~305 endpoints), Auth, AI, Theming, Embassies, Epochs, Game Systems, Substrate Resonances |
-| **references/** | 5 | Database Schema (v3.2, 56 tables), Domain Models, Feature Catalog, Components, Design System |
-| **guides/** | 6 | Deployment, Testing, Migration, Implementation Plan (160 tasks), Simulation Blueprint, Playtest |
+| **references/** | 5 | Database Schema (v3.3, 56 tables), Domain Models, Feature Catalog, Components, Design System |
+| **guides/** | 6 | Deployment (v1.3, 15 migration lessons), Testing, Migration, Implementation Plan (160 tasks), Simulation Blueprint, Playtest |
 | **explanations/** | 5 | Project Overview, Techstack, Game Design Document, Concept Lore, TCG Card System |
 | **analysis/** | 6 | Epoch balance reports (2P-5P + cross-reference + playthrough verification) |
+| **audits/** | 1 | Simulation Forge live playthrough audit (UX, content quality, game design) |
 | **adr/** | 8 | Architecture Decision Records (multi-tenancy, settings, taxonomies, templates, cloning, admin, DB logic, resonance caps) |
 
 ---

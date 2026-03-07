@@ -44,7 +44,7 @@ tags: [index, catalog, documentation]
 
 | Document | Version | Date | Lang | Status |
 |----------|---------|------|------|--------|
-| [Deployment Infrastructure](guides/deployment-infrastructure.md) | 1.2 | 2026-02-25 | de | active |
+| [Deployment Infrastructure](guides/deployment-infrastructure.md) | 1.3 | 2026-03-07 | de | active |
 | [Implementation Plan](guides/implementation-plan.md) | 2.9 | 2026-02-26 | de | active |
 | [Migration Strategy](guides/migration-strategy.md) | 1.2 | 2026-02-25 | de | active |
 | [Epoch Playtest Methodology](guides/playtest-methodology.md) | 1.0 | — | en | active |

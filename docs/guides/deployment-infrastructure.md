@@ -1,8 +1,8 @@
 ---
 title: "Deployment Infrastructure"
 id: deployment-infrastructure
-version: "1.2"
-date: 2026-02-25
+version: "1.3"
+date: 2026-03-07
 lang: de
 type: guide
 status: active
@@ -468,13 +468,14 @@ Migrations 016 and 017 contain `INSERT` statements for seed data. They reference
 
 **Service:** `metaverse-center` (project: `metaverse.center`)
 
-**Dockerfile** (`Dockerfile` in project root): Multi-stage build that:
-1. Builds the Vite frontend (`npm run build`)
-2. Installs Python dependencies
-3. Copies built frontend assets to `backend/static/`
-4. Runs `uvicorn backend.app:app --host 0.0.0.0 --port 8000`
+**Dockerfile** (`Dockerfile` in project root): 3-stage build:
+1. **frontend-build** (Node 22) — `npm ci` + `npm run build` (Vite production build)
+2. **prerender** (Python 3.13-slim) — runs `scripts/prerender.py` which fetches live simulation data from Supabase and generates static HTML snapshots for SEO crawlers (stored in `static/dist/prerendered/`)
+3. **runtime** (Python 3.13-slim) — installs backend deps from `requirements.txt`, copies app source + prerendered frontend assets, runs Uvicorn
 
 The FastAPI app serves the SPA static files in production (see `backend/app.py` static file mounting).
+
+**CRITICAL:** `scripts/prerender.py` must be accessible in the Docker build context. The `.dockerignore` excludes `scripts/*` but re-includes `!scripts/prerender.py`. If you add new scripts needed at build time, add a corresponding `!scripts/your_script.py` negation line.
 
 **`railway.toml`** — Config-as-code for build/deploy behavior:
 
@@ -482,7 +483,7 @@ The FastAPI app serves the SPA static files in production (see `backend/app.py` 
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
-watchPatterns = ["backend/**", "frontend/**", "Dockerfile", "pyproject.toml"]
+watchPatterns = ["backend/**", "frontend/**", "Dockerfile", ".dockerignore", "pyproject.toml", "backend/requirements.txt", "scripts/prerender.py"]
 
 [deploy]
 healthcheckPath = "/api/v1/health"
@@ -492,8 +493,10 @@ restartPolicyMaxRetries = 3
 ```
 
 **Watch patterns** control when Railway triggers a build. Only changes matching these patterns cause a deploy. This means:
-- Commits touching only docs (`*.md`), specs, scripts, supabase config, etc. → **no deploy**
-- Commits touching `backend/`, `frontend/`, `Dockerfile`, or `pyproject.toml` → **deploy triggered**
+- Commits touching only docs (`*.md`), specs, other scripts, supabase config, etc. → **no deploy**
+- Commits touching `backend/`, `frontend/`, `Dockerfile`, `.dockerignore`, `pyproject.toml`, `requirements.txt`, or `scripts/prerender.py` → **deploy triggered**
+
+**CRITICAL:** If you change `.dockerignore` or any file referenced by the Dockerfile (e.g., `scripts/prerender.py`), it MUST be in the watch patterns — otherwise Railway won't pick up the change and will keep building from stale source. The `railway redeploy` command only re-deploys from the last deployment's source, not from the latest git commit.
 
 **Environment Variables (6 required):**
 
@@ -572,7 +575,7 @@ The backend `dependencies.py` handles both: it tries HS256 first (local), then f
 
 ## 6. Migration Lessons Learned
 
-These 12 issues were encountered during production deployments. They are documented here to prevent repeating them.
+These 15 issues were encountered during production deployments. They are documented here to prevent repeating them.
 
 ### Issue 1: Auth User Must Exist Before Data Migrations
 
@@ -688,6 +691,41 @@ curl -s "$PROD_URL/rest/v1/agents?portrait_image_url=not.is.null&select=name,por
 
 Any UUID mismatch means the production DB URL needs updating via the REST API.
 
+### Issue 13: `.dockerignore` Excludes Build-Time Scripts
+
+**Problem:** The Dockerfile's prerender stage does `COPY scripts/prerender.py ./scripts/`, but `.dockerignore` contained `scripts` which excluded the entire directory. Docker could not find the file and the build failed with `"/scripts/prerender.py": not found`. This caused **10 consecutive deployment failures** over 2 days before the root cause was identified.
+
+**Why it wasn't caught immediately:** Previous builds succeeded because Docker layer cache from earlier deployments still had the file. Once the cache was invalidated (by unrelated Dockerfile changes), every build failed.
+
+**Solution:** Change `.dockerignore` from `scripts` to `scripts/*` + `!scripts/prerender.py`:
+```
+scripts/*
+!scripts/prerender.py
+```
+
+The `scripts` pattern excludes the directory itself (Docker never looks inside). The `scripts/*` pattern excludes contents, allowing `!scripts/prerender.py` to re-include the specific file.
+
+**Rule:** Whenever a Dockerfile `COPY` references a path, verify that path is NOT excluded by `.dockerignore`. If adding a new build-time script, add a corresponding `!scripts/your_script.py` negation line.
+
+### Issue 14: Watch Patterns Miss Build-Affecting Files
+
+**Problem:** After fixing `.dockerignore`, the push didn't trigger a Railway deploy because `.dockerignore` wasn't in `railway.toml` `watchPatterns`. The `railway redeploy --yes` command only redeploys from the last deployment's source (the broken commit), not from the latest git commit. This creates a dead-end where the fix is in git but Railway keeps rebuilding the old broken source.
+
+**Solution:** Add ALL build-affecting files to `watchPatterns`:
+```toml
+watchPatterns = ["backend/**", "frontend/**", "Dockerfile", ".dockerignore", "pyproject.toml", "backend/requirements.txt", "scripts/prerender.py"]
+```
+
+**Rule:** Any file referenced by the Dockerfile or that affects the Docker build (including `.dockerignore`) must be in `watchPatterns`. When adding new Dockerfile stages that reference new files, update `watchPatterns` simultaneously.
+
+### Issue 15: `pydantic-ai` Full Package Causes Build Timeout
+
+**Problem:** `pydantic-ai==1.66.0` (the full meta-package) installs ALL 18 provider extras (Anthropic, Bedrock, Cohere, Google, Groq, Hugging Face, Mistral, logfire, MCP, etc.), creating a massive transitive dependency tree (~200+ packages). When Docker layer cache is busted, pip's dependency resolution backtracks through hundreds of package versions and exceeds Railway's build timeout (~15 minutes).
+
+**Solution:** Switch to `pydantic-ai-slim[openai]==1.66.0` in `requirements.txt`. We only use the OpenAI provider (via OpenRouter), so the slim package with just the `[openai]` extra dramatically reduces the dependency tree. Build time went from timeout → 40 seconds.
+
+**Rule:** Never use `pydantic-ai` (full) in `requirements.txt` — always use `pydantic-ai-slim` with only the needed extras. If you add a new AI provider, add its extra explicitly (e.g., `pydantic-ai-slim[openai,anthropic]`).
+
 ---
 
 ## 7. Deployment Workflow
@@ -710,10 +748,10 @@ git push origin main
 ```
 
 **What triggers a Railway deploy** (watch patterns in `railway.toml`):
-- Changes to `backend/**`, `frontend/**`, `Dockerfile`, `pyproject.toml`
+- Changes to `backend/**`, `frontend/**`, `Dockerfile`, `.dockerignore`, `pyproject.toml`, `backend/requirements.txt`, `scripts/prerender.py`
 
 **What does NOT trigger a deploy:**
-- Spec docs (`*.md`), scripts (`scripts/`), Supabase config (`supabase/`), seed files, `railway.toml` itself, `.mcp.json`, `.env*`
+- Spec docs (`*.md`), other scripts (`scripts/*.py` except prerender), Supabase config (`supabase/`), seed files, `railway.toml` itself, `.mcp.json`, `.env*`
 
 ### Full Production Update Checklist
 
@@ -843,7 +881,10 @@ supabase status
 | 401 on production API | JWT expired or wrong audience | Re-authenticate; check `SUPABASE_JWT_SECRET` matches |
 | Images broken on production | Localhost URLs in DB | Run URL rewrite SQL (Section 2) |
 | `supabase db push` hangs | Network/IPv6 issues | Check `SUPABASE_ACCESS_TOKEN` is set; retry |
-| Railway deploy fails | Build error | Check Dockerfile; ensure `npm run build` succeeds locally |
+| Railway deploy fails (file not found) | `.dockerignore` excludes a file the Dockerfile needs | Check `.dockerignore` for negation patterns; see Issue 13 |
+| Railway deploy fails (build timeout) | pip dependency resolution too slow | Use `pydantic-ai-slim[openai]` instead of `pydantic-ai` (full); see Issue 15 |
+| Push to main but no deploy triggered | File not in `watchPatterns` | Add changed file to `railway.toml` `watchPatterns`; see Issue 14 |
+| `railway redeploy` keeps failing | Redeploys from last (broken) source, not latest git | Touch a watched file and push, or wait for auto-deploy from a new push |
 | RLS policy denied | Missing simulation_members row | Verify user is a member of the simulation |
 | ERR_TOO_MANY_REDIRECTS | Cloudflare SSL set to "Flexible" | Change to **Full (strict)** in Cloudflare SSL/TLS settings |
 | Port 8000/5173 in use (local) | Orphaned processes | Follow Server Restart sequence in CLAUDE.md |
@@ -909,6 +950,6 @@ See `.env.production.example` for the full list of required environment variable
 ## References
 
 - [Project Overview](../explanations/project-overview.md) — Project context and architecture
-- [Database Schema](../references/database-schema.md) — Complete schema (52 tables)
+- [Database Schema](../references/database-schema.md) — Complete schema (56 tables)
 - [Auth and Security](../specs/auth-and-security.md) — Auth and JWT details
 - [CLAUDE.md](../../CLAUDE.md) — Development commands and patterns
