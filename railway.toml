@@ -1,7 +1,7 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
-watchPatterns = ["backend/**", "frontend/**", "Dockerfile", "pyproject.toml", "backend/requirements.txt"]
+watchPatterns = ["backend/**", "frontend/**", "Dockerfile", ".dockerignore", "pyproject.toml", "backend/requirements.txt", "scripts/prerender.py"]
 
 [deploy]
 healthcheckPath = "/api/v1/health"
