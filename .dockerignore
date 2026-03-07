@@ -13,3 +13,4 @@ docs/
 *.md
 supabase
 scripts
+!scripts/prerender.py
