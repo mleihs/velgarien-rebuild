@@ -13,6 +13,35 @@ from supabase import Client
 
 logger = logging.getLogger(__name__)
 
+# Archetype → (aligned operative types, opposed operative types)
+ARCHETYPE_OPERATIVE_AFFINITIES: dict[str, tuple[list[str], list[str]]] = {
+    "The Shadow":           (["spy", "assassin"],        ["propagandist"]),
+    "The Tower":            (["saboteur", "infiltrator"], []),
+    "The Devouring Mother": (["spy", "propagandist"],    ["infiltrator"]),
+    "The Deluge":           (["saboteur", "infiltrator"], ["spy"]),
+    "The Overthrow":        (["propagandist", "infiltrator"], []),
+    "The Prometheus":       (["spy", "infiltrator"],      ["saboteur"]),
+    "The Awakening":        (["propagandist", "spy"],     ["assassin"]),
+    "The Entropy":          (["saboteur", "assassin"],    ["infiltrator"]),
+}
+
+
+def _derive_resonance_affinities(
+    active_resonances: list[dict],
+) -> tuple[list[str], list[str]]:
+    """Derive aligned/opposed operative types from active resonance archetypes."""
+    aligned: set[str] = set()
+    opposed: set[str] = set()
+    for res in active_resonances:
+        archetype = res.get("archetype", "")
+        affinities = ARCHETYPE_OPERATIVE_AFFINITIES.get(archetype)
+        if affinities:
+            aligned.update(affinities[0])
+            opposed.update(affinities[1])
+    # Remove any type that appears in both (net zero)
+    overlap = aligned & opposed
+    return sorted(aligned - overlap), sorted(opposed - overlap)
+
 
 @dataclass
 class BotGameState:
@@ -51,6 +80,13 @@ class BotGameState:
     teams: list[dict] = field(default_factory=list)
     participants: list[dict] = field(default_factory=list)
 
+    # World state (resonance awareness)
+    own_zone_stability: list[dict] = field(default_factory=list)
+    own_avg_pressure: float = 0.0
+    active_resonances: list[dict] = field(default_factory=list)
+    resonance_aligned_types: list[str] = field(default_factory=list)
+    resonance_opposed_types: list[str] = field(default_factory=list)
+
     # Derived
     own_team_id: str | None = None
     allies: list[str] = field(default_factory=list)
@@ -86,6 +122,7 @@ class BotGameState:
         await state._load_own_data(supabase, epoch_id, sim_id)
         await state._load_detected_intel(supabase, epoch_id, sim_id)
         await state._load_public_data(supabase, epoch_id)
+        await state._load_world_state(supabase, sim_id)
         state._derive_allies()
 
         return state
@@ -237,6 +274,41 @@ class BotGameState:
             and p["simulation_id"] != self.simulation_id
         ]
 
+    async def _load_world_state(self, supabase: Client, sim_id: str) -> None:
+        """Load zone stability and active resonances (publicly visible data)."""
+        # Zone stability for own simulation
+        try:
+            stability_resp = (
+                supabase.table("mv_zone_stability")
+                .select("zone_id, zone_name, stability, total_pressure")
+                .eq("simulation_id", sim_id)
+                .execute()
+            )
+            self.own_zone_stability = stability_resp.data or []
+            if self.own_zone_stability:
+                self.own_avg_pressure = sum(
+                    float(z.get("total_pressure", 0)) for z in self.own_zone_stability
+                ) / len(self.own_zone_stability)
+        except Exception:
+            logger.debug("Zone stability load failed", exc_info=True)
+
+        # Active resonances (public — all players can see these)
+        try:
+            resonance_resp = (
+                supabase.table("active_resonances")
+                .select("id, archetype, resonance_signature, magnitude, status")
+                .in_("status", ["detected", "impacting"])
+                .order("magnitude", desc=True)
+                .limit(5)
+                .execute()
+            )
+            self.active_resonances = resonance_resp.data or []
+            self.resonance_aligned_types, self.resonance_opposed_types = (
+                _derive_resonance_affinities(self.active_resonances)
+            )
+        except Exception:
+            logger.debug("Active resonances load failed", exc_info=True)
+
     # ── Query helpers for personality logic ──────────────────
 
     def get_available_agents(self) -> list[dict]:
@@ -336,3 +408,47 @@ class BotGameState:
         if dominant == "diplomatic":
             return "diplomatic"
         return "mixed"
+
+    # ── Resonance-aware helpers ──────────────────────────────
+
+    def get_most_volatile_opponent(self) -> str | None:
+        """Opponent sim with highest pressure from spy intel.
+
+        Uses spy intel reports to find which opponent has the most
+        pressured zones (best target for resonance-aware operations).
+        """
+        opponents = self.get_opponent_sim_ids()
+        if not opponents:
+            return None
+
+        # Check spy intel for zone security data (lower = more vulnerable)
+        from backend.services.operative_service import SECURITY_LEVEL_MAP
+
+        best_target: str | None = None
+        lowest_security = 10.0
+
+        for report in self.spy_intel_reports:
+            meta = report.get("metadata", {})
+            target_id = report.get("target_simulation_id")
+            if target_id not in opponents:
+                continue
+            if "zone_security" in meta:
+                levels = meta["zone_security"]
+                if levels:
+                    avg = sum(SECURITY_LEVEL_MAP.get(lv, 5.0) for lv in levels) / len(levels)
+                    if avg < lowest_security:
+                        lowest_security = avg
+                        best_target = target_id
+
+        return best_target
+
+    def is_under_resonance_pressure(self) -> bool:
+        """True if own average zone pressure exceeds 0.3."""
+        return self.own_avg_pressure > 0.3
+
+    def get_resonance_preferred_operative(self, candidates: list[str]) -> str | None:
+        """From candidates, pick one in resonance_aligned_types if available."""
+        for op_type in self.resonance_aligned_types:
+            if op_type in candidates:
+                return op_type
+        return None

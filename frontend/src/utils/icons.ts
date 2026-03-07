@@ -476,4 +476,150 @@ export const icons = {
       <path d="M10 6h8v4h-8z" />
     </svg>
   `,
+
+  // --- Substrate Resonance Archetypes ---
+
+  archetypeTower: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21l3 -18l3 18" />
+      <path d="M7 6l10 0" />
+      <path d="M6 12l12 0" />
+      <path d="M5 18l14 0" />
+      <path d="M15 3l2 -1" />
+      <path d="M17 7l2 -2" />
+    </svg>
+  `,
+
+  archetypeShadow: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3a9 9 0 0 1 0 18" />
+      <path d="M12 3a7 7 0 0 0 0 18" />
+      <path d="M12 3v18" />
+      <circle cx="12" cy="9" r="1" fill="currentColor" />
+      <circle cx="12" cy="15" r="1" fill="currentColor" />
+    </svg>
+  `,
+
+  archetypeDevouringMother: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 21c-4.97 0 -9 -2.686 -9 -6c0 -2.21 1.79 -4.126 4.5 -5.174" />
+      <path d="M12 21c4.97 0 9 -2.686 9 -6c0 -2.21 -1.79 -4.126 -4.5 -5.174" />
+      <path d="M12 3c-1.933 0 -3.5 2.239 -3.5 5s1.567 5 3.5 5" />
+      <path d="M12 3c1.933 0 3.5 2.239 3.5 5s-1.567 5 -3.5 5" />
+      <circle cx="12" cy="8" r="1.5" fill="currentColor" />
+    </svg>
+  `,
+
+  archetypeDeluge: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 14c0 -3.314 3.582 -6 8 -6s8 2.686 8 6" />
+      <path d="M3 18c.328 -.814 1.014 -1.553 1.952 -2.14" />
+      <path d="M21 18c-.328 -.814 -1.014 -1.553 -1.952 -2.14" />
+      <path d="M7 4l.5 2" />
+      <path d="M12 3v3" />
+      <path d="M17 4l-.5 2" />
+      <path d="M5 20l2 -1" />
+      <path d="M12 20v1" />
+      <path d="M19 20l-2 -1" />
+    </svg>
+  `,
+
+  archetypeOverthrow: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3l-8 9h5v9h6v-9h5z" />
+    </svg>
+  `,
+
+  archetypePrometheus: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2l1.5 5h4.5l-3.5 3l1.5 5l-4 -3l-4 3l1.5 -5l-3.5 -3h4.5z" />
+      <path d="M12 15v6" />
+      <path d="M9 18h6" />
+    </svg>
+  `,
+
+  archetypeAwakening: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <circle cx="12" cy="12" r="7" />
+      <path d="M12 2v3" />
+      <path d="M12 19v3" />
+      <path d="M2 12h3" />
+      <path d="M19 12h3" />
+      <path d="M4.93 4.93l2.12 2.12" />
+      <path d="M16.95 16.95l2.12 2.12" />
+      <path d="M4.93 19.07l2.12 -2.12" />
+      <path d="M16.95 7.05l2.12 -2.12" />
+    </svg>
+  `,
+
+  archetypeEntropy: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+      <path d="M12 3c-1.333 2.667 -2 5.333 -2 8s.667 5.333 2 8" />
+      <path d="M12 3c1.333 2.667 2 5.333 2 8s-.667 5.333 -2 8" />
+      <path d="M8 8l8 8" />
+      <path d="M16 8l-8 8" />
+    </svg>
+  `,
+
+  /** Returns the archetype icon for a given resonance signature. */
+  resonanceArchetype: (signature: string, size = 16) => {
+    const map: Record<string, (size: number) => ReturnType<typeof svg>> = {
+      economic_tremor: icons.archetypeTower,
+      conflict_wave: icons.archetypeShadow,
+      biological_tide: icons.archetypeDevouringMother,
+      elemental_surge: icons.archetypeDeluge,
+      authority_fracture: icons.archetypeOverthrow,
+      innovation_spark: icons.archetypePrometheus,
+      consciousness_drift: icons.archetypeAwakening,
+      decay_bloom: icons.archetypeEntropy,
+    };
+    return (map[signature] ?? icons.alertTriangle)(size);
+  },
+
+  /** Substrate tremor icon (seismograph wave). */
+  substrateTremor: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12h3l2 -6l3 12l3 -8l2 6h5" />
+    </svg>
+  `,
+
+  // ── Visibility icons ──────────────────────────────────
+
+  eye: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+    </svg>
+  `,
+
+  eyeOff: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" />
+      <path d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.014 9.014 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87" />
+      <path d="M3 3l18 18" />
+    </svg>
+  `,
+
+  key: (size = 16) => svg`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-3.602 -3.602a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z" />
+      <path d="M14.5 7.5l-8 8" />
+      <path d="M3 21l1.5 -1.5" />
+      <path d="M6.5 17.5l2-2" />
+    </svg>
+  `,
 };

@@ -232,23 +232,64 @@ class ForgeAgentDraft(BaseModel):
     gender: str
     system: str
     primary_profession: str
-    character: str
-    background: str
+    character: str = Field(
+        description=(
+            "Personality portrait in 200-300 words. Include temperament, mannerisms, "
+            "contradictions, one memorable quirk, and a brief physical impression "
+            "(build, distinguishing feature, typical clothing) to aid later portrait generation."
+        ),
+    )
+    background: str = Field(
+        description=(
+            "Backstory in 200-300 words. Include origin, formative event, current motivation, "
+            "and a secret or unresolved tension."
+        ),
+    )
 
 
 class ForgeBuildingDraft(BaseModel):
     """Draft of a building entity."""
     name: str
     building_type: str
-    description: str
-    building_condition: str = "good"
+    description: str = Field(
+        description=(
+            "Atmospheric description in 150-250 words. Include architectural style, "
+            "dominant materials (stone, iron, glass, wood), sensory details (sounds, smells, light), "
+            "and what makes this place remarkable or unsettling. "
+            "These details will feed into image generation."
+        ),
+    )
+    building_condition: str = Field(
+        default="good",
+        description=(
+            "Physical condition: pristine, good, fair, poor, or ruined. "
+            "Vary across buildings in the set. "
+            "A 'ruined' building shows structural damage; 'poor' shows neglect and decay."
+        ),
+    )
+
+
+class ForgeZoneDraft(BaseModel):
+    """Draft of a single zone/district."""
+    name: str
+    zone_type: str = Field(description="Zone classification (e.g. residential, industrial, cultural, commercial, government, military, slum, entertainment).")
+    description: str = Field(description="1-2 sentence atmospheric description of the zone's character and purpose.")
+    characteristics: list[str] = Field(description="2-4 evocative tags capturing the zone's essence (e.g. 'perpetual twilight', 'echoing walls', 'overgrown machinery').")
+
+
+class ForgeStreetDraft(BaseModel):
+    """Draft of a single named street."""
+    name: str
+    zone_name: str = Field(description="Name of the zone this street belongs to.")
+    street_type: str = Field(description="Street classification (e.g. alley, boulevard, lane, avenue, road, street, stairway).")
+    description: str = Field(default="", description="Optional 1-sentence atmospheric detail about this street.")
 
 
 class ForgeGeographyDraft(BaseModel):
     """Draft of city geography."""
     city_name: str
-    zones: list[dict[str, Any]]  # name, zone_type, description
-    streets: list[dict[str, Any]]  # name, zone_name, street_type
+    zones: list[ForgeZoneDraft]
+    streets: list[ForgeStreetDraft]
 
 
 # ── Entity Translation Models ─────────────────────────────────────────

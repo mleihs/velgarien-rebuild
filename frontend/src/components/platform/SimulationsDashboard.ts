@@ -3,11 +3,14 @@ import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { simulationsApi } from '../../services/api/SimulationsApiService.js';
-import type { Simulation } from '../../types/index.js';
+import { resonanceApi } from '../../services/api/index.js';
+import type { Resonance, Simulation } from '../../types/index.js';
+import { icons } from '../../utils/icons.js';
 
 import { getPlatformPullQuotes } from './LoreScroll.js';
 import './SimulationCard.js';
 import './LoreScroll.js';
+import '../resonance/ResonanceMonitor.js';
 
 /**
  * Hero background image path in simulation.assets bucket.
@@ -214,6 +217,56 @@ export class VelgSimulationsDashboard extends LitElement {
       letter-spacing: var(--tracking-wide);
     }
 
+    /* ── Tremor Warning Banner ── */
+
+    .tremor-banner {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: rgba(239, 68, 68, 0.08);
+      border-bottom: 2px solid rgba(239, 68, 68, 0.3);
+      font-family: var(--font-brutalist);
+      font-size: var(--text-sm);
+      color: rgba(239, 68, 68, 0.9);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wider);
+      animation: banner-pulse 3s ease-in-out infinite;
+    }
+
+    .tremor-banner__icon {
+      flex-shrink: 0;
+      animation: tremor-shake 2s ease-in-out infinite;
+    }
+
+    .tremor-banner__count {
+      font-weight: var(--font-bold);
+      color: #ef4444;
+    }
+
+    @keyframes banner-pulse {
+      0%, 100% { background: rgba(239, 68, 68, 0.08); }
+      50% { background: rgba(239, 68, 68, 0.04); }
+    }
+
+    @keyframes tremor-shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-1px); }
+      75% { transform: translateX(1px); }
+    }
+
+    /* ── Resonance Monitor Section ── */
+
+    .resonance-section {
+      padding: var(--space-6) var(--space-6) 0;
+    }
+
+    @media (max-width: 640px) {
+      .resonance-section {
+        padding: var(--space-4) var(--space-3) 0;
+      }
+    }
+
     /* ── States ── */
 
     .loading-state {
@@ -395,6 +448,7 @@ export class VelgSimulationsDashboard extends LitElement {
   @state() private _simulations: Simulation[] = [];
   @state() private _loading = true;
   @state() private _error: string | null = null;
+  @state() private _activeResonances: Resonance[] = [];
 
   /** Scroll nav state */
   @state() private _scrollNavVisible = false;
@@ -406,7 +460,7 @@ export class VelgSimulationsDashboard extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     window.addEventListener('scroll', this._onScroll, { passive: true });
-    await this._loadSimulations();
+    await Promise.all([this._loadSimulations(), this._loadActiveResonances()]);
   }
 
   disconnectedCallback(): void {
@@ -455,6 +509,19 @@ export class VelgSimulationsDashboard extends LitElement {
     }
   }
 
+  private async _loadActiveResonances(): Promise<void> {
+    try {
+      const res = await resonanceApi.list({ limit: '10' });
+      if (res.success && res.data) {
+        this._activeResonances = (res.data as Resonance[]).filter(
+          (r) => r.status === 'detected' || r.status === 'impacting',
+        );
+      }
+    } catch {
+      // Non-critical — silently ignore
+    }
+  }
+
   private _handleCreateClick(): void {
     this.dispatchEvent(
       new CustomEvent('navigate', {
@@ -500,13 +567,14 @@ export class VelgSimulationsDashboard extends LitElement {
               src=${heroUrl}
               fetchpriority="high"
               decoding="async"
-              alt="metaverse.center — interconnected shards of simulated reality"
+              alt=""
+              @error=${(e: Event) => { (e.target as HTMLImageElement).replaceWith(Object.assign(document.createElement('div'), { className: 'hero__bg hero__bg--fallback' })); }}
             />`
             : html`<div class="hero__bg hero__bg--fallback"></div>`
         }
         <div class="hero__noise"></div>
         <div class="hero__overlay">
-          <h1 class="hero__title">${msg('Worlds. One Fracture.')}</h1>
+          <h1 class="hero__title">${msg('Shattered Worlds. Bleeding Borders.')}</h1>
           <p class="hero__lore">
             ${msg('There was once a single world. It broke into shards — each a complete reality with its own physics, its own history, its own answer to a question the universe could not ask in one voice. The edges do not fit together. But they do touch.')}
           </p>
@@ -520,8 +588,28 @@ export class VelgSimulationsDashboard extends LitElement {
         </span>
       </div>
 
+      <!-- Tremor Warning Banner -->
+      ${this._activeResonances.length > 0
+        ? html`
+          <div class="tremor-banner" role="alert">
+            <span class="tremor-banner__icon" aria-hidden="true">${icons.substrateTremor(18)}</span>
+            <span class="tremor-banner__count">${this._activeResonances.length}</span>
+            ${msg('substrate tremors detected — the space between worlds is afraid')}
+          </div>
+        `
+        : nothing}
+
       <!-- Lore Scroll -->
       <velg-lore-scroll .pullQuotes=${getPlatformPullQuotes()}></velg-lore-scroll>
+
+      <!-- Resonance Monitor -->
+      ${this._activeResonances.length > 0
+        ? html`
+          <section class="resonance-section">
+            <resonance-monitor></resonance-monitor>
+          </section>
+        `
+        : nothing}
 
       <!-- Shards -->
       ${

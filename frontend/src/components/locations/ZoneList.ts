@@ -123,6 +123,79 @@ export class VelgZoneList extends LitElement {
       min-width: 28px;
       text-align: right;
     }
+
+    /* Fortification / Quarantine / Cascade overlays */
+    .item--quarantined {
+      border-color: var(--color-warning);
+      background: repeating-linear-gradient(
+        45deg,
+        var(--color-surface-raised),
+        var(--color-surface-raised) 8px,
+        color-mix(in srgb, var(--color-warning) 8%, var(--color-surface-raised)) 8px,
+        color-mix(in srgb, var(--color-warning) 8%, var(--color-surface-raised)) 16px
+      );
+    }
+
+    .item__overlays {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1-5);
+      margin-top: var(--space-2);
+    }
+
+    .item__overlay-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-0-5) var(--space-2);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+    }
+
+    .item__overlay-badge--fortified {
+      background: color-mix(in srgb, var(--color-success) 12%, transparent);
+      border: var(--border-width-thin) solid color-mix(in srgb, var(--color-success) 40%, transparent);
+      color: var(--color-success);
+    }
+
+    .item__overlay-badge--quarantine {
+      background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+      border: var(--border-width-thin) solid color-mix(in srgb, var(--color-warning) 40%, transparent);
+      color: var(--color-warning);
+    }
+
+    .item__overlay-badge--cascade-risk {
+      background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+      border: var(--border-width-thin) solid color-mix(in srgb, var(--color-danger) 40%, transparent);
+      color: var(--color-danger);
+    }
+
+    .item__cascade-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-danger);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .item__cascade-dot { animation: none; }
+    }
+
+    .item__pressure-text {
+      font-family: var(--font-brutalist);
+      font-size: 10px;
+      color: var(--color-text-muted);
+      margin-top: var(--space-1);
+    }
   `;
 
   @property({ attribute: false }) zones: Zone[] = [];
@@ -166,12 +239,55 @@ export class VelgZoneList extends LitElement {
     `;
   }
 
+  private _renderOverlays(zoneId: string) {
+    const stability = this.stabilityMap.get(zoneId);
+    if (!stability) return nothing;
+
+    const hasFortification = stability.fortification_reduction > 0;
+    const isQuarantined = stability.is_quarantined;
+    const hasCascadeRisk = stability.event_pressure > 0.7;
+
+    if (!hasFortification && !isQuarantined && !hasCascadeRisk) return nothing;
+
+    return html`
+      <div class="item__overlays">
+        ${hasFortification && !isQuarantined
+          ? html`<span class="item__overlay-badge item__overlay-badge--fortified"
+              aria-label=${msg('Zone fortified')}
+            >${msg('Fortified')}</span>`
+          : nothing
+        }
+        ${isQuarantined
+          ? html`<span class="item__overlay-badge item__overlay-badge--quarantine"
+              aria-label=${msg('Zone quarantined')}
+            >${msg('Quarantined')}</span>`
+          : nothing
+        }
+        ${hasCascadeRisk
+          ? html`<span class="item__overlay-badge item__overlay-badge--cascade-risk"
+              aria-label=${msg('Cascade risk: zone pressure exceeds threshold')}
+            ><span class="item__cascade-dot"></span> ${msg('Cascade Risk')}</span>`
+          : nothing
+        }
+      </div>
+      ${stability.total_pressure > 0
+        ? html`<div class="item__pressure-text">
+            ${msg(str`Pressure: ${Math.round(stability.event_pressure * 100)}% targeted + ${Math.round(stability.ambient_pressure * 100)}% ambient${stability.fortification_reduction > 0 ? ` - ${Math.round(stability.fortification_reduction * 100)}% fortification` : ''}`)}
+          </div>`
+        : nothing
+      }
+    `;
+  }
+
   protected render() {
     return html`
       <div class="list">
         ${this.zones.map(
-          (zone) => html`
-            <div class="item" role="button" tabindex="0" @click=${() => this._handleSelect(zone)} @keydown=${(
+          (zone) => {
+            const stability = this.stabilityMap.get(zone.id);
+            const isQuarantined = stability?.is_quarantined ?? false;
+            return html`
+            <div class="item ${isQuarantined ? 'item--quarantined' : ''}" role="button" tabindex="0" @click=${() => this._handleSelect(zone)} @keydown=${(
               e: KeyboardEvent,
             ) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -205,8 +321,10 @@ export class VelgZoneList extends LitElement {
                 }
               </div>
               ${this._renderStabilityBar(zone.id)}
+              ${this._renderOverlays(zone.id)}
             </div>
-          `,
+          `;
+          },
         )}
       </div>
     `;

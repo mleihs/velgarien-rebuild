@@ -297,6 +297,9 @@ class OperativeService:
           - target_zone_security × 0.05
           - min(0.15, guardian_count × 0.06)
           + embassy_effectiveness × 0.15
+          + resonance_pressure (0.00 to +0.04)
+          + resonance_operative_mod (-0.04 to +0.04)
+          + attacker_pressure_penalty (-0.04 to 0.00)
           Clamped to [0.05, 0.95]
 
         Aptitude range 3-9 → contribution +0.09 to +0.27 (18pp swing).
@@ -369,15 +372,91 @@ class OperativeService:
         # Guardian penalty: -0.06 per guardian, capped at -0.15
         guardian_penalty = min(0.15, guardian_count * 0.06)
 
+        # Resonance modifiers: zone pressure + archetype alignment + attacker penalty
+        resonance_pressure = 0.0
+        resonance_operative_mod = 0.0
+        attacker_pressure_penalty = 0.0
+        if body.target_simulation_id:
+            resonance_pressure = await cls._get_target_zone_pressure(
+                admin, str(body.target_simulation_id), body.target_zone_id
+            )
+            resonance_operative_mod = await cls._get_resonance_operative_modifier(
+                admin, str(body.target_simulation_id), body.operative_type
+            )
+            # Attacker's own instability reduces mission effectiveness
+            attacker_pressure_penalty = await cls._get_attacker_pressure_penalty(
+                admin, str(source_simulation_id)
+            )
+
         probability = (
             base
             + aptitude * 0.03
             - zone_security * 0.05
             - guardian_penalty
             + embassy_eff * 0.15
+            + resonance_pressure
+            + resonance_operative_mod
+            + attacker_pressure_penalty
         )
 
         return max(0.05, min(0.95, probability))
+
+    # ── Resonance Helpers ─────────────────────────────────
+
+    @staticmethod
+    async def _get_target_zone_pressure(
+        admin: Client, target_sim_id: str, target_zone_id: UUID | None = None
+    ) -> float:
+        """Get zone pressure modifier: pressured zones are easier to infiltrate.
+
+        Returns +0.00 to +0.04 (pressure * cap).
+        """
+        try:
+            result = admin.rpc(
+                "fn_target_zone_pressure",
+                {"p_simulation_id": target_sim_id, "p_zone_id": str(target_zone_id) if target_zone_id else None},
+            ).execute()
+            return float(result.data) if result.data is not None else 0.0
+        except Exception:
+            logger.debug("Zone pressure lookup failed, defaulting to 0.0", exc_info=True)
+            return 0.0
+
+    @staticmethod
+    async def _get_resonance_operative_modifier(
+        admin: Client, target_sim_id: str, operative_type: str
+    ) -> float:
+        """Get net resonance archetype modifier for an operative type.
+
+        Returns clamped [-0.04, +0.04] based on active resonances.
+        Subsiding resonances apply at 50% strength.
+        """
+        try:
+            result = admin.rpc(
+                "fn_resonance_operative_modifier",
+                {"p_simulation_id": target_sim_id, "p_operative_type": operative_type},
+            ).execute()
+            return float(result.data) if result.data is not None else 0.0
+        except Exception:
+            logger.debug("Resonance operative modifier lookup failed, defaulting to 0.0", exc_info=True)
+            return 0.0
+
+    @staticmethod
+    async def _get_attacker_pressure_penalty(
+        admin: Client, source_sim_id: str
+    ) -> float:
+        """Get attacker's own pressure penalty: own instability hurts outbound ops.
+
+        Returns -0.04 to 0.00 (defender compensation).
+        """
+        try:
+            result = admin.rpc(
+                "fn_attacker_pressure_penalty",
+                {"p_simulation_id": source_sim_id},
+            ).execute()
+            return float(result.data) if result.data is not None else 0.0
+        except Exception:
+            logger.debug("Attacker pressure penalty lookup failed, defaulting to 0.0", exc_info=True)
+            return 0.0
 
     # ── List / Get ────────────────────────────────────────
 
@@ -736,7 +815,7 @@ class OperativeService:
         if target_sim_id:
             zones_resp = (
                 supabase.table("zones")
-                .select("id, security_level")
+                .select("id, name, security_level")
                 .eq("simulation_id", target_sim_id)
                 .execute()
             )
@@ -753,6 +832,55 @@ class OperativeService:
                     "old_level": old_level,
                     "new_level": new_level,
                 }
+
+        # Generate crisis event from sabotage (feeds event→pressure→cascade pipeline)
+        # Diminishing returns: impact decreases with existing active sabotage events
+        if target_sim_id:
+            try:
+                admin = await get_admin_supabase()
+
+                # Check existing active sabotage crisis events for this simulation
+                existing_resp = (
+                    admin.table("events")
+                    .select("id", count="exact")
+                    .eq("simulation_id", target_sim_id)
+                    .eq("data_source", "sabotage")
+                    .eq("event_status", "active")
+                    .execute()
+                )
+                existing_count = existing_resp.count or 0
+
+                # Skip event creation if 3+ active sabotage events (saturation)
+                if existing_count < 3:
+                    zone_name_label = "Unknown District"
+                    sabotaged_zone = result.get("zone_downgraded", {})
+                    if sabotaged_zone.get("zone_id") and zones_resp.data:
+                        for z in zones_resp.data:
+                            if z["id"] == sabotaged_zone["zone_id"]:
+                                zone_name_label = z.get("name", zone_name_label)
+                                break
+
+                    # Diminishing impact: 3 → 2 → 1 as more events stack
+                    impact_level = max(1, 3 - existing_count)
+
+                    event_data = {
+                        "simulation_id": target_sim_id,
+                        "title": f"Infrastructure Sabotage — {zone_name_label}",
+                        "event_type": "crisis",
+                        "impact_level": impact_level,
+                        "event_status": "active",
+                        "data_source": "sabotage",
+                        "metadata": {
+                            "mission_id": str(mission["id"]),
+                            "source_simulation_id": str(mission["source_simulation_id"]),
+                        },
+                    }
+                    admin.table("events").insert(event_data).execute()
+                    result["event_created"] = True
+                else:
+                    result["event_saturated"] = True
+            except Exception:
+                logger.debug("Sabotage crisis event creation failed", exc_info=True)
 
         narrative_parts = ["Sabotage successful."]
         if "damage_dealt" in result:

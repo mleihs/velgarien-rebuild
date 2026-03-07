@@ -1752,6 +1752,137 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 
 ---
 
+## 31. Zone Actions (Simulation-Scoped)
+
+Simulation-Level Zonenaktionen fuer Stabilitaets-Management. Drei Aktionstypen mit unterschiedlichen Effekten, Dauern und Cooldowns.
+
+### `GET /api/v1/simulations/:simId/zones/:zoneId/actions`
+Aktuelle und kuerzliche Zonenaktionen auflisten (max 10).
+
+**Rolle:** `viewer`
+
+**Response:** `SuccessResponse[list[ZoneActionResponse]]`
+
+### `POST /api/v1/simulations/:simId/zones/:zoneId/actions`
+Neue Zonenaktion erstellen. Nur eine aktive Aktion pro Zone gleichzeitig. Cooldown-Validierung verhindert Re-Use desselben Aktionstyps.
+
+**Rolle:** `editor`
+
+**Body:**
+```json
+{
+  "action_type": "fortify"
+}
+```
+
+| Action Type | Effekt | Dauer | Cooldown |
+|-------------|--------|-------|----------|
+| `fortify` | +0.3 Stabilisierung | 7 Tage | 14 Tage |
+| `quarantine` | -0.1 Isolierung | 14 Tage | 21 Tage |
+| `deploy_resources` | +0.5 Notfallmassnahme | 3 Tage | 30 Tage |
+
+**Response:** `SuccessResponse[ZoneActionResponse]` (Status 201)
+
+**Fehler:**
+- 409 Conflict: Bereits eine aktive Aktion auf dieser Zone
+- 429 Too Many Requests: Cooldown fuer diesen Aktionstyp noch aktiv
+
+### `DELETE /api/v1/simulations/:simId/zones/:zoneId/actions/:actionId`
+Aktive Zonenaktion abbrechen (Soft-Delete).
+
+**Rolle:** `editor`
+
+**Response:** `SuccessResponse[ZoneActionResponse]`
+
+---
+
+## 32. Substrate Resonances (Platform-Level)
+
+Platform-Level Resonanzen die ueber alle Simulationen propagieren. Oeffentlich lesbar, Schreibzugriff nur fuer Platform-Admin. Vollstaendige Dokumentation: [Substrate Resonances Spec](../specs/substrate-resonances.md).
+
+### `GET /api/v1/resonances`
+Resonanzen auflisten (paginiert, filterbar).
+
+**Query:** `?status=detected&signature=conflict_wave&search=crisis&limit=25&offset=0&include_deleted=false`
+
+**Response:** `PaginatedResponse[ResonanceResponse]`
+
+**Auth:** Authentifizierter Benutzer
+
+### `GET /api/v1/resonances/:resonanceId`
+Einzelne Resonanz abrufen.
+
+**Response:** `SuccessResponse[ResonanceResponse]`
+
+**Auth:** Authentifizierter Benutzer
+
+### `POST /api/v1/resonances`
+Neue Resonanz erstellen. Signature, Archetype und Event-Typen werden automatisch aus source_category abgeleitet (Postgres Trigger).
+
+**Auth:** Platform-Admin (`require_platform_admin()`)
+
+**Body:**
+```json
+{
+  "source_category": "military_conflict",
+  "title": "Eastern Continental War",
+  "description": "Armed conflict spreading across...",
+  "bureau_dispatch": "The Bureau has detected tremors...",
+  "real_world_source": { "url": "...", "headline": "..." },
+  "magnitude": 0.7,
+  "impacts_at": "2026-03-10T00:00:00Z"
+}
+```
+
+**Response:** `SuccessResponse[ResonanceResponse]` (Status 201)
+
+### `PUT /api/v1/resonances/:resonanceId`
+Resonanz aktualisieren.
+
+**Auth:** Platform-Admin
+
+**Body:** Partielle Felder (title, description, bureau_dispatch, magnitude, status, impacts_at, subsides_at)
+
+### `POST /api/v1/resonances/:resonanceId/process-impact`
+Impact-Verarbeitung ueber Simulationen triggern. Erzeugt 2-3 Events pro Simulation via AI-Generierung.
+
+**Auth:** Platform-Admin
+
+**Body:**
+```json
+{
+  "simulation_ids": ["uuid-1", "uuid-2"],
+  "generate_narratives": true,
+  "locale": "de"
+}
+```
+
+**Response:** `SuccessResponse[list[ResonanceImpactResponse]]` (Status 201)
+
+### `GET /api/v1/resonances/:resonanceId/impacts`
+Impact-Records fuer eine Resonanz auflisten.
+
+**Response:** `SuccessResponse[list[ResonanceImpactResponse]]`
+
+### `PUT /api/v1/resonances/:resonanceId/status`
+Resonanz-Status aktualisieren.
+
+**Auth:** Platform-Admin
+
+**Query:** `?new_status=subsiding`
+
+### `POST /api/v1/resonances/:resonanceId/restore`
+Soft-deleted Resonanz wiederherstellen.
+
+**Auth:** Platform-Admin
+
+### `DELETE /api/v1/resonances/:resonanceId`
+Resonanz soft-deleten.
+
+**Auth:** Platform-Admin
+
+---
+
 ## Endpoint-Zusammenfassung
 
 | Bereich | Endpoints | Methoden |
@@ -1787,6 +1918,8 @@ Alle oeffentlichen Endpoints (ohne Authentifizierung, Rate-Limit: 100/min) unter
 | Game Mechanics | 8 | Health Dashboard + Sim/Buildings/Zones/Embassies + Refresh |
 | Bot Players | 5 | CRUD (List + Get + Create + Update + Delete) |
 | Aptitudes | 3 | GetForAgent + UpdateForAgent + ListForSimulation |
+| Zone Actions | 3 | List + Create + Cancel |
+| Resonances | 9 | CRUD + ProcessImpact + Impacts + Status + Restore |
 | Admin | 11 | Settings (2) + Users (3) + Memberships (3) + Cleanup (3) |
 | Public | 48 | Anonymer Lesezugriff (alle GET-only) |
-| **Gesamt** | **257** | **33 Router** |
+| **Gesamt** | **269** | **35 Router** |

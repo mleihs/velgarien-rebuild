@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from backend.config import settings as platform_settings
+from backend.services.platform_api_keys import get_platform_api_key
 from backend.utils.encryption import decrypt
 from supabase import Client
 
@@ -48,10 +49,32 @@ class ExternalServiceResolver:
     Encrypted values are decrypted transparently.
     """
 
-    def __init__(self, supabase: Client, simulation_id: UUID):
+    def __init__(
+        self,
+        supabase: Client,
+        simulation_id: UUID,
+        admin_supabase: Client | None = None,
+    ):
         self._supabase = supabase
         self._simulation_id = simulation_id
+        self._admin_supabase = admin_supabase
         self._cache: dict[str, str | None] | None = None
+
+    def _get_admin_client(self) -> Client | None:
+        """Get admin client for platform key lookups, creating lazily if needed."""
+        if self._admin_supabase:
+            return self._admin_supabase
+        try:
+            from supabase import create_client
+
+            self._admin_supabase = create_client(
+                platform_settings.supabase_url,
+                platform_settings.supabase_service_role_key,
+            )
+            return self._admin_supabase
+        except Exception:
+            logger.debug("Could not create admin client for platform key lookup")
+            return None
 
     async def _load_integration_settings(self) -> dict[str, str | None]:
         """Load all integration category settings for this simulation."""
@@ -111,7 +134,10 @@ class ExternalServiceResolver:
         )
 
     async def get_guardian_config(self) -> NewsConfig | None:
-        """Get Guardian API config if enabled."""
+        """Get Guardian API config if enabled.
+
+        Fallback: sim-level key -> platform_settings -> None.
+        """
         settings = await self._load_integration_settings()
 
         enabled = settings.get("guardian_enabled")
@@ -119,13 +145,19 @@ class ExternalServiceResolver:
             return None
 
         api_key = self._get_decrypted(settings, "guardian_api_key")
+        admin = self._get_admin_client()
+        if not api_key and admin:
+            api_key = await get_platform_api_key(admin, "guardian_api_key")
         if not api_key:
             return None
 
         return NewsConfig(api_key=api_key, source="guardian")
 
     async def get_newsapi_config(self) -> NewsConfig | None:
-        """Get NewsAPI config if enabled."""
+        """Get NewsAPI config if enabled.
+
+        Fallback: sim-level key -> platform_settings -> None.
+        """
         settings = await self._load_integration_settings()
 
         enabled = settings.get("newsapi_enabled")
@@ -133,17 +165,30 @@ class ExternalServiceResolver:
             return None
 
         api_key = self._get_decrypted(settings, "newsapi_api_key")
+        admin = self._get_admin_client()
+        if not api_key and admin:
+            api_key = await get_platform_api_key(admin, "newsapi_api_key")
         if not api_key:
             return None
 
         return NewsConfig(api_key=api_key, source="newsapi")
 
     async def get_ai_provider_config(self) -> AIProviderConfig:
-        """Get AI provider API keys — simulation override or platform defaults."""
+        """Get AI provider API keys.
+
+        Fallback chain: sim-level override -> platform_settings -> .env.
+        """
         settings = await self._load_integration_settings()
 
         openrouter_key = self._get_decrypted(settings, "openrouter_api_key")
         replicate_key = self._get_decrypted(settings, "replicate_api_key")
+
+        # Platform settings fallback (before .env)
+        admin = self._get_admin_client()
+        if not openrouter_key and admin:
+            openrouter_key = await get_platform_api_key(admin, "openrouter_api_key")
+        if not replicate_key and admin:
+            replicate_key = await get_platform_api_key(admin, "replicate_api_key")
 
         return AIProviderConfig(
             openrouter_api_key=openrouter_key or platform_settings.openrouter_api_key,

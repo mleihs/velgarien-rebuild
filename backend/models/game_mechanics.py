@@ -39,6 +39,10 @@ class ZoneStabilityResponse(BaseModel):
     infrastructure_score: float = 0.0
     security_factor: float = 0.5
     event_pressure: float = 0.0
+    ambient_pressure: float = 0.0
+    fortification_reduction: float = 0.0
+    is_quarantined: bool = False
+    total_pressure: float = 0.0
     building_count: int = 0
     total_agents: int = 0
     total_capacity: int = 0

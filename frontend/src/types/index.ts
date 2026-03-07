@@ -278,6 +278,10 @@ export interface BuildingProfessionRequirement {
 
 // --- Event ---
 
+export type EventStatus = 'active' | 'escalating' | 'resolving' | 'resolved' | 'archived';
+
+export type EventChainType = 'escalation' | 'follow_up' | 'resolution' | 'cascade' | 'resonance';
+
 export interface Event {
   id: UUID;
   simulation_id: UUID;
@@ -297,11 +301,23 @@ export interface Event {
   location?: string;
   tags: string[];
   external_refs?: Record<string, unknown>;
+  event_status: EventStatus;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
   reactions?: EventReaction[];
   campaign?: Campaign;
+}
+
+export interface EventChain {
+  id: UUID;
+  simulation_id: UUID;
+  parent_event_id: UUID;
+  child_event_id: UUID;
+  chain_type: EventChainType;
+  created_at: string;
+  parent?: { id: UUID; title: string; event_status: EventStatus };
+  child?: { id: UUID; title: string; event_status: EventStatus };
 }
 
 export interface EventReaction {
@@ -875,6 +891,10 @@ export interface ZoneStability {
   infrastructure_score: number;
   security_factor: number;
   event_pressure: number;
+  ambient_pressure: number;
+  fortification_reduction: number;
+  is_quarantined: boolean;
+  total_pressure: number;
   building_count: number;
   total_agents: number;
   total_capacity: number;
@@ -882,6 +902,31 @@ export interface ZoneStability {
   avg_readiness: number;
   stability: number;
   stability_label: string;
+}
+
+export interface EventZoneLink {
+  id: UUID;
+  event_id: UUID;
+  zone_id: UUID;
+  affinity_weight: number;
+  link_source: 'auto' | 'manual' | 'location_match';
+  zone_name?: string;
+  zone_type?: string;
+}
+
+export type ZoneActionType = 'fortify' | 'quarantine' | 'deploy_resources';
+
+export interface ZoneAction {
+  id: UUID;
+  zone_id: UUID;
+  simulation_id: UUID;
+  action_type: ZoneActionType;
+  effect_value: number;
+  created_by_id?: UUID;
+  expires_at: string;
+  cooldown_until: string;
+  created_at: string;
+  deleted_at?: string;
 }
 
 export interface EmbassyEffectiveness {
@@ -1307,4 +1352,74 @@ export interface CleanupExecuteResult {
   min_age_days: number;
   deleted_count: number;
   cascade_counts: Record<string, number>;
+}
+
+// --- Substrate Resonance ---
+
+export type ResonanceStatus = 'detected' | 'impacting' | 'subsiding' | 'archived';
+
+export type ResonanceImpactStatus = 'pending' | 'generating' | 'completed' | 'skipped' | 'failed';
+
+export type ResonanceSignature =
+  | 'economic_tremor'
+  | 'conflict_wave'
+  | 'biological_tide'
+  | 'elemental_surge'
+  | 'authority_fracture'
+  | 'innovation_spark'
+  | 'consciousness_drift'
+  | 'decay_bloom';
+
+export type ResonanceArchetype =
+  | 'The Tower'
+  | 'The Shadow'
+  | 'The Devouring Mother'
+  | 'The Deluge'
+  | 'The Overthrow'
+  | 'The Prometheus'
+  | 'The Awakening'
+  | 'The Entropy';
+
+export type SourceCategory =
+  | 'economic_crisis'
+  | 'military_conflict'
+  | 'pandemic'
+  | 'natural_disaster'
+  | 'political_upheaval'
+  | 'tech_breakthrough'
+  | 'cultural_shift'
+  | 'environmental_disaster';
+
+export interface Resonance {
+  id: UUID;
+  source_category: SourceCategory;
+  resonance_signature: ResonanceSignature;
+  archetype: ResonanceArchetype;
+  title: string;
+  description?: string;
+  bureau_dispatch?: string;
+  real_world_source?: Record<string, unknown>;
+  magnitude: number;
+  affected_event_types: string[];
+  status: ResonanceStatus;
+  detected_at: string;
+  impacts_at: string;
+  subsides_at?: string;
+  created_by_id?: UUID;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}
+
+export interface ResonanceImpact {
+  id: UUID;
+  resonance_id: UUID;
+  simulation_id: UUID;
+  simulation_name?: string;
+  susceptibility: number;
+  effective_magnitude: number;
+  status: ResonanceImpactStatus;
+  spawned_event_ids: UUID[];
+  narrative_context?: string;
+  created_at: string;
 }

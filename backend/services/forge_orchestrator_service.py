@@ -37,6 +37,92 @@ WORLD_ARCHITECT_PROMPT = (
 )
 
 
+def _build_chunk_prompt(
+    chunk_type: str,
+    anchor: dict,
+    seed: str,
+    gen_config: ForgeGenerationConfig,
+    geography: dict | None = None,
+) -> str:
+    """Build a rich, chunk-type-specific prompt for entity generation."""
+    # Common context block
+    lines = [
+        f"Seed Prompt: {seed}",
+        f"Simulation Theme: {anchor.get('title', '')}",
+        f"Core Question: {anchor.get('core_question', '')}",
+        f"Description: {anchor.get('description', '')}",
+    ]
+
+    if chunk_type == "geography":
+        lines += [
+            "",
+            f"Generate exactly {gen_config.zone_count} zones/districts and "
+            f"exactly {gen_config.street_count} named streets for a unique city.",
+            "",
+            "Requirements:",
+            "- Invent a distinctive city name that reflects the theme.",
+            "- Each zone needs a 1-2 sentence description and 2-4 evocative characteristic tags.",
+            "- Each street should belong to a zone and have a name that evokes atmosphere.",
+            "- Vary zone types (residential, industrial, cultural, commercial, government, etc.).",
+            "- Streets should have different types (alley, boulevard, lane, avenue, stairway, etc.).",
+            "- The geography should feel interconnected — zones and streets should hint at relationships.",
+        ]
+
+    elif chunk_type == "agents":
+        lines += [
+            "",
+            f"Generate exactly {gen_config.agent_count} unique agents who inhabit this world.",
+        ]
+        # Add geographic context if available
+        if geography:
+            city = geography.get("city_name", "the city")
+            zone_names = [z.get("name", "") for z in geography.get("zones", [])]
+            lines += [
+                f"",
+                f"City: {city}",
+                f"Districts: {', '.join(zone_names)}" if zone_names else "",
+            ]
+        lines += [
+            "",
+            "Requirements:",
+            "- Write 'character' as a vivid personality portrait (200-300 words): temperament, mannerisms, "
+            "contradictions, a memorable quirk, and a brief physical impression (build, distinguishing "
+            "feature, typical clothing). The physical details will feed portrait image generation.",
+            "- Write 'background' as rich backstory (200-300 words): origin, formative event, "
+            "current motivation, and a secret or unresolved tension.",
+            "- Vary genders across the set (mix of male, female, non-binary).",
+            "- Each agent should belong to a different faction/system tied to the world's geography.",
+            "- Professions should be unique and thematically resonant — avoid generic titles.",
+        ]
+
+    elif chunk_type == "buildings":
+        lines += [
+            "",
+            f"Generate exactly {gen_config.building_count} unique buildings.",
+        ]
+        if geography:
+            city = geography.get("city_name", "the city")
+            zone_names = [z.get("name", "") for z in geography.get("zones", [])]
+            lines += [
+                f"",
+                f"City: {city}",
+                f"Districts: {', '.join(zone_names)}" if zone_names else "",
+            ]
+        lines += [
+            "",
+            "Requirements:",
+            "- Write 'description' as an atmospheric passage (150-250 words): architectural style, "
+            "dominant materials (stone, iron, glass, wood), sensory details (sounds, smells, light), "
+            "and what makes the place remarkable or unsettling. These feed image generation.",
+            "- Vary 'building_condition' across the set: use pristine, good, fair, poor, or ruined. "
+            "At least one should be 'poor' or 'ruined', and at least one 'pristine' or 'good'.",
+            "- Vary building types (tavern, archive, factory, residence, market, observatory, etc.).",
+            "- Building names should be evocative and world-specific.",
+        ]
+
+    return "\n".join(lines)
+
+
 class ForgeOrchestratorService:
     """Orchestrates multi-step simulation generation."""
 
@@ -156,14 +242,12 @@ class ForgeOrchestratorService:
             else:
                 raise HTTPException(status_code=400, detail=f"Invalid chunk type: {chunk_type}")
 
-        prompt = (
-            f"Simulation Theme: {anchor.get('title')}\n"
-            f"Core Question: {anchor.get('core_question')}\n"
-            f"Description: {anchor.get('description')}\n\n"
-            f"Task: Generate the {chunk_type} for this world."
-        )
-
         or_key, _ = await ForgeOrchestratorService._get_user_keys(supabase, user_id)
+
+        # Build geography context for agent/building chunks
+        geography = draft_data.get("geography") or None
+
+        prompt = _build_chunk_prompt(chunk_type, anchor, seed, gen_config, geography)
 
         logger.debug("Instantiating dynamic Pydantic AI agent for chunk generation")
         dynamic_agent = Agent(
@@ -172,12 +256,7 @@ class ForgeOrchestratorService:
         )
 
         if chunk_type == "geography":
-            geo_prompt = (
-                f"{prompt}\n"
-                f"Generate exactly {gen_config.zone_count} zones/districts and "
-                f"exactly {gen_config.street_count} named streets."
-            )
-            result = await dynamic_agent.run(geo_prompt, output_type=ForgeGeographyDraft)
+            result = await dynamic_agent.run(prompt, output_type=ForgeGeographyDraft)
             await ForgeDraftService.update_draft(
                 supabase, user_id, draft_id, ForgeDraftUpdate(geography=result.output.model_dump())
             )
@@ -185,7 +264,7 @@ class ForgeOrchestratorService:
 
         elif chunk_type == "agents":
             result = await dynamic_agent.run(
-                prompt + f" Generate exactly {gen_config.agent_count} unique agents.",
+                prompt,
                 output_type=list[ForgeAgentDraft],
             )
             agents_list = [a.model_dump() for a in result.output]
@@ -196,7 +275,7 @@ class ForgeOrchestratorService:
 
         elif chunk_type == "buildings":
             result = await dynamic_agent.run(
-                prompt + f" Generate exactly {gen_config.building_count} unique buildings.",
+                prompt,
                 output_type=list[ForgeBuildingDraft],
             )
             buildings_list = [b.model_dump() for b in result.output]

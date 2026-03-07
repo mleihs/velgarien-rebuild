@@ -2,7 +2,7 @@ import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import type { Event as SimEvent } from '../../types/index.js';
+import type { Event as SimEvent, EventStatus } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import '../shared/VelgBadge.js';
 import '../shared/VelgIconButton.js';
@@ -191,6 +191,52 @@ export class VelgEventCard extends LitElement {
       margin-top: auto;
     }
 
+    /* Status indicator dot */
+    .card__status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .card__status-dot--active {
+      background: var(--color-success);
+      border: 2px solid color-mix(in srgb, var(--color-success) 50%, transparent);
+    }
+
+    .card__status-dot--escalating {
+      background: var(--color-danger);
+      border: 2px solid color-mix(in srgb, var(--color-danger) 50%, transparent);
+      animation: status-pulse var(--duration-slow, 300ms) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) infinite alternate;
+    }
+
+    .card__status-dot--resolving {
+      background: var(--color-info);
+      border: 2px solid color-mix(in srgb, var(--color-info) 50%, transparent);
+    }
+
+    .card__status-dot--resolved {
+      background: var(--color-text-muted);
+      border: 2px solid color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+    }
+
+    .card__status-dot--archived {
+      background: var(--color-text-muted);
+      border: 2px solid color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+      opacity: 0.6;
+    }
+
+    @keyframes status-pulse {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card__status-dot--escalating {
+        animation: none;
+      }
+    }
+
   `;
 
   @property({ type: Object }) event!: SimEvent;
@@ -216,6 +262,17 @@ export class VelgEventCard extends LitElement {
 
   private _getReactionCount(): number {
     return this.event.reactions?.length ?? 0;
+  }
+
+  private _getStatusBadgeVariant(status: EventStatus): string {
+    switch (status) {
+      case 'active': return 'success';
+      case 'escalating': return 'danger';
+      case 'resolving': return 'info';
+      case 'resolved': return 'default';
+      case 'archived': return 'default';
+      default: return 'default';
+    }
   }
 
   private _handleClick(): void {
@@ -292,6 +349,11 @@ export class VelgEventCard extends LitElement {
         }
       }}>
         <div class="card__header">
+          <span
+            class="card__status-dot card__status-dot--${evt.event_status ?? 'active'}"
+            role="img"
+            aria-label=${msg(str`Status: ${evt.event_status ?? 'active'}`)}
+          ></span>
           <h3 class="card__title">${evt.title}</h3>
           ${this._renderImpactBar()}
         </div>
@@ -299,9 +361,12 @@ export class VelgEventCard extends LitElement {
         <div class="card__body">
           <div class="card__badges">
             ${evt.event_type ? html`<velg-badge variant="primary">${evt.event_type}</velg-badge>` : null}
+            ${evt.event_status && evt.event_status !== 'active' ? html`<velg-badge variant=${this._getStatusBadgeVariant(evt.event_status)}>${evt.event_status}</velg-badge>` : null}
             ${evt.data_source === 'ai' ? html`<velg-badge variant="info">AI</velg-badge>` : null}
             ${evt.data_source === 'bleed' ? html`<velg-badge variant="warning">${msg('Bleed')}</velg-badge>` : null}
+            ${evt.data_source === 'cascade' ? html`<velg-badge variant="danger" title=${msg('Auto-generated cascade event from zone pressure overflow')}>${icons.bolt()} ${msg('Cascade')}</velg-badge>` : null}
             ${evt.data_source === 'propagandist' ? html`<velg-badge variant="warning" title=${msg('This event was caused by foreign propaganda')}>${msg('Propaganda')}</velg-badge>` : null}
+            ${evt.data_source === 'resonance' ? html`<velg-badge variant="danger" title=${msg('Spawned by substrate resonance')}>${icons.substrateTremor(12)} ${(evt.external_refs as Record<string, unknown> | undefined)?.archetype ?? msg('Resonance')}</velg-badge>` : null}
             ${reactionCount > 0 ? html`<velg-badge variant="warning">${msg(str`${reactionCount} Reactions`)}</velg-badge>` : null}
           </div>
 
@@ -342,7 +407,7 @@ export class VelgEventCard extends LitElement {
             evt.tags && evt.tags.length > 0
               ? html`
               <div class="card__tags">
-                ${evt.tags.slice(0, 5).map((tag) => html`<span class="card__tag">${tag}</span>`)}
+                ${evt.tags.slice(0, 5).map((tag) => html`<span class="card__tag">${tag.replace(/_/g, ' ')}</span>`)}
                 ${evt.tags.length > 5 ? html`<span class="card__tag">+${evt.tags.length - 5}</span>` : null}
               </div>
             `

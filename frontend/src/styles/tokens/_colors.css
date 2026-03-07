@@ -55,7 +55,7 @@
   /* === TEXT COLORS === */
   --color-text-primary: var(--color-gray-900);
   --color-text-secondary: var(--color-gray-600);
-  --color-text-muted: var(--color-gray-400);
+  --color-text-muted: var(--color-gray-500);
   --color-text-inverse: var(--color-gray-0);
   --color-text-link: var(--color-info);
   --color-text-danger: var(--color-danger);

@@ -1464,3 +1464,202 @@ Centralized SVG icon module for all operative types. Exports `operativeIcons` ob
 ### EpochBattleLog Enhancement (Migration 048)
 
 - **zone_fortified Event:** Renders fortification events with shield icon from `operative-icons.ts`, zone name, and "fortified" narrative. Uses defensive green accent color.
+
+---
+
+## Event Pressure & Seismograph
+
+### VelgEventSeismograph (`velg-event-seismograph`)
+
+SVG seismograph visualization for event pressure over time. Renders event spikes, pressure overlay, and supports brush interaction for date range selection.
+
+**Tag:** `<velg-event-seismograph>`
+
+**Properties:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `simulationId` | `string` | Current simulation ID |
+| `events` | `SimEvent[]` | Events to visualize |
+
+**Features:**
+- **Time ranges:** 30, 90, 180, 365 days (default: 90), switchable via range buttons
+- **Spike rendering:** Vertical lines per event, color-coded by impact level (≥8: danger red, ≥5: warning amber, <5: primary)
+- **Special markers:**
+  - Resonance events: expanding circles + pink diamond marker, 2s pulse animation
+  - Cascade events: dashed strokes, open circles
+  - Bleed events: dashed strokes (4,3 pattern)
+  - Escalating events: 1.2s opacity pulse
+- **Pressure overlay:** 7-day rolling pressure polygon (danger-colored, low opacity), ceiling normalized to 15
+- **Brush interaction:** Click-drag to select date range, double-click to clear
+- **Grid lines:** Vertical date markers (7d/14d/30d/60d intervals), horizontal impact thresholds at 5 and 8
+- **Accessibility:** Respects `prefers-reduced-motion`, semantic SVG structure
+
+**Custom Events:**
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `seismograph-brush` | `{ dateFrom: string, dateTo: string }` | Date range selected via brush |
+| `seismograph-clear` | — | Brush cleared (double-click) |
+
+---
+
+## Substrate Resonance Components
+
+### ResonanceMonitor (`resonance-monitor`)
+
+Platform-level dashboard for viewing active substrate resonances. Displayed on the SimulationsDashboard.
+
+**Tag:** `<resonance-monitor>`
+
+**State:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `_resonances` | `Resonance[]` | Loaded resonances |
+| `_impactCounts` | `Record<string, number>` | Impact count per resonance |
+| `_statusFilter` | `'all' \| 'detected' \| 'impacting' \| 'subsiding'` | Active status filter |
+| `_signatureFilter` | `ResonanceSignature \| ''` | Signature filter |
+
+**Features:**
+- Status filter chips (all, detected, impacting, subsiding)
+- Signature dropdown filter
+- Auto-refresh every 60 seconds
+- Grid of `<resonance-card>` components with stagger animation
+- Process impact button (platform admin only)
+- Loading/error/empty states
+
+### ResonanceCard (`resonance-card`)
+
+Individual resonance display card with magnitude indicator, status badge, and countdown timer.
+
+**Tag:** `<resonance-card>`
+
+**Properties:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `resonance` | `Resonance` | Resonance data object |
+| `impactCount` | `number` | Number of processed impacts |
+| `showProcessButton` | `boolean` | Show process button (admin only) |
+
+**Visual:**
+- Magnitude indicator: low (cyan, ≤0.4), medium (amber, 0.4-0.7), high (red, >0.7)
+- Status badge with color coding per status
+- Countdown to `impacts_at` timestamp (live updating)
+- Expandable bureau dispatch section
+- Impact count badge
+
+**Custom Events:**
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `resonance-click` | `Resonance` | Card clicked |
+| `resonance-process` | `string` (resonance ID) | Process button clicked |
+
+---
+
+## Admin Panel Components
+
+### AdminApiKeysTab (`velg-admin-api-keys-tab`)
+
+Platform API key management panel. Displays 6 API keys grouped by category with masked values, edit fields, and save/clear actions.
+
+**Tag:** `<velg-admin-api-keys-tab>`
+
+**Managed Keys:**
+
+| Key | Label | Category |
+|-----|-------|----------|
+| `openrouter_api_key` | OpenRouter API Key | AI |
+| `replicate_api_key` | Replicate API Key | AI |
+| `guardian_api_key` | Guardian API Key | News |
+| `newsapi_api_key` | NewsAPI Key | News |
+| `tavily_api_key` | Tavily API Key | Other |
+| `deepl_api_key` | DeepL API Key | Other |
+
+**Features:**
+- Grouped by category (AI, News, Other)
+- Status badge (Active/Not configured)
+- Masked value display with show/hide toggle
+- Per-key save and clear buttons
+- Dirty state indicator (yellow border glow)
+
+### AdminResonancesTab (`velg-admin-resonances-tab`)
+
+Full admin management panel for substrate resonances with three views and comprehensive filtering.
+
+**Tag:** `<velg-admin-resonances-tab>`
+
+**Views:** Active | Archived | Trash
+
+**Filters:** Status chips (all, detected, impacting, subsiding), signature dropdown, search input
+
+**Actions per resonance:**
+- Status transition (detected → impacting → subsiding → archived)
+- Process impact (triggers AI event generation across simulations)
+- Expand impact panel (shows per-simulation results)
+- Edit (opens form modal)
+- Soft-delete / Restore
+
+**Child Components:** `<velg-admin-resonance-form-modal>`, `<velg-confirm-dialog>`
+
+### AdminResonanceFormModal (`velg-admin-resonance-form-modal`)
+
+Modal form for creating/editing substrate resonances. Source category selection auto-previews derived signature and archetype.
+
+**Tag:** `<velg-admin-resonance-form-modal>`
+
+**Properties:**
+| Name | Typ | Beschreibung |
+|------|-----|-------------|
+| `resonance` | `Resonance \| null` | Existing resonance for edit mode, null for create |
+
+**Form Fields:**
+1. Source category select (with auto-derivation preview showing signature + archetype)
+2. Title input
+3. Description textarea
+4. Bureau dispatch textarea (monospace)
+5. Magnitude slider (0.1-1.0, step 0.05) with color-coded live display
+6. Impacts At datetime-local input
+
+**Custom Events:** `resonance-save`, `modal-close`
+
+---
+
+## Shared Component Additions
+
+### VelgFontPicker (`velg-font-picker`)
+
+Font selection dropdown with 13 curated typefaces. Used in VelgForgeDarkroom for theme font customization.
+
+**Tag:** `<velg-font-picker>`
+
+**Available Fonts:** Oswald, Barlow, Cormorant Garamond, Libre Baskerville, Space Mono, Spectral, Inter, Montserrat, Playfair Display, Merriweather, Fira Code, Lora, system-ui
+
+---
+
+## API Service Additions
+
+### ResonanceApiService
+
+Singleton API service for resonance management (`resonanceApi`).
+
+**Methods:**
+| Method | HTTP | Path | Auth |
+|--------|------|------|------|
+| `list()` | GET | `/resonances` | Public/Auth |
+| `getById()` | GET | `/resonances/{id}` | Public/Auth |
+| `create()` | POST | `/resonances` | Platform Admin |
+| `update()` | PUT | `/resonances/{id}` | Platform Admin |
+| `processImpact()` | POST | `/resonances/{id}/process-impact` | Platform Admin |
+| `listImpacts()` | GET | `/resonances/{id}/impacts` | Auth |
+| `updateStatus()` | PUT | `/resonances/{id}/status` | Platform Admin |
+| `restore()` | POST | `/resonances/{id}/restore` | Platform Admin |
+| `remove()` | DELETE | `/resonances/{id}` | Platform Admin |
+
+### ZoneActionApiService
+
+Singleton API service for zone action management (`zoneActionsApi`).
+
+**Methods:**
+| Method | HTTP | Path | Auth |
+|--------|------|------|------|
+| `list()` | GET | `/simulations/{simId}/zones/{zoneId}/actions` | Viewer |
+| `create()` | POST | `/simulations/{simId}/zones/{zoneId}/actions` | Editor |
+| `cancel()` | DELETE | `/simulations/{simId}/zones/{zoneId}/actions/{id}` | Editor |

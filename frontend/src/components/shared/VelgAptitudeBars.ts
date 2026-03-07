@@ -107,7 +107,7 @@ export class VelgAptitudeBars extends LitElement {
       font-size: var(--apt-font-size);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted, #64748b);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -159,7 +159,7 @@ export class VelgAptitudeBars extends LitElement {
       display: flex;
       justify-content: flex-end;
       font-size: var(--apt-font-size);
-      color: var(--color-text-muted, #94a3b8);
+      color: var(--color-text-muted, #64748b);
       margin-top: 4px;
       padding-top: 4px;
       border-top: 1px solid var(--color-border, #334155);

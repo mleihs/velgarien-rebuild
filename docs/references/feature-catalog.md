@@ -1,8 +1,8 @@
 ---
 title: "Feature Catalog"
 id: feature-catalog
-version: "2.0"
-date: 2026-03-03
+version: "2.1"
+date: 2026-03-07
 lang: de
 type: reference
 status: active
@@ -339,17 +339,54 @@ Features die innerhalb einer Simulation existieren. Benutzer können beliebig vi
 
 ---
 
+### I. Event Pressure & Zone Dynamics
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| I1 | **Graduated Event Pressure** | ✅ IMPL | `POWER(impact_level/10, 1.5)` Druckformel mit Status-Multiplikatoren (escalating=1.3x, resolving=0.5x). Emotions-gewichteter Reaction-Modifier. |
+| I2 | **Event Lifecycle** | ✅ IMPL | Event-Status-Workflow: active → escalating → resolving → resolved → archived. Event Chains (escalation, follow_up, resolution, cascade, resonance). |
+| I3 | **Zone Gravity Matrix** | ✅ IMPL | Event-Typ → Zone-Typ Affinitaets-Matrix. Auto-Zuordnung via `assign_event_zones()` Trigger. `_global` Flag fuer krisenbezogene Events. |
+| I4 | **Zone Vulnerability Matrix** | ✅ IMPL | Zone-Typ × Event-Typ Multiplikatoren (0.5x-1.5x). Per-Simulation konfigurierbar via simulation_settings. |
+| I5 | **Cascade Events** | ✅ IMPL | Automatische Folgeereignis-Erzeugung wenn Zone-Druck > 0.7. Rate-limitiert, quarantaene-immun. Zone-Typ-spezifische Templates. |
+| I6 | **Zone Actions** | ✅ IMPL | Spieler-Interventionen: fortify (+0.3, 7d/14d), quarantine (-0.1 + cascade-block, 14d/21d), deploy_resources (+0.5, 3d/30d). Cooldown-Validierung. |
+| I7 | **Event Seismograph** | ✅ IMPL | SVG Seismograph-Visualisierung (30/90/180/365 Tage). Spike-Farben nach Impact, Druckueberlagerung, Brush-Selektion, Resonanz/Kaskade-Marker. |
+
+---
+
+### J. Substrate Resonances
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| J1 | **Resonance Detection** | ✅ IMPL | 8 Source-Kategorien (economic_crisis, military_conflict, pandemic, etc.) → 8 Resonanz-Signaturen → 8 Archetypen. Auto-Derivation via Postgres Trigger. |
+| J2 | **Susceptibility Profiles** | ✅ IMPL | Per-Simulation Empfindlichkeits-Profile (0.4-1.8 Multiplikator). 5 benannte Simulationen mit individuellen Profilen. Effective Magnitude = magnitude × susceptibility. |
+| J3 | **Impact Processing** | ✅ IMPL | Platform-Admin triggered Impact-Pipeline: 2-3 AI-generierte Events pro Simulation. Status-Workflow: pending → generating → completed. Auto-Transition zu 'subsiding'. |
+| J4 | **Operative Integration** | ✅ IMPL | Archetyp-Operative Affinitaeten (+0.03 aligned, -0.02 opposed). Netto-Modifier [-0.04, +0.04]. Zone-Pressure-Bonus (max 0.04). Attacker-Pressure-Penalty (max -0.04). Subsiding-Resonanzen 0.5x Decay. Bot-Awareness fuer Resonanz-Druck. |
+| J5 | **Resonance Monitor** | ✅ IMPL | Platform-Level Dashboard (`<resonance-monitor>`). Status-Filter, Signatur-Filter, Auto-Refresh 60s. Magnitude-Farbkodierung (cyan/amber/rot). |
+| J6 | **Admin Resonances Panel** | ✅ IMPL | Vollstaendiges Admin-Panel (`<velg-admin-resonances-tab>`). CRUD + Status-Transition + Impact-Verarbeitung + Soft-Delete/Restore. Formular-Modal mit Derivation-Preview. |
+| J7 | **Balance Fixes v2** | ✅ IMPL | Infiltrator-Oppositionen (The Entropy + The Devouring Mother). Subsiding-Resonanzen 0.5x Decay. Caps reduziert (0.06→0.04 fuer Pressure + Modifier). Attacker-Pressure-Penalty (`fn_attacker_pressure_penalty`, max -0.04). `active_resonances`-View schliesst archivierte aus. `fn_target_zone_pressure` NULL-Bug Fix. |
+
+---
+
+### K. Platform Admin Extensions
+
+| # | Feature | Status | Beschreibung |
+|---|---------|--------|-------------|
+| K1 | **API Key Management** | ✅ IMPL | Admin-Panel (`<velg-admin-api-keys-tab>`) fuer 6 Platform-API-Keys (OpenRouter, Replicate, Guardian, NewsAPI, Tavily, DeepL). Maskierte Anzeige, Save/Clear pro Key. 5-Min Cache-TTL mit Invalidierung. |
+| K2 | **Font Picker** | ✅ IMPL | Shared Component (`<velg-font-picker>`) mit 13 kuratierten Schriften (Oswald, Barlow, Cormorant Garamond, Spectral, Space Mono, etc.). Verwendet in VelgForgeDarkroom fuer Theme-Anpassung. |
+
+---
+
 ## Technische Infrastruktur-Übersicht
 
 | Kennzahl | Wert |
 |----------|------|
 | **Simulationen** | 5 (Velgarien, The Gaslit Reach, Station Null, Speranza, Cité des Dames) |
-| **Datenbanktabellen** | 46 |
-| **SQL-Migrationen** | 51 |
-| **RLS-Policies** | 140+ |
-| **Trigger** | 27+ |
-| **Views** | 6 Standard + 6 Materialized |
-| **API-Endpoints** | 255 (über 32 Router) |
+| **Datenbanktabellen** | 56 |
+| **SQL-Migrationen** | 85 |
+| **RLS-Policies** | 150+ |
+| **Trigger** | 41+ |
+| **Views** | 8 Standard + 6 Materialized |
+| **API-Endpoints** | ~305 (über 37 Router) |
 | **Backend-Tests** | 788 (pytest: unit + integration + security + performance) |
 | **Frontend-Tests** | 442 (vitest: validation + API + theme contrast + SEO) |
 | **E2E-Tests** | 81 (Playwright: 12 Dateien) |
@@ -412,3 +449,8 @@ Alle 6 Phasen abgeschlossen. 160 Tasks implementiert.
 - P19 (How-to-Play Tutorial)
 - P20 (ECharts Intelligence Report)
 - C10-C12 (View + Notifications + Bleed Settings)
+
+### Phase 7: Event Pressure & Resonance Gameplay
+- I1-I7 (Graduated Event Pressure, Event Lifecycle, Zone Gravity/Vulnerability, Cascade Events, Zone Actions, Event Seismograph)
+- J1-J7 (Substrate Resonances: Detection, Susceptibility, Impact Processing, Operative Integration, Monitor, Admin Panel, Balance Fixes)
+- K1-K2 (API Key Management, Font Picker)

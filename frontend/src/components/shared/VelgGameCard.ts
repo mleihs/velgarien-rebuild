@@ -71,7 +71,7 @@ export class VelgGameCard extends LitElement {
       --card-bg: var(--color-surface, #1a1a1a);
       --card-bg-deep: var(--color-surface-sunken, #0f0f0f);
       --card-text: var(--color-text-primary, #e5e5e5);
-      --card-text-dim: var(--color-text-secondary, #999);
+      --card-text-dim: var(--color-text-secondary, #a3a3a3);
       --card-border-color: var(--color-border, #333);
       --card-radius: var(--border-radius, 0px);
       --card-font-heading: var(--font-brutalist, 'Oswald', sans-serif);
@@ -516,6 +516,22 @@ export class VelgGameCard extends LitElement {
     :host([size="sm"]) .card__subtitle { font-size: 8px; }
     :host([size="lg"]) .card__subtitle { font-size: 12px; }
 
+    .card__description {
+      font-family: var(--card-font-body);
+      font-size: 8px;
+      color: var(--card-text-dim);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      opacity: 0.8;
+    }
+
+    :host([size="xs"]) .card__description { display: none; }
+    :host([size="sm"]) .card__description { -webkit-line-clamp: 1; font-size: 7px; }
+    :host([size="lg"]) .card__description { -webkit-line-clamp: 3; font-size: 10px; }
+
     .card__badges {
       display: flex;
       flex-wrap: wrap;
@@ -956,6 +972,7 @@ export class VelgGameCard extends LitElement {
     return html`
       ${this.aptitudes ? this._renderAptitudePips() : nothing}
       ${this.subtitle ? html`<span class="card__subtitle">${this.subtitle}</span>` : nothing}
+      ${this.description && !this.editable ? html`<span class="card__description">${this.description}</span>` : nothing}
       ${
         this.editable
           ? html`
@@ -1008,6 +1025,7 @@ export class VelgGameCard extends LitElement {
           : nothing
       }
       ${this.subtitle ? html`<span class="card__subtitle">${this.subtitle}</span>` : nothing}
+      ${this.description && !this.editable ? html`<span class="card__description">${this.description}</span>` : nothing}
       ${
         this.editable
           ? html`

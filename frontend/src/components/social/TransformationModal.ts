@@ -22,127 +22,337 @@ export class VelgTransformationModal extends LitElement {
       display: block;
     }
 
-    .wizard {
+    /* Widen modal for split-screen on transform step */
+    :host([data-step="transform"]) velg-base-modal {
+      --modal-max-width: 880px;
+    }
+
+    .crucible {
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
     }
 
-    /* Step indicator */
-    .wizard__steps {
+    /* ======================================== */
+    /* PIPELINE — [REALITY] ──▶ [CRUCIBLE] ──▶ [EVENT] */
+    /* ======================================== */
+    .pipeline {
       display: flex;
+      align-items: center;
       gap: 0;
-      border: var(--border-default);
     }
 
-    .wizard__step {
-      flex: 1;
+    .pipeline__step {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: var(--space-1-5);
       padding: var(--space-2) var(--space-3);
       font-family: var(--font-brutalist);
-      font-weight: var(--font-bold);
+      font-weight: var(--font-black);
       font-size: var(--text-xs);
       text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
+      letter-spacing: var(--tracking-brutalist);
       background: var(--color-surface-sunken);
       color: var(--color-text-muted);
-      border-right: var(--border-width-thin) solid var(--color-border);
+      border: var(--border-width-default) solid var(--color-border);
+      transition: all var(--duration-normal, 200ms);
+      white-space: nowrap;
     }
 
-    .wizard__step:last-child {
-      border-right: none;
-    }
-
-    .wizard__step--active {
+    .pipeline__step--active {
       background: var(--color-primary);
       color: var(--color-text-inverse);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary), 0 0 12px color-mix(in srgb, var(--color-primary) 30%, transparent);
     }
 
-    .wizard__step--done {
-      background: var(--color-success-bg);
+    .pipeline__step--done {
+      background: var(--color-surface-raised);
       color: var(--color-success);
+      border-color: var(--color-success);
     }
 
-    .wizard__step-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 20px;
-      height: 20px;
-      font-weight: var(--font-black);
-      font-size: var(--text-xs);
-      border: var(--border-width-default) solid currentColor;
-    }
-
-    /* Content sections */
-    .wizard__section {
+    .pipeline__arrow {
       display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .wizard__label {
+      align-items: center;
+      padding: 0 var(--space-1);
       font-family: var(--font-brutalist);
       font-weight: var(--font-black);
-      font-size: var(--text-sm);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+
+    .pipeline__arrow--active {
+      color: var(--color-primary);
+      animation: arrow-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes arrow-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pipeline__arrow--active {
+        animation: none;
+      }
+    }
+
+    /* ======================================== */
+    /* CLIPPING — Newspaper / reality aesthetic */
+    /* ======================================== */
+    .clipping {
+      position: relative;
+      padding: var(--space-5) var(--space-5) var(--space-4);
+      background: color-mix(in srgb, var(--color-surface-raised) 90%, var(--color-warning));
+      border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+      box-shadow: 2px 3px 0 color-mix(in srgb, var(--color-border) 30%, transparent);
+      transform: rotate(-0.8deg);
+      transition: transform var(--duration-normal, 200ms);
+    }
+
+    .clipping--compact {
+      padding: var(--space-3) var(--space-4);
+      transform: rotate(-0.5deg);
+    }
+
+    .clipping::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--color-text-primary);
+      opacity: 0.7;
+    }
+
+    .clipping__headline {
+      font-family: var(--font-sans);
+      font-weight: var(--font-black);
+      font-size: var(--text-xl);
+      line-height: 1.2;
       color: var(--color-text-primary);
+      margin: 0 0 var(--space-2);
     }
 
-    .wizard__original {
-      padding: var(--space-3);
-      background: var(--color-surface-sunken);
-      border: var(--border-width-thin) solid var(--color-border-light);
-      font-size: var(--text-sm);
-      line-height: 1.5;
-    }
-
-    .wizard__original-title {
-      font-weight: var(--font-bold);
+    .clipping--compact .clipping__headline {
+      font-size: var(--text-md);
       margin-bottom: var(--space-1);
     }
 
-    .wizard__original-meta {
+    .clipping__body {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      line-height: 1.65;
+      color: var(--color-text-secondary);
+    }
+
+    .clipping__byline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-1);
+      margin-top: var(--space-2);
+      padding-top: var(--space-2);
+      border-top: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+      font-family: var(--font-sans);
       font-size: var(--text-xs);
       color: var(--color-text-muted);
-      margin-top: var(--space-1);
+      font-style: italic;
     }
 
-    .wizard__result {
+    .clipping__byline-platform {
+      font-style: normal;
+      font-weight: var(--font-bold);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      font-family: var(--font-brutalist);
+      font-size: 10px;
+      color: var(--color-text-secondary);
+    }
+
+    .clipping__byline a {
+      color: var(--color-text-muted);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ======================================== */
+    /* SPLIT-SCREEN — Crucible transform view  */
+    /* ======================================== */
+    .crucible__split {
+      display: grid;
+      grid-template-columns: 1fr 2px 1fr;
+      gap: 0;
+      min-height: 220px;
+    }
+
+    @media (max-width: 640px) {
+      .crucible__split {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+      }
+
+      .crucible__divider {
+        display: none;
+      }
+    }
+
+    .crucible__panel {
       padding: var(--space-3);
-      background: var(--color-primary-bg);
-      border: var(--border-width-default) solid var(--color-primary);
-      font-size: var(--text-sm);
-      white-space: pre-wrap;
-      line-height: 1.6;
+      overflow-y: auto;
+      max-height: 360px;
     }
 
-    .wizard__model-info {
+    .crucible__panel-label {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .crucible__panel-label--sim {
+      color: var(--color-success);
+    }
+
+    /* Center divider with scan animation */
+    .crucible__divider {
+      position: relative;
+      width: 2px;
+      background: var(--color-border);
+      overflow: hidden;
+    }
+
+    .crucible__divider--active::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -1px;
+      width: 4px;
+      height: 40px;
+      background: var(--color-success);
+      box-shadow: 0 0 8px var(--color-success), 0 0 16px color-mix(in srgb, var(--color-success) 40%, transparent);
+      animation: scan-sweep-v 2s ease-in-out infinite;
+    }
+
+    @keyframes scan-sweep-v {
+      0% { top: -40px; opacity: 1; }
+      100% { top: calc(100% + 40px); opacity: 0.4; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .crucible__divider--active::after {
+        animation: none;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.6;
+      }
+    }
+
+    /* Simulation output panel */
+    .crucible__output {
+      position: relative;
+      padding: var(--space-3);
+      background: color-mix(in srgb, var(--color-success) 3%, var(--color-surface-sunken));
+      border: var(--border-width-default) solid color-mix(in srgb, var(--color-success) 20%, var(--color-border));
+      font-family: var(--font-brutalist);
+      font-size: var(--text-sm);
+      line-height: 1.65;
+      white-space: pre-wrap;
+      color: var(--color-text-primary);
+    }
+
+    /* CRT scanline overlay on simulation panel */
+    .crucible__output::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        color-mix(in srgb, var(--color-success) 2%, transparent) 3px,
+        color-mix(in srgb, var(--color-success) 2%, transparent) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .crucible__output::before {
+        display: none;
+      }
+    }
+
+    /* Waiting state — blinking cursor */
+    .crucible__cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--color-success);
+      vertical-align: text-bottom;
+      animation: cursor-blink 0.8s steps(1) infinite;
+    }
+
+    @keyframes cursor-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .crucible__cursor {
+        animation: none;
+        opacity: 0.7;
+      }
+    }
+
+    .crucible__waiting {
+      font-family: var(--font-brutalist);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4);
+    }
+
+    .crucible__model-info {
       font-family: var(--font-brutalist);
       font-size: var(--text-xs);
       color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
+      margin-top: var(--space-1);
     }
 
-    /* Form fields for integrate step */
-    .wizard__form {
+    /* ======================================== */
+    /* INTEGRATE FORM — Simulation aesthetic    */
+    /* ======================================== */
+    .crucible__form {
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
+      border: var(--border-width-thin) solid var(--color-border-light);
+      padding: var(--space-4);
+      background: var(--color-surface-sunken);
     }
 
-    .wizard__form-group {
+    .crucible__form-group {
       display: flex;
       flex-direction: column;
       gap: var(--space-1-5);
     }
 
-    .wizard__form-label {
+    .crucible__form-label {
       font-family: var(--font-brutalist);
       font-weight: var(--font-bold);
       font-size: var(--text-xs);
@@ -151,14 +361,14 @@ export class VelgTransformationModal extends LitElement {
       color: var(--color-text-secondary);
     }
 
-    .wizard__form-label--required::after {
+    .crucible__form-label--required::after {
       content: ' *';
       color: var(--color-danger);
     }
 
-    .wizard__form-input,
-    .wizard__form-select,
-    .wizard__form-textarea {
+    .crucible__form-input,
+    .crucible__form-select,
+    .crucible__form-textarea {
       font-family: var(--font-sans);
       font-size: var(--text-base);
       padding: var(--space-2) var(--space-3);
@@ -168,46 +378,52 @@ export class VelgTransformationModal extends LitElement {
       transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
     }
 
-    .wizard__form-input:focus,
-    .wizard__form-select:focus,
-    .wizard__form-textarea:focus {
+    .crucible__form-input:focus,
+    .crucible__form-select:focus,
+    .crucible__form-textarea:focus {
       outline: none;
       border-color: var(--color-border-focus);
       box-shadow: var(--ring-focus);
     }
 
-    .wizard__form-textarea {
+    .crucible__form-textarea {
       resize: vertical;
       min-height: 80px;
     }
 
-    .wizard__form-row {
+    .crucible__form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--space-3);
     }
 
-    .wizard__form-checkbox {
+    @media (max-width: 640px) {
+      .crucible__form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .crucible__form-checkbox {
       display: flex;
       align-items: center;
       gap: var(--space-2);
       cursor: pointer;
     }
 
-    .wizard__form-checkbox input[type="checkbox"] {
+    .crucible__form-checkbox input[type="checkbox"] {
       width: 18px;
       height: 18px;
       accent-color: var(--color-primary);
       cursor: pointer;
     }
 
-    .wizard__form-range-label {
+    .crucible__form-range-label {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .wizard__error {
+    .crucible__error {
       font-family: var(--font-brutalist);
       font-weight: var(--font-bold);
       font-size: var(--text-xs);
@@ -215,7 +431,6 @@ export class VelgTransformationModal extends LitElement {
       letter-spacing: var(--tracking-wide);
       color: var(--color-danger);
     }
-
   `,
   ];
 
@@ -241,6 +456,9 @@ export class VelgTransformationModal extends LitElement {
   // Reaction generation (ephemeral articles)
   @state() private _generateReactions = true;
   @state() private _reactionAgents = 20;
+
+  // Crucible animation state
+  @state() private _transforming = false;
 
   get _isEphemeral(): boolean {
     return !!this.article && !this.trend;
@@ -273,6 +491,12 @@ export class VelgTransformationModal extends LitElement {
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('open') && this.open) {
       this._resetWizard();
+    }
+  }
+
+  protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+    if (changedProperties.has('_step')) {
+      this.setAttribute('data-step', this._step);
     }
   }
 
@@ -316,6 +540,7 @@ export class VelgTransformationModal extends LitElement {
     this._impactLevel = 5;
     this._generateReactions = true;
     this._reactionAgents = 20;
+    this._transforming = false;
   }
 
   private _handleClose(): void {
@@ -324,6 +549,7 @@ export class VelgTransformationModal extends LitElement {
 
   private async _handleTransform(): Promise<void> {
     this._error = null;
+    this._transforming = true;
 
     try {
       await generationProgress.run('transform', async (progress) => {
@@ -378,15 +604,17 @@ export class VelgTransformationModal extends LitElement {
           if (t?.impact_level) this._impactLevel = t.impact_level;
 
           this._step = 'transform';
+          this._transforming = false;
           progress.complete(msg('Transformation complete'));
         } else {
           const errMsg = response.error?.message || msg('Transformation failed');
           progress.setError(errMsg);
           this._error = errMsg;
+          this._transforming = false;
         }
       });
     } catch {
-      // Error already shown by GenerationProgressService
+      this._transforming = false;
     }
   }
 
@@ -466,12 +694,12 @@ export class VelgTransformationModal extends LitElement {
     this._loading = false;
   }
 
-  private _getStepClass(step: Step): string {
+  private _getStepState(step: Step): 'active' | 'done' | '' {
     const steps: Step[] = ['preview', 'transform', 'integrate'];
     const current = steps.indexOf(this._step);
     const target = steps.indexOf(step);
-    if (target === current) return 'wizard__step--active';
-    if (target < current) return 'wizard__step--done';
+    if (target === current) return 'active';
+    if (target < current) return 'done';
     return '';
   }
 
@@ -479,39 +707,95 @@ export class VelgTransformationModal extends LitElement {
     return appState.getTaxonomiesByType('event_type');
   }
 
-  private _renderPreview() {
+  // -- Render helpers --
+
+  private _renderPipeline() {
+    const previewState = this._getStepState('preview');
+    const transformState = this._getStepState('transform');
+    const integrateState = this._getStepState('integrate');
+
+    const arrow1Active = previewState === 'done' || this._transforming;
+    const arrow2Active = transformState === 'done';
+
+    return html`
+      <nav class="pipeline" role="navigation" aria-label=${msg('Transformation steps')}>
+        <div
+          class="pipeline__step ${previewState ? `pipeline__step--${previewState}` : ''}"
+          aria-current=${previewState === 'active' ? 'step' : nothing}
+        >
+          ${previewState === 'done' ? '\u2713' : nothing}
+          ${msg('Reality')}
+        </div>
+        <span class="pipeline__arrow ${arrow1Active ? 'pipeline__arrow--active' : ''}" aria-hidden="true">\u2500\u2500\u25B6</span>
+        <div
+          class="pipeline__step ${transformState ? `pipeline__step--${transformState}` : ''} ${this._transforming ? 'pipeline__step--active' : ''}"
+          aria-current=${transformState === 'active' || this._transforming ? 'step' : nothing}
+        >
+          ${transformState === 'done' ? '\u2713' : nothing}
+          ${msg('Crucible')}
+        </div>
+        <span class="pipeline__arrow ${arrow2Active ? 'pipeline__arrow--active' : ''}" aria-hidden="true">\u2500\u2500\u25B6</span>
+        <div
+          class="pipeline__step ${integrateState ? `pipeline__step--${integrateState}` : ''}"
+          aria-current=${integrateState === 'active' ? 'step' : nothing}
+        >
+          ${msg('Event')}
+        </div>
+      </nav>
+    `;
+  }
+
+  private _renderClipping(compact = false) {
     const raw = this._articleRawData as Record<string, string> | undefined;
     return html`
-      <div class="wizard__section">
-        <div class="wizard__label">${msg('Original Article')}</div>
-        <div class="wizard__original">
-          <div class="wizard__original-title">${this._articleName}</div>
-          ${
-            raw?.trail_text || raw?.description
-              ? html`<div>${this._stripHtml(raw.trail_text || raw.description)}</div>`
-              : nothing
-          }
-          <div class="wizard__original-meta">
-            ${this._articlePlatform}
-            ${raw?.byline || raw?.author ? html` &mdash; ${raw.byline || raw.author}` : nothing}
-            ${this._articleUrl ? html` &mdash; <a href=${this._articleUrl} target="_blank" rel="noopener">${this._articleUrl}</a>` : nothing}
-          </div>
+      <div class="clipping ${compact ? 'clipping--compact' : ''}">
+        <h3 class="clipping__headline">${this._articleName}</h3>
+        ${
+          raw?.trail_text || raw?.description
+            ? html`<div class="clipping__body">${this._stripHtml(raw.trail_text || raw.description)}</div>`
+            : nothing
+        }
+        <div class="clipping__byline">
+          <span class="clipping__byline-platform">${this._articlePlatform}</span>
+          ${raw?.byline || raw?.author ? html`<span>${raw.byline || raw.author}</span>` : nothing}
+          ${this._articleUrl ? html`<a href=${this._articleUrl} target="_blank" rel="noopener">${msg('Source')}</a>` : nothing}
         </div>
+      </div>
+    `;
+  }
+
+  private _renderPreview() {
+    return html`
+      <div class="crucible__section">
+        ${this._renderClipping()}
       </div>
     `;
   }
 
   private _renderTransformResult() {
     return html`
-      ${this._renderPreview()}
-      <div class="wizard__section">
-        <div class="wizard__label">${msg('Transformed')}</div>
-        <div class="wizard__result">${this._cleanContent(this._transformedContent)}</div>
-        ${
-          this._modelUsed
-            ? html`<div class="wizard__model-info">${msg(str`Model: ${this._modelUsed}`)}</div>`
-            : nothing
-        }
+      <div class="crucible__split">
+        <!-- Reality panel -->
+        <div class="crucible__panel">
+          <div class="crucible__panel-label">${msg('Reality')}</div>
+          ${this._renderClipping(true)}
+        </div>
+
+        <!-- Divider with scan animation -->
+        <div class="crucible__divider ${this._transforming ? 'crucible__divider--active' : ''}"></div>
+
+        <!-- Simulation panel -->
+        <div class="crucible__panel">
+          <div class="crucible__panel-label crucible__panel-label--sim">${msg('Simulation')}</div>
+          <div class="crucible__output" aria-live="polite">
+            ${this._cleanContent(this._transformedContent)}
+          </div>
+          ${
+            this._modelUsed
+              ? html`<div class="crucible__model-info">${msg(str`Model: ${this._modelUsed}`)}</div>`
+              : nothing
+          }
+        </div>
       </div>
     `;
   }
@@ -520,11 +804,11 @@ export class VelgTransformationModal extends LitElement {
     const eventTypes = this._getEventTypeTaxonomies();
 
     return html`
-      <div class="wizard__form">
-        <div class="wizard__form-group">
-          <label class="wizard__form-label wizard__form-label--required">${msg('Event Title')}</label>
+      <div class="crucible__form">
+        <div class="crucible__form-group">
+          <label class="crucible__form-label crucible__form-label--required">${msg('Event Title')}</label>
           <input
-            class="wizard__form-input"
+            class="crucible__form-input"
             type="text"
             .value=${this._eventTitle}
             @input=${(e: InputEvent) => {
@@ -534,10 +818,10 @@ export class VelgTransformationModal extends LitElement {
           />
         </div>
 
-        <div class="wizard__form-group">
-          <label class="wizard__form-label">${msg('Description')}</label>
+        <div class="crucible__form-group">
+          <label class="crucible__form-label">${msg('Description')}</label>
           <textarea
-            class="wizard__form-textarea"
+            class="crucible__form-textarea"
             .value=${this._eventDescription}
             @input=${(e: InputEvent) => {
               this._eventDescription = (e.target as HTMLTextAreaElement).value;
@@ -546,11 +830,11 @@ export class VelgTransformationModal extends LitElement {
           ></textarea>
         </div>
 
-        <div class="wizard__form-row">
-          <div class="wizard__form-group">
-            <label class="wizard__form-label">${msg('Event Type')}</label>
+        <div class="crucible__form-row">
+          <div class="crucible__form-group">
+            <label class="crucible__form-label">${msg('Event Type')}</label>
             <select
-              class="wizard__form-select"
+              class="crucible__form-select"
               .value=${this._eventType}
               @change=${(e: Event) => {
                 this._eventType = (e.target as HTMLSelectElement).value;
@@ -563,10 +847,10 @@ export class VelgTransformationModal extends LitElement {
             </select>
           </div>
 
-          <div class="wizard__form-group">
-            <label class="wizard__form-label">${msg(str`Impact Level (${this._impactLevel}/10)`)}</label>
+          <div class="crucible__form-group">
+            <label class="crucible__form-label">${msg(str`Impact Level (${this._impactLevel}/10)`)}</label>
             <input
-              class="wizard__form-input"
+              class="crucible__form-input"
               type="range"
               min="1"
               max="10"
@@ -586,8 +870,8 @@ export class VelgTransformationModal extends LitElement {
 
   private _renderReactionOptions() {
     return html`
-      <div class="wizard__form-group">
-        <label class="wizard__form-checkbox">
+      <div class="crucible__form-group">
+        <label class="crucible__form-checkbox">
           <input
             type="checkbox"
             .checked=${this._generateReactions}
@@ -595,20 +879,20 @@ export class VelgTransformationModal extends LitElement {
               this._generateReactions = (e.target as HTMLInputElement).checked;
             }}
           />
-          <span class="wizard__form-label">${msg('Generate agent reactions')}</span>
+          <span class="crucible__form-label">${msg('Generate agent reactions')}</span>
         </label>
       </div>
 
       ${
         this._generateReactions
           ? html`
-          <div class="wizard__form-group">
-            <div class="wizard__form-range-label">
-              <label class="wizard__form-label">${msg('Number of agents')}</label>
-              <span class="wizard__form-label">${this._reactionAgents}/50</span>
+          <div class="crucible__form-group">
+            <div class="crucible__form-range-label">
+              <label class="crucible__form-label">${msg('Number of agents')}</label>
+              <span class="crucible__form-label">${this._reactionAgents}/50</span>
             </div>
             <input
-              class="wizard__form-input"
+              class="crucible__form-input"
               type="range"
               min="1"
               max="50"
@@ -688,24 +972,12 @@ export class VelgTransformationModal extends LitElement {
   protected render() {
     return html`
       <velg-base-modal ?open=${this.open} @modal-close=${this._handleClose}>
-        <span slot="header">${msg('News → Event')}</span>
+        <span slot="header">${msg('The Crucible')}</span>
 
-        <div class="wizard">
-          <div class="wizard__steps">
-            <div class="wizard__step ${this._getStepClass('preview')}">
-              <span class="wizard__step-number">1</span> ${msg('Preview')}
-            </div>
-            <div class="wizard__step ${this._getStepClass('transform')}">
-              <span class="wizard__step-number">2</span> ${msg('Transform')}
-            </div>
-            <div class="wizard__step ${this._getStepClass('integrate')}">
-              <span class="wizard__step-number">3</span> ${msg('Event')}
-            </div>
-          </div>
-
+        <div class="crucible">
+          ${this._renderPipeline()}
           ${this._renderStepContent()}
-
-          ${this._error ? html`<div class="wizard__error">${this._error}</div>` : nothing}
+          ${this._error ? html`<div class="crucible__error">${this._error}</div>` : nothing}
         </div>
 
         <div slot="footer" class="footer">

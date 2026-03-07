@@ -82,24 +82,24 @@ def mock_geography(seed: str, zone_count: int = 5, street_count: int = 5) -> dic
     city = city_names[h % len(city_names)]
 
     zone_pool = [
-        {"name": "The Inkwell", "zone_type": "cultural", "description": "Where stories are distilled into liquid form and sold by the dram."},
-        {"name": "Thornwalk", "zone_type": "residential", "description": "A labyrinth of terraced houses growing thorned hedges as load-bearing walls."},
-        {"name": "The Furnace Quarter", "zone_type": "industrial", "description": "Perpetual smoke. The factories here produce things no one ordered."},
-        {"name": "Echoplex", "zone_type": "entertainment", "description": "An amphitheatre district where yesterday's conversations replay at dusk."},
-        {"name": "The Stillwater", "zone_type": "government", "description": "Administrative buildings arranged around a canal that flows in no direction."},
-        {"name": "Ashgrove", "zone_type": "military", "description": "A fortified garden where trees grow ammunition instead of fruit."},
-        {"name": "The Hollows", "zone_type": "slum", "description": "Underground caverns repurposed as housing. The rent is paid in secrets."},
-        {"name": "Mirrorside", "zone_type": "commercial", "description": "Every shopfront reflects a slightly different version of the customer."},
+        {"name": "The Inkwell", "zone_type": "cultural", "description": "Where stories are distilled into liquid form and sold by the dram.", "characteristics": ["liquid narratives", "alchemical fumes", "ink-stained cobblestones"]},
+        {"name": "Thornwalk", "zone_type": "residential", "description": "A labyrinth of terraced houses growing thorned hedges as load-bearing walls.", "characteristics": ["living architecture", "rustling walls", "pollen haze"]},
+        {"name": "The Furnace Quarter", "zone_type": "industrial", "description": "Perpetual smoke. The factories here produce things no one ordered.", "characteristics": ["perpetual smoke", "unexplained output", "molten glow"]},
+        {"name": "Echoplex", "zone_type": "entertainment", "description": "An amphitheatre district where yesterday's conversations replay at dusk.", "characteristics": ["temporal echoes", "acoustic anomalies", "twilight performances"]},
+        {"name": "The Stillwater", "zone_type": "government", "description": "Administrative buildings arranged around a canal that flows in no direction.", "characteristics": ["bureaucratic calm", "directionless canal", "paper rustling"]},
+        {"name": "Ashgrove", "zone_type": "military", "description": "A fortified garden where trees grow ammunition instead of fruit.", "characteristics": ["militant horticulture", "brass-leaf canopy", "cordite perfume"]},
+        {"name": "The Hollows", "zone_type": "slum", "description": "Underground caverns repurposed as housing. The rent is paid in secrets.", "characteristics": ["subterranean", "whisper economy", "bioluminescent moss"]},
+        {"name": "Mirrorside", "zone_type": "commercial", "description": "Every shopfront reflects a slightly different version of the customer.", "characteristics": ["distorted reflections", "identity commerce", "silver-glass facades"]},
     ]
     street_pool = [
-        {"name": "Threadneedle Passage", "street_type": "alley"},
-        {"name": "Rue du Souvenir", "street_type": "boulevard"},
-        {"name": "Forgetting Lane", "street_type": "lane"},
-        {"name": "The Long Exhale", "street_type": "avenue"},
-        {"name": "Clinker Row", "street_type": "road"},
-        {"name": "Drift Street", "street_type": "street"},
-        {"name": "Parliament Way", "street_type": "avenue"},
-        {"name": "The Spiral Descent", "street_type": "stairway"},
+        {"name": "Threadneedle Passage", "street_type": "alley", "description": "A narrow gap between buildings where seamstresses once threaded needles by moonlight."},
+        {"name": "Rue du Souvenir", "street_type": "boulevard", "description": "Lined with trees that shed memories instead of leaves each autumn."},
+        {"name": "Forgetting Lane", "street_type": "lane", "description": "Visitors report mild amnesia upon reaching the far end."},
+        {"name": "The Long Exhale", "street_type": "avenue", "description": "A gently sloping avenue where the wind always sighs downhill."},
+        {"name": "Clinker Row", "street_type": "road", "description": "Paved with fused furnace slag that still radiates warmth underfoot."},
+        {"name": "Drift Street", "street_type": "street", "description": "Its position shifts by a few meters each decade, confounding cartographers."},
+        {"name": "Parliament Way", "street_type": "avenue", "description": "The widest avenue in the city, designed so that shouted debates carry from end to end."},
+        {"name": "The Spiral Descent", "street_type": "stairway", "description": "A corkscrew stairway carved into bedrock, connecting the surface to the Hollows."},
     ]
 
     zones = zone_pool[:zone_count]

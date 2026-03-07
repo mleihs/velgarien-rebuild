@@ -12,6 +12,8 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 
+from backend.models.settings import is_sensitive_key
+from backend.utils.encryption import decrypt, mask
 from supabase import Client
 
 logger = logging.getLogger(__name__)
@@ -33,15 +35,41 @@ class PlatformSettingsService:
     table_name = "platform_settings"
 
     @classmethod
-    async def list_all(cls, admin_supabase: Client) -> list[dict]:
-        """Fetch all platform settings."""
+    async def list_all(
+        cls, admin_supabase: Client, *, mask_sensitive: bool = False,
+    ) -> list[dict]:
+        """Fetch all platform settings.
+
+        When mask_sensitive=True, sensitive keys show masked values (for admin UI).
+        """
         response = (
             admin_supabase.table(cls.table_name)
             .select("*")
             .order("setting_key")
             .execute()
         )
-        return response.data or []
+        rows = response.data or []
+        if not mask_sensitive:
+            return rows
+
+        for row in rows:
+            key = row.get("setting_key", "")
+            if not is_sensitive_key(key):
+                continue
+            raw = str(row.get("setting_value", "")).strip('"')
+            if not raw:
+                row["setting_value"] = ""
+                continue
+            # Decrypt if encrypted, then mask
+            if raw.startswith("gAAAAA"):
+                try:
+                    decrypted = decrypt(raw)
+                    row["setting_value"] = mask(decrypted)
+                except (ValueError, Exception):
+                    row["setting_value"] = "***"
+            else:
+                row["setting_value"] = mask(raw)
+        return rows
 
     @classmethod
     async def get(cls, admin_supabase: Client, key: str) -> dict:

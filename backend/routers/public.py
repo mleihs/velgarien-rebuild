@@ -26,6 +26,7 @@ from backend.services.embassy_service import EmbassyService
 from backend.services.epoch_invitation_service import EpochInvitationService
 from backend.services.epoch_service import EpochService
 from backend.services.event_service import EventService
+from backend.services.resonance_service import ResonanceService
 from backend.services.game_mechanics_service import GameMechanicsService
 from backend.services.location_service import LocationService
 from backend.services.relationship_service import RelationshipService
@@ -935,6 +936,45 @@ async def get_battle_log_public(
         supabase, epoch_id, limit=limit, offset=offset
     )
     return _paginated(data, total, limit, offset)
+
+
+# ── Substrate Resonances (Public) ──────────────────────────────────
+
+
+@router.get("/resonances", response_model=PaginatedResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def list_resonances_public(
+    request: Request,
+    http_response: Response,
+    supabase: Client = Depends(get_anon_supabase),
+    status_filter: str | None = Query(default=None, alias="status"),
+    signature: str | None = Query(default=None),
+    limit: int = Query(default=25, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    """List substrate resonances (public)."""
+    max_age = get_ttl("cache_http_battle_feed_max_age")
+    http_response.headers["Cache-Control"] = f"public, max-age={max_age}, stale-while-revalidate={max_age * 3}"
+    data, total = await ResonanceService.list(
+        supabase,
+        status_filter=status_filter,
+        signature=signature,
+        limit=limit,
+        offset=offset,
+    )
+    return _paginated(data, total, limit, offset)
+
+
+@router.get("/resonances/{resonance_id}", response_model=SuccessResponse)
+@limiter.limit(RATE_LIMIT_PUBLIC)
+async def get_resonance_public(
+    request: Request,
+    resonance_id: UUID,
+    supabase: Client = Depends(get_anon_supabase),
+) -> dict:
+    """Get a single resonance (public)."""
+    data = await ResonanceService.get(supabase, resonance_id)
+    return {"success": True, "data": data}
 
 
 # ── Epoch Invitations (Public) ──────────────────────────────────────

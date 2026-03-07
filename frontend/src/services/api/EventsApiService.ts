@@ -1,4 +1,4 @@
-import type { ApiResponse, Event, EventReaction } from '../../types/index.js';
+import type { ApiResponse, Event, EventChain, EventReaction, EventStatus, EventZoneLink } from '../../types/index.js';
 import { BaseApiService } from './BaseApiService.js';
 
 export class EventsApiService extends BaseApiService {
@@ -51,6 +51,41 @@ export class EventsApiService extends BaseApiService {
       `/simulations/${simulationId}/events/${eventId}/generate-reactions`,
       data || {},
     );
+  }
+
+  updateStatus(
+    simulationId: string,
+    eventId: string,
+    eventStatus: EventStatus,
+  ): Promise<ApiResponse<Event>> {
+    return this.put(
+      `/simulations/${simulationId}/events/${eventId}/status`,
+      { event_status: eventStatus },
+    );
+  }
+
+  getChains(simulationId: string, eventId: string): Promise<ApiResponse<EventChain[]>> {
+    return this.get(`/simulations/${simulationId}/events/${eventId}/chains`);
+  }
+
+  createChain(
+    simulationId: string,
+    eventId: string,
+    data: { parent_event_id: string; child_event_id: string; chain_type: string },
+  ): Promise<ApiResponse<EventChain>> {
+    return this.post(`/simulations/${simulationId}/events/${eventId}/chains`, data);
+  }
+
+  deleteChain(
+    simulationId: string,
+    eventId: string,
+    chainId: string,
+  ): Promise<ApiResponse<void>> {
+    return this.delete(`/simulations/${simulationId}/events/${eventId}/chains/${chainId}`);
+  }
+
+  getZoneLinks(simulationId: string, eventId: string): Promise<ApiResponse<EventZoneLink[]>> {
+    return this.get(`/simulations/${simulationId}/events/${eventId}/zone-links`);
   }
 }
 

@@ -1281,3 +1281,133 @@ interface ZoneFortification {
 ```
 
 Versteckte Zonenfortifikationen waehrend der Foundation-Phase ("Nebelkrieg"). Erhoehen die Sicherheitsstufe einer Zone um 1 Tier fuer 5 Wettbewerbszyklen. Max 1 pro Zone. Kosten 2 RP. Nur sichtbar fuer den Besitzer und via feindliche Spion-Intel-Reports.
+
+### Zone Actions (Simulation-Level)
+
+```typescript
+interface ZoneAction {
+  id: UUID;
+  zone_id: UUID;
+  simulation_id: UUID;
+  action_type: 'fortify' | 'quarantine' | 'deploy_resources';
+  effect_value: number;              // 0.0-1.0
+  created_by_id: UUID | null;
+  expires_at: string;                // ISO timestamp
+  cooldown_until: string;            // ISO timestamp
+  created_at: string;
+  deleted_at: string | null;
+}
+```
+
+Simulation-level zone actions affecting zone stability. Three action types with different effect values, durations, and cooldowns:
+
+| Action | Effect | Duration | Cooldown | Description |
+|--------|--------|----------|----------|-------------|
+| `fortify` | +0.3 | 7 days | 14 days | Deploy resources to stabilize zone |
+| `quarantine` | -0.1 | 14 days | 21 days | Isolate zone to prevent cascade spreading |
+| `deploy_resources` | +0.5 | 3 days | 30 days | Emergency intervention, strong but short |
+
+Only one active action per zone at a time. Cooldown prevents re-use of the same action type until expired.
+
+### Event Chains
+
+```typescript
+interface EventChain {
+  id: UUID;
+  simulation_id: UUID;
+  parent_event_id: UUID;
+  child_event_id: UUID;
+  chain_type: 'escalation' | 'follow_up' | 'resolution' | 'cascade' | 'resonance';
+  created_at: string;
+}
+```
+
+Links between related events forming narrative chains. Chain types:
+- `escalation`: Event intensifies into a more severe event
+- `follow_up`: Consequential event spawned by a parent
+- `resolution`: Event that resolves or concludes a parent event
+- `cascade`: Auto-spawned by `process_cascade_events()` when zone pressure exceeds threshold
+- `resonance`: Spawned by substrate resonance impact processing
+
+### Event Zone Links
+
+```typescript
+interface EventZoneLink {
+  id: UUID;
+  event_id: UUID;
+  zone_id: UUID;
+  affinity_weight: number;           // 0.0-1.0, default 1.0
+  link_source: 'auto' | 'manual' | 'location_match';
+  created_at: string;
+}
+```
+
+Links events to affected zones via the zone gravity matrix. Auto-assigned by trigger (`assign_event_zones()`) on event creation/update.
+
+### Event Status Lifecycle
+
+Events have a `event_status` field with pressure multipliers:
+
+| Status | Multiplier | Description |
+|--------|-----------|-------------|
+| `active` | 1.0x | Normal active event |
+| `escalating` | 1.3x | Intensifying — increased pressure |
+| `resolving` | 0.5x | Being resolved — reduced pressure |
+| `resolved` | 0.0x | Fully resolved — no pressure |
+| `archived` | 0.0x | Historical record only |
+
+### Substrate Resonance
+
+```typescript
+interface Resonance {
+  id: UUID;
+  source_category: SourceCategory;
+  resonance_signature: ResonanceSignature;
+  archetype: string;
+  title: string;
+  description: string | null;
+  bureau_dispatch: string | null;
+  real_world_source: Record<string, unknown> | null;
+  magnitude: number;                 // 0.1-1.0
+  affected_event_types: string[];
+  status: 'detected' | 'impacting' | 'subsiding' | 'archived';
+  detected_at: string;
+  impacts_at: string | null;
+  subsides_at: string | null;
+  created_by_id: UUID | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+```
+
+Platform-level phenomena that propagate across simulations. 8 source categories map to 8 resonance signatures and 8 archetypes. See [Substrate Resonances Spec](../specs/substrate-resonances.md) for full documentation.
+
+### Resonance Impact
+
+```typescript
+interface ResonanceImpact {
+  id: UUID;
+  resonance_id: UUID;
+  simulation_id: UUID;
+  susceptibility: number;
+  effective_magnitude: number;
+  status: 'pending' | 'generating' | 'completed' | 'skipped' | 'failed';
+  spawned_event_ids: UUID[];
+  narrative_context: string | null;
+  created_at: string;
+}
+```
+
+Per-simulation impact record created when a resonance is processed. Effective magnitude = `MIN(resonance.magnitude * susceptibility, 1.00)`.
+
+### Prompt Template Types (Extended)
+
+Additional template types beyond the base set:
+
+| Type | Description |
+|------|-------------|
+| `memory_extraction` | Extract observations from chat messages |
+| `memory_reflection` | Synthesize memories into insights |
+| `event_echo_transformation` | Transform events across simulations (bleed) |
+| `resonance_impact_generation` | Generate events when resonance impacts a simulation |

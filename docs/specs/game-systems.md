@@ -1159,6 +1159,115 @@ Background task: **Cycle resolver** — runs on schedule (configurable), process
 
 ---
 
+## VII-B. Event Pressure & Zone Dynamics (Migrationen 068-073)
+
+The event pressure system creates a dynamic feedback loop where events exert pressure on zones, zones can cascade into new events, and players can intervene with zone actions to stabilize their world.
+
+### Event Pressure Formula
+
+Each event contributes pressure to linked zones based on its impact level and status:
+
+```
+per_event_pressure = POWER(impact_level / 10.0, 1.5) * status_multiplier + reaction_modifier
+```
+
+**Status multipliers:** active=1.0, escalating=1.3, resolving=0.5, resolved/archived=0.0
+
+**Reaction modifier:** Computed from community reactions via emotion weights (fear/anger/panic: +0.1, hope/defiance: -0.1). Updated automatically by `recompute_reaction_modifier()` trigger.
+
+### Zone Stability Formula (Extended)
+
+```
+total_pressure = event_pressure + ambient_pressure - fortification_reduction
+stability = (infrastructure_score * 0.5) + (security_factor * 0.3) - (total_pressure * 0.25)
+```
+
+| Component | Source | Description |
+|-----------|--------|-------------|
+| `event_pressure` | Events linked via `event_zone_links` | Direct event impact, weighted by affinity |
+| `ambient_pressure` | Unlinked events (via `pressure_spill_factor`) | Background pressure from simulation-wide events (default: 0.3 spill) |
+| `fortification_reduction` | Active `zone_actions` (type=fortify/deploy_resources) | Player-deployed stability measures |
+
+**Stability labels:** critical (<0.3), unstable (<0.5), functional (<0.7), stable (<0.9), exemplary (≥0.9)
+
+### Zone Gravity Matrix
+
+The `zone_gravity_matrix` (simulation_settings) defines event-type → zone-type affinities. When an event is created or updated, the `assign_event_zones()` trigger automatically links it to relevant zones:
+
+```json
+{
+  "exploration": {"ruins": 1.0, "slums": 0.6},
+  "trade": {"commercial": 1.0, "industrial": 0.6},
+  "intrigue": {"government": 1.0, "military": 0.6},
+  "crisis": {"_global": 0.6},
+  "military": {"military": 1.0, "government": 0.7, "industrial": 0.3}
+}
+```
+
+The `_global` flag applies pressure to all zones (used for crisis events).
+
+### Zone Vulnerability Matrix
+
+The `zone_vulnerability_matrix` multiplies base pressure by zone-type × event-type combinations:
+
+| Zone Type | Strongest Vulnerability | Weakest Vulnerability |
+|-----------|------------------------|----------------------|
+| residential | social (1.5×) | military (0.7×) |
+| commercial | trade (1.5×) | military (0.7×) |
+| military | military (1.5×) | social (0.5×) |
+| government | intrigue (1.5×) | social (0.9×) |
+| religious | religious (1.5×) | military (0.6×) |
+| slums | crisis (1.5×) | trade (0.7×) |
+| ruins | discovery (1.5×) | trade (0.5×) |
+
+### Cascade Events
+
+When zone pressure exceeds `cascade_threshold` (default 0.7), `process_cascade_events()` auto-spawns secondary events:
+
+- **Rate limited:** 1 cascade per zone per time window
+- **Quarantine immunity:** Quarantined zones skip cascade generation
+- **Impact level:** `LEAST(10, GREATEST(4, FLOOR(zone_pressure * 7)))`
+- **Chain link:** Connected to highest-impact source event via `event_chains` (chain_type='cascade')
+
+Cascade event types are zone-type-specific (e.g., residential → "Civil Unrest", commercial → "Market Panic", military → "Garrison Revolt").
+
+### Zone Actions (Player Interventions)
+
+Players with editor role can deploy zone actions to stabilize zones:
+
+| Action | Effect | Duration | Cooldown | Strategy |
+|--------|--------|----------|----------|----------|
+| `fortify` | +0.3 stability | 7 days | 14 days | Steady defense, moderate effect |
+| `quarantine` | -0.1 stability, blocks cascades | 14 days | 21 days | Sacrifice stability to prevent spread |
+| `deploy_resources` | +0.5 stability | 3 days | 30 days | Emergency burst, long cooldown |
+
+**Constraints:** One active action per zone. Cooldown prevents re-use of same type until expired.
+
+### EventSeismograph Visualization
+
+The `<velg-event-seismograph>` component renders event pressure as an SVG seismograph:
+
+- **Time ranges:** 30, 90, 180, 365 days (default: 90)
+- **Spike colors:** ≥8 impact = danger (red), ≥5 = warning (amber), <5 = primary
+- **Special markers:** Resonance events (expanding circles + pink diamond), cascade events (dashed), bleed events (dashed)
+- **Pressure overlay:** 7-day rolling pressure polygon (danger-colored, low opacity)
+- **Brush interaction:** Click-drag to select date range, dispatches `seismograph-brush` event
+- **Animations:** Pulsing for escalating events, glow for resonance events (respects `prefers-reduced-motion`)
+
+---
+
+## VII-C. Substrate Resonances (Migrationen 074-079)
+
+Platform-level phenomena that propagate across all simulations. Real-world events become archetypal forces with differential impact per simulation. Full specification: [Substrate Resonances](substrate-resonances.md).
+
+**Key integration points with game systems:**
+- Active resonances modify operative success probability via archetype-operative affinities ([-0.04, +0.06])
+- Zone pressure from resonance-spawned events affects zone stability
+- Bot personalities factor resonance pressure into deployment decisions
+- Per-simulation susceptibility profiles create asymmetric impact
+
+---
+
 ## VIII. New Database Tables Summary
 
 | Table | Purpose | Rows (estimated) |
@@ -1173,6 +1282,11 @@ Background task: **Cycle resolver** — runs on schedule (configurable), process
 | `mv_zone_stability` | Materialized view | ~zones count |
 | `mv_embassy_effectiveness` | Materialized view | ~embassies count |
 | `mv_simulation_health` | Materialized view | ~simulations count |
+| `event_chains` | Event chain links (escalation, cascade, resonance) | ~100s per sim |
+| `event_zone_links` | Event-to-zone affinity mappings | ~events × zones |
+| `zone_actions` | Player zone stabilization actions | ~10s per sim |
+| `substrate_resonances` | Platform-level resonance phenomena | ~10s |
+| `resonance_impacts` | Per-simulation resonance impact records | ~resonances × sims |
 
 ---
 

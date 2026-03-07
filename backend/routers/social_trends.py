@@ -11,6 +11,8 @@ from backend.middleware.rate_limit import RATE_LIMIT_AI_GENERATION, RATE_LIMIT_E
 from backend.models.common import CurrentUser, PaginatedResponse, PaginationMeta, SuccessResponse
 from backend.models.social import SocialTrendResponse
 from backend.models.social_trend import (
+    BatchIntegrateRequest,
+    BatchTransformRequest,
     BrowseArticlesRequest,
     FetchTrendsRequest,
     IntegrateArticleRequest,
@@ -434,5 +436,150 @@ async def integrate_article(
             "event": event,
             "reactions_count": len(reactions),
             "reactions": reactions,
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Batch workflow — multi-article transform & integrate
+# ---------------------------------------------------------------------------
+
+
+@router.post("/batch-transform", response_model=SuccessResponse[list[dict]])
+@limiter.limit(RATE_LIMIT_AI_GENERATION)
+async def batch_transform_articles(
+    request: Request,
+    simulation_id: UUID,
+    body: BatchTransformRequest,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Transform multiple articles in batch. Returns a list of transformation results."""
+    resolver = ExternalServiceResolver(supabase, simulation_id)
+    ai_config = await resolver.get_ai_provider_config()
+    gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
+
+    results: list[dict] = []
+    for article in body.articles:
+        raw = article.article_raw_data or {}
+        news_content_parts = [
+            raw.get("trail_text") or raw.get("description") or "",
+            f"Source: {article.article_platform}",
+        ]
+        if article.article_url:
+            news_content_parts.append(f"URL: {article.article_url}")
+        if raw.get("byline") or raw.get("author"):
+            news_content_parts.append(f"Author: {raw.get('byline') or raw.get('author')}")
+
+        try:
+            result = await gen.generate_news_transformation(
+                news_title=article.article_name,
+                news_content="\n".join(news_content_parts),
+            )
+            results.append({
+                "article_name": article.article_name,
+                "article_platform": article.article_platform,
+                "article_url": article.article_url,
+                "article_raw_data": article.article_raw_data,
+                "transformation": result,
+                "error": None,
+            })
+        except Exception:
+            logger.warning(
+                "Batch transform failed for article",
+                extra={"article_name": article.article_name},
+                exc_info=True,
+            )
+            results.append({
+                "article_name": article.article_name,
+                "article_platform": article.article_platform,
+                "article_url": article.article_url,
+                "article_raw_data": article.article_raw_data,
+                "transformation": None,
+                "error": "Transformation failed",
+            })
+
+    return {"success": True, "data": results}
+
+
+@router.post("/batch-integrate", response_model=SuccessResponse[dict], status_code=201)
+async def batch_integrate_articles(
+    simulation_id: UUID,
+    body: BatchIntegrateRequest,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Integrate multiple transformed articles as events."""
+    created_events: list[dict] = []
+    errors: list[dict] = []
+
+    # Sort by impact_level descending so highest-impact is first (for reaction generation)
+    sorted_items = sorted(body.items, key=lambda x: x.impact_level, reverse=True)
+
+    for idx, item in enumerate(sorted_items):
+        tags = [*item.tags, "imported", "news", "batch"]
+        event_data = serialize_for_json({
+            "title": item.title,
+            "description": item.description,
+            "event_type": item.event_type or "news",
+            "impact_level": item.impact_level,
+            "tags": tags,
+            "data_source": "imported",
+            "occurred_at": datetime.now(UTC).isoformat(),
+        })
+        if item.source_article:
+            event_data["original_trend_data"] = item.source_article
+
+        try:
+            event = await EventService.create(supabase, simulation_id, user.id, event_data)
+            created_events.append(event)
+
+            await AuditService.log_action(
+                supabase,
+                simulation_id=simulation_id,
+                user_id=user.id,
+                entity_type="events",
+                entity_id=UUID(event["id"]),
+                action="create",
+                changes={"source": "batch_import"},
+            )
+        except Exception:
+            logger.warning(
+                "Batch integrate failed for item",
+                extra={"title": item.title},
+                exc_info=True,
+            )
+            errors.append({"title": item.title, "error": "Failed to create event"})
+
+    # Generate reactions for highest-impact event only (cost control)
+    reactions_count = 0
+    if body.generate_reactions_for_top and created_events:
+        top_event = created_events[0]  # Already sorted by impact descending
+        try:
+            resolver = ExternalServiceResolver(supabase, simulation_id)
+            ai_config = await resolver.get_ai_provider_config()
+            gen = GenerationService(supabase, simulation_id, ai_config.openrouter_api_key)
+
+            reactions = await EventService.generate_reactions(
+                supabase, simulation_id, top_event, gen,
+                max_agents=body.max_reaction_agents,
+            )
+            reactions_count = len(reactions)
+        except Exception:
+            logger.warning(
+                "Reaction generation failed for batch top event",
+                extra={"event_id": top_event["id"]},
+                exc_info=True,
+            )
+
+    return {
+        "success": True,
+        "data": {
+            "events": created_events,
+            "errors": errors,
+            "reactions_generated_for": created_events[0]["id"] if created_events and reactions_count > 0 else None,
+            "reactions_count": reactions_count,
         },
     }

@@ -39,7 +39,7 @@ Uses an AI Agent (LangGraph + Tavily) to scrape the web for themes related to th
 
 ### Phase II: The Drafting Table (Structural Expansion)
 *Arcanum: The Emperor & The Tower*
-The AI generates the City name, 4 Zones, 16 Streets, 6 Agents, and 7 Buildings. Users can manually edit text or trigger micro-mutations.
+The AI generates the City name, Zones (with `characteristics` tags), Streets (with optional descriptions), Agents, and Buildings. Users can manually edit text or trigger micro-mutations. Each entity type uses chunk-specific prompts with word-count guidance (200-300 words for agent character/background, 150-250 words for building descriptions), geographic context (city/zone names), and diversity instructions (varied genders, factions, building conditions). Output quality is enforced via `Field(description=...)` on Pydantic models, ensuring LLM output matches the downstream image-generation templates.
 
 ### Phase III: The Darkroom (Aesthetic Calibration)
 *Arcanum: The Moon*
@@ -83,8 +83,10 @@ CREATE TABLE public.forge_drafts (
 ```
 
 ### 4.3 The Orchestrator (Pydantic AI)
-The `ForgeOrchestratorService` will be built using **Pydantic AI**, aligning with our existing commitment to Pydantic v2. 
-*   **Strict Typing:** We will use the project's existing Pydantic models (from `backend/models/`) as the "output shapes" for the LLM. 
+The `ForgeOrchestratorService` will be built using **Pydantic AI**, aligning with our existing commitment to Pydantic v2.
+*   **Strict Typing:** We will use the project's existing Pydantic models (from `backend/models/forge.py`) as the `output_type` for the LLM. Each field carries a `Field(description=...)` with word-count guidance and image-generation hints to ensure LLM output quality matches the DB prompt templates used in the established generation pipeline.
+*   **Typed Geography:** `ForgeGeographyDraft` uses typed sub-models (`ForgeZoneDraft`, `ForgeStreetDraft`) rather than `list[dict]`, ensuring zones include `characteristics` tags and streets include optional `description` fields.
+*   **Rich Prompts:** `_build_chunk_prompt()` builds chunk-type-specific prompts that include the user's seed prompt, anchor context, geographic context (city/zone names for agent/building chunks), word-count guidance matching DB templates, image-ready hints, and diversity instructions.
 *   **Agentic Search:** The `ResearchService` will use **LangGraph** to manage the iterative state of the "Astrolabe" search process, storing its graph state in PostgreSQL to remain memory-efficient for Railway.
 
 ### 4.4 Background Asset Pipeline (FastAPI `BackgroundTasks`)

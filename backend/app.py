@@ -46,6 +46,7 @@ from backend.routers import (
     prompt_templates,
     public,
     relationships,
+    resonances,
     scores,
     seo,
     settings,
@@ -54,6 +55,7 @@ from backend.routers import (
     social_trends,
     taxonomies,
     users,
+    zone_actions,
 )
 
 app = FastAPI(
@@ -136,6 +138,8 @@ app.include_router(epoch_chat.router)
 app.include_router(epoch_invitations.router)
 app.include_router(operatives.router)
 app.include_router(scores.router)
+app.include_router(zone_actions.router)
+app.include_router(resonances.router)
 app.include_router(public.router)
 app.include_router(seo.router)
 

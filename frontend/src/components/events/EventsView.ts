@@ -18,6 +18,7 @@ import { viewHeaderStyles } from '../shared/view-header-styles.js';
 import './EventCard.js';
 import './EventEditModal.js';
 import './EventDetailsPanel.js';
+import './EventSeismograph.js';
 
 @localized()
 @customElement('velg-events-view')
@@ -72,6 +73,9 @@ export class VelgEventsView extends LitElement {
   @state() private _showEditModal = false;
   @state() private _showDetails = false;
   @state() private _bleedOnly = false;
+  @state() private _seismographEvents: SimEvent[] = [];
+  @state() private _dateFrom: string | null = null;
+  @state() private _dateTo: string | null = null;
 
   private get _canEdit(): boolean {
     return appState.canEdit.value;
@@ -88,12 +92,14 @@ export class VelgEventsView extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     this._loadEvents();
+    this._loadSeismographEvents();
   }
 
   protected willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
     if (changedProperties.has('simulationId') && this.simulationId) {
       this._offset = 0;
       this._loadEvents();
+      this._loadSeismographEvents();
     }
   }
 
@@ -114,6 +120,13 @@ export class VelgEventsView extends LitElement {
 
     if (this._bleedOnly) {
       params.data_source = 'bleed';
+    }
+
+    if (this._dateFrom) {
+      params.date_from = this._dateFrom;
+    }
+    if (this._dateTo) {
+      params.date_to = this._dateTo;
     }
 
     for (const [key, value] of Object.entries(this._filters)) {
@@ -219,6 +232,32 @@ export class VelgEventsView extends LitElement {
     this._loadEvents();
   }
 
+  private async _loadSeismographEvents(): Promise<void> {
+    if (!this.simulationId) return;
+    try {
+      const response = await eventsApi.list(this.simulationId, { limit: '100', offset: '0' });
+      if (response.success && response.data) {
+        this._seismographEvents = Array.isArray(response.data) ? response.data : [];
+      }
+    } catch {
+      // Seismograph is supplemental — silent fail
+    }
+  }
+
+  private _handleBrush(e: CustomEvent<{ dateFrom: string; dateTo: string }>): void {
+    this._dateFrom = e.detail.dateFrom;
+    this._dateTo = e.detail.dateTo;
+    this._offset = 0;
+    this._loadEvents();
+  }
+
+  private _handleBrushClear(): void {
+    this._dateFrom = null;
+    this._dateTo = null;
+    this._offset = 0;
+    this._loadEvents();
+  }
+
   protected render() {
     const filterConfigs = [
       {
@@ -245,6 +284,13 @@ export class VelgEventsView extends LitElement {
               : nothing
           }
         </div>
+
+        <velg-event-seismograph
+          .simulationId=${this.simulationId}
+          .events=${this._seismographEvents}
+          @seismograph-brush=${this._handleBrush}
+          @seismograph-clear=${this._handleBrushClear}
+        ></velg-event-seismograph>
 
         <velg-filter-bar
           .filters=${filterConfigs}

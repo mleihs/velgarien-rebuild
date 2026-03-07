@@ -1,9 +1,13 @@
-import { localized, msg } from '@lit/localize';
+import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
-import { socialTrendsApi } from '../../services/api/index.js';
+import { eventsApi, resonanceApi, socialTrendsApi } from '../../services/api/index.js';
+import { icons } from '../../utils/icons.js';
+import type { SourceCategory } from '../../types/index.js';
 import type { BrowseArticle } from '../../services/api/SocialTrendsApiService.js';
+import { generationProgress } from '../../services/GenerationProgressService.js';
+import { VelgToast } from '../shared/Toast.js';
 
 import '../shared/VelgBadge.js';
 import '../shared/Lightbox.js';
@@ -24,6 +28,25 @@ const GUARDIAN_SECTIONS = [
   'lifeandstyle',
   'education',
 ];
+
+const MAX_BATCH = 10;
+
+interface BatchTransformResult {
+  article_name: string;
+  article_platform: string;
+  article_url?: string;
+  article_raw_data?: Record<string, unknown>;
+  transformation: {
+    content?: string;
+    narrative?: string;
+    title?: string;
+    description?: string;
+    event_type?: string;
+    impact_level?: number;
+    model_used?: string;
+  } | null;
+  error: string | null;
+}
 
 @localized()
 @customElement('velg-social-trends-view')
@@ -100,6 +123,62 @@ export class VelgSocialTrendsView extends LitElement {
       opacity: 0.5; cursor: not-allowed; pointer-events: none;
     }
 
+    .controls__btn--toggle {
+      background: var(--color-surface-raised);
+      color: var(--color-text-primary);
+    }
+
+    .controls__btn--toggle:hover {
+      background: var(--color-surface-header);
+    }
+
+    .controls__btn--toggle-active {
+      background: var(--color-warning);
+      color: var(--color-text-primary);
+      border-color: var(--color-warning);
+    }
+
+    .controls__btn--toggle-active:hover {
+      background: var(--color-warning);
+    }
+
+    /* Resonance button */
+    .btn--resonance {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1-5);
+      padding: var(--space-1-5) var(--space-3);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist);
+      background: var(--color-danger);
+      color: var(--color-text-inverse);
+      border: var(--border-default);
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .btn--resonance:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+      background: color-mix(in srgb, var(--color-danger) 85%, black);
+    }
+
+    .btn--resonance:active {
+      transform: translate(0);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    .btn--resonance:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     /* Selected article panel */
     .selected {
       padding: var(--space-4);
@@ -138,7 +217,7 @@ export class VelgSocialTrendsView extends LitElement {
     }
 
     .selected__meta > span:not(:last-child)::after {
-      content: '·'; margin-left: var(--space-1-5);
+      content: '\u00b7'; margin-left: var(--space-1-5);
     }
 
     .selected__platform {
@@ -202,6 +281,7 @@ export class VelgSocialTrendsView extends LitElement {
 
     /* Article card */
     .article-card {
+      position: relative;
       background: var(--color-surface-raised); border: var(--border-default);
       box-shadow: var(--shadow-md); display: flex; flex-direction: column;
       transition: transform var(--duration-normal) var(--ease-out),
@@ -224,6 +304,14 @@ export class VelgSocialTrendsView extends LitElement {
     .article-card--selected {
       border-color: var(--color-primary);
       box-shadow: 0 0 0 2px var(--color-primary);
+    }
+
+    .article-card--dedup {
+      opacity: 0.55;
+    }
+
+    .article-card--dedup:hover {
+      opacity: 0.75;
     }
 
     .article-card__header {
@@ -255,6 +343,241 @@ export class VelgSocialTrendsView extends LitElement {
     .article-card__meta {
       font-size: var(--text-xs); color: var(--color-text-muted);
       margin-top: auto;
+    }
+
+    /* Batch checkbox overlay */
+    .article-card__check {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-surface-raised);
+      border: var(--border-default);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-xs);
+      color: var(--color-text-inverse);
+      z-index: 1;
+    }
+
+    .article-card__check--active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    /* Staging rack */
+    .staging {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-surface-header);
+      border: var(--border-default);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .staging__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+
+    .staging__label {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist);
+      color: var(--color-text-secondary);
+    }
+
+    .staging__count {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .staging__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1-5);
+    }
+
+    .staging__chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-0-5) var(--space-2);
+      background: var(--color-surface-raised);
+      border: var(--border-default);
+      box-shadow: var(--shadow-xs);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-primary);
+      max-width: 200px;
+    }
+
+    .staging__chip-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .staging__chip-remove {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      background: none;
+      border: none;
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: 10px;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: color var(--transition-fast);
+    }
+
+    .staging__chip-remove:hover {
+      color: var(--color-danger);
+    }
+
+    .staging__actions {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-1);
+    }
+
+    .staging__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-1-5) var(--space-4);
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist);
+      border: var(--border-default);
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .staging__btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .staging__btn:active {
+      transform: translate(0);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    .staging__btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .staging__btn--transform {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .staging__btn--integrate {
+      background: var(--color-success);
+      color: var(--color-text-inverse);
+    }
+
+    .staging__btn--clear {
+      background: var(--color-surface-raised);
+      color: var(--color-text-primary);
+    }
+
+    /* Batch results */
+    .batch-results {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: var(--color-surface-sunken);
+      border: var(--border-default);
+    }
+
+    .batch-results__label {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-black);
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-brutalist);
+      color: var(--color-text-primary);
+    }
+
+    .batch-results__item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--color-surface-raised);
+      border: var(--border-width-thin) solid var(--color-border-light);
+    }
+
+    .batch-results__item--error {
+      border-color: var(--color-danger);
+      opacity: 0.7;
+    }
+
+    .batch-results__item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .batch-results__item-title {
+      font-family: var(--font-brutalist);
+      font-weight: var(--font-bold);
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+    }
+
+    .batch-results__item-desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      margin-top: var(--space-1);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .batch-results__item-meta {
+      font-family: var(--font-brutalist);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      margin-top: var(--space-1);
+    }
+
+    .batch-results__item-error {
+      font-family: var(--font-brutalist);
+      font-size: var(--text-xs);
+      color: var(--color-danger);
+      text-transform: uppercase;
     }
 
     .trends__auth-notice {
@@ -300,6 +623,13 @@ export class VelgSocialTrendsView extends LitElement {
   @state() private _lightboxSrc: string | null = null;
   @state() private _lightboxAlt = '';
 
+  // Batch mode state
+  @state() private _batchMode = false;
+  @state() private _selectedBatch: BrowseArticle[] = [];
+  @state() private _batchTransforming = false;
+  @state() private _batchResults: BatchTransformResult[] | null = null;
+  @state() private _existingEventTitles: string[] = [];
+
   connectedCallback(): void {
     super.connectedCallback();
     if (this.simulationId && appState.isAuthenticated.value) {
@@ -344,9 +674,45 @@ export class VelgSocialTrendsView extends LitElement {
       this._error = response.error?.message || msg('Failed to load articles');
     }
     this._loading = false;
+
+    // Load existing event titles for dedup
+    this._loadExistingEventTitles();
   }
 
+  private async _loadExistingEventTitles(): Promise<void> {
+    if (!this.simulationId) return;
+    try {
+      const response = await eventsApi.list(this.simulationId, { limit: '100', offset: '0' });
+      if (response.success && response.data && Array.isArray(response.data)) {
+        this._existingEventTitles = response.data.map(
+          (e: { title: string }) => e.title.toLowerCase(),
+        );
+      }
+    } catch {
+      // Dedup is best-effort
+    }
+  }
+
+  private _isDedup(article: BrowseArticle): boolean {
+    if (this._existingEventTitles.length === 0) return false;
+    const name = article.name.toLowerCase();
+    return this._existingEventTitles.some((t) => {
+      // Fuzzy: check if >60% of words overlap
+      const nameWords = name.split(/\s+/).filter((w) => w.length > 3);
+      const titleWords = t.split(/\s+/).filter((w) => w.length > 3);
+      if (nameWords.length === 0 || titleWords.length === 0) return false;
+      const overlap = nameWords.filter((w) => titleWords.includes(w)).length;
+      return overlap / Math.min(nameWords.length, titleWords.length) > 0.6;
+    });
+  }
+
+  // -- Single mode handlers --
+
   private _handleSelectArticle(article: BrowseArticle): void {
+    if (this._batchMode) {
+      this._handleBatchToggle(article);
+      return;
+    }
     if (this._selectedArticle === article) {
       this._selectedArticle = null;
     } else {
@@ -364,6 +730,209 @@ export class VelgSocialTrendsView extends LitElement {
     this._showTransformModal = false;
     this._selectedArticle = null;
   }
+
+  // -- Batch mode handlers --
+
+  private _handleBatchModeToggle(): void {
+    this._batchMode = !this._batchMode;
+    if (!this._batchMode) {
+      this._selectedBatch = [];
+      this._batchResults = null;
+    }
+    this._selectedArticle = null;
+  }
+
+  private _handleBatchToggle(article: BrowseArticle): void {
+    const idx = this._selectedBatch.indexOf(article);
+    if (idx >= 0) {
+      this._selectedBatch = this._selectedBatch.filter((a) => a !== article);
+    } else if (this._selectedBatch.length < MAX_BATCH) {
+      this._selectedBatch = [...this._selectedBatch, article];
+    }
+  }
+
+  private _handleBatchRemove(article: BrowseArticle): void {
+    this._selectedBatch = this._selectedBatch.filter((a) => a !== article);
+  }
+
+  private _handleBatchClear(): void {
+    this._selectedBatch = [];
+    this._batchResults = null;
+  }
+
+  private async _handleBatchTransform(): Promise<void> {
+    if (this._selectedBatch.length === 0) return;
+    this._batchTransforming = true;
+    this._batchResults = null;
+
+    try {
+      await generationProgress.withProgress(
+        {
+          title: msg('Batch transformation'),
+          steps: [
+            { id: 'prepare', label: msg('Preparing') },
+            { id: 'transform', label: msg('Transforming articles') },
+            { id: 'complete', label: msg('Complete') },
+          ],
+        },
+        async (progress) => {
+        progress.setStep('prepare', msg('Preparing batch...'));
+        await new Promise((r) => setTimeout(r, 300));
+
+        progress.setStep(
+          'transform',
+          msg(str`Transforming ${this._selectedBatch.length} articles...`),
+          msg('This may take a moment'),
+        );
+
+        const response = await socialTrendsApi.batchTransform(this.simulationId, {
+          articles: this._selectedBatch.map((a) => ({
+            article_name: a.name,
+            article_platform: a.platform,
+            article_url: a.url,
+            article_raw_data: a.raw_data,
+          })),
+        });
+
+        if (response.success && response.data) {
+          this._batchResults = response.data;
+          const successCount = response.data.filter((r) => r.transformation).length;
+          progress.complete(msg(str`${successCount} articles transformed`));
+        } else {
+          const errMsg = response.error?.message || msg('Batch transformation failed');
+          progress.setError(errMsg);
+        }
+      },
+      );
+    } catch {
+      // Error shown by GenerationProgressService
+    } finally {
+      this._batchTransforming = false;
+    }
+  }
+
+  private async _handleBatchIntegrate(): Promise<void> {
+    if (!this._batchResults) return;
+
+    const successResults = this._batchResults.filter((r) => r.transformation);
+    if (successResults.length === 0) return;
+
+    this._batchTransforming = true;
+
+    try {
+      await generationProgress.withProgress(
+        {
+          title: msg('Batch integration'),
+          steps: [
+            { id: 'integrate', label: msg('Creating events') },
+            { id: 'complete', label: msg('Complete') },
+          ],
+        },
+        async (progress) => {
+        progress.setStep('integrate', msg(str`Creating ${successResults.length} events...`));
+
+        const items = successResults.map((r) => ({
+          title: r.transformation!.title || r.article_name,
+          description: r.transformation!.description || r.transformation!.narrative || r.transformation!.content || '',
+          event_type: r.transformation!.event_type || 'news',
+          impact_level: r.transformation!.impact_level || 5,
+          tags: [r.article_platform],
+          source_article: {
+            name: r.article_name,
+            platform: r.article_platform,
+            url: r.article_url,
+            raw_data: r.article_raw_data,
+          },
+        }));
+
+        const response = await socialTrendsApi.batchIntegrate(this.simulationId, {
+          items,
+          generate_reactions_for_top: true,
+          max_reaction_agents: 20,
+        });
+
+        if (response.success && response.data) {
+          const { events, errors, reactions_count } = response.data;
+          if (reactions_count > 0) {
+            VelgToast.success(
+              msg(str`${events.length} events created, ${reactions_count} reactions generated`),
+            );
+          } else {
+            VelgToast.success(msg(str`${events.length} events created`));
+          }
+          if (errors.length > 0) {
+            VelgToast.error(msg(str`${errors.length} items failed`));
+          }
+          this._selectedBatch = [];
+          this._batchResults = null;
+          progress.complete(msg(str`${events.length} events created`));
+        } else {
+          progress.setError(response.error?.message || msg('Batch integration failed'));
+        }
+      },
+      );
+    } catch {
+      // Error shown by GenerationProgressService
+    } finally {
+      this._batchTransforming = false;
+    }
+  }
+
+  // -- Resonance --
+
+  private async _handleCreateResonance(): Promise<void> {
+    const article = this._selectedArticle;
+    if (!article) {
+      VelgToast.error(msg('Select an article first'));
+      return;
+    }
+
+    const raw = article.raw_data as Record<string, string> | undefined;
+    const section = (raw?.section || raw?.source || '').toLowerCase();
+
+    // Map article section to source category
+    const sectionMap: Record<string, SourceCategory> = {
+      business: 'economic_crisis',
+      politics: 'political_upheaval',
+      world: 'military_conflict',
+      technology: 'tech_breakthrough',
+      science: 'tech_breakthrough',
+      environment: 'environmental_disaster',
+      sport: 'cultural_shift',
+      culture: 'cultural_shift',
+      lifeandstyle: 'cultural_shift',
+      education: 'cultural_shift',
+    };
+
+    const sourceCategory: SourceCategory = sectionMap[section] || 'cultural_shift';
+
+    try {
+      const response = await resonanceApi.create({
+        source_category: sourceCategory,
+        title: article.name,
+        description: this._getAbstract(article, true) || article.name,
+        magnitude: 0.5,
+        real_world_source: {
+          name: article.name,
+          platform: article.platform,
+          url: article.url,
+          section: raw?.section,
+        },
+        impacts_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      });
+
+      if (response.success) {
+        VelgToast.success(msg('Resonance created'));
+        this._selectedArticle = null;
+      } else {
+        VelgToast.error(response.error?.message || msg('Failed to create resonance'));
+      }
+    } catch {
+      VelgToast.error(msg('Failed to create resonance'));
+    }
+  }
+
+  // -- Helpers --
 
   private _stripHtml(text: string): string {
     return text.replace(/<[^>]*>/g, '');
@@ -402,6 +971,8 @@ export class VelgSocialTrendsView extends LitElement {
     const raw = article.raw_data as Record<string, string> | undefined;
     return raw?.section || raw?.source || '';
   }
+
+  // -- Render --
 
   private _renderControls() {
     return html`
@@ -480,11 +1051,120 @@ export class VelgSocialTrendsView extends LitElement {
         >
           ${this._loading ? msg('Loading...') : msg('Load Articles')}
         </button>
+
+        <button
+          class="controls__btn controls__btn--toggle ${this._batchMode ? 'controls__btn--toggle-active' : ''}"
+          @click=${this._handleBatchModeToggle}
+          aria-pressed=${this._batchMode}
+        >
+          ${this._batchMode ? msg('Batch') : msg('Single')}
+        </button>
+      </div>
+    `;
+  }
+
+  private _renderStagingRack() {
+    if (!this._batchMode || this._selectedBatch.length === 0) return nothing;
+
+    const successCount = this._batchResults?.filter((r) => r.transformation).length ?? 0;
+
+    return html`
+      <div class="staging">
+        <div class="staging__header">
+          <span class="staging__label">${msg('Staging Rack')}</span>
+          <span class="staging__count">${this._selectedBatch.length}/${MAX_BATCH}</span>
+        </div>
+        <div class="staging__chips">
+          ${this._selectedBatch.map(
+            (article) => html`
+              <div class="staging__chip" aria-label=${article.name}>
+                <span class="staging__chip-title">${article.name}</span>
+                <button
+                  class="staging__chip-remove"
+                  @click=${(e: Event) => {
+                    e.stopPropagation();
+                    this._handleBatchRemove(article);
+                  }}
+                  aria-label=${msg(str`Remove ${article.name}`)}
+                >
+                  \u2715
+                </button>
+              </div>
+            `,
+          )}
+        </div>
+        <div class="staging__actions">
+          ${
+            !this._batchResults
+              ? html`
+                <button
+                  class="staging__btn staging__btn--transform"
+                  @click=${this._handleBatchTransform}
+                  ?disabled=${this._batchTransforming}
+                >
+                  ${this._batchTransforming ? msg('Transforming...') : msg('Transform All')}
+                </button>
+              `
+              : html`
+                <button
+                  class="staging__btn staging__btn--integrate"
+                  @click=${this._handleBatchIntegrate}
+                  ?disabled=${this._batchTransforming || successCount === 0}
+                >
+                  ${this._batchTransforming ? msg('Integrating...') : msg(str`Integrate ${successCount} Events`)}
+                </button>
+              `
+          }
+          <button
+            class="staging__btn staging__btn--clear"
+            @click=${this._handleBatchClear}
+            ?disabled=${this._batchTransforming}
+          >
+            ${msg('Clear')}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  private _renderBatchResults() {
+    if (!this._batchResults || this._batchResults.length === 0) return nothing;
+
+    return html`
+      <div class="batch-results">
+        <div class="batch-results__label">${msg('Transformation Results')}</div>
+        ${this._batchResults.map((result) => {
+          const hasError = !!result.error || !result.transformation;
+          const t = result.transformation;
+          return html`
+            <div class="batch-results__item ${hasError ? 'batch-results__item--error' : ''}">
+              <div class="batch-results__item-info">
+                <div class="batch-results__item-title">
+                  ${t?.title || result.article_name}
+                </div>
+                ${
+                  t?.description || t?.narrative
+                    ? html`<div class="batch-results__item-desc">${t.description || t.narrative}</div>`
+                    : nothing
+                }
+                ${
+                  hasError
+                    ? html`<div class="batch-results__item-error">${result.error || msg('Transformation failed')}</div>`
+                    : html`<div class="batch-results__item-meta">
+                        ${t?.event_type || 'news'} &mdash; ${msg('impact')} ${t?.impact_level || 5}
+                      </div>`
+                }
+              </div>
+            </div>
+          `;
+        })}
       </div>
     `;
   }
 
   private _renderSelectedPanel() {
+    if (this._batchMode) return nothing;
+
     const article = this._selectedArticle;
     if (!article) return nothing;
 
@@ -548,14 +1228,23 @@ export class VelgSocialTrendsView extends LitElement {
     const author = this._getAuthor(article);
     const date = this._getDate(article);
     const section = this._getSection(article);
-    const isSelected = this._selectedArticle === article;
+    const isDedup = this._isDedup(article);
+
+    const isSelected = this._batchMode
+      ? this._selectedBatch.includes(article)
+      : this._selectedArticle === article;
 
     return html`
       <div
-        class="article-card ${isSelected ? 'article-card--selected' : ''}"
+        class="article-card ${isSelected ? 'article-card--selected' : ''} ${isDedup ? 'article-card--dedup' : ''}"
         style="--i: ${index}"
         @click=${() => this._handleSelectArticle(article)}
       >
+        ${
+          this._batchMode
+            ? html`<div class="article-card__check ${isSelected ? 'article-card__check--active' : ''}">${isSelected ? '\u2713' : ''}</div>`
+            : nothing
+        }
         <div class="article-card__header">
           <h3 class="article-card__title">${article.name}</h3>
         </div>
@@ -563,6 +1252,7 @@ export class VelgSocialTrendsView extends LitElement {
           <div class="article-card__badges">
             <velg-badge variant="primary">${article.platform}</velg-badge>
             ${section ? html`<velg-badge>${section}</velg-badge>` : nothing}
+            ${isDedup ? html`<velg-badge>${msg('Already imported')}</velg-badge>` : nothing}
           </div>
           ${abstract ? html`<p class="article-card__abstract">${abstract}</p>` : nothing}
           <div class="article-card__meta">
@@ -593,9 +1283,16 @@ export class VelgSocialTrendsView extends LitElement {
       <div class="trends">
         <div class="trends__header">
           <h1 class="trends__title">${msg('Browse News')}</h1>
+          ${appState.isPlatformAdmin.value
+            ? html`<button class="btn--resonance" @click=${this._handleCreateResonance}
+                title=${msg('Create substrate resonance from selected article')}>
+                ${icons.substrateTremor(14)} ${msg('Create Resonance')}
+              </button>`
+            : nothing}
         </div>
 
         ${this._renderControls()}
+        ${this._renderStagingRack()}
         ${this._renderSelectedPanel()}
 
         ${this._loading ? html`<velg-loading-state message=${msg('Loading articles...')}></velg-loading-state>` : nothing}
@@ -620,6 +1317,8 @@ export class VelgSocialTrendsView extends LitElement {
           `
             : nothing
         }
+
+        ${this._renderBatchResults()}
 
         ${
           this._showTransformModal && this._selectedArticle

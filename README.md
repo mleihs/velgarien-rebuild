@@ -177,6 +177,7 @@ The epoch simulation library (`scripts/epoch_sim_lib.py`) runs 50&ndash;200 comp
 | **v2.3** | Agent aptitudes (3-9 scores), draft phase, formula `aptitude*0.03` | 18pp success swing between best/worst agents; strategic agent selection matters |
 | **v2.4** | Foundation redesign: spy+guardian+fortification; open epoch participation | Hidden defensive layer, early intel, any user can join any epoch |
 | **v2.5** | The Chronicle (AI newspaper) + Agent Memory & Reflection (pgvector) | Living world systems: worlds narrate themselves, agents remember |
+| **v2.6** | Substrate resonance integration: 8-term success formula, archetype-operative affinities, zone pressure modifier, attacker penalty, saboteur diminishing returns | Shared narrative layer feeds into competitive mechanics; caps reduced for tighter balance |
 
 ### Intelligence Report
 
@@ -202,7 +203,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
            ▼        │
 ┌──────────────┐    │
 │   FastAPI     │    │
-│   293 endpoints│    │
+│  ~305 endpoints│    │
 │   37 routers  │    │
 │   PyJWT auth  │    │
 └──────┬───────┘    │
@@ -210,9 +211,9 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
        ▼            ▼
 ┌──────────────────────────┐
 │   Supabase (PostgreSQL)       │
-│   52 tables + pgvector         │
-│   ~48 functions, 17 triggers   │
-│   230+ RLS policies           │
+│   56 tables + pgvector         │
+│   ~60 functions, 23 triggers   │
+│   240+ RLS policies           │
 │   4 materialized views        │
 │   Realtime channels           │
 │   Auth (ES256/HS256)          │
@@ -228,7 +229,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 - **Per-Simulation Theming** &mdash; CSS custom properties cascade through shadow DOM. Each simulation gets its own theme preset, all validated against WCAG 2.1 AA contrast ratios.
 - **Structured Logging** &mdash; structlog on top of stdlib logging. JSON output in production, console renderer locally. Request context (user_id, request_id, method, path) injected via middleware. All mutations log with structured `extra={}` fields for observability.
 - **Game Instance Isolation** &mdash; When an epoch starts, participating simulations are atomically cloned into balanced game instances. Templates remain untouched. Clones are archived on completion, deleted on cancellation.
-- **Database-First Logic** &mdash; Business invariants enforced in PostgreSQL via ~48 functions and 17 trigger functions. Complex operations like epoch cloning (~250 lines PL/pgSQL) and forge materialization run as atomic transactions. Derived game metrics computed via 4 materialized views with stale-notification triggers.
+- **Database-First Logic** &mdash; Business invariants enforced in PostgreSQL via ~60 functions and 23 trigger functions. Complex operations like epoch cloning (~250 lines PL/pgSQL) and forge materialization run as atomic transactions. Derived game metrics computed via 4 materialized views with stale-notification triggers.
 
 ---
 
@@ -270,7 +271,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 
 | Component | Technology |
 |:----------|:-----------|
-| Database | PostgreSQL via Supabase (52 tables, ~48 functions, 230+ RLS policies, pgvector embeddings) |
+| Database | PostgreSQL via Supabase (56 tables, ~60 functions, 240+ RLS policies, pgvector embeddings) |
 | Auth | Supabase Auth (JWT with ES256 in production, HS256 locally) |
 | Email | SMTP SSL (bilingual tactical briefing emails, fog-of-war compliant) |
 | AI Text | OpenRouter (model fallback chain) |
@@ -286,19 +287,19 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 
 | Metric | Count |
 |:-------|------:|
-| Database tables | 52 |
-| PostgreSQL functions | ~48 |
-| Database trigger functions | 17 |
-| Views (regular + materialized) | 8 + 4 |
-| RLS policies | 230+ |
-| SQL migrations | 77 |
-| API endpoints | 293 across 37 routers |
+| Database tables | 56 |
+| PostgreSQL functions | ~60 |
+| Database trigger functions | 23 |
+| Views (regular + materialized) | 9 + 4 |
+| RLS policies | 240+ |
+| SQL migrations | 85 |
+| API endpoints | ~305 across 37 routers |
 | Web Components | 133 custom elements |
 | Backend tests | 866 |
 | Frontend tests | 453 |
 | E2E specs | 81 |
 | Localized UI strings | 2,563 (EN/DE, 0 missing) |
-| Documentation files | 36 (Divio structure + ADRs) |
+| Documentation files | 38 (Divio structure + ADRs) |
 | Flagship simulations | 5 (users can create more) |
 | Operative types | 6 |
 | Scoring dimensions | 5 |
@@ -327,6 +328,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 - **Structured logging** &mdash; JSON production logs with request context, structured extra fields, per-service observability
 - **Full i18n** &mdash; English + German (2,563 localized strings, 0 missing translations)
 - **How-to-Play tutorial** &mdash; rules reference, worked match replays, changelog, ECharts Intelligence Report
+- **Substrate Resonances** &mdash; platform-level event propagation through 8 archetypes that modify operative effectiveness during competitive epochs, with zone pressure bonuses, attacker penalties, and bot awareness
 - **Platform admin panel** &mdash; user/membership management, runtime cache TTL controls
 - **Bureau auth terminals** &mdash; themed login/register screens with scanlines, corner brackets, amber glow, blinking cursor, styled signup confirmation email
 - **SEO** &mdash; JSON-LD structured data, dynamic sitemap, slug-based URLs, crawler meta injection
@@ -400,16 +402,16 @@ frontend/
     types/                  # TypeScript interfaces + Zod schemas
     locales/                # i18n (XLIFF source + generated output)
 supabase/
-  migrations/               # 77 SQL migration files
+  migrations/               # 85 SQL migration files
   seed/                     # Seed data (7 active, 11 archived)
 scripts/                    # Image generation, epoch simulation, doc index generation
-docs/                       # 36 documents (Divio structure)
-  specs/                    # 13 hard contracts ("this is how it works")
+docs/                       # 38 documents (Divio structure)
+  specs/                    # 14 hard contracts ("this is how it works")
   references/               # 5 canonical data ("look it up here")
   guides/                   # 6 procedural ("how to do X")
   explanations/             # 5 understanding ("why it's this way")
   analysis/                 # 6 epoch balance analysis reports
-  adr/                      # 7 Architecture Decision Records
+  adr/                      # 8 Architecture Decision Records
   archive/                  # 1 legacy doc
   INDEX.md                  # Auto-generated catalog from frontmatter
   llms.txt                  # AI-friendly doc index
@@ -420,16 +422,16 @@ e2e/                        # Playwright E2E tests (13 spec files)
 
 ## Documentation
 
-The `docs/` directory contains 36 documents organized in [Divio](https://docs.divio.com/documentation-system/) structure with YAML frontmatter. See [`docs/INDEX.md`](docs/INDEX.md) for the full catalog or [`docs/llms.txt`](docs/llms.txt) for AI-friendly consumption.
+The `docs/` directory contains 38 documents organized in [Divio](https://docs.divio.com/documentation-system/) structure with YAML frontmatter. See [`docs/INDEX.md`](docs/INDEX.md) for the full catalog or [`docs/llms.txt`](docs/llms.txt) for AI-friendly consumption. See [`CHANGELOG.md`](CHANGELOG.md) for recent changes.
 
 | Category | Count | Contents |
 |:---------|------:|:---------|
-| **specs/** | 13 | Platform Architecture, API (293 endpoints), Auth, AI, Theming, Embassies, Epochs, Game Systems |
-| **references/** | 5 | Database Schema (v3.1, 52 tables), Domain Models, Feature Catalog, Components, Design System |
+| **specs/** | 14 | Platform Architecture, API (~305 endpoints), Auth, AI, Theming, Embassies, Epochs, Game Systems, Substrate Resonances |
+| **references/** | 5 | Database Schema (v3.2, 56 tables), Domain Models, Feature Catalog, Components, Design System |
 | **guides/** | 6 | Deployment, Testing, Migration, Implementation Plan (160 tasks), Simulation Blueprint, Playtest |
 | **explanations/** | 5 | Project Overview, Techstack, Game Design Document, Concept Lore, TCG Card System |
 | **analysis/** | 6 | Epoch balance reports (2P-5P + cross-reference + playthrough verification) |
-| **adr/** | 7 | Architecture Decision Records (multi-tenancy, settings, taxonomies, templates, cloning, admin, DB logic) |
+| **adr/** | 8 | Architecture Decision Records (multi-tenancy, settings, taxonomies, templates, cloning, admin, DB logic, resonance caps) |
 
 ---
 

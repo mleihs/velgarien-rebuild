@@ -3,7 +3,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { eventsApi } from '../../services/api/index.js';
-import type { Event as SimEvent } from '../../types/index.js';
+import type { Event as SimEvent, EventStatus } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
 import '../shared/BaseModal.js';
 import { formStyles } from '../shared/form-styles.js';
@@ -148,6 +148,7 @@ export class VelgEventEditModal extends LitElement {
   @state() private _tags: string[] = [];
   @state() private _tagInput = '';
   @state() private _location = '';
+  @state() private _eventStatus: EventStatus = 'active';
   @state() private _saving = false;
   @state() private _error: string | null = null;
 
@@ -180,6 +181,7 @@ export class VelgEventEditModal extends LitElement {
         ? this._toDateInputValue(this.event.occurred_at)
         : '';
       this._impactLevel = this.event.impact_level ?? 1;
+      this._eventStatus = this.event.event_status ?? 'active';
       this._tags = [...(this.event.tags ?? [])];
       this._location = this.event.location ?? '';
     } else {
@@ -194,6 +196,7 @@ export class VelgEventEditModal extends LitElement {
     this._description = '';
     this._occurredAt = this._toDateInputValue(new Date().toISOString());
     this._impactLevel = 1;
+    this._eventStatus = 'active';
     this._tags = [];
     this._tagInput = '';
     this._location = '';
@@ -254,6 +257,7 @@ export class VelgEventEditModal extends LitElement {
       description: this._description.trim() || undefined,
       occurred_at: this._occurredAt ? new Date(this._occurredAt).toISOString() : undefined,
       impact_level: this._impactLevel,
+      ...(this._isEdit ? { event_status: this._eventStatus } : {}),
       tags: this._tags,
       location: this._location.trim() || undefined,
     };
@@ -403,6 +407,28 @@ export class VelgEventEditModal extends LitElement {
               <span class="form__impact-value">${this._impactLevel}</span>
             </div>
           </div>
+
+          ${this._isEdit ? html`
+          <div class="form__group">
+            <label class="form__label">
+              ${msg('Event Status')}
+              ${renderInfoBubble(msg('Lifecycle status affects zone stability pressure. Escalating events amplify impact by 1.3x, resolving events dampen to 0.5x, resolved/archived events contribute nothing.'))}
+            </label>
+            <select
+              class="form__select"
+              .value=${this._eventStatus}
+              @change=${(e: Event) => {
+                this._eventStatus = (e.target as HTMLSelectElement).value as EventStatus;
+              }}
+            >
+              <option value="active">${msg('Active')}</option>
+              <option value="escalating">${msg('Escalating')}</option>
+              <option value="resolving">${msg('Resolving')}</option>
+              <option value="resolved">${msg('Resolved')}</option>
+              <option value="archived">${msg('Archived')}</option>
+            </select>
+          </div>
+          ` : null}
 
           <div class="form__group">
             <label class="form__label">

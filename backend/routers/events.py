@@ -1,6 +1,7 @@
 """Event CRUD endpoints with reactions and tag filtering."""
 
 import logging
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Query, status
@@ -13,6 +14,8 @@ from backend.models.common import (
     SuccessResponse,
 )
 from backend.models.event import (
+    EventChainCreate,
+    EventChainResponse,
     EventCreate,
     EventResponse,
     EventUpdate,
@@ -45,6 +48,8 @@ async def list_events(
     impact_level: int | None = Query(default=None, ge=1, le=10),
     tag: str | None = Query(default=None),
     search: str | None = Query(default=None),
+    date_from: datetime | None = Query(default=None),
+    date_to: datetime | None = Query(default=None),
     limit: int = Query(default=25, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
 ) -> dict:
@@ -56,6 +61,8 @@ async def list_events(
         impact_level=impact_level,
         tag=tag,
         search=search,
+        date_from=date_from,
+        date_to=date_to,
         limit=limit,
         offset=offset,
     )
@@ -92,6 +99,7 @@ async def create_event(
         supabase, simulation_id, user.id, body.model_dump(exclude_none=True)
     )
     await AuditService.log_action(supabase, simulation_id, user.id, "events", event["id"], "create")
+    await _service._post_event_mutation(supabase, simulation_id)
     return {"success": True, "data": event}
 
 
@@ -111,6 +119,7 @@ async def update_event(
         if_updated_at=if_updated_at,
     )
     await AuditService.log_action(supabase, simulation_id, user.id, "events", event_id, "update")
+    await _service._post_event_mutation(supabase, simulation_id)
     return {"success": True, "data": event}
 
 
@@ -125,6 +134,7 @@ async def delete_event(
     """Soft-delete an event."""
     event = await _service.soft_delete(supabase, simulation_id, event_id)
     await AuditService.log_action(supabase, simulation_id, user.id, "events", event_id, "delete")
+    await _service._post_event_mutation(supabase, simulation_id)
     return {"success": True, "data": event}
 
 
@@ -250,6 +260,7 @@ async def generate_reactions(
                 reactions.append(reaction)
             except Exception:
                 logger.warning("Agent reaction generation failed", extra={"agent_id": agent["id"]}, exc_info=True)
+        # NOTE: reaction_modifier auto-computed by Postgres trigger on event_reactions
     else:
         # General reaction generation via EventService
         reactions = await EventService.generate_reactions(
@@ -264,6 +275,102 @@ async def generate_reactions(
             )
 
     return {"success": True, "data": reactions}
+
+
+@router.put("/{event_id}/status", response_model=SuccessResponse[EventResponse])
+async def update_event_status(
+    simulation_id: UUID,
+    event_id: UUID,
+    event_status: str = Body(..., embed=True),
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Transition an event to a new lifecycle status."""
+    event = await _service.update_status(supabase, simulation_id, event_id, event_status)
+    await AuditService.log_action(
+        supabase, simulation_id, user.id, "events", event_id, "status_change",
+        details={"new_status": event_status},
+    )
+    await _service._post_event_mutation(supabase, simulation_id)
+    return {"success": True, "data": event}
+
+
+@router.get("/{event_id}/chains", response_model=SuccessResponse[list[EventChainResponse]])
+async def get_event_chains(
+    simulation_id: UUID,
+    event_id: UUID,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("viewer")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Get chain links for an event."""
+    chains = await _service.get_chains(supabase, simulation_id, event_id)
+    return {"success": True, "data": chains}
+
+
+@router.post("/{event_id}/chains", response_model=SuccessResponse[EventChainResponse], status_code=201)
+async def create_event_chain(
+    simulation_id: UUID,
+    event_id: UUID,
+    body: EventChainCreate,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Link two events in a narrative chain."""
+    chain = await _service.add_chain(
+        supabase, simulation_id,
+        {
+            "parent_event_id": str(body.parent_event_id),
+            "child_event_id": str(body.child_event_id),
+            "chain_type": body.chain_type,
+        },
+    )
+    await AuditService.log_action(
+        supabase, simulation_id, user.id, "event_chains", chain["id"], "create",
+    )
+    return {"success": True, "data": chain}
+
+
+@router.delete("/{event_id}/chains/{chain_id}", response_model=SuccessResponse[EventChainResponse])
+async def delete_event_chain(
+    simulation_id: UUID,
+    event_id: UUID,
+    chain_id: UUID,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("editor")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Remove an event chain link."""
+    deleted = await _service.delete_chain(supabase, simulation_id, chain_id)
+    return {"success": True, "data": deleted}
+
+
+@router.get("/{event_id}/zone-links", response_model=SuccessResponse[list])
+async def get_event_zone_links(
+    simulation_id: UUID,
+    event_id: UUID,
+    user: CurrentUser = Depends(get_current_user),
+    _role_check: str = Depends(require_role("viewer")),
+    supabase: Client = Depends(get_supabase),
+) -> dict:
+    """Get zone links for an event (auto-assigned + manual)."""
+    response = (
+        supabase.table("event_zone_links")
+        .select("*, zones(name, zone_type)")
+        .eq("event_id", str(event_id))
+        .order("affinity_weight", desc=True)
+        .execute()
+    )
+    # Flatten zone name/type into link objects
+    links = []
+    for row in response.data or []:
+        zone_data = row.pop("zones", None) or {}
+        row["zone_name"] = zone_data.get("name")
+        row["zone_type"] = zone_data.get("zone_type")
+        links.append(row)
+    return {"success": True, "data": links}
 
 
 @router.get("/by-tags/{tags}", response_model=SuccessResponse[list])

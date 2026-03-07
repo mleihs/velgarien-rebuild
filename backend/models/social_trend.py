@@ -72,3 +72,43 @@ class IntegrateArticleRequest(BaseModel):
     generate_reactions: bool = True
     max_reaction_agents: int = Field(default=20, ge=1, le=50)
     source_article: dict | None = None
+
+
+# --- Batch workflow models ---
+
+
+class BatchArticle(BaseModel):
+    """A single article in a batch operation."""
+
+    article_name: str = Field(..., min_length=1, max_length=500)
+    article_platform: str
+    article_url: str | None = None
+    article_raw_data: dict | None = None
+
+
+class BatchTransformRequest(BaseModel):
+    """Request to transform multiple articles in batch."""
+
+    articles: list[BatchArticle] = Field(..., min_length=1, max_length=10)
+
+
+class BatchIntegrateItem(BaseModel):
+    """A single transformed article ready for integration."""
+
+    title: str = Field(..., min_length=1, max_length=500)
+    description: str | None = None
+    event_type: str | None = None
+    impact_level: int = Field(default=5, ge=1, le=10)
+    tags: list[str] = Field(default_factory=list)
+    source_article: dict | None = None
+
+
+class BatchIntegrateRequest(BaseModel):
+    """Request to integrate multiple transformed articles as events."""
+
+    items: list[BatchIntegrateItem] = Field(..., min_length=1, max_length=10)
+    generate_reactions_for_top: bool = Field(
+        default=True,
+        description="Generate reactions for the highest-impact event only (cost control).",
+    )
+    max_reaction_agents: int = Field(default=20, ge=1, le=50)

@@ -32,7 +32,7 @@ export class VelgBaseModal extends LitElement {
     .modal {
       position: relative;
       width: 100%;
-      max-width: 560px;
+      max-width: var(--modal-max-width, 560px);
       max-height: 85vh;
       display: flex;
       flex-direction: column;

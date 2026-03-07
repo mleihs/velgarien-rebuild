@@ -1,13 +1,15 @@
-import { localized, msg } from '@lit/localize';
+import { localized, msg, str } from '@lit/localize';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { appState } from '../../services/AppStateManager.js';
 import { healthApi } from '../../services/api/HealthApiService.js';
+import { zoneActionsApi } from '../../services/api/index.js';
 import type {
   BuildingReadiness,
   EmbassyEffectiveness,
   SimulationHealth,
   SimulationHealthDashboard,
+  ZoneActionType,
   ZoneStability,
 } from '../../types/index.js';
 import { icons } from '../../utils/icons.js';
@@ -259,6 +261,223 @@ export class VelgSimulationHealthView extends LitElement {
         text-align: right;
       }
 
+      /* ── Zone fortification overlays ── */
+
+      .zone-item-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .zone-item--quarantined {
+        background: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 6px,
+          color-mix(in srgb, var(--color-warning) 8%, transparent) 6px,
+          color-mix(in srgb, var(--color-warning) 8%, transparent) 12px
+        );
+        padding: var(--space-2) var(--space-3);
+        margin: 0 calc(var(--space-3) * -1);
+      }
+
+      .zone-item__shield-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        background: transparent;
+        border: var(--border-width-thin) solid var(--color-border);
+        color: var(--color-text-muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all var(--transition-fast);
+      }
+
+      .zone-item__shield-btn:hover {
+        color: var(--color-success);
+        border-color: var(--color-success);
+        background: color-mix(in srgb, var(--color-success) 8%, transparent);
+      }
+
+      .zone-item__shield-btn--active {
+        color: var(--color-success);
+        border-color: var(--color-success);
+        background: color-mix(in srgb, var(--color-success) 12%, transparent);
+        box-shadow: 0 0 8px color-mix(in srgb, var(--color-success) 30%, transparent);
+        animation: shield-glow 2s ease-in-out infinite;
+      }
+
+      .zone-item__shield-btn--quarantined {
+        color: var(--color-warning);
+        border-color: var(--color-warning);
+        background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+      }
+
+      @keyframes shield-glow {
+        0%, 100% { box-shadow: 0 0 6px color-mix(in srgb, var(--color-success) 25%, transparent); }
+        50% { box-shadow: 0 0 14px color-mix(in srgb, var(--color-success) 50%, transparent); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .zone-item__shield-btn--active { animation: none; }
+        .zone-item__cascade-dot { animation: none; }
+      }
+
+      .zone-item__overlays {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1-5);
+        flex-shrink: 0;
+      }
+
+      .zone-item__overlay-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-0-5);
+        padding: var(--space-0-5) var(--space-1-5);
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        white-space: nowrap;
+      }
+
+      .zone-item__overlay-badge--fortified {
+        background: color-mix(in srgb, var(--color-success) 12%, transparent);
+        border: var(--border-width-thin) solid color-mix(in srgb, var(--color-success) 40%, transparent);
+        color: var(--color-success);
+      }
+
+      .zone-item__overlay-badge--quarantine {
+        background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+        border: var(--border-width-thin) solid color-mix(in srgb, var(--color-warning) 40%, transparent);
+        color: var(--color-warning);
+      }
+
+      .zone-item__overlay-badge--cascade {
+        background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+        border: var(--border-width-thin) solid color-mix(in srgb, var(--color-danger) 40%, transparent);
+        color: var(--color-danger);
+      }
+
+      .zone-item__cascade-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--color-danger);
+        animation: cascade-pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes cascade-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.4); }
+      }
+
+      .zone-item__pressure-text {
+        font-family: var(--font-brutalist);
+        font-size: 10px;
+        color: var(--color-text-muted);
+        padding-left: calc(140px + var(--space-3));
+        margin-top: var(--space-0-5);
+      }
+
+      /* ── Zone action selector ── */
+
+      .zone-action-selector {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-2);
+        padding: var(--space-3) 0 var(--space-1);
+        padding-left: calc(140px + var(--space-3));
+      }
+
+      .zone-action-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding: var(--space-2) var(--space-3);
+        background: var(--color-surface-sunken, var(--color-background));
+        border: var(--border-width-thin) solid var(--color-border);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+
+      .zone-action-card:hover {
+        border-color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface-sunken, var(--color-background)));
+      }
+
+      .zone-action-card--loading {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .zone-action-card__header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+      }
+
+      .zone-action-card__icon {
+        display: flex;
+        color: var(--color-text-muted);
+      }
+
+      .zone-action-card__name {
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+      }
+
+      .zone-action-card__desc {
+        font-family: var(--font-sans);
+        font-size: 10px;
+        color: var(--color-text-muted);
+        line-height: 1.3;
+      }
+
+      .zone-action-card__effect {
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-black);
+        font-size: 10px;
+        color: var(--color-success);
+      }
+
+      .zone-action-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-2);
+        margin-left: calc(140px + var(--space-3));
+        margin-top: var(--space-1);
+        font-family: var(--font-brutalist);
+        font-weight: var(--font-bold);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        background: transparent;
+        color: var(--color-danger);
+        border: var(--border-width-thin) solid color-mix(in srgb, var(--color-danger) 40%, transparent);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+
+      .zone-action-cancel:hover {
+        background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+        border-color: var(--color-danger);
+      }
+
+      .zone-action-cancel--loading {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
       /* ── Building readiness list ── */
 
       .building-list {
@@ -483,6 +702,8 @@ export class VelgSimulationHealthView extends LitElement {
   @state() private _error: string | null = null;
   @state() private _dashboard: SimulationHealthDashboard | null = null;
   @state() private _refreshing = false;
+  @state() private _selectedZoneForAction: string | null = null;
+  @state() private _actionLoading = false;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -606,7 +827,151 @@ export class VelgSimulationHealthView extends LitElement {
     `;
   }
 
+  private _toggleActionSelector(zoneId: string): void {
+    this._selectedZoneForAction = this._selectedZoneForAction === zoneId ? null : zoneId;
+  }
+
+  private async _handleZoneAction(zoneId: string, actionType: ZoneActionType): Promise<void> {
+    if (this._actionLoading) return;
+    this._actionLoading = true;
+    try {
+      await zoneActionsApi.create(this.simulationId, zoneId, { action_type: actionType });
+      this._selectedZoneForAction = null;
+      await this._load();
+    } catch {
+      // Toast will be handled by API layer
+    } finally {
+      this._actionLoading = false;
+    }
+  }
+
+  private async _handleCancelAction(zoneId: string): Promise<void> {
+    if (this._actionLoading) return;
+    this._actionLoading = true;
+    try {
+      const listResult = await zoneActionsApi.list(this.simulationId, zoneId);
+      if (listResult.success && listResult.data) {
+        const active = listResult.data.find(
+          (a) => !a.deleted_at && new Date(a.expires_at) > new Date(),
+        );
+        if (active) {
+          await zoneActionsApi.cancel(this.simulationId, zoneId, active.id);
+        }
+      }
+      this._selectedZoneForAction = null;
+      await this._load();
+    } catch {
+      // Toast will be handled by API layer
+    } finally {
+      this._actionLoading = false;
+    }
+  }
+
+  private _renderZoneOverlays(z: ZoneStability) {
+    const hasFortification = z.fortification_reduction > 0;
+    const hasCascadeRisk = z.event_pressure > 0.7;
+
+    if (!hasFortification && !z.is_quarantined && !hasCascadeRisk) return nothing;
+
+    return html`
+      <div class="zone-item__overlays">
+        ${hasFortification && !z.is_quarantined
+          ? html`<span class="zone-item__overlay-badge zone-item__overlay-badge--fortified"
+              >${icons.fortify(10)} ${msg('Fortified')}</span>`
+          : nothing}
+        ${z.is_quarantined
+          ? html`<span class="zone-item__overlay-badge zone-item__overlay-badge--quarantine"
+              aria-label=${msg('Zone quarantined')}
+              >${msg('Quarantined')}</span>`
+          : nothing}
+        ${hasCascadeRisk
+          ? html`<span class="zone-item__overlay-badge zone-item__overlay-badge--cascade"
+              aria-label=${msg('Cascade risk: zone pressure exceeds threshold')}
+              ><span class="zone-item__cascade-dot"></span> ${msg('Cascade Risk')}</span>`
+          : nothing}
+      </div>
+    `;
+  }
+
+  private _renderActionSelector(z: ZoneStability) {
+    if (this._selectedZoneForAction !== z.zone_id) return nothing;
+
+    const canEdit = appState.canEdit.value;
+    // If zone has an active action (fortification_reduction > 0 or is_quarantined), show cancel option
+    const hasActiveAction = z.fortification_reduction > 0 || z.is_quarantined;
+
+    if (hasActiveAction && canEdit) {
+      // We need the action ID — for now show a cancel-by-zone button
+      return html`
+        <button
+          class="zone-action-cancel ${this._actionLoading ? 'zone-action-cancel--loading' : ''}"
+          @click=${() => this._handleCancelAction(z.zone_id)}
+          ?disabled=${this._actionLoading}
+        >
+          ${icons.close(10)} ${this._actionLoading ? msg('Cancelling...') : msg('Cancel Active Action')}
+        </button>
+      `;
+    }
+
+    if (!canEdit) return nothing;
+
+    const actions: { type: ZoneActionType; name: string; desc: string; effect: string; icon: typeof icons.fortify }[] = [
+      {
+        type: 'fortify',
+        name: msg('Fortify'),
+        desc: msg('Deploy resources to stabilize zone'),
+        effect: msg('-30% pressure / 7 days'),
+        icon: icons.fortify,
+      },
+      {
+        type: 'quarantine',
+        name: msg('Quarantine'),
+        desc: msg('Isolate zone to prevent cascade spreading'),
+        effect: msg('Block cascades / 14 days'),
+        icon: icons.alertTriangle,
+      },
+      {
+        type: 'deploy_resources',
+        name: msg('Deploy'),
+        desc: msg('Emergency intervention, strong but short'),
+        effect: msg('-50% pressure / 3 days'),
+        icon: icons.deploy,
+      },
+    ];
+
+    return html`
+      <div class="zone-action-selector" role="radiogroup" aria-label=${msg('Zone actions')}>
+        ${actions.map(
+          (a) => html`
+            <div
+              class="zone-action-card ${this._actionLoading ? 'zone-action-card--loading' : ''}"
+              role="radio"
+              tabindex="0"
+              aria-checked="false"
+              @click=${() => this._handleZoneAction(z.zone_id, a.type)}
+              @keydown=${(e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  this._handleZoneAction(z.zone_id, a.type);
+                }
+              }}
+            >
+              <div class="zone-action-card__header">
+                <span class="zone-action-card__icon">${a.icon(12)}</span>
+                <span class="zone-action-card__name">${a.name}</span>
+              </div>
+              <span class="zone-action-card__desc">${a.desc}</span>
+              <span class="zone-action-card__effect">${a.effect}</span>
+            </div>
+          `,
+        )}
+      </div>
+    `;
+  }
+
   private _renderZonePanel(zones: ZoneStability[]) {
+    const canEdit = appState.canEdit.value;
+
     return html`
       <div class="panel">
         <div class="panel__header">
@@ -618,23 +983,49 @@ export class VelgSimulationHealthView extends LitElement {
             ? html`<div class="panel__empty">${msg('No zones found.')}</div>`
             : html`
               <div class="zone-list">
-                ${zones.map(
-                  (z) => html`
-                    <div class="zone-item">
-                      <span class="zone-item__name">${z.zone_name}</span>
-                      <div class="zone-item__bar">
-                        <div
-                          class="zone-item__fill"
-                          style="width: ${Math.round(z.stability * 100)}%; background: ${healthColor(z.stability_label)}"
-                        ></div>
+                ${zones.map((z) => {
+                  const isQuarantined = z.is_quarantined;
+                  const hasFortification = z.fortification_reduction > 0;
+                  const hasActiveAction = hasFortification || isQuarantined;
+                  const isSelected = this._selectedZoneForAction === z.zone_id;
+
+                  return html`
+                    <div class="zone-item-wrapper">
+                      <div class="zone-item ${isQuarantined ? 'zone-item--quarantined' : ''}">
+                        <span class="zone-item__name">${z.zone_name}</span>
+                        <div class="zone-item__bar">
+                          <div
+                            class="zone-item__fill"
+                            style="width: ${Math.round(z.stability * 100)}%; background: ${healthColor(z.stability_label)}"
+                          ></div>
+                        </div>
+                        <span class="zone-item__value" style="color: ${healthColor(z.stability_label)}">
+                          ${(z.stability * 100).toFixed(0)}%
+                        </span>
+                        <span class="zone-item__label">${z.stability_label}</span>
+                        ${this._renderZoneOverlays(z)}
+                        ${canEdit
+                          ? html`
+                            <button
+                              class="zone-item__shield-btn ${hasActiveAction ? (isQuarantined ? 'zone-item__shield-btn--quarantined' : 'zone-item__shield-btn--active') : ''}"
+                              aria-label=${msg(str`Fortify zone: ${z.zone_name}`)}
+                              aria-expanded=${isSelected}
+                              @click=${() => this._toggleActionSelector(z.zone_id)}
+                            >
+                              ${icons.fortify(14)}
+                            </button>
+                          `
+                          : nothing}
                       </div>
-                      <span class="zone-item__value" style="color: ${healthColor(z.stability_label)}">
-                        ${(z.stability * 100).toFixed(0)}%
-                      </span>
-                      <span class="zone-item__label">${z.stability_label}</span>
+                      ${z.total_pressure > 0
+                        ? html`<div class="zone-item__pressure-text">
+                            ${msg(str`Pressure: ${Math.round(z.event_pressure * 100)}% targeted + ${Math.round(z.ambient_pressure * 100)}% ambient${z.fortification_reduction > 0 ? ` - ${Math.round(z.fortification_reduction * 100)}% fortification` : ''}`)}
+                          </div>`
+                        : nothing}
+                      ${this._renderActionSelector(z)}
                     </div>
-                  `,
-                )}
+                  `;
+                })}
               </div>
             `
         }

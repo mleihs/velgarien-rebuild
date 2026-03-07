@@ -6,6 +6,10 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 
+EVENT_STATUSES = ("active", "escalating", "resolving", "resolved", "archived")
+CHAIN_TYPES = ("escalation", "follow_up", "resolution", "cascade", "resonance")
+
+
 class EventCreate(BaseModel):
     """Schema for creating a new event."""
 
@@ -24,6 +28,7 @@ class EventCreate(BaseModel):
     location: str | None = None
     tags: list[str] = Field(default_factory=list)
     external_refs: dict | None = None
+    event_status: str = "active"
 
 
 class EventUpdate(BaseModel):
@@ -42,6 +47,7 @@ class EventUpdate(BaseModel):
     location: str | None = None
     tags: list[str] | None = None
     external_refs: dict | None = None
+    event_status: str | None = None
 
 
 class EventResponse(BaseModel):
@@ -65,9 +71,29 @@ class EventResponse(BaseModel):
     location: str | None = None
     tags: list[str] = Field(default_factory=list)
     external_refs: dict | None = None
+    event_status: str = "active"
     created_at: datetime
     updated_at: datetime
     deleted_at: datetime | None = None
+
+
+class EventChainCreate(BaseModel):
+    """Schema for linking two events in a chain."""
+
+    parent_event_id: UUID
+    child_event_id: UUID
+    chain_type: str = Field(..., pattern=r"^(escalation|follow_up|resolution|cascade|resonance)$")
+
+
+class EventChainResponse(BaseModel):
+    """Event chain link response."""
+
+    id: UUID
+    simulation_id: UUID
+    parent_event_id: UUID
+    child_event_id: UUID
+    chain_type: str
+    created_at: datetime
 
 
 class GenerateEventReactionsRequest(BaseModel):

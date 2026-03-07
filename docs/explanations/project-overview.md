@@ -251,6 +251,7 @@ Plattform (Multi-Tenancy)
 | [Game Systems](../specs/game-systems.md) | Game Mechanics: Materialized Views, berechnete Attribute, Bleed-System |
 | [Epochs & Competitive Layer](../specs/epochs-competitive-layer.md) | Competitive PvP: Epochs, Operative, Scoring, Battle Log, Chat (v1.8) |
 | [Microanimations](../specs/microanimations.md) | Dramatische Eingangsanimationen, Stagger-Muster, Theme-aware Motion |
+| [Substrate Resonances](../specs/substrate-resonances.md) | Platform-Level Event-Propagation: 8 Archetypen, Susceptibility-Profile, Operative-Integration |
 | [Game Design Document](../explanations/game-design-document.md) | High-Level Game-Design-Konzept und Vision (v1.1) |
 | [Simulation Blueprint](../guides/simulation-blueprint.md) | Wiederverwendbare Referenz für neue Simulationen |
 

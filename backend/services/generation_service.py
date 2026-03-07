@@ -506,6 +506,51 @@ class GenerationService:
             "model_used": result.get("model_used"),
         }
 
+    # --- Resonance transformation ---
+
+    async def generate_resonance_event(
+        self,
+        archetype_name: str,
+        archetype_description: str,
+        resonance_title: str,
+        resonance_description: str,
+        event_type: str,
+        magnitude: float,
+        locale: str = "de",
+    ) -> dict:
+        """Transform a substrate resonance into a simulation-native event.
+
+        Returns dict with title, description, and optionally impact_level.
+        """
+        result = await self._generate(
+            template_type="resonance_transformation",
+            model_purpose="news_transformation",
+            variables={
+                "archetype_name": archetype_name,
+                "archetype_description": archetype_description,
+                "resonance_title": resonance_title,
+                "resonance_description": resonance_description or "",
+                "event_type": event_type,
+                "magnitude": str(round(magnitude * 10)),
+                "simulation_name": await self._get_simulation_name(),
+                "locale_name": LOCALE_NAMES.get(locale, locale),
+            },
+            locale=locale,
+        )
+
+        raw_content = result.get("content", "")
+        parsed = self._parse_json_content(raw_content)
+        if parsed:
+            return {
+                "title": parsed.get("title", f"{archetype_name} — {event_type}"),
+                "description": parsed.get("description", raw_content),
+                "impact_level": parsed.get("impact_level"),
+            }
+        return {
+            "title": f"{archetype_name} — {event_type}",
+            "description": raw_content,
+        }
+
     # --- JSON parsing ---
 
     async def _parse_or_repair_json(

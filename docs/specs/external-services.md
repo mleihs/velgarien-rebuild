@@ -312,3 +312,49 @@ async def get_facebook_posts(
         raise HTTPException(404, detail="Facebook integration not enabled")
     ...
 ```
+
+---
+
+## 6. Platform API Key Management
+
+Platform-level API keys provide defaults for all simulations. Individual simulations can override these via BYOK (Bring Your Own Key) in their settings.
+
+### Key Hierarchy
+
+```
+Simulation-level key (if configured)
+    → Platform-level key (default)
+        → Environment variable (fallback)
+```
+
+The `ExternalServiceResolver` checks simulation settings first, then falls back to platform defaults via `get_platform_api_key()`.
+
+### Managed Keys
+
+| Setting Key | Service | Description |
+|-------------|---------|-------------|
+| `openrouter_api_key` | OpenRouter | AI text generation (LLM proxy) |
+| `replicate_api_key` | Replicate | AI image generation |
+| `guardian_api_key` | The Guardian | News integration |
+| `newsapi_api_key` | NewsAPI | News integration |
+| `tavily_api_key` | Tavily | Forge research + web search |
+| `deepl_api_key` | DeepL | Automated translation |
+
+### Encryption
+
+All API keys stored in `platform_settings` are encrypted with AES-256 (Fernet). Encrypted values are prefixed with `gAAAAA`. Decryption happens at read time in `platform_api_keys.py`.
+
+### Caching
+
+- **Cache TTL:** 300 seconds (5 minutes)
+- **Invalidation:** `invalidate()` clears in-process cache when admin updates a key
+- Keys are loaded lazily on first access, then served from cache until TTL expires
+
+### Admin UI
+
+The `<velg-admin-api-keys-tab>` component in the Admin Panel provides:
+- Masked display of current key values
+- Per-key edit with show/hide toggle
+- Save and clear actions per key
+- Status badges (Active / Not configured)
+- Grouped by category (AI, News, Other)

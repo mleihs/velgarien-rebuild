@@ -1,8 +1,8 @@
 ---
 title: "Game Design Document"
 id: game-design-document
-version: "1.1"
-date: 2026-03-03
+version: "1.2"
+date: 2026-03-07
 lang: en
 type: explanation
 status: active
@@ -743,6 +743,10 @@ Scoring          ·       ·         ·        ·       ·      ★★★     �
 ```
 
 The densest interactions are between Operatives and the core economy systems. This is by design — the competitive layer doesn't exist in isolation, it USES the economy as its playing field.
+
+### Resonance-Combat Bridge
+
+Substrate resonances create a ninth interaction axis that connects the platform's narrative layer directly to competitive mechanics. When a resonance is active, its archetype modifies the 8-term success probability formula through three channels: zone pressure in the target simulation (up to +0.04), archetype-operative affinities where aligned operatives gain effectiveness and opposed ones lose it (net -0.04 to +0.04), and an attacker pressure penalty where a destabilized attacker's own zone instability reduces their outbound mission effectiveness (up to -0.04). This means a real-world event translated into an archetype like "The Shadow" doesn't just spawn narrative events — it mechanically advantages spies and assassins while disadvantaging propagandists across every active epoch, creating strategic windows that players must read and exploit. See [Substrate Resonances](../specs/substrate-resonances.md) for the full archetype-operative affinity table and function documentation.
 
 ---
 

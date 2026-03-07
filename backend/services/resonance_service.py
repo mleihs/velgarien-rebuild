@@ -1,0 +1,476 @@
+"""Service for substrate resonance CRUD and impact processing."""
+
+from __future__ import annotations
+
+import logging
+from datetime import UTC, datetime
+from uuid import UUID
+
+from fastapi import HTTPException, status
+from supabase import Client
+
+from backend.models.resonance import ARCHETYPE_DESCRIPTIONS
+from backend.services.base_service import BaseService, serialize_for_json
+from backend.services.event_service import EventService
+from backend.services.external_service_resolver import ExternalServiceResolver
+from backend.services.generation_service import GenerationService
+
+logger = logging.getLogger(__name__)
+
+
+class ResonanceService(BaseService):
+    """Platform-level resonance CRUD + per-simulation impact processing."""
+
+    table_name = "substrate_resonances"
+    view_name = "active_resonances"
+    supports_created_by = True
+
+    # ── CRUD overrides ───────────────────────────────────────────────────
+
+    @classmethod
+    async def list(
+        cls,
+        supabase: Client,
+        *,
+        status_filter: str | None = None,
+        signature: str | None = None,
+        search: str | None = None,
+        limit: int = 25,
+        offset: int = 0,
+        include_deleted: bool = False,
+    ) -> tuple[list[dict], int]:
+        """List resonances (platform-level, no simulation_id)."""
+        table = cls._read_table(include_deleted)
+        query = supabase.table(table).select("*", count="exact")
+
+        if status_filter:
+            query = query.eq("status", status_filter)
+        if signature:
+            query = query.eq("resonance_signature", signature)
+        if search:
+            query = query.ilike("title", f"%{search}%")
+
+        query = query.order("detected_at", desc=True)
+        query = query.range(offset, offset + limit - 1)
+        response = query.execute()
+        total = response.count if response.count is not None else len(response.data or [])
+        return response.data or [], total
+
+    @classmethod
+    async def get(
+        cls,
+        supabase: Client,
+        resonance_id: UUID,
+    ) -> dict:
+        """Get a single resonance by ID."""
+        response = (
+            supabase.table(cls.view_name)
+            .select("*")
+            .eq("id", str(resonance_id))
+            .limit(1)
+            .execute()
+        )
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Resonance not found.",
+            )
+        return response.data[0]
+
+    @classmethod
+    async def create(
+        cls,
+        supabase: Client,
+        user_id: UUID,
+        data: dict,
+    ) -> dict:
+        """Create a resonance. Postgres trigger derives signature/archetype/event_types."""
+        insert_data = serialize_for_json({
+            **data,
+            "created_by_id": str(user_id),
+        })
+        response = (
+            supabase.table(cls.table_name)
+            .insert(insert_data)
+            .execute()
+        )
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create resonance.",
+            )
+        return response.data[0]
+
+    @classmethod
+    async def update(
+        cls,
+        supabase: Client,
+        resonance_id: UUID,
+        data: dict,
+    ) -> dict:
+        """Update a resonance."""
+        update_data = serialize_for_json(data)
+        response = (
+            supabase.table(cls.table_name)
+            .update(update_data)
+            .eq("id", str(resonance_id))
+            .execute()
+        )
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Resonance not found.",
+            )
+        return response.data[0]
+
+    @classmethod
+    async def update_status(
+        cls,
+        supabase: Client,
+        resonance_id: UUID,
+        new_status: str,
+    ) -> dict:
+        """Transition resonance status."""
+        return await cls.update(supabase, resonance_id, {"status": new_status})
+
+    @classmethod
+    async def soft_delete(
+        cls,
+        supabase: Client,
+        resonance_id: UUID,
+    ) -> dict:
+        """Soft-delete a resonance."""
+        return await cls.update(supabase, resonance_id, {"deleted_at": datetime.now(UTC).isoformat()})
+
+    @classmethod
+    async def restore(
+        cls,
+        supabase: Client,
+        resonance_id: UUID,
+    ) -> dict:
+        """Restore a soft-deleted resonance."""
+        response = (
+            supabase.table(cls.table_name)
+            .update({"deleted_at": None})
+            .eq("id", str(resonance_id))
+            .execute()
+        )
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Resonance not found.",
+            )
+        return response.data[0]
+
+    # ── Impact Processing ────────────────────────────────────────────────
+
+    @classmethod
+    async def list_impacts(
+        cls,
+        supabase: Client,
+        resonance_id: UUID,
+    ) -> list[dict]:
+        """List all impacts for a resonance, including simulation names."""
+        response = (
+            supabase.table("resonance_impacts")
+            .select("*, simulations(name)")
+            .eq("resonance_id", str(resonance_id))
+            .order("created_at", desc=True)
+            .execute()
+        )
+        # Flatten simulation name into each impact record
+        for impact in response.data or []:
+            sim = impact.pop("simulations", None)
+            impact["simulation_name"] = sim["name"] if sim else None
+        return response.data or []
+
+    @classmethod
+    async def process_impact(
+        cls,
+        supabase: Client,
+        resonance_id: UUID,
+        user_id: UUID,
+        *,
+        simulation_ids: list[UUID] | None = None,
+        generate_narratives: bool = True,
+        locale: str = "de",
+    ) -> list[dict]:
+        """Process resonance impact across simulations.
+
+        1. Transition resonance to 'impacting'
+        2. For each target simulation, compute susceptibility
+        3. Create resonance_impact records (effective_magnitude computed by DB trigger)
+        4. Spawn 2-3 events per simulation based on event_type_map
+        5. Optionally generate AI narratives for each event
+        """
+        # Get resonance
+        resonance = await cls.get(supabase, resonance_id)
+
+        # Transition to impacting
+        if resonance["status"] == "detected":
+            await cls.update_status(supabase, resonance_id, "impacting")
+
+        # Get target simulations
+        if simulation_ids:
+            sim_query = (
+                supabase.table("simulations")
+                .select("id, name, slug, description")
+                .in_("id", [str(sid) for sid in simulation_ids])
+                .eq("status", "active")
+                .execute()
+            )
+        else:
+            sim_query = (
+                supabase.table("simulations")
+                .select("id, name, slug, description")
+                .eq("status", "active")
+                .eq("simulation_type", "template")
+                .execute()
+            )
+        simulations = sim_query.data or []
+
+        if not simulations:
+            logger.warning("No active simulations found for resonance impact")
+            return []
+
+        signature = resonance["resonance_signature"]
+        impacts: list[dict] = []
+
+        for sim in simulations:
+            sim_id = sim["id"]
+            try:
+                impact = await cls._process_simulation_impact(
+                    supabase,
+                    resonance=resonance,
+                    simulation=sim,
+                    signature=signature,
+                    user_id=user_id,
+                    generate_narratives=generate_narratives,
+                    locale=locale,
+                )
+                impacts.append(impact)
+            except Exception:
+                logger.exception(
+                    "Failed to process resonance impact for simulation %s", sim_id,
+                )
+                # Record failed impact
+                fail_data = serialize_for_json({
+                    "resonance_id": str(resonance_id),
+                    "simulation_id": str(sim_id),
+                    "susceptibility": 1.0,
+                    "effective_magnitude": 0,
+                    "status": "failed",
+                })
+                try:
+                    resp = (
+                        supabase.table("resonance_impacts")
+                        .upsert(fail_data, on_conflict="resonance_id,simulation_id")
+                        .execute()
+                    )
+                    if resp.data:
+                        impacts.append(resp.data[0])
+                except Exception:
+                    logger.exception("Failed to record failure for simulation %s", sim_id)
+
+        return impacts
+
+    @classmethod
+    async def _process_simulation_impact(
+        cls,
+        supabase: Client,
+        *,
+        resonance: dict,
+        simulation: dict,
+        signature: str,
+        user_id: UUID,
+        generate_narratives: bool,
+        locale: str,
+    ) -> dict:
+        """Process resonance impact for a single simulation."""
+        sim_id = simulation["id"]
+        resonance_id = resonance["id"]
+
+        # Get susceptibility via Postgres function
+        susc_resp = supabase.rpc(
+            "fn_get_resonance_susceptibility",
+            {"p_simulation_id": sim_id, "p_signature": signature},
+        ).execute()
+        susceptibility = float(susc_resp.data) if susc_resp.data is not None else 1.0
+
+        # Get event types via Postgres function
+        types_resp = supabase.rpc(
+            "fn_get_resonance_event_types",
+            {"p_simulation_id": sim_id, "p_signature": signature},
+        ).execute()
+        event_types = types_resp.data if types_resp.data else []
+
+        # Create impact record (effective_magnitude computed by DB trigger)
+        impact_data = serialize_for_json({
+            "resonance_id": str(resonance_id),
+            "simulation_id": str(sim_id),
+            "susceptibility": susceptibility,
+            "effective_magnitude": 0,  # will be overwritten by trigger
+            "status": "generating",
+        })
+        impact_resp = (
+            supabase.table("resonance_impacts")
+            .upsert(impact_data, on_conflict="resonance_id,simulation_id")
+            .execute()
+        )
+        if not impact_resp.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to create impact for simulation {sim_id}",
+            )
+        impact = impact_resp.data[0]
+        effective_mag = float(impact["effective_magnitude"])
+
+        # Skip low-impact simulations
+        if effective_mag < 0.05:
+            await cls._update_impact_status(supabase, impact["id"], "skipped")
+            return impact
+
+        # Spawn events (2-3 per simulation based on event_type_map)
+        spawned_ids: list[str] = []
+        gen_service: GenerationService | None = None
+
+        if generate_narratives:
+            try:
+                resolver = ExternalServiceResolver(supabase, UUID(sim_id))
+                ai_config = await resolver.get_ai_provider_config()
+                gen_service = GenerationService(supabase, UUID(sim_id), ai_config.openrouter_api_key)
+            except Exception:
+                logger.warning(
+                    "AI generation unavailable for simulation %s, using template titles",
+                    sim_id,
+                    exc_info=True,
+                )
+
+        for event_type in event_types[:3]:
+            try:
+                event = await cls._spawn_resonance_event(
+                    supabase,
+                    simulation=simulation,
+                    resonance=resonance,
+                    event_type=event_type,
+                    effective_magnitude=effective_mag,
+                    user_id=user_id,
+                    gen_service=gen_service,
+                    locale=locale,
+                )
+                spawned_ids.append(event["id"])
+            except Exception:
+                logger.exception(
+                    "Failed to spawn %s event for simulation %s",
+                    event_type, sim_id,
+                )
+
+        # Update impact with spawned event IDs
+        update_data = serialize_for_json({
+            "spawned_event_ids": spawned_ids,
+            "status": "completed" if spawned_ids else "failed",
+        })
+        update_resp = (
+            supabase.table("resonance_impacts")
+            .update(update_data)
+            .eq("id", str(impact["id"]))
+            .execute()
+        )
+
+        # Trigger post-event-mutation pipeline for this simulation
+        if spawned_ids:
+            try:
+                await EventService._post_event_mutation(supabase, UUID(sim_id))
+            except Exception:
+                logger.warning(
+                    "Post-mutation pipeline failed for simulation %s", sim_id,
+                    exc_info=True,
+                )
+
+        return update_resp.data[0] if update_resp.data else impact
+
+    @classmethod
+    async def _spawn_resonance_event(
+        cls,
+        supabase: Client,
+        *,
+        simulation: dict,
+        resonance: dict,
+        event_type: str,
+        effective_magnitude: float,
+        user_id: UUID,
+        gen_service: GenerationService | None,
+        locale: str,
+    ) -> dict:
+        """Spawn a single event from resonance impact."""
+        archetype = resonance["archetype"]
+        impact_level = min(10, max(1, round(effective_magnitude * 10)))
+
+        # Generate title and description via AI or fallback template
+        title: str
+        description: str | None
+
+        if gen_service:
+            try:
+                generated = await gen_service.generate_resonance_event(
+                    archetype_name=archetype,
+                    archetype_description=ARCHETYPE_DESCRIPTIONS.get(archetype, ""),
+                    resonance_title=resonance["title"],
+                    resonance_description=resonance.get("description", ""),
+                    event_type=event_type,
+                    magnitude=effective_magnitude,
+                    locale=locale,
+                )
+                title = generated.get("title", f"{archetype} — {event_type}")
+                description = generated.get("description")
+                if generated.get("impact_level"):
+                    impact_level = min(10, max(1, int(generated["impact_level"])))
+            except Exception:
+                logger.warning(
+                    "AI generation failed for resonance event, using template",
+                    exc_info=True,
+                )
+                title = f"{archetype} — {event_type.replace('_', ' ').title()}"
+                description = resonance.get("description")
+        else:
+            title = f"{archetype} — {event_type.replace('_', ' ').title()}"
+            description = resonance.get("description")
+
+        event_data = {
+            "title": title,
+            "event_type": event_type,
+            "description": description,
+            "data_source": "resonance",
+            "impact_level": impact_level,
+            "event_status": "active",
+            "tags": ["resonance", resonance["resonance_signature"], archetype.lower().replace(" ", "_")],
+            "external_refs": {
+                "resonance_id": str(resonance["id"]),
+                "resonance_signature": resonance["resonance_signature"],
+                "archetype": archetype,
+            },
+        }
+
+        sim_id = UUID(simulation["id"])
+        event = await EventService.create(
+            supabase, sim_id, user_id, event_data,
+        )
+
+        logger.info(
+            "Spawned resonance event: %s (type=%s, impact=%d) in %s",
+            event["id"], event_type, impact_level, simulation.get("name", sim_id),
+        )
+        return event
+
+    # ── Helpers ───────────────────────────────────────────────────────────
+
+    @staticmethod
+    async def _update_impact_status(
+        supabase: Client,
+        impact_id: str,
+        new_status: str,
+    ) -> None:
+        """Update a resonance impact status."""
+        supabase.table("resonance_impacts").update(
+            {"status": new_status}
+        ).eq("id", impact_id).execute()

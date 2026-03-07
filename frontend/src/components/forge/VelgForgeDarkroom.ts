@@ -14,6 +14,7 @@ import {
 } from './forge-console-styles.js';
 import { renderInfoBubble } from './forge-utils.js';
 
+import '../shared/VelgFontPicker.js';
 import '../shared/VelgGameCard.js';
 import './VelgForgeScanOverlay.js';
 
@@ -111,12 +112,24 @@ export class VelgForgeDarkroom extends LitElement {
       }
 
       .color-field input[type='color'] {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
         border: 1px solid var(--color-gray-600, #4b5563);
         background: transparent;
         cursor: pointer;
         padding: 0;
+        transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+      }
+
+      .color-field input[type='color']:hover {
+        transform: scale(1.15);
+        border-color: var(--color-gray-400, #9ca3af);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+      }
+
+      .color-field input[type='color']:focus {
+        outline: 2px solid var(--color-success, #22c55e);
+        outline-offset: 1px;
       }
 
       .color-field input[type='text'] {
@@ -130,21 +143,15 @@ export class VelgForgeDarkroom extends LitElement {
         box-sizing: border-box;
       }
 
-      /* ── Select Fields ─────────────────────── */
+      /* ── Chip Selectors ────────────────────── */
 
-      .select-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-3);
-      }
-
-      .select-field {
+      .chip-group {
         display: flex;
         flex-direction: column;
         gap: var(--space-1);
       }
 
-      .select-field__label {
+      .chip-group__label {
         font-family: var(--font-mono, monospace);
         font-size: 11px;
         text-transform: uppercase;
@@ -152,20 +159,48 @@ export class VelgForgeDarkroom extends LitElement {
         color: var(--color-gray-300, #d1d5db);
       }
 
-      .select-field select {
-        appearance: none;
-        width: 100%;
-        background: var(--color-gray-950, #030712);
-        color: var(--color-gray-100, #f3f4f6);
-        border: 1px solid var(--color-gray-700, #374151);
+      .chip-group__row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-1);
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        min-width: 44px;
         padding: var(--space-1) var(--space-2);
+        background: var(--color-gray-950, #030712);
+        border: 1px solid var(--color-gray-700, #374151);
+        color: var(--color-gray-300, #d1d5db);
         font-family: var(--font-mono, monospace);
         font-size: 11px;
         cursor: pointer;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 8px center;
-        padding-right: 24px;
+        transition: background 0.12s, border-color 0.12s, color 0.12s, box-shadow 0.12s;
+        white-space: nowrap;
+        box-sizing: border-box;
+      }
+
+      .chip:hover {
+        background: var(--color-gray-800, #1f2937);
+      }
+
+      .chip[aria-pressed='true'] {
+        border-color: var(--color-success, #22c55e);
+        color: var(--color-success, #22c55e);
+        box-shadow: 0 0 6px rgba(34, 197, 94, 0.2);
+      }
+
+      .chip__glyph {
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .chip-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-3);
       }
 
       /* ── Preview Pane ────────────────────── */
@@ -388,14 +423,47 @@ export class VelgForgeDarkroom extends LitElement {
     `;
   }
 
-  private _renderSelectField(key: string, label: string, options: string[]) {
+  private static _chipGlyphs: Record<string, Record<string, string>> = {
+    shadow_style: { offset: '__|', blur: '...', glow: '(*)', none: '---' },
+    hover_effect: { translate: '↑↑', scale: '<+>', glow: '(*)' },
+    card_frame_texture: {
+      none: '---', filigree: '~*~', circuits: '[#]',
+      scanlines: '|||', rivets: 'o·o', illumination: '❋',
+    },
+    card_frame_nameplate: {
+      terminal: '>_', banner: '═/═', readout: '[=]',
+      plate: '|=|', cartouche: '(~)',
+    },
+    card_frame_corners: {
+      none: '···', tentacles: '~.~', brackets: '[.]',
+      crosshairs: '+.+', bolts: 'o.o', floral: '✿',
+    },
+    card_frame_foil: {
+      holographic: '◇', aquatic: '≈', phosphor: '✦',
+      patina: '··', gilded: '✧',
+    },
+  };
+
+  private _renderChipSelector(key: string, label: string, options: string[]) {
     const value = this._themeConfig[key] || options[0];
+    const glyphs = VelgForgeDarkroom._chipGlyphs[key] ?? {};
     return html`
-      <div class="select-field">
-        <span class="select-field__label">${label}</span>
-        <select @change=${(e: Event) => this._updateThemeKey(key, (e.target as HTMLSelectElement).value)}>
-          ${options.map((opt) => html`<option value=${opt} ?selected=${value === opt}>${opt}</option>`)}
-        </select>
+      <div class="chip-group">
+        <span class="chip-group__label">${label}</span>
+        <div class="chip-group__row">
+          ${options.map(
+            (opt) => html`
+              <button
+                class="chip"
+                aria-pressed=${value === opt ? 'true' : 'false'}
+                @click=${() => this._updateThemeKey(key, opt)}
+              >
+                <span class="chip__glyph">${glyphs[opt] ?? ''}</span>
+                ${opt}
+              </button>
+            `,
+          )}
+        </div>
       </div>
     `;
   }
@@ -456,16 +524,16 @@ export class VelgForgeDarkroom extends LitElement {
           </div>
 
           <div class="color-grid">
-            <div class="color-field">
-              <span class="color-field__label">${msg('Heading Font')}</span>
-              <input type="text" class="field__input" .value=${tc.font_heading || ''}
-                @change=${(e: Event) => this._updateThemeKey('font_heading', (e.target as HTMLInputElement).value)} />
-            </div>
-            <div class="color-field">
-              <span class="color-field__label">${msg('Body Font')}</span>
-              <input type="text" class="field__input" .value=${tc.font_body || ''}
-                @change=${(e: Event) => this._updateThemeKey('font_body', (e.target as HTMLInputElement).value)} />
-            </div>
+            <velg-font-picker
+              .label=${msg('Heading Font')}
+              .value=${tc.font_heading || ''}
+              @font-change=${(e: CustomEvent<{ value: string }>) => this._updateThemeKey('font_heading', e.detail.value)}
+            ></velg-font-picker>
+            <velg-font-picker
+              .label=${msg('Body Font')}
+              .value=${tc.font_body || ''}
+              @font-change=${(e: CustomEvent<{ value: string }>) => this._updateThemeKey('font_body', e.detail.value)}
+            ></velg-font-picker>
           </div>
 
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-4)">
@@ -489,13 +557,13 @@ export class VelgForgeDarkroom extends LitElement {
             />
           </div>
 
-          <div class="select-grid">
-            ${this._renderSelectField('shadow_style', msg('Shadow'), ['offset', 'blur', 'glow', 'none'])}
-            ${this._renderSelectField('hover_effect', msg('Hover'), ['translate', 'scale', 'glow'])}
-            ${this._renderSelectField('card_frame_texture', msg('Card Texture'), ['none', 'filigree', 'circuits', 'scanlines', 'rivets', 'illumination'])}
-            ${this._renderSelectField('card_frame_nameplate', msg('Nameplate'), ['terminal', 'banner', 'readout', 'plate', 'cartouche'])}
-            ${this._renderSelectField('card_frame_corners', msg('Corners'), ['none', 'tentacles', 'brackets', 'crosshairs', 'bolts', 'floral'])}
-            ${this._renderSelectField('card_frame_foil', msg('Foil'), ['holographic', 'aquatic', 'phosphor', 'patina', 'gilded'])}
+          <div class="chip-grid">
+            ${this._renderChipSelector('shadow_style', msg('Shadow'), ['offset', 'blur', 'glow', 'none'])}
+            ${this._renderChipSelector('hover_effect', msg('Hover'), ['translate', 'scale', 'glow'])}
+            ${this._renderChipSelector('card_frame_texture', msg('Card Texture'), ['none', 'filigree', 'circuits', 'scanlines', 'rivets', 'illumination'])}
+            ${this._renderChipSelector('card_frame_nameplate', msg('Nameplate'), ['terminal', 'banner', 'readout', 'plate', 'cartouche'])}
+            ${this._renderChipSelector('card_frame_corners', msg('Corners'), ['none', 'tentacles', 'brackets', 'crosshairs', 'bolts', 'floral'])}
+            ${this._renderChipSelector('card_frame_foil', msg('Foil'), ['holographic', 'aquatic', 'phosphor', 'patina', 'gilded'])}
           </div>
 
           <button class="btn btn--ghost" @click=${this._generateTheme}>

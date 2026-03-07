@@ -128,11 +128,12 @@ class TestForgeGeographyDraft:
     def test_valid(self):
         geo = ForgeGeographyDraft(
             city_name="Chronopolis",
-            zones=[{"name": "District 1", "zone_type": "commercial", "description": "Trade hub"}],
+            zones=[{"name": "District 1", "zone_type": "commercial", "description": "Trade hub", "characteristics": ["bustling", "neon-lit"]}],
             streets=[{"name": "Main St", "zone_name": "District 1", "street_type": "main"}],
         )
         assert geo.city_name == "Chronopolis"
         assert len(geo.zones) == 1
+        assert geo.zones[0].characteristics == ["bustling", "neon-lit"]
 
 
 class TestUpdateBYOKRequest:

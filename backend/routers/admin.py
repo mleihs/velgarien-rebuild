@@ -12,11 +12,14 @@ from pydantic import BaseModel, Field
 from backend.dependencies import get_admin_supabase, require_platform_admin
 from backend.models.cleanup import CleanupExecuteRequest, CleanupPreviewRequest
 from backend.models.common import CurrentUser
+from backend.models.settings import is_sensitive_key
 from backend.services.admin_user_service import AdminUserService
 from backend.services.cache_config import invalidate as invalidate_cache_config
 from backend.services.cleanup_service import CleanupService
+from backend.services.platform_api_keys import invalidate as invalidate_api_key_cache
 from backend.services.platform_settings_service import PlatformSettingsService
 from backend.services.simulation_service import SimulationService
+from backend.utils.encryption import encrypt as encrypt_value
 from supabase import Client
 
 router = APIRouter(
@@ -55,7 +58,7 @@ async def list_settings(
     admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
     """List all platform settings."""
-    data = await PlatformSettingsService.list_all(admin_supabase)
+    data = await PlatformSettingsService.list_all(admin_supabase, mask_sensitive=True)
     return {"success": True, "data": data}
 
 
@@ -67,11 +70,20 @@ async def update_setting(
     admin_supabase: Client = Depends(get_admin_supabase),
 ) -> dict:
     """Update a platform setting value."""
-    data = await PlatformSettingsService.update(admin_supabase, key, body.value, user.id)
+    value = body.value
+    # Encrypt non-empty sensitive values before storing
+    if is_sensitive_key(key) and isinstance(value, str) and value:
+        value = encrypt_value(value)
+
+    data = await PlatformSettingsService.update(admin_supabase, key, value, user.id)
 
     # Invalidate relevant caches when cache TTLs change
     if key.startswith("cache_"):
         _invalidate_caches(key)
+
+    # Invalidate API key cache when sensitive keys change
+    if is_sensitive_key(key):
+        invalidate_api_key_cache()
 
     return {"success": True, "data": data}
 

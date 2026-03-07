@@ -1,7 +1,7 @@
 ---
 title: "Database Schema: Neues Multi-Simulations-Schema"
 id: database-schema
-version: "3.1"
+version: "3.2"
 date: 2026-03-07
 lang: de
 type: reference
@@ -2791,6 +2791,208 @@ ALTER TABLE battle_log ADD CONSTRAINT battle_log_event_type_check CHECK (
 ### Open Epoch Participation — RLS-Umstellung (Migration 049)
 
 Migration 049 stellt die Competitive-Layer-RLS von `simulation_members`-JOINs auf direkte `user_id`-Checks via `epoch_participants` um. Betroffene Policies:
+
+---
+
+## Event Pressure & Zone Dynamics (Migrationen 068-073)
+
+### Event Status & Lifecycle (Migration 069)
+
+`events` Tabelle erweitert um `event_status` Spalte:
+
+| Wert | Druck-Multiplikator | Beschreibung |
+|------|---------------------|-------------|
+| `active` | 1.0x | Normal aktives Event |
+| `escalating` | 1.3x | Intensiviert sich — erhoehter Druck |
+| `resolving` | 0.5x | Wird aufgeloest — reduzierter Druck |
+| `resolved` | 0.0x | Vollstaendig aufgeloest |
+| `archived` | 0.0x | Nur historischer Datensatz |
+
+### `event_chains` (Migration 069)
+
+Verknuepfungen zwischen verwandten Events.
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `simulation_id` | uuid | NO | FK → simulations |
+| `parent_event_id` | uuid | NO | FK → events |
+| `child_event_id` | uuid | NO | FK → events |
+| `chain_type` | text | NO | |
+| `created_at` | timestamptz | NO | `now()` |
+
+**CHECK:** `chain_type IN ('escalation', 'follow_up', 'resolution', 'cascade', 'resonance')`
+**UNIQUE:** `(parent_event_id, child_event_id, chain_type)`
+
+### `event_zone_links` (Migration 072)
+
+Verknuepfung von Events zu betroffenen Zonen via Zone-Gravity-Matrix.
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `event_id` | uuid | NO | FK → events |
+| `zone_id` | uuid | NO | FK → zones |
+| `affinity_weight` | numeric | NO | 1.0 |
+| `link_source` | text | NO | |
+| `created_at` | timestamptz | NO | `now()` |
+
+**CHECK:** `link_source IN ('auto', 'manual', 'location_match')`, `affinity_weight BETWEEN 0.0 AND 1.0`
+**UNIQUE:** `(event_id, zone_id)`
+
+### `zone_actions` (Migration 072)
+
+Simulation-Level Zonenaktionen fuer Stabilitaets-Management.
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `zone_id` | uuid | NO | FK → zones |
+| `simulation_id` | uuid | NO | FK → simulations |
+| `action_type` | text | NO | |
+| `effect_value` | numeric | NO | |
+| `created_by_id` | uuid | YES | FK → auth.users |
+| `expires_at` | timestamptz | NO | |
+| `cooldown_until` | timestamptz | NO | |
+| `created_at` | timestamptz | NO | `now()` |
+| `deleted_at` | timestamptz | YES | |
+
+**CHECK:** `action_type IN ('fortify', 'quarantine', 'deploy_resources')`, `effect_value BETWEEN 0.0 AND 1.0`
+
+**Aktionstypen:**
+
+| Aktion | Effekt | Dauer | Cooldown |
+|--------|--------|-------|----------|
+| `fortify` | +0.3 | 7 Tage | 14 Tage |
+| `quarantine` | -0.1 | 14 Tage | 21 Tage |
+| `deploy_resources` | +0.5 | 3 Tage | 30 Tage |
+
+### Reaction Modifier Trigger (Migration 071)
+
+`recompute_reaction_modifier()` berechnet Emotions-gewichteten Modifier fuer Event-Druck:
+
+| Emotion | Gewicht | Wirkung |
+|---------|---------|---------|
+| fear, anger, panic | +0.1 | Krisen-Verstaerker |
+| despair | +0.05 | Leichte Verstaerkung |
+| hope, defiance | -0.1 | Resilienz-Daempfer |
+| resolve | -0.05 | Leichte Daempfung |
+| indifference | 0.0 | Neutral |
+
+Berechnet `dominant_sentiment` und `reaction_modifier` in `events.metadata`.
+
+### Zone Gravity & Vulnerability Matrizen (Migration 072)
+
+**zone_gravity_matrix** (simulation_settings): Bestimmt welche Event-Typen welche Zonen-Typen betreffen.
+
+```json
+{
+  "exploration": {"ruins": 1.0, "slums": 0.6},
+  "trade": {"commercial": 1.0, "industrial": 0.6},
+  "crisis": {"_global": 0.6},
+  "military": {"military": 1.0, "government": 0.7, "industrial": 0.3}
+}
+```
+
+**zone_vulnerability_matrix**: Multipliziert Basis-Druck je nach Zone-Event-Kombination.
+
+```json
+{
+  "residential": {"social": 1.5, "crisis": 1.3, "military": 0.7},
+  "military": {"military": 1.5, "intrigue": 1.3, "social": 0.5},
+  "government": {"intrigue": 1.5, "military": 1.3, "crisis": 1.2}
+}
+```
+
+**Weitere Settings:** `pressure_spill_factor` (0.3), `cascade_threshold` (0.7).
+
+### Cascade Events (Migration 073)
+
+`process_cascade_events(p_simulation_id)` erzeugt automatisch Folgeereignisse wenn Zonen-Druck den `cascade_threshold` (0.7) ueberschreitet:
+
+- Rate-limitiert: 1 Kaskade pro Zone pro Zeitfenster
+- Ueberspringt quarantaenierte Zonen
+- Impact-Level: `LEAST(10, GREATEST(4, FLOOR(zone_pressure * 7)))`
+- Verknuepft via `event_chains` (chain_type='cascade')
+
+### Erweiterte `mv_zone_stability` Formel
+
+```
+total_pressure = event_pressure + ambient_pressure - fortification_reduction
+stability = (infrastructure * 0.5) + (security * 0.3) - (total_pressure * 0.25)
+```
+
+Neue Spalten: `event_pressure`, `ambient_pressure`, `fortification_reduction`, `is_quarantined`, `total_pressure`.
+
+---
+
+## Substrate Resonances (Migrationen 074-079)
+
+### `substrate_resonances` (Migration 074)
+
+Platform-Level Phaenomene die ueber alle Simulationen propagieren. Vollstaendige Dokumentation: [Substrate Resonances Spec](../specs/substrate-resonances.md).
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `source_category` | text | NO | |
+| `resonance_signature` | text | YES | (trigger-derived) |
+| `archetype` | text | YES | (trigger-derived) |
+| `title` | text | NO | |
+| `description` | text | YES | |
+| `bureau_dispatch` | text | YES | |
+| `real_world_source` | jsonb | YES | |
+| `magnitude` | numeric | NO | 0.50 |
+| `affected_event_types` | text[] | YES | |
+| `status` | resonance_status | NO | 'detected' |
+| `detected_at` | timestamptz | NO | `now()` |
+| `impacts_at` | timestamptz | YES | |
+| `subsides_at` | timestamptz | YES | |
+| `created_by_id` | uuid | YES | |
+| `created_at` | timestamptz | NO | `now()` |
+| `updated_at` | timestamptz | NO | `now()` |
+| `deleted_at` | timestamptz | YES | |
+
+**Enums:** `resonance_status` (detected, impacting, subsiding, archived), `resonance_impact_status` (pending, generating, completed, skipped, failed)
+
+**RLS:** Public read, authenticated write, `resonances_admin_full_access` fuer Platform-Admin.
+
+### `resonance_impacts` (Migration 074)
+
+| Spalte | Typ | Nullable | Default |
+|--------|-----|----------|---------|
+| `id` | uuid | NO | `gen_random_uuid()` |
+| `resonance_id` | uuid | NO | FK → substrate_resonances |
+| `simulation_id` | uuid | NO | FK → simulations |
+| `susceptibility` | numeric | NO | 1.00 |
+| `effective_magnitude` | numeric | YES | (trigger: `MIN(magnitude * susceptibility, 1.00)`) |
+| `status` | resonance_impact_status | NO | 'pending' |
+| `spawned_event_ids` | uuid[] | YES | |
+| `narrative_context` | text | YES | |
+| `created_at` | timestamptz | NO | `now()` |
+
+**UNIQUE:** `(resonance_id, simulation_id)`
+
+### Resonance Functions (Migrationen 076-078)
+
+| Funktion | Parameter | Returns | Beschreibung |
+|----------|-----------|---------|-------------|
+| `fn_derive_resonance_fields()` | trigger | trigger | source_category → signature + archetype + event_types |
+| `fn_get_resonance_susceptibility()` | `(sim_id, signature)` | numeric | Susceptibility aus resonance_profile Setting |
+| `fn_get_resonance_event_types()` | `(sim_id, signature)` | text[] | Event-Typen aus resonance_event_type_map |
+| `fn_resonance_operative_modifier()` | `(sim_id, operative_type)` | numeric | Netto-Modifier [-0.04, +0.04], subsiding 0.5x Decay |
+| `fn_target_zone_pressure()` | `(sim_id, zone_id?)` | numeric | Zonen-Druck skaliert auf Cap (0.04), NULL-safe |
+| `fn_attacker_pressure_penalty()` | `(sim_id)` | numeric | Angreifer-Druckstrafe [-0.04, 0.00] |
+| `is_platform_admin()` | — | boolean | SECURITY DEFINER Admin-Check |
+
+### Balance Fixes (Migration 080)
+
+| Aenderung | Detail |
+|-----------|--------|
+| `fn_target_zone_pressure` | NULL-Bug Fix: gibt 0.0 zurueck wenn zone_id nicht gefunden (vorher Cap). Cap reduziert 0.06→0.04. |
+| `fn_resonance_operative_modifier` | Infiltrator-Oppositionen hinzugefuegt (The Entropy, The Devouring Mother). Subsiding-Resonanzen 0.5x Decay. Clamp reduziert [-0.04, +0.06] → [-0.04, +0.04]. |
+| `fn_attacker_pressure_penalty` (NEU) | `(p_simulation_id)` → numeric [-0.04, 0.00]. Formel: `-1.0 * LEAST(0.04, avg_pressure * 0.04)`. Eigene Zonen-Instabilitaet reduziert Angriffs-Effektivitaet. |
+| `active_resonances` View | Filter erweitert: `AND status != 'archived'` (archivierte Resonanzen ausgeschlossen). |
 
 - **epoch_participants:** INSERT erfordert `user_id = auth.uid()` (oder `is_bot = true`). Neue DELETE-Policy (`user_id = auth.uid()`).
 - **epoch_chat_messages:** 3 Policies umgeschrieben (epoch SELECT, team SELECT, INSERT) — alle via `epoch_participants.user_id` statt `simulation_members` JOIN + `resolve_template_id()`.

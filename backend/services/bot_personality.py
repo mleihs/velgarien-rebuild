@@ -243,6 +243,12 @@ class BotPersonality(ABC):
         if alliances:
             actions = [a.action for a in alliances]
             parts.append(f"Alliance actions: {', '.join(actions)}.")
+        # Resonance awareness context
+        if state.active_resonances:
+            archetypes = [r.get("archetype", "?") for r in state.active_resonances]
+            parts.append(f"Resonance active: {', '.join(archetypes)}.")
+        if state.is_under_resonance_pressure():
+            parts.append("The substrate trembles — reinforcing defenses.")
         parts.append(f"RP: {state.current_rp} available.")
         return " ".join(parts)
 
@@ -288,8 +294,9 @@ class SentinelPersonality(BotPersonality):
                 rp -= plan.cost_rp
             return plans
 
-        # Priority 1: Guardians (50% of budget)
-        guardian_budget = int(available_rp * 0.50)
+        # Priority 1: Guardians (50% of budget, 60% under resonance pressure)
+        guardian_pct = 0.60 if state.is_under_resonance_pressure() else 0.50
+        guardian_budget = int(available_rp * guardian_pct)
         while rp > (available_rp - guardian_budget) and rp >= OPERATIVE_RP_COSTS["guardian"]:
             plan = self._try_deploy(state, "guardian", None, rp, plans)
             if not plan:
@@ -380,8 +387,12 @@ class WarlordPersonality(BotPersonality):
                 rp -= plan.cost_rp
 
         # Primary target: leader (or weakest if we're leading)
+        # Resonance awareness: prefer most volatile opponent
+        volatile = state.get_most_volatile_opponent() if self.params["use_intel"] else None
         rank = state.get_my_score_rank()
-        if rank == 1:
+        if volatile:
+            target = volatile
+        elif rank == 1:
             target = self._pick_target(state, "weakest")
         else:
             target = self._pick_target(state, "leader")
@@ -398,6 +409,16 @@ class WarlordPersonality(BotPersonality):
 
         # Offensive priority: assassin > saboteur > propagandist
         offensive_queue = ["assassin", "saboteur", "propagandist", "saboteur"]
+
+        # Resonance awareness: shift budget toward aligned types
+        if state.active_resonances and self.params["use_intel"]:
+            aligned_offensive = [
+                t for t in state.resonance_aligned_types if t != "guardian"
+            ]
+            if aligned_offensive:
+                # Prepend aligned types to the queue
+                offensive_queue = aligned_offensive + offensive_queue
+
         for op_type in offensive_queue:
             if rp < OPERATIVE_RP_COSTS.get(op_type, 5):
                 continue
@@ -604,6 +625,11 @@ class StrategistPersonality(BotPersonality):
         leader = state.get_leader_sim_id()
         spy_target = leader or (opponents[0] if opponents else None)
 
+        # Resonance awareness: prefer most volatile opponent when available
+        volatile_target = state.get_most_volatile_opponent() if self.params["use_intel"] else None
+        if volatile_target:
+            spy_target = volatile_target
+
         if spy_target and rp >= OPERATIVE_RP_COSTS["spy"]:
             plan = self._try_deploy(state, "spy", spy_target, rp, plans)
             if plan:
@@ -612,19 +638,19 @@ class StrategistPersonality(BotPersonality):
 
         # Counter-strategy deployment
         if dominant == "aggressive":
-            # Vs aggressive: guardians + spies (detect + defend)
             counter_ops = ["guardian", "guardian", "spy"]
         elif dominant == "diplomatic":
-            # Vs diplomatic: assassins (break alliances by blocking ambassadors)
             counter_ops = ["assassin", "infiltrator"]
         elif dominant == "subversive":
-            # Vs subversive: guardians + counter-intel (implied by spies)
             counter_ops = ["guardian", "saboteur"]
         else:
-            # Unknown/mixed: balanced approach
             counter_ops = ["guardian", "saboteur", "propagandist"]
 
-        target = leader or (opponents[0] if opponents else None)
+        # Resonance awareness: substitute aligned operative types when available
+        if state.active_resonances and self.params["use_intel"]:
+            counter_ops = self._apply_resonance_preference(state, counter_ops)
+
+        target = volatile_target or leader or (opponents[0] if opponents else None)
         for op_type in counter_ops:
             if rp < OPERATIVE_RP_COSTS.get(op_type, 5):
                 continue
@@ -636,6 +662,21 @@ class StrategistPersonality(BotPersonality):
 
         return plans
 
+    @staticmethod
+    def _apply_resonance_preference(
+        state: BotGameState, ops: list[str]
+    ) -> list[str]:
+        """Substitute non-guardian ops with resonance-aligned types where possible."""
+        result: list[str] = []
+        for op in ops:
+            if op == "guardian":
+                result.append(op)
+            elif preferred := state.get_resonance_preferred_operative([op] + state.resonance_aligned_types):
+                result.append(preferred)
+            else:
+                result.append(op)
+        return result
+
     def manage_alliances(self, state: BotGameState) -> list[AllianceAction]:
         actions: list[AllianceAction] = []
 
@@ -643,14 +684,12 @@ class StrategistPersonality(BotPersonality):
         if not state.own_team_id and self.params.get("proactive_counter"):
             rank = state.get_my_score_rank()
             if rank > 1:
-                # Find another non-leading, non-teamed player
                 non_leaders = [
                     p["simulation_id"] for p in state.participants
                     if p["simulation_id"] != state.simulation_id
                     and not p.get("team_id")
                 ]
                 if non_leaders:
-                    # Prefer the weakest (also wants to counter the leader)
                     target = non_leaders[-1] if len(non_leaders) > 1 else non_leaders[0]
                     actions.append(AllianceAction(
                         action="form",
@@ -658,7 +697,6 @@ class StrategistPersonality(BotPersonality):
                         team_name=f"Counter-Alliance C{state.current_cycle}",
                     ))
         elif not state.own_team_id:
-            # Medium difficulty: join existing team
             for team in state.teams:
                 actions.append(AllianceAction(action="join", team_name=team["name"]))
                 break

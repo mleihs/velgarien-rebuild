@@ -294,7 +294,58 @@ export class VelgForgeTable extends LitElement {
       /* ── Deployment Field ─────────────────── */
 
       .deployment-section {
+        position: relative;
         margin-bottom: var(--space-10);
+      }
+
+      .deployment-section velg-forge-scan-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        animation: overlay-fade-in 0.4s ease-out;
+      }
+
+      @keyframes overlay-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .section-empty {
+        font-family: var(--font-mono, monospace);
+        font-size: var(--text-sm);
+        color: var(--color-gray-500, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: var(--space-8) var(--space-4);
+        text-align: center;
+        border: 1px dashed var(--color-gray-700, #374151);
+      }
+
+      .section-reveal {
+        animation: section-reveal-in 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      @keyframes section-reveal-in {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+          filter: blur(4px);
+        }
+        60% {
+          filter: blur(0);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+          filter: blur(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .section-reveal,
+        .deployment-section velg-forge-scan-overlay {
+          animation: none;
+        }
       }
 
       .deployment-field {
@@ -752,29 +803,32 @@ export class VelgForgeTable extends LitElement {
   }
 
   private async _generateChunk(type: 'agents' | 'buildings' | 'geography') {
+    const sectionSel =
+      type === 'geography'
+        ? '.section--geography'
+        : type === 'agents'
+          ? '.section--agents'
+          : '.section--buildings';
+
+    // Scroll to the target section first, then start generation
     this._generatingChunk = type;
-    // Wait for overlay to render, then scroll to it
     await this.updateComplete;
     requestAnimationFrame(() => {
       this.renderRoot
-        .querySelector('velg-forge-scan-overlay')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        .querySelector(sectionSel)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+
     await forgeStateManager.generateChunk(type);
     this._generatingChunk = null;
+
     if (!forgeStateManager.error.value) {
       VelgToast.success(msg('Blueprint expanded successfully.'));
-      // Scroll to the generated content section
+      // Scroll to reveal the generated content
       await this.updateComplete;
       requestAnimationFrame(() => {
-        const sel =
-          type === 'geography'
-            ? '.section--geography'
-            : type === 'agents'
-              ? '.section--agents'
-              : '.section--buildings';
         this.renderRoot
-          .querySelector(sel)
+          .querySelector(sectionSel)
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     } else {
@@ -943,85 +997,66 @@ export class VelgForgeTable extends LitElement {
         ${!allComplete ? html`<span class="advance-hint">${msg('Complete all three divisions to advance')}</span>` : nothing}
       </div>
 
-      ${this._generatingChunk === 'geography' ? html`
-        <velg-forge-scan-overlay
-          active
-          .phases=${[msg('Surveying Dimensional Topology'), msg('Plotting Zone Boundaries'), msg('Charting Transit Corridors'), msg('Mapping Cartographic Anomalies'), msg('Crystallizing City Grid')]}
-          .lockLabels=${[msg('Zones'), msg('Streets'), msg('Grid')]}
-          headerLabel=${msg('Dimensional Cartography Division')}
-          .echoText=${this._draft?.seed_prompt ?? ''}
-        ></velg-forge-scan-overlay>
-      ` : nothing}
-
-      ${this._generatingChunk === 'agents' ? html`
-        <velg-forge-scan-overlay
-          active
-          .phases=${[msg('Scanning Personnel Archives'), msg('Profiling Operative Candidates'), msg('Cross-Referencing Dossier Files'), msg('Analyzing Psychological Matrices'), msg('Assembling Operative Roster')]}
-          .lockLabels=${[msg('Psych'), msg('Skills'), msg('Cover')]}
-          headerLabel=${msg('Bureau Personnel Division')}
-        ></velg-forge-scan-overlay>
-      ` : nothing}
-
-      ${this._generatingChunk === 'buildings' ? html`
-        <velg-forge-scan-overlay
-          active
-          .phases=${[msg('Analyzing Structural Foundations'), msg('Drafting Architectural Blueprints'), msg('Calculating Load-Bearing Vectors'), msg('Simulating Infrastructure Networks'), msg('Materializing Structural Footprint')]}
-          .lockLabels=${[msg('Base'), msg('Frame'), msg('Roof')]}
-          headerLabel=${msg('Infrastructure Engineering Corps')}
-        ></velg-forge-scan-overlay>
-      ` : nothing}
-
-      ${
-        geo?.zones?.length
-          ? html`
-        <div class="section--geography"></div>
+      <!-- Cartographic Survey -->
+      <div class="deployment-section section--geography">
         <h2 class="section-title">
           <span style="display:flex;align-items:baseline;gap:var(--space-3)">
             ${msg('Cartographic Survey')}
-            ${geo.city_name ? html`<span class="geo-header__city">// ${geo.city_name}</span>` : nothing}
+            ${geo?.city_name ? html`<span class="geo-header__city">// ${geo.city_name}</span>` : nothing}
           </span>
         </h2>
-        <div class="geo-grid">
-          ${geo.zones.map(
-            (z) => html`
-            <div class="geo-card">
-              <div class="geo-card__name">${z.name}</div>
-              <p class="geo-card__desc">${z.description}</p>
-              ${
-                Array.isArray(z.characteristics) && z.characteristics.length
-                  ? html`<div class="geo-card__tags">${z.characteristics.map((c) => html`<span class="geo-tag">${c}</span>`)}</div>`
-                  : nothing
-              }
-            </div>
-          `,
-          )}
-        </div>
 
-        ${
-          geo.streets?.length
-            ? html`
-          <h2 class="section-title">${msg('Transit Arteries')}</h2>
-          <div class="geo-grid">
-            ${geo.streets.map(
-              (s) => html`
+        ${geo?.zones?.length
+          ? html`
+          <div class="geo-grid section-reveal">
+            ${geo.zones.map(
+              (z) => html`
               <div class="geo-card">
-                <div class="geo-card__name">${s.name}</div>
-                <p class="geo-card__desc">${s.description}</p>
+                <div class="geo-card__name">${z.name}</div>
+                <p class="geo-card__desc">${z.description}</p>
                 ${
-                  Array.isArray(s.characteristics) && s.characteristics.length
-                    ? html`<div class="geo-card__tags">${s.characteristics.map((c) => html`<span class="geo-tag">${c}</span>`)}</div>`
+                  Array.isArray(z.characteristics) && z.characteristics.length
+                    ? html`<div class="geo-card__tags">${z.characteristics.map((c) => html`<span class="geo-tag">${c}</span>`)}</div>`
                     : nothing
                 }
               </div>
             `,
             )}
           </div>
-        `
-            : nothing
-        }
-      `
-          : nothing
-      }
+
+          ${geo.streets?.length
+            ? html`
+            <h2 class="section-title">${msg('Transit Arteries')}</h2>
+            <div class="geo-grid section-reveal">
+              ${geo.streets.map(
+                (s) => html`
+                <div class="geo-card">
+                  <div class="geo-card__name">${s.name}</div>
+                  <p class="geo-card__desc">${s.description}</p>
+                  ${
+                    Array.isArray(s.characteristics) && s.characteristics.length
+                      ? html`<div class="geo-card__tags">${s.characteristics.map((c) => html`<span class="geo-tag">${c}</span>`)}</div>`
+                      : nothing
+                  }
+                </div>
+              `,
+              )}
+            </div>
+          ` : nothing}
+        ` : html`
+          <div class="section-empty">${msg('Awaiting cartographic survey...')}</div>
+        `}
+
+        ${this._generatingChunk === 'geography' ? html`
+          <velg-forge-scan-overlay
+            active
+            .phases=${[msg('Surveying Dimensional Topology'), msg('Plotting Zone Boundaries'), msg('Charting Transit Corridors'), msg('Mapping Cartographic Anomalies'), msg('Crystallizing City Grid')]}
+            .lockLabels=${[msg('Zones'), msg('Streets'), msg('Grid')]}
+            headerLabel=${msg('Dimensional Cartography Division')}
+            .echoText=${this._draft?.seed_prompt ?? ''}
+          ></velg-forge-scan-overlay>
+        ` : nothing}
+      </div>
 
       <!-- Operative Roster -->
       <div class="deployment-section section--agents">
@@ -1044,6 +1079,7 @@ export class VelgForgeTable extends LitElement {
                     <velg-game-card
                       .name=${agent.name}
                       .subtitle=${agent.primary_profession}
+                      .description=${agent.background ?? ''}
                       .imageUrl=${this._agentImages[i] ?? ''}
                       .rarity=${'common'}
                       theme="brutalist"
@@ -1083,6 +1119,7 @@ export class VelgForgeTable extends LitElement {
                   <velg-game-card
                     .name=${a.name}
                     .subtitle=${a.primary_profession}
+                    .description=${a.background ?? ''}
                     .imageUrl=${this._agentImages[i % this._agentImages.length] ?? ''}
                     .rarity=${'common'}
                     theme="brutalist"
@@ -1100,6 +1137,15 @@ export class VelgForgeTable extends LitElement {
         `
             : nothing
         }
+
+        ${this._generatingChunk === 'agents' ? html`
+          <velg-forge-scan-overlay
+            active
+            .phases=${[msg('Scanning Personnel Archives'), msg('Profiling Operative Candidates'), msg('Cross-Referencing Dossier Files'), msg('Analyzing Psychological Matrices'), msg('Assembling Operative Roster')]}
+            .lockLabels=${[msg('Psych'), msg('Skills'), msg('Cover')]}
+            headerLabel=${msg('Bureau Personnel Division')}
+          ></velg-forge-scan-overlay>
+        ` : nothing}
       </div>
 
       <!-- Architectural Footprint -->
@@ -1123,6 +1169,7 @@ export class VelgForgeTable extends LitElement {
                     <velg-game-card
                       .name=${building.name}
                       .subtitle=${building.building_type}
+                      .description=${building.description ?? ''}
                       .imageUrl=${this._buildingImages[i] ?? ''}
                       .rarity=${'common'}
                       theme="brutalist"
@@ -1162,6 +1209,7 @@ export class VelgForgeTable extends LitElement {
                   <velg-game-card
                     .name=${b.name}
                     .subtitle=${b.building_type}
+                    .description=${b.description ?? ''}
                     .imageUrl=${this._buildingImages[i % this._buildingImages.length] ?? ''}
                     .rarity=${'common'}
                     theme="brutalist"
@@ -1179,6 +1227,15 @@ export class VelgForgeTable extends LitElement {
         `
             : nothing
         }
+
+        ${this._generatingChunk === 'buildings' ? html`
+          <velg-forge-scan-overlay
+            active
+            .phases=${[msg('Analyzing Structural Foundations'), msg('Drafting Architectural Blueprints'), msg('Calculating Load-Bearing Vectors'), msg('Simulating Infrastructure Networks'), msg('Materializing Structural Footprint')]}
+            .lockLabels=${[msg('Base'), msg('Frame'), msg('Roof')]}
+            headerLabel=${msg('Infrastructure Engineering Corps')}
+          ></velg-forge-scan-overlay>
+        ` : nothing}
       </div>
 
       ${this._renderDossierPanel()}

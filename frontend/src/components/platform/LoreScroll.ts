@@ -514,7 +514,7 @@ The Cartographers do not know which outcome is correct. They know only this: som
 
 That someone, in the cosmology of the Cartographers, in the deep mythology of the Bureau of Impossible Geography, in the restricted files and the consumed pages and the maps that are also doors — that someone is whoever is reading this.
 
-Worlds. One fracture. The map has no edges. Which world do you enter first?`),
+Shattered worlds. Bleeding borders. The map has no edges. Which world do you enter first?`),
     },
   ];
 }

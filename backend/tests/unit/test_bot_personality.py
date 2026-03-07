@@ -36,6 +36,11 @@ def _make_state(
     detected_enemy_ops: list[dict] | None = None,
     battle_log: list[dict] | None = None,
     spy_intel_reports: list[dict] | None = None,
+    active_resonances: list[dict] | None = None,
+    own_zone_stability: list[dict] | None = None,
+    own_avg_pressure: float = 0.0,
+    resonance_aligned_types: list[str] | None = None,
+    resonance_opposed_types: list[str] | None = None,
 ) -> BotGameState:
     """Create a BotGameState for testing."""
     sim_id = "sim-self"
@@ -81,6 +86,11 @@ def _make_state(
         detected_enemy_ops=detected_enemy_ops if detected_enemy_ops is not None else [],
         battle_log=battle_log if battle_log is not None else [],
         spy_intel_reports=spy_intel_reports if spy_intel_reports is not None else [],
+        active_resonances=active_resonances if active_resonances is not None else [],
+        own_zone_stability=own_zone_stability if own_zone_stability is not None else [],
+        own_avg_pressure=own_avg_pressure,
+        resonance_aligned_types=resonance_aligned_types if resonance_aligned_types is not None else [],
+        resonance_opposed_types=resonance_opposed_types if resonance_opposed_types is not None else [],
     )
 
 
@@ -654,3 +664,340 @@ class TestHelperMethods:
         assert "SENTINEL" in reasoning
         assert "medium" in reasoning
         assert "2 operatives" in reasoning
+
+
+# ── Resonance Gameplay Integration ────────────────────────────
+
+
+SHADOW_RESONANCE = {
+    "id": "res-1",
+    "archetype": "The Shadow",
+    "resonance_signature": "conflict_wave",
+    "magnitude": 0.80,
+    "status": "impacting",
+}
+
+AWAKENING_RESONANCE = {
+    "id": "res-2",
+    "archetype": "The Awakening",
+    "resonance_signature": "consciousness_drift",
+    "magnitude": 0.60,
+    "status": "impacting",
+}
+
+
+class TestResonanceBackwardCompatibility:
+    """All personalities must work unchanged with empty resonance data."""
+
+    def test_sentinel_no_resonances(self):
+        p = create_personality("sentinel", "hard")
+        state = _make_state(current_rp=30)
+        decisions = p.decide(state)
+        assert isinstance(decisions, BotDecisions)
+
+    def test_warlord_no_resonances(self):
+        p = create_personality("warlord", "hard")
+        state = _make_state(current_rp=30)
+        decisions = p.decide(state)
+        assert isinstance(decisions, BotDecisions)
+
+    def test_strategist_no_resonances(self):
+        p = create_personality("strategist", "hard")
+        state = _make_state(current_rp=30)
+        decisions = p.decide(state)
+        assert isinstance(decisions, BotDecisions)
+
+    def test_diplomat_no_resonances(self):
+        p = create_personality("diplomat", "hard")
+        state = _make_state(current_rp=30)
+        decisions = p.decide(state)
+        assert isinstance(decisions, BotDecisions)
+
+    def test_chaos_no_resonances(self):
+        p = create_personality("chaos", "hard")
+        state = _make_state(current_rp=30)
+        decisions = p.decide(state)
+        assert isinstance(decisions, BotDecisions)
+
+
+class TestSentinelResonance:
+    def test_increases_guardian_budget_under_pressure(self):
+        """Sentinel increases guardian budget from 50% to 60% under resonance pressure."""
+        p = create_personality("sentinel", "hard")
+        state_calm = _make_state(current_rp=40, own_avg_pressure=0.1)
+        state_pressure = _make_state(current_rp=40, own_avg_pressure=0.5)
+
+        decisions_calm = p.decide(state_calm)
+        decisions_pressure = p.decide(state_pressure)
+
+        guardians_calm = sum(1 for d in decisions_calm.deployments if d.operative_type == "guardian")
+        guardians_pressure = sum(1 for d in decisions_pressure.deployments if d.operative_type == "guardian")
+
+        # Under pressure, guardian count should be >= calm count
+        assert guardians_pressure >= guardians_calm
+
+    def test_reasoning_includes_resonance_pressure(self):
+        """Sentinel reasoning mentions substrate pressure when under resonance."""
+        p = create_personality("sentinel", "hard")
+        state = _make_state(
+            current_rp=20,
+            own_avg_pressure=0.5,
+            active_resonances=[SHADOW_RESONANCE],
+        )
+
+        decisions = p.decide(state)
+
+        assert "substrate trembles" in decisions.reasoning
+
+
+class TestStrategistResonance:
+    def test_prefers_aligned_operative_types(self):
+        """Strategist prefers resonance-aligned types when Shadow is active."""
+        p = create_personality("strategist", "hard")
+        # Shadow aligns spy + assassin
+        state = _make_state(
+            current_rp=40,
+            active_resonances=[SHADOW_RESONANCE],
+            resonance_aligned_types=["spy", "assassin"],
+            resonance_opposed_types=["propagandist"],
+        )
+
+        # Run multiple times due to randomness in base logic
+        aligned_deployed = False
+        for _ in range(20):
+            decisions = p.decide(state)
+            for d in decisions.deployments:
+                if d.operative_type in ("spy", "assassin"):
+                    aligned_deployed = True
+                    break
+            if aligned_deployed:
+                break
+
+        assert aligned_deployed
+
+    def test_targets_most_volatile_opponent(self):
+        """Strategist targets most volatile opponent from spy intel."""
+        p = create_personality("strategist", "hard")
+        state = _make_state(
+            current_rp=30,
+            active_resonances=[SHADOW_RESONANCE],
+            spy_intel_reports=[
+                {
+                    "target_simulation_id": "sim-opp2",
+                    "metadata": {"zone_security": ["low", "contested", "low"]},
+                },
+                {
+                    "target_simulation_id": "sim-opp1",
+                    "metadata": {"zone_security": ["high", "guarded"]},
+                },
+            ],
+        )
+
+        decisions = p.decide(state)
+
+        # Should prefer sim-opp2 (lowest security = most volatile)
+        offensive = [d for d in decisions.deployments if d.target_simulation_id]
+        if offensive:
+            assert offensive[0].target_simulation_id == "sim-opp2"
+
+    def test_reasoning_includes_archetype(self):
+        """Strategist reasoning references active resonance archetypes."""
+        p = create_personality("strategist", "hard")
+        state = _make_state(
+            current_rp=20,
+            active_resonances=[SHADOW_RESONANCE],
+        )
+
+        decisions = p.decide(state)
+
+        assert "The Shadow" in decisions.reasoning
+
+
+class TestWarlordResonance:
+    def test_prefers_volatile_target(self):
+        """Warlord targets most volatile opponent when resonance intel is available."""
+        p = create_personality("warlord", "hard")
+        state = _make_state(
+            current_rp=30,
+            active_resonances=[SHADOW_RESONANCE],
+            resonance_aligned_types=["spy", "assassin"],
+            spy_intel_reports=[
+                {
+                    "target_simulation_id": "sim-opp2",
+                    "metadata": {"zone_security": ["low", "lawless"]},
+                },
+                {
+                    "target_simulation_id": "sim-opp1",
+                    "metadata": {"zone_security": ["high", "maximum"]},
+                },
+            ],
+        )
+
+        decisions = p.decide(state)
+
+        offensive = [d for d in decisions.deployments if d.target_simulation_id]
+        if offensive:
+            assert offensive[0].target_simulation_id == "sim-opp2"
+
+    def test_prepends_aligned_types_to_offensive_queue(self):
+        """Warlord shifts budget toward resonance-aligned types."""
+        p = create_personality("warlord", "hard")
+        # Shadow aligns spy + assassin
+        state = _make_state(
+            current_rp=40,
+            active_resonances=[SHADOW_RESONANCE],
+            resonance_aligned_types=["spy", "assassin"],
+        )
+
+        # Over multiple runs, aligned types should appear frequently
+        aligned_count = 0
+        total_offensive = 0
+        for _ in range(10):
+            decisions = p.decide(state)
+            for d in decisions.deployments:
+                if d.operative_type != "guardian":
+                    total_offensive += 1
+                    if d.operative_type in ("spy", "assassin"):
+                        aligned_count += 1
+
+        # At least some aligned types should be deployed
+        assert aligned_count > 0
+
+
+class TestGameStateResonanceHelpers:
+    def test_is_under_resonance_pressure_false(self):
+        state = _make_state(own_avg_pressure=0.1)
+        assert not state.is_under_resonance_pressure()
+
+    def test_is_under_resonance_pressure_true(self):
+        state = _make_state(own_avg_pressure=0.5)
+        assert state.is_under_resonance_pressure()
+
+    def test_get_resonance_preferred_operative_aligned(self):
+        state = _make_state(resonance_aligned_types=["spy", "assassin"])
+        result = state.get_resonance_preferred_operative(["saboteur", "spy", "propagandist"])
+        assert result == "spy"
+
+    def test_get_resonance_preferred_operative_none(self):
+        state = _make_state(resonance_aligned_types=["spy", "assassin"])
+        result = state.get_resonance_preferred_operative(["saboteur", "propagandist"])
+        assert result is None
+
+    def test_get_resonance_preferred_operative_empty_aligned(self):
+        state = _make_state()
+        result = state.get_resonance_preferred_operative(["saboteur", "spy"])
+        assert result is None
+
+    def test_get_most_volatile_opponent_from_intel(self):
+        state = _make_state(
+            spy_intel_reports=[
+                {
+                    "target_simulation_id": "sim-opp1",
+                    "metadata": {"zone_security": ["high", "maximum"]},
+                },
+                {
+                    "target_simulation_id": "sim-opp2",
+                    "metadata": {"zone_security": ["low", "contested"]},
+                },
+            ],
+        )
+        assert state.get_most_volatile_opponent() == "sim-opp2"
+
+    def test_get_most_volatile_opponent_no_intel(self):
+        state = _make_state()
+        assert state.get_most_volatile_opponent() is None
+
+
+class TestDeriveResonanceAffinities:
+    def test_shadow_affinities(self):
+        from backend.services.bot_game_state import _derive_resonance_affinities
+
+        aligned, opposed = _derive_resonance_affinities([SHADOW_RESONANCE])
+        assert "spy" in aligned
+        assert "assassin" in aligned
+        assert "propagandist" in opposed
+
+    def test_multiple_resonances_merge(self):
+        from backend.services.bot_game_state import _derive_resonance_affinities
+
+        # Shadow: spy/assassin aligned, propagandist opposed
+        # Awakening: propagandist/spy aligned, assassin opposed
+        aligned, opposed = _derive_resonance_affinities([SHADOW_RESONANCE, AWAKENING_RESONANCE])
+        # spy aligned by both → stays aligned
+        assert "spy" in aligned
+        # propagandist aligned by Awakening, opposed by Shadow → cancels out
+        assert "propagandist" not in aligned
+        assert "propagandist" not in opposed
+        # assassin aligned by Shadow, opposed by Awakening → cancels out
+        assert "assassin" not in aligned
+        assert "assassin" not in opposed
+
+    def test_entropy_opposes_infiltrator(self):
+        from backend.services.bot_game_state import _derive_resonance_affinities
+
+        entropy = {"id": "res-e", "archetype": "The Entropy", "magnitude": 0.7, "status": "impacting"}
+        aligned, opposed = _derive_resonance_affinities([entropy])
+        assert "saboteur" in aligned
+        assert "assassin" in aligned
+        assert "infiltrator" in opposed
+
+    def test_devouring_mother_opposes_infiltrator(self):
+        from backend.services.bot_game_state import _derive_resonance_affinities
+
+        dm = {"id": "res-dm", "archetype": "The Devouring Mother", "magnitude": 0.5, "status": "impacting"}
+        aligned, opposed = _derive_resonance_affinities([dm])
+        assert "spy" in aligned
+        assert "propagandist" in aligned
+        assert "infiltrator" in opposed
+
+    def test_infiltrator_cancels_when_aligned_and_opposed(self):
+        from backend.services.bot_game_state import _derive_resonance_affinities
+
+        # Tower aligns infiltrator, Entropy opposes infiltrator → cancels
+        tower = {"id": "res-t", "archetype": "The Tower", "magnitude": 0.8, "status": "impacting"}
+        entropy = {"id": "res-e", "archetype": "The Entropy", "magnitude": 0.7, "status": "impacting"}
+        aligned, opposed = _derive_resonance_affinities([tower, entropy])
+        assert "infiltrator" not in aligned
+        assert "infiltrator" not in opposed
+        # saboteur aligned by both
+        assert "saboteur" in aligned
+
+    def test_empty_resonances(self):
+        from backend.services.bot_game_state import _derive_resonance_affinities
+
+        aligned, opposed = _derive_resonance_affinities([])
+        assert aligned == []
+        assert opposed == []
+
+
+class TestExplainResonanceContext:
+    def test_reasoning_includes_archetype_name(self):
+        p = create_personality("sentinel", "medium")
+        state = _make_state(
+            active_resonances=[SHADOW_RESONANCE],
+        )
+        deployments = [DeploymentPlan("guardian", "a1", cost_rp=4)]
+
+        reasoning = p._explain(state, deployments, [])
+
+        assert "The Shadow" in reasoning
+        assert "Resonance active" in reasoning
+
+    def test_reasoning_includes_pressure_warning(self):
+        p = create_personality("sentinel", "medium")
+        state = _make_state(own_avg_pressure=0.5)
+        deployments = []
+
+        reasoning = p._explain(state, deployments, [])
+
+        assert "substrate trembles" in reasoning
+
+    def test_no_resonance_context_when_none_active(self):
+        p = create_personality("sentinel", "medium")
+        state = _make_state()
+        deployments = []
+
+        reasoning = p._explain(state, deployments, [])
+
+        assert "Resonance" not in reasoning
+        assert "substrate" not in reasoning

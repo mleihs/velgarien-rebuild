@@ -20,11 +20,13 @@ export class VelgForgeScanOverlay extends LitElement {
 
     .scan-overlay {
       position: relative;
-      background: var(--color-gray-950, #030712);
+      background: rgba(3 7 18 / 0.96);
       border: 1px solid rgba(74 222 128 / 0.15);
       padding: var(--space-8) var(--space-6);
       overflow: hidden;
       min-height: 280px;
+      height: 100%;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       justify-content: center;

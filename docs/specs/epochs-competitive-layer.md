@@ -1,8 +1,8 @@
 ---
 title: "Epochs & Competitive Layer"
 id: epochs-competitive-layer
-version: "1.9"
-date: 2026-03-04
+version: "2.0"
+date: 2026-03-07
 lang: de
 type: spec
 status: active
@@ -245,7 +245,7 @@ RP is the action economy currency. Each simulation receives RP at the start of e
 | Type | Cost | Deploy Time | Duration | Effect |
 |------|------|-------------|----------|--------|
 | **Spy** | 3 RP | Instant | 3 cycles | Reveals target zone security levels and guardian count (intel report in battle log). +2 Influence, +1 Diplomatic, −2 Sovereignty. |
-| **Saboteur** | 5 RP | 1 cycle | Single action | Downgrades random zone security −1 tier + building condition −1. −6 Stability, −8 Sovereignty. |
+| **Saboteur** | 5 RP | 1 cycle | Single action | Downgrades random zone security −1 tier + building condition −1. Generates crisis event (impact 3, diminishing: 3→2→1, skip at 3+). −6 Stability, −8 Sovereignty. |
 | **Propagandist** | 4 RP | 1 cycle | 2 cycles | Generates a destabilizing event (impact 6-8) in target zone |
 | **Assassin** | 7 RP | 2 cycles | Single action | Wounds target agent — reduces relationships by 2, removes ambassador status for 3 cycles |
 | **Guardian** | 4 RP | Instant | Permanent | −6% enemy success per guardian (max −15%). Deploys to OWN simulation only. |
@@ -255,13 +255,18 @@ RP is the action economy currency. Each simulation receives RP at the start of e
 
 ```
 base_probability = 0.55
-+ agent_aptitude × 0.03           (3-9 scale → +0.09 to +0.27)
-- target_zone_security × 0.05    (mapped 0-10 → -0 to -0.50)
-- min(0.15, guardian_presence × 0.06)  (−0.06 each, cap 0.15)
-+ embassy_effectiveness × 0.15   (0-1 → +0 to +0.15)
++ agent_aptitude × 0.03                    (3-9 scale → +0.09 to +0.27)
+- target_zone_security × 0.05             (mapped 0-10 → -0 to -0.50)
+- min(0.15, guardian_presence × 0.06)     (−0.06 each, cap 0.15)
++ embassy_effectiveness × 0.15            (0-1 → +0 to +0.15)
++ resonance_zone_pressure                 (+0.00 to +0.04)
++ resonance_operative_modifier            (-0.04 to +0.04)
++ attacker_pressure_penalty               (-0.04 to 0.00)
 
 Final: clamped to [0.05, 0.95]
 ```
+
+**Resonance terms (3 new):** When substrate resonances are active, three additional modifiers apply. `resonance_zone_pressure` adds up to +0.04 based on event pressure in the target zone (via `fn_target_zone_pressure`). `resonance_operative_modifier` adjusts -0.04 to +0.04 based on archetype-operative affinities — aligned operatives gain effectiveness while opposed operatives lose it, with subsiding resonances contributing at 0.5x strength (via `fn_resonance_operative_modifier`). `attacker_pressure_penalty` subtracts up to -0.04 based on the attacker's own average zone instability, compensating the defender bonus (via `fn_attacker_pressure_penalty`). See [Substrate Resonances](substrate-resonances.md) for archetype-operative affinity tables and full function documentation.
 
 **Aptitude impact examples:**
 - Aptitude 3 (minimum): +0.09
@@ -588,6 +593,76 @@ During `resolve_cycle()`, after RP grant + mission resolution, before scoring:
    f. Generate 0-2 chat messages (template or LLM)
    g. Set cycle_ready = TRUE
 ```
+
+### Bot Personality Decision Trees
+
+Each personality implements `_plan_deployments()` and `manage_alliances()` with distinct strategies. Difficulty scaling affects all personalities via `DIFFICULTY_PARAMS`:
+
+| Difficulty | RP Waste | Success Threshold | Uses Intel | Optimal Targeting | Proactive Counter |
+|------------|----------|-------------------|------------|-------------------|-------------------|
+| Easy | 30% | 0% | No | No | No |
+| Medium | 10% | 20% | Yes | No | No |
+| Hard | 0% | 35% | Yes | Yes | Yes |
+
+#### Sentinel (Defense-Focused)
+
+- **Strategy:** Protect own world first, attack only when leading
+- **Guardian budget:** 50% of RP (60% under resonance pressure)
+- **Offensive types:** Spy (primary), then balanced
+- **Targeting:** Leader (only when own rank is #1)
+- **Fortification:** Fortifies all 4 zones in Foundation phase
+- **Alliances:** Seeks alliances early, never betrays unless betrayed first
+- **Draft priorities:** guardian (3x), spy (2x), saboteur (1x)
+
+#### Warlord (Aggressive)
+
+- **Strategy:** Focus fire on the leader, maximum offensive pressure
+- **Guardian budget:** Minimal (1-2 guardians max)
+- **Offensive types:** Assassin + saboteur heavy
+- **Targeting:** Leader, or weakest if tied for lead
+- **Fortification:** None outside Foundation phase
+- **Alliances:** Reluctant to ally, betrays threat-level allies
+- **Draft priorities:** assassin (3x), saboteur (2x), guardian (1x)
+
+#### Diplomat (Alliance Builder)
+
+- **Strategy:** Spread influence, avoid direct confrontation, build coalitions
+- **Guardian budget:** 20% of RP
+- **Offensive types:** Propagandist + infiltrator (avoids assassins)
+- **Targeting:** Spreads operatives across all targets
+- **Fortification:** 2 zones in Foundation phase
+- **Alliances:** Actively seeks alliances, never betrays
+- **Draft priorities:** propagandist (3x), infiltrator (2x), spy (1x)
+
+#### Strategist (Counter-Strategy)
+
+- **Strategy:** Detect dominant strategy among opponents and counter it
+- **Guardian budget:** Variable (responds to threat level)
+- **Offensive types:** Heavy spy investment, then reactive
+- **Targeting:** Counter-targets based on detected dominant strategy
+- **Fortification:** Weakest zones (lowest security), 1-2 randomly
+- **Alliances:** Forms strategic alliances with weak players against leader
+- **Resonance integration:** Applies resonance-preferred operative type to selection
+- **Draft priorities:** spy (3x), infiltrator (2x), assassin (1x)
+
+#### Chaos (Unpredictable Wildcard)
+
+- **Strategy:** Random weighted decisions, impossible to predict
+- **Guardian budget:** Random 0-3 guardians in Foundation
+- **Offensive types:** Random 1-4 operatives per cycle
+- **Targeting:** Random opponent selection
+- **Fortification:** Random 0-2 zones
+- **Alliances:** 30% chance to betray, 40% chance to form/join
+- **Draft priorities:** saboteur (3x), propagandist (2x), assassin (1x)
+
+### Bot Resonance Awareness
+
+When `resonance_bot_awareness_enabled` is true (default), the `BotGameState` tracks active resonances and derives aligned/opposed operative types:
+
+- `is_under_resonance_pressure()`: Returns true when `own_avg_pressure > 0.3`
+- `get_resonance_preferred_operative(candidates)`: Returns the most aligned operative type from candidates
+- Sentinel increases guardian deployment under resonance pressure (50% → 60%)
+- Strategist applies resonance preference to operative selection
 
 ### Bot Chat (Dual Mode)
 

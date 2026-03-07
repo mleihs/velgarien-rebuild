@@ -108,6 +108,65 @@ export class SocialTrendsApiService extends BaseApiService {
   ): Promise<ApiResponse<{ event: SimEvent; reactions_count: number; reactions: unknown[] }>> {
     return this.post(`/simulations/${simulationId}/social-trends/integrate-article`, data);
   }
+  // --- Batch workflow ---
+
+  batchTransform(
+    simulationId: string,
+    data: {
+      articles: Array<{
+        article_name: string;
+        article_platform: string;
+        article_url?: string;
+        article_raw_data?: Record<string, unknown>;
+      }>;
+    },
+  ): Promise<
+    ApiResponse<
+      Array<{
+        article_name: string;
+        article_platform: string;
+        article_url?: string;
+        article_raw_data?: Record<string, unknown>;
+        transformation: {
+          content?: string;
+          narrative?: string;
+          title?: string;
+          description?: string;
+          event_type?: string;
+          impact_level?: number;
+          model_used?: string;
+        } | null;
+        error: string | null;
+      }>
+    >
+  > {
+    return this.post(`/simulations/${simulationId}/social-trends/batch-transform`, data);
+  }
+
+  batchIntegrate(
+    simulationId: string,
+    data: {
+      items: Array<{
+        title: string;
+        description?: string;
+        event_type?: string;
+        impact_level?: number;
+        tags?: string[];
+        source_article?: Record<string, unknown>;
+      }>;
+      generate_reactions_for_top?: boolean;
+      max_reaction_agents?: number;
+    },
+  ): Promise<
+    ApiResponse<{
+      events: SimEvent[];
+      errors: Array<{ title: string; error: string }>;
+      reactions_generated_for: string | null;
+      reactions_count: number;
+    }>
+  > {
+    return this.post(`/simulations/${simulationId}/social-trends/batch-integrate`, data);
+  }
 }
 
 export const socialTrendsApi = new SocialTrendsApiService();

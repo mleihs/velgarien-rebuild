@@ -2,13 +2,15 @@ import { localized, msg } from '@lit/localize';
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
+import './AdminApiKeysTab.js';
 import './AdminUsersTab.js';
 import './AdminCachingTab.js';
 import './AdminCleanupTab.js';
 import './AdminForgeTab.js';
+import './AdminResonancesTab.js';
 import './AdminSimulationsTab.js';
 
-type AdminTab = 'users' | 'simulations' | 'caching' | 'cleanup' | 'forge';
+type AdminTab = 'users' | 'simulations' | 'resonances' | 'forge' | 'apikeys' | 'caching' | 'cleanup';
 
 @localized()
 @customElement('velg-admin-panel')
@@ -189,12 +191,26 @@ export class VelgAdminPanel extends LitElement {
           @click=${() => this._setTab('simulations')}
         >${msg('Simulations')}</button>
         <button
+          class="admin-tabs__tab ${this._activeTab === 'resonances' ? 'admin-tabs__tab--active' : ''}"
+          role="tab"
+          aria-selected=${this._activeTab === 'resonances'}
+          aria-controls="admin-tabpanel"
+          @click=${() => this._setTab('resonances')}
+        >${msg('Resonances')}</button>
+        <button
           class="admin-tabs__tab ${this._activeTab === 'forge' ? 'admin-tabs__tab--active' : ''}"
           role="tab"
           aria-selected=${this._activeTab === 'forge'}
           aria-controls="admin-tabpanel"
           @click=${() => this._setTab('forge')}
         >${msg('Forge')}</button>
+        <button
+          class="admin-tabs__tab ${this._activeTab === 'apikeys' ? 'admin-tabs__tab--active' : ''}"
+          role="tab"
+          aria-selected=${this._activeTab === 'apikeys'}
+          aria-controls="admin-tabpanel"
+          @click=${() => this._setTab('apikeys')}
+        >${msg('API Keys')}</button>
         <button
           class="admin-tabs__tab ${this._activeTab === 'caching' ? 'admin-tabs__tab--active' : ''}"
           role="tab"
@@ -223,8 +239,12 @@ export class VelgAdminPanel extends LitElement {
         return html`<velg-admin-users-tab></velg-admin-users-tab>`;
       case 'simulations':
         return html`<velg-admin-simulations-tab></velg-admin-simulations-tab>`;
+      case 'resonances':
+        return html`<velg-admin-resonances-tab></velg-admin-resonances-tab>`;
       case 'forge':
         return html`<velg-admin-forge-tab></velg-admin-forge-tab>`;
+      case 'apikeys':
+        return html`<velg-admin-api-keys-tab></velg-admin-api-keys-tab>`;
       case 'caching':
         return html`<velg-admin-caching-tab></velg-admin-caching-tab>`;
       case 'cleanup':
