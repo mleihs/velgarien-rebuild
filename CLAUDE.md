@@ -2,7 +2,7 @@
 
 ## Core Principles (Non-Negotiable)
 
-- Follow spec documents in `/docs` before implementing.
+- Follow spec documents in `/docs` before implementing. See `/docs/INDEX.md` for catalog, `/docs/llms.txt` for AI-friendly index.
 - No hacks. No temporary shortcuts. No TODO-later patches.
 - Proper separation of concerns:
   - Routers → HTTP only

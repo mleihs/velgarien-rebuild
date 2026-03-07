@@ -1,3 +1,12 @@
+---
+title: "Epoch 4-Player Simulation: 50-Game Analysis"
+id: epoch-4p-analysis
+lang: en
+type: analysis
+status: active
+tags: [analysis, 4-player, simulation, statistics]
+---
+
 # Epoch 4-Player Simulation: 50-Game Analysis
 
 > Simulated on 2026-02-28 (local API)

@@ -1,3 +1,12 @@
+---
+title: "Epoch Cross-Reference Analysis: Game Balance Report"
+id: epoch-cross-reference
+lang: en
+type: analysis
+status: active
+tags: [analysis, balance, cross-reference, statistics]
+---
+
 # Epoch Cross-Reference Analysis: Game Balance Report (v2.1 — Post-Balance Tuning)
 
 > **Simulated:** 2026-03-02 (local API, balance tuning v2.1 applied)

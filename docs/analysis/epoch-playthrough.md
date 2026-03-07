@@ -1,3 +1,12 @@
+---
+title: "Epoch Playthrough: Bug Fix Verification"
+id: epoch-playthrough
+lang: en
+type: analysis
+status: active
+tags: [analysis, playthrough, bugs, verification]
+---
+
 # Epoch Playthrough: Bug Fix Verification
 
 > Simulated on 2026-02-28 (local API)

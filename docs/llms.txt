@@ -1,0 +1,60 @@
+# metaverse.center
+
+> Multiplayer worldbuilding platform with AI-driven simulations and competitive PvP epochs.
+> 52 database tables, ~48 PostgreSQL functions, 293 API endpoints, 133 web components.
+> Stack: FastAPI + Lit 3 + Supabase + OpenRouter. Bilingual EN/DE.
+
+## Specifications
+- [AI Integration](specs/ai-integration.md)
+- [API Specification](specs/api-specification.md)
+- [Auth and Security](specs/auth-and-security.md)
+- [Embassies & Ambassadors](specs/embassies.md)
+- [Epochs & Competitive Layer](specs/epochs-competitive-layer.md)
+- [External Services](specs/external-services.md)
+- [Game Systems Design](specs/game-systems.md)
+- [i18n Architecture](specs/i18n-architecture.md)
+- [Microanimations](specs/microanimations.md)
+- [Platform Architecture: Multi-Simulations-Plattform](specs/platform-architecture.md)
+- [Relationships, Echoes & Map](specs/relationships-echoes-map.md)
+- [Simulation Settings](specs/simulation-settings.md)
+- [Theming System](specs/theming-system.md)
+
+## References
+- [Database Schema Legacy: Komplettes Alt-Schema](archive/database-schema-legacy.md)
+- [Database Schema: Neues Multi-Simulations-Schema](references/database-schema.md)
+- [Design System](references/design-system.md)
+- [Domain Models](references/domain-models.md)
+- [Feature Catalog](references/feature-catalog.md)
+- [Frontend Components](references/frontend-components.md)
+
+## Guides
+- [Deployment Infrastructure](guides/deployment-infrastructure.md)
+- [Implementation Plan](guides/implementation-plan.md)
+- [Migration Strategy](guides/migration-strategy.md)
+- [Epoch Playtest Methodology](guides/playtest-methodology.md)
+- [Simulation Blueprint](guides/simulation-blueprint.md)
+- [Testing Strategy](guides/testing-strategy.md)
+
+## Explanations
+- [The Velgarien Multiverse — Game Design Proposal](explanations/concept-lore.md)
+- [Game Design Document](explanations/game-design-document.md)
+- [Project Overview: metaverse.center Multi-Simulations-Plattform](explanations/project-overview.md)
+- [TCG Card System — Unified Design Concept](explanations/tcg-card-system.md)
+- [Techstack Recommendation](explanations/techstack-recommendation.md)
+
+## Analysis
+- [Epoch 2-Player Simulation: 50-Game Analysis](analysis/epoch-2p-analysis.md)
+- [Epoch 3-Player Simulation: 50-Game Analysis](analysis/epoch-3p-analysis.md)
+- [Epoch 4-Player Simulation: 50-Game Analysis](analysis/epoch-4p-analysis.md)
+- [Epoch 5-Player Simulation: 50-Game Analysis](analysis/epoch-5p-analysis.md)
+- [Epoch Cross-Reference Analysis: Game Balance Report](analysis/epoch-cross-reference-analysis.md)
+- [Epoch Playthrough: Bug Fix Verification](analysis/epoch-playthrough.md)
+
+## Architecture Decision Records
+- [ADR-001: Simulation als Row-Level Tenant](adr/001-simulation-row-level-tenant.md)
+- [ADR-002: Settings als Key-Value Store](adr/002-settings-key-value-store.md)
+- [ADR-003: Taxonomien als dynamische Tabellen](adr/003-taxonomies-dynamic-tables.md)
+- [ADR-004: Prompt-Templates pro Simulation + Locale](adr/004-prompt-templates-per-simulation.md)
+- [ADR-005: Competitive Layer als Template-Clone-Architektur](adr/005-competitive-layer-template-clone.md)
+- [ADR-006: Platform Admin via SECURITY DEFINER RPC](adr/006-platform-admin-security-definer.md)
+- [ADR-007: Datenbank-Logik in der Datenbank](adr/007-database-logic-in-database.md)

@@ -208,14 +208,16 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 └──────┬───────┘    │
        │            │
        ▼            ▼
-┌──────────────────────┐
-│   Supabase (PostgreSQL)   │
-│   52 tables + pgvector     │
-│   230+ RLS policies       │
-│   Realtime channels       │
-│   Auth (ES256/HS256)      │
-│   Storage (4 buckets)     │
-└──────────────────────┘
+┌──────────────────────────┐
+│   Supabase (PostgreSQL)       │
+│   52 tables + pgvector         │
+│   ~48 functions, 17 triggers   │
+│   230+ RLS policies           │
+│   4 materialized views        │
+│   Realtime channels           │
+│   Auth (ES256/HS256)          │
+│   Storage (4 buckets)         │
+└──────────────────────────┘
 ```
 
 ### Key Patterns
@@ -226,6 +228,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 - **Per-Simulation Theming** &mdash; CSS custom properties cascade through shadow DOM. Each simulation gets its own theme preset, all validated against WCAG 2.1 AA contrast ratios.
 - **Structured Logging** &mdash; structlog on top of stdlib logging. JSON output in production, console renderer locally. Request context (user_id, request_id, method, path) injected via middleware. All mutations log with structured `extra={}` fields for observability.
 - **Game Instance Isolation** &mdash; When an epoch starts, participating simulations are atomically cloned into balanced game instances. Templates remain untouched. Clones are archived on completion, deleted on cancellation.
+- **Database-First Logic** &mdash; Business invariants enforced in PostgreSQL via ~48 functions and 17 trigger functions. Complex operations like epoch cloning (~250 lines PL/pgSQL) and forge materialization run as atomic transactions. Derived game metrics computed via 4 materialized views with stale-notification triggers.
 
 ---
 
@@ -267,7 +270,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 
 | Component | Technology |
 |:----------|:-----------|
-| Database | PostgreSQL via Supabase (52 tables, 230+ RLS policies, pgvector embeddings) |
+| Database | PostgreSQL via Supabase (52 tables, ~48 functions, 230+ RLS policies, pgvector embeddings) |
 | Auth | Supabase Auth (JWT with ES256 in production, HS256 locally) |
 | Email | SMTP SSL (bilingual tactical briefing emails, fog-of-war compliant) |
 | AI Text | OpenRouter (model fallback chain) |
@@ -284,15 +287,18 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | Metric | Count |
 |:-------|------:|
 | Database tables | 52 |
+| PostgreSQL functions | ~48 |
+| Database trigger functions | 17 |
+| Views (regular + materialized) | 8 + 4 |
 | RLS policies | 230+ |
-| SQL migrations | 72 |
+| SQL migrations | 77 |
 | API endpoints | 293 across 37 routers |
 | Web Components | 133 custom elements |
 | Backend tests | 866 |
 | Frontend tests | 453 |
 | E2E specs | 81 |
 | Localized UI strings | 2,563 (EN/DE, 0 missing) |
-| Specification documents | 30 |
+| Documentation files | 36 (Divio structure + ADRs) |
 | Flagship simulations | 5 (users can create more) |
 | Operative types | 6 |
 | Scoring dimensions | 5 |
@@ -305,7 +311,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 ## Features
 
 - **Simulation worldbuilding** &mdash; agents, buildings, events, locations, zones, streets, social media, campaigns, chat
-- **Dynamic simulation creation** &mdash; users forge new worlds with custom lore, themes, taxonomies, and AI prompt templates via the Simulation Forge
+- **Simulation Forge** &mdash; 4-phase AI worldbuilding pipeline (Astrolabe research &rarr; Drafting Table entity generation &rarr; Darkroom theme tuning &rarr; Ignition materialization). Pydantic AI structured output with typed zone/street/agent/building models, chunk-specific prompts with word-count guidance and image-ready hints, geographic context injection, and BYOK API key support
 - **TCG card system** &mdash; unified collectible card component with 3D tilt, holographic foil, rarity tiers, stat gems, aptitude pips, card-deal animations
 - **Cross-simulation diplomacy** &mdash; embassies, ambassadors, event echoes (narrative bleed between worlds)
 - **Cartographer's Map** &mdash; force-directed multiverse graph with operative trails, health arcs, sparklines, battle feed, leaderboard
@@ -394,10 +400,19 @@ frontend/
     types/                  # TypeScript interfaces + Zod schemas
     locales/                # i18n (XLIFF source + generated output)
 supabase/
-  migrations/               # 72 SQL migration files
+  migrations/               # 77 SQL migration files
   seed/                     # Seed data (7 active, 11 archived)
-scripts/                    # Image generation + epoch simulation library
-docs/                       # 30 specification documents
+scripts/                    # Image generation, epoch simulation, doc index generation
+docs/                       # 36 documents (Divio structure)
+  specs/                    # 13 hard contracts ("this is how it works")
+  references/               # 5 canonical data ("look it up here")
+  guides/                   # 6 procedural ("how to do X")
+  explanations/             # 5 understanding ("why it's this way")
+  analysis/                 # 6 epoch balance analysis reports
+  adr/                      # 7 Architecture Decision Records
+  archive/                  # 1 legacy doc
+  INDEX.md                  # Auto-generated catalog from frontmatter
+  llms.txt                  # AI-friendly doc index
 e2e/                        # Playwright E2E tests (13 spec files)
 ```
 
@@ -405,17 +420,16 @@ e2e/                        # Playwright E2E tests (13 spec files)
 
 ## Documentation
 
-The `docs/` directory contains 30 specification documents covering every aspect of the system:
+The `docs/` directory contains 36 documents organized in [Divio](https://docs.divio.com/documentation-system/) structure with YAML frontmatter. See [`docs/INDEX.md`](docs/INDEX.md) for the full catalog or [`docs/llms.txt`](docs/llms.txt) for AI-friendly consumption.
 
-| Area | Documents |
-|:-----|:----------|
-| Overview & Planning | Project Overview, Implementation Plan (160 tasks, 6 phases) |
-| Data & API | Database Schema (v3.0), Domain Models (v3.0), API Specification (293 endpoints) |
-| Frontend | Component Hierarchy, Design System, Theming System, Microanimations |
-| Security | Auth & Security (hybrid JWT, RLS strategies) |
-| Game Systems | Game Mechanics, Epochs & Competitive Layer, Game Design Document |
-| Features | Relationships/Echoes/Map, Embassies, AI Integration |
-| Infrastructure | Deployment, Testing Strategy, Simulation Blueprint (template for new worlds) |
+| Category | Count | Contents |
+|:---------|------:|:---------|
+| **specs/** | 13 | Platform Architecture, API (293 endpoints), Auth, AI, Theming, Embassies, Epochs, Game Systems |
+| **references/** | 5 | Database Schema (v3.1, 52 tables), Domain Models, Feature Catalog, Components, Design System |
+| **guides/** | 6 | Deployment, Testing, Migration, Implementation Plan (160 tasks), Simulation Blueprint, Playtest |
+| **explanations/** | 5 | Project Overview, Techstack, Game Design Document, Concept Lore, TCG Card System |
+| **analysis/** | 6 | Epoch balance reports (2P-5P + cross-reference + playthrough verification) |
+| **adr/** | 7 | Architecture Decision Records (multi-tenancy, settings, taxonomies, templates, cloning, admin, DB logic) |
 
 ---
 
