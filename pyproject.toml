@@ -7,8 +7,8 @@ dependencies = [
     "uvicorn[standard]>=0.41.0",
     "pydantic>=2.12.0",
     "pydantic-settings>=2.13.0",
-    "pydantic-ai>=0.0.1",
-    "supabase>=2.10.0",
+    "pydantic-ai>=1.66.0",
+    "supabase>=2.25.0",
     "httpx>=0.28.0",
     "Pillow>=12.0.0",
     "cryptography>=46.0.0",
@@ -19,7 +19,7 @@ dependencies = [
     "replicate>=1.0.7",
     "cachetools>=7.0.0",
     "tavily-python>=0.5.0",
-    "structlog>=25.1.0",
+    "structlog>=25.5.0",
 ]
 
 [project.optional-dependencies]
@@ -60,4 +60,14 @@ asyncio_mode = "auto"
 markers = [
     "integration: Integration tests requiring app instantiation but not external services",
     "slow: Performance tests that may take several seconds",
+]
+
+[tool.coverage.run]
+source = ["backend"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
 ]

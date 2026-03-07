@@ -1,7 +1,8 @@
 # 16 - Testing Strategy
 
-**Version:** 2.1
-**Datum:** 2026-03-06
+**Version:** 2.2
+**Datum:** 2026-03-07
+**Aenderung v2.2:** `[tool.coverage.run]` und `[tool.coverage.report]` in pyproject.toml konfiguriert — `--cov` funktioniert jetzt ohne expliziten Modulpfad. Gezielte Coverage weiterhin moeglich via `--cov=backend.module`.
 **Aenderung v2.1:** Aktualisierte Test-Zahlen (866 Backend, 453 Frontend, 81 E2E). pytest-cov hinzugefuegt. Shared `make_chain_mock` Fixture in conftest.py. Neue Test-Dateien: test_logging_config.py, test_logging_context_middleware.py, test_simulation_service.py, test_member_service.py, test_invitation_service.py, test_epoch_invitation_service.py. Logging-Assertions in 6 bestehende Test-Dateien hinzugefuegt (caplog-basiert). structlog-Integration getestet.
 **Aenderung v2.0:** Aktualisierte Test-Zahlen (788 Backend, 442 Frontend, 81 E2E), PyJWT statt jose, happy-dom statt jsdom, @open-wc/testing entfernt, neue Test-Suites (Operative, Scoring, Epoch, Bot, Cleanup, Email, Notifications, Aptitudes), E2E-Dateien aktualisiert (13 Specs)
 **Aenderung v1.2:** Aktualisierte Test-Zahlen (275 Backend, 197 Frontend, 56 E2E), 88 WCAG-Kontrast-Tests, 36 Anonymous-View-Integrationstests
@@ -57,8 +58,19 @@ markers = [
     "slow: Performance tests that may take several seconds",
 ]
 
+[tool.coverage.run]
+source = ["backend"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
+
 # Coverage via pytest-cov (dev dependency)
-# Run: python -m pytest backend/tests/ --cov=backend --cov-report=term-missing
+# Run: python -m pytest backend/tests/ --cov               # Full backend coverage
+# Run: python -m pytest backend/tests/ --cov=backend.services.member_service  # Targeted
 ```
 
 ### Verzeichnisstruktur

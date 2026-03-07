@@ -237,8 +237,8 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 |:--------|:--------|:--------|
 | FastAPI | 0.135 | Async web framework, auto-generated OpenAPI docs |
 | Pydantic v2 | 2.12 | Request/response validation, settings management |
-| structlog | 25.1 | Structured logging (JSON production, console dev) |
-| Supabase Python | 2.10 | PostgreSQL client with RLS enforcement |
+| structlog | 25.5 | Structured logging (JSON production, console dev) |
+| Supabase Python | 2.25 | PostgreSQL client with RLS enforcement |
 | PyJWT | 2.11 | JWT verification (ES256 production, HS256 local) |
 | Pillow | 12.0 | Image processing, AVIF conversion |
 | Replicate | 1.0 | AI image generation (Flux, Stable Diffusion) |
@@ -246,7 +246,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | slowapi | 0.1 | Tiered rate limiting (30/hr AI, 100/min standard) |
 | cryptography | 46.0 | AES-256 encryption for sensitive settings |
 | cachetools | 7.0 | JWKS + model resolution + map data caching |
-| pydantic-ai | 0.0.1 | AI agent framework for structured generation |
+| pydantic-ai | 1.66 | AI agent framework for structured generation |
 | tavily-python | 0.5 | Web research for AI-assisted content generation |
 
 ### Frontend
@@ -291,7 +291,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 | Backend tests | 866 |
 | Frontend tests | 453 |
 | E2E specs | 81 |
-| Localized UI strings | ~3,100 (EN/DE) |
+| Localized UI strings | 2,563 (EN/DE, 0 missing) |
 | Specification documents | 30 |
 | Flagship simulations | 5 (users can create more) |
 | Operative types | 6 |
@@ -319,7 +319,7 @@ The How-to-Play page includes an interactive **Intelligence Report** built with 
 - **Bilingual email notifications** &mdash; cycle briefings, phase changes, epoch completion (fog-of-war compliant, per-player data)
 - **Per-simulation theming** &mdash; CSS presets per world with WCAG 2.1 AA contrast validation, light & dark modes
 - **Structured logging** &mdash; JSON production logs with request context, structured extra fields, per-service observability
-- **Full i18n** &mdash; English + German (~3,100 localized strings)
+- **Full i18n** &mdash; English + German (2,563 localized strings, 0 missing translations)
 - **How-to-Play tutorial** &mdash; rules reference, worked match replays, changelog, ECharts Intelligence Report
 - **Platform admin panel** &mdash; user/membership management, runtime cache TTL controls
 - **Bureau auth terminals** &mdash; themed login/register screens with scanlines, corner brackets, amber glow, blinking cursor, styled signup confirmation email
@@ -361,7 +361,7 @@ npm run dev                              # Dev server on http://localhost:5173
 ```bash
 # Backend (from project root, venv activated)
 python -m pytest backend/tests/ -v              # 866 tests
-python -m pytest backend/tests/ --cov=backend   # With coverage report
+python -m pytest backend/tests/ --cov           # With coverage report
 python -m ruff check backend/                   # Lint
 
 # Frontend (from frontend/)
