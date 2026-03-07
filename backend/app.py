@@ -174,4 +174,7 @@ if _static_dir.is_dir():
             enriched = await enrich_html_for_crawler(_static_dir / "index.html", request.url.path)
             if enriched:
                 return HTMLResponse(content=enriched)
-        return FileResponse(_static_dir / "index.html")
+        return FileResponse(
+            _static_dir / "index.html",
+            headers={"Cache-Control": "no-cache, must-revalidate"},
+        )
